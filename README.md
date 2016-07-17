@@ -26,24 +26,54 @@ Table of Contents
 <a name="installation"></a> Installation
 ----------------------------------------
 
-#####Maven:
-In `pom.xml`:
+####Maven:
+Add jcenter as you maven repository:
 
- ```xml
+In your `pom.xml`:
+
+* Add `jcenter` as maven resolve repository:
+
+```xml
+<repositories>
+ 	<repository>
+ 		<snapshots>
+ 			<enabled>false</enabled>
+ 		</snapshots>
+ 		<id>bintray-maven</id>
+ 		<name>bintray</name>
+ 		<url>https://dl.bintray.com/jaycroaker/maven</url>
+ 	</repository>
+ </repositories>
+```
+
+* Add `perimeterx-sdk` as dependency:
+
+```xml
 <dependency>
 	<groupId>com.perimeterx</groupId>
-   <artifactId>perimeterx-sdk</artifactId>
+   <artifactId>perimeterx-sdk<</artifactId>
    <version>${VERSION}</version>
 </dependency>
- ```
+```
 
-#####gradle:
-In `build.gradle`
+####gradle:
+
+In your `build.gradle`:
+
+* Add `jcenter` as your maven resolve repository:
+
+```gradle
+repositories {
+    maven {
+        url  "http://jcenter.bintray.com"
+    }
+}
+```
+* Add `perimeterx-sdk` to your `build.gradle`
 
 ```groovy
 compile group: 'com.perimeterx', name: 'perimeterx-sdk', version: '${VERSION}'
 ```
-
 
 
 
@@ -58,8 +88,9 @@ PXConfig pxConfiguration = new PXconfiguration.Builder()
 	.blockingScore(SCORE)
 	.build();
 
-// Get instance	
+// Get instance
 PerimeterX px = PerimeterX.getInstance(pxConfig);
+px.init(new DefaultBlockHandler(), new DefaultActivityHandler(pxConfig);
 
 // Inside the request / Filter
 @Override
@@ -98,8 +129,8 @@ PXConfig pxConfiguration = new PXconfiguration.Builder()
 #### <a name="custom-block"></a> Custom Blocking Actions
 Setting a custom block handler customizes is done by implementing the `BlockHandler` interface and set the `blockHandler` field in `PerimeterX` object and `pxVerify` method will run `blockHandler.handleBlocking`.
 
-**default:**  - `DefaultBlockHandler` supplied in this SDK return HTTP status code `403` and serve the
-Perimeterx block page.
+**default:**  - `DefaultBlockHandler` supplied in this SDK return HTTP status code 403 and serve the
+Perimeterx block page. (TODO!)
 
 ###### Examples
 
@@ -107,7 +138,7 @@ Perimeterx block page.
 
 ```java
 public class LoggerBlockHandler implements BlockHandler {
-	
+
 	public void handleBlocking(HttpServletResponseWrapper responseWrapper) {
 		Systm.out.Println("Loggin request " + responseWrapper);
 	}
@@ -134,9 +165,9 @@ In order to evaluate user's score properly, the PerimeterX module
 requires the real socket ip (client IP address that created the HTTP
 request). The user ip can be passed to the PerimeterX module by implementing the `IPProvider` interface and set it on the `PerimeterX` object.
 
-**default with no predefined header:** 
+**default with no predefined header:**
 
-This SDK provided two implementations for this. 
+This SDK provided two implementations for this.
 
 - `RemoteAddressIPProvider` which extract the Remote address from raw servlet request.
 - `IPByHeaderProvider` which can be constructed with a header key and when applied will extract this value haeder as the true IP.
@@ -204,4 +235,3 @@ PXConfig pxConfiguration = new PXconfiguration.Builder()
 ```
 <a name="contributing"></a> Contributing
 ----------------------------------------
-
