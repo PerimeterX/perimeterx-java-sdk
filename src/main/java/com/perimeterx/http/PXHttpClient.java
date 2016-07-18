@@ -74,7 +74,7 @@ public class PXHttpClient implements PXClient {
     }
 
     public CaptchaResponse sendCaptchaRequest(CaptchaRequest captchaRequest) throws PXException, IOException {
-        return callPXServer(captchaRequest, JsonUtils.captchaResponseReader, Constants.API_CAPTCHA);
+        return callPXServer(captchaRequest, JsonUtils.captchaResponseReader, baseUrl + Constants.API_CAPTCHA);
     }
 
 

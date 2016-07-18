@@ -20,7 +20,7 @@ public interface ActivityHandler {
     /**
      * Sends PageRequested Activity upon the valid request
      *
-     * @param context - requext context
+     * @param context - request context
      */
     void handlePageRequestedActivity(PXContext context) throws PXException;
 }

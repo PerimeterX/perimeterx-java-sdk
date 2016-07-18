@@ -28,6 +28,7 @@ package com.perimeterx.api;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
+import com.perimeterx.api.blockhandler.CaptchaBlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.ip.IPProvider;
 import com.perimeterx.api.ip.RemoteAddressIPProvider;
@@ -86,7 +87,11 @@ public class PerimeterX {
     private PerimeterX(PXConfiguration configuration) throws PXException {
         PXHttpClient pxClient = PXHttpClient.getInstance(Constants.SERVER_HOST, configuration.getApiTimeout(), configuration.getAuthToken());
         this.configuration = configuration;
-        this.blockHandler = new DefaultBlockHandler();
+        if (this.configuration.isCaptchaEnabled()) {
+            this.blockHandler = new CaptchaBlockHandler();
+        } else {
+            this.blockHandler = new DefaultBlockHandler();
+        }
         this.serverValidator = new PXS2SValidator(pxClient);
         this.captchaValidator = new PXCaptchaValidator(pxClient);
         this.activityHandler = new DefaultActivityHandler(pxClient, configuration);
