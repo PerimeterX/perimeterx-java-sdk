@@ -155,11 +155,9 @@ public class PXContext {
         return httpVersion;
     }
 
-    // TODO: Check if better to save risk cookie
     public void addCookieDetails(RiskCookie riskCookie) {
         this.vid = riskCookie.vid;
         this.uuid = riskCookie.uuid;
-        //this.riskScore = riskCookie.score;
     }
 
     public void setScore(int score) {

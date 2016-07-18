@@ -5,7 +5,6 @@ import com.perimeterx.internals.cookie.RiskCookieDecoder;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.S2SCallReason;
-import com.perimeterx.utils.Constants;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -54,7 +53,7 @@ public class PXCookieValidator {
             context.setVid(riskCookie.vid);
             context.setUuid(riskCookie.uuid);
             context.setScore(riskCookie.score.bot);
-            RiskCookieDecoder.ValidationResult validate = cookieDecoder.validate(riskCookie, Constants.SIGNING_FIELDS);
+            RiskCookieDecoder.ValidationResult validate = cookieDecoder.validate(riskCookie, new String[] { context.getIp(), context.getUserAgent() });
             switch (validate) {
                 case NO_SIGNING:
                 case INVALID:

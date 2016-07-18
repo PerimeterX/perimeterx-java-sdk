@@ -22,7 +22,4 @@ public final class Constants {
 
     public static final int CAPTCHA_SUCCESS_CODE = 0;
     public static final int CAPTCHA_FAILED_CODE = -1;
-
-    public static final String[] SIGNING_FIELDS = { "ip", "vid", "User-Agent"};
-
 }

@@ -29,6 +29,8 @@ import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
+import com.perimeterx.api.ip.IPProvider;
+import com.perimeterx.api.ip.RemoteAddressIPProvider;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
@@ -61,6 +63,7 @@ public class PerimeterX {
     private PXCookieValidator cookieValidator;
     private ActivityHandler activityHandler;
     private PXCaptchaValidator captchaValidator;
+    private IPProvider ipProvider;
 
     /**
      * Build a singleton object from configuration
@@ -88,6 +91,7 @@ public class PerimeterX {
         this.captchaValidator = new PXCaptchaValidator(pxClient);
         this.activityHandler = new DefaultActivityHandler(pxClient, configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(configuration.getCookieKey());
+        this.ipProvider = new RemoteAddressIPProvider();
     }
 
     /**
@@ -107,7 +111,7 @@ public class PerimeterX {
         cookie.setMaxAge(0);
         responseWrapper.addCookie(cookie);
 
-        PXContext context = new PXContext(req);
+        PXContext context = new PXContext(req, this.ipProvider);
         if (captchaValidator.verify(context)) {
             return handleVerification(context, responseWrapper, BlockReason.COOKIE);
         }
@@ -161,5 +165,14 @@ public class PerimeterX {
      */
     public void setBlockHandler(BlockHandler blockHandler) {
         this.blockHandler = blockHandler;
+    }
+
+    /**
+     * Set IP Provider
+     *
+     * @param ipProvider - IP provider that is used to extract ip from request
+     */
+    public void setIpProvider(IPProvider ipProvider) {
+        this.ipProvider = ipProvider;
     }
 }
