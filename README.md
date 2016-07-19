@@ -1,3 +1,5 @@
+  [ ![Download](https://api.bintray.com/packages/perimeterx/maven/perimeterx-sdk/images/download.svg) ](https://bintray.com/perimeterx/maven/perimeterx-sdk/_latestVersion)
+
 ![image](https://843a2be0f3083c485676508ff87beaf088a889c0-www.googledrive.com/host/0B_r_WoIa581oY01QMWNVUElyM2M)
 
 [PerimeterX](http://www.perimeterx.com) Java SDK
@@ -17,9 +19,6 @@ Table of Contents
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeout Milliseconds](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
-  *   [Debug Mode](#debug-mode)
--   [Contributing](#contributing)
-  *   [Tests](#tests)
 
 <a name="Usage"></a>
 
@@ -29,7 +28,7 @@ Table of Contents
 ####Maven:
 Add jcenter as you maven repository:
 
-In your `pom.xml`:
+In your `pom.xml` or (`settings.xml`):
 
 * Add `jcenter` as maven resolve repository:
 
@@ -41,7 +40,7 @@ In your `pom.xml`:
  		</snapshots>
  		<id>bintray-maven</id>
  		<name>bintray</name>
- 		<url>https://dl.bintray.com/jaycroaker/maven</url>
+ 		<url>https://dl.bintray.com/perimeterx/maven</url>
  	</repository>
  </repositories>
 ```
@@ -69,7 +68,7 @@ repositories {
     }
 }
 ```
-* Add `perimeterx-sdk` to your `build.gradle`
+* Add `perimeterx-sdk` to your `build.gradle`:
 
 ```groovy
 compile group: 'com.perimeterx', name: 'perimeterx-sdk', version: '${VERSION}'
@@ -90,7 +89,6 @@ PXConfig pxConfiguration = new PXconfiguration.Builder()
 
 // Get instance
 PerimeterX px = PerimeterX.getInstance(pxConfig);
-px.init(new DefaultBlockHandler(), new DefaultActivityHandler(pxConfig);
 
 // Inside the request / Filter
 @Override
@@ -121,7 +119,7 @@ Configuration options are set in `PXconfiguration`
 ```java
 PXConfig pxConfiguration = new PXconfiguration.Builder()
 	...
-	.blockingScore(70)
+	.blockingScore(50)
 	...
 	.build();
 ```
@@ -130,7 +128,7 @@ PXConfig pxConfiguration = new PXconfiguration.Builder()
 Setting a custom block handler customizes is done by implementing the `BlockHandler` interface and set the `blockHandler` field in `PerimeterX` object and `pxVerify` method will run `blockHandler.handleBlocking`.
 
 **default:**  - `DefaultBlockHandler` supplied in this SDK return HTTP status code 403 and serve the
-Perimeterx block page. (TODO!)
+Perimeterx block page.
 
 ###### Examples
 
@@ -165,12 +163,17 @@ In order to evaluate user's score properly, the PerimeterX module
 requires the real socket ip (client IP address that created the HTTP
 request). The user ip can be passed to the PerimeterX module by implementing the `IPProvider` interface and set it on the `PerimeterX` object.
 
-**default with no predefined header:**
 
-This SDK provided two implementations for this.
+This SDK provided two implementations for this:
 
-- `RemoteAddressIPProvider` which extract the Remote address from raw servlet request.
+- `RemoteAddressIPProvider` (deault) which extract the Remote address from raw servlet request.
 - `IPByHeaderProvider` which can be constructed with a header key and when applied will extract this value haeder as the true IP.
+
+You can set your own `IPProvider`:
+
+```java
+px.setIpProvider((httpRequest) -> "127.0.0.1");
+```
 
 #### <a name="sensitive-headers"></a> Filter sensitive headers
 
@@ -219,19 +222,3 @@ PXConfig pxConfiguration = new PXconfiguration.Builder()
 	...
 	.build()
 ```
-
-#### <a name="debug-mode"></a> Debug Mode
-
-Enables debug logging
-
-**default:** false
-
-```php
-PXConfig pxConfiguration = new PXconfiguration.Builder()
-	...
-	.debugMode(true)
-	...
-	.build()
-```
-<a name="contributing"></a> Contributing
-----------------------------------------
