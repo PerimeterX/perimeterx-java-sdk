@@ -57,7 +57,7 @@ public class PXCookieValidator {
             switch (validate) {
                 case NO_SIGNING:
                 case INVALID:
-                    return S2SCallReason.INVALID_COOKIE;
+                    return S2SCallReason.INVALID_VERIFICATION;
                 case EXPIRED:
                     return S2SCallReason.EXPIRED_COOKIE;
                 case VALID:
@@ -67,7 +67,7 @@ public class PXCookieValidator {
             }
         } catch (IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException |
                 InvalidKeyException | InvalidKeySpecException | NoSuchAlgorithmException | IOException e) {
-            return S2SCallReason.INVALID_COOKIE;
+            return S2SCallReason.INVALID_DECRYPTION;
         }
     }
 }

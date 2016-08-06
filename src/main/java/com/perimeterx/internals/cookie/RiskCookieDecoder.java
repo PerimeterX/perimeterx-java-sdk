@@ -1,5 +1,6 @@
 package com.perimeterx.internals.cookie;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.perimeterx.utils.JsonUtils;
 
@@ -64,7 +65,7 @@ public class RiskCookieDecoder {
         return new String(data, StandardCharsets.UTF_8);
     }
 
-    public RiskCookie decryptRiskCookie(String cookieData) throws IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException, InvalidKeyException, InvalidKeySpecException, NoSuchAlgorithmException, IOException {
+    public RiskCookie decryptRiskCookie(String cookieData) throws BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidAlgorithmParameterException, InvalidKeySpecException, IOException {
         // decrypt and parse
         final String decryptData = decryptData(cookieData);
         return jsonReader.readValue(decryptData);

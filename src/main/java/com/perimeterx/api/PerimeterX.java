@@ -139,7 +139,7 @@ public class PerimeterX {
         boolean verified = score < this.configuration.getBlockingScore();
         if (verified) {
             // Not blocking request and sending page_requested activity to px if configured as true
-            if (this.configuration.isModuleEnabled()) {
+            if (this.configuration.shouldSendPageActivities()) {
                 this.activityHandler.handlePageRequestedActivity(context);
             }
         } else {

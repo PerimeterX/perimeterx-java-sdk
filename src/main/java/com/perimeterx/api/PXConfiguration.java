@@ -83,7 +83,7 @@ public class PXConfiguration {
         return apiTimeout;
     }
 
-    public boolean isSendPageActivities() {
+    public boolean shouldSendPageActivities() {
         return sendPageActivities;
     }
 

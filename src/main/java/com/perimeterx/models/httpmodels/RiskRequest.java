@@ -1,9 +1,7 @@
 package com.perimeterx.models.httpmodels;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.Request;
-import com.perimeterx.models.risk.S2SCallReason;
 
 /**
  * RiskRequest model
@@ -13,12 +11,13 @@ import com.perimeterx.models.risk.S2SCallReason;
 public class RiskRequest {
 
     private Request request;
-    @JsonProperty("s2s_call_reason")
-    private S2SCallReason callReason;
+    private String vid;
+    private Additional additional;
 
     public RiskRequest(PXContext context) {
         this.request = new Request(context);
-        this.callReason = context.getS2sCallReason();
+        this.vid = context.getVid();
+        this.additional = new Additional(context);
     }
 
     public Request getRequest() {
@@ -29,11 +28,19 @@ public class RiskRequest {
         this.request = request;
     }
 
-    public S2SCallReason getCallReason() {
-        return callReason;
+    public String getVid() {
+        return vid;
     }
 
-    public void setCallReason(S2SCallReason callReason) {
-        this.callReason = callReason;
+    public void setVid(String vid) {
+        this.vid = vid;
+    }
+
+    public Additional getAdditional() {
+        return additional;
+    }
+
+    public void setAdditional(Additional additional) {
+        this.additional = additional;
     }
 }
