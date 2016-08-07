@@ -9,7 +9,7 @@ import java.io.IOException;
 
 /**
  * Default captcha block handler which display captcha page on block
- *
+ * <p>
  * Created by shikloshi on 07/07/2016.
  */
 public class CaptchaBlockHandler implements BlockHandler {

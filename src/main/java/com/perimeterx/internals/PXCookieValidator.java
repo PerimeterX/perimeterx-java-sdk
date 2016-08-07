@@ -53,7 +53,7 @@ public class PXCookieValidator {
             context.setVid(riskCookie.vid);
             context.setUuid(riskCookie.uuid);
             context.setScore(riskCookie.score.bot);
-            RiskCookieDecoder.ValidationResult validate = cookieDecoder.validate(riskCookie, new String[] { context.getIp(), context.getUserAgent() });
+            RiskCookieDecoder.ValidationResult validate = cookieDecoder.validate(riskCookie, new String[]{context.getIp(), context.getUserAgent()});
             switch (validate) {
                 case NO_SIGNING:
                 case INVALID:

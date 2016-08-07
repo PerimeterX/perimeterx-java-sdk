@@ -6,7 +6,7 @@ import java.util.Map;
 
 /**
  * HeaderEntry
- *
+ * <p>
  * Created by shikloshi on 05/07/2016.
  */
 public class HeaderEntry implements Map.Entry<String, String> {

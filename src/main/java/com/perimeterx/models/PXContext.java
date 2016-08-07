@@ -6,12 +6,10 @@ import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -72,7 +70,7 @@ public class PXContext {
         this.hostname = request.getRemoteHost();
         this.s2sCallReason = S2SCallReason.NONE;
         this.httpMethod = request.getMethod();
-        this.httpVersion = request.getProtocol();
+        this.httpVersion = Optional.ofNullable(request.getProtocol().split("/")[1]).orElse(StringUtils.EMPTY);// extracting only the version number from HTTP/x.x
     }
 
     // Prefer to utilize this // throw exception for no cookie found

@@ -1,7 +1,6 @@
 package com.perimeterx.models.httpmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.S2SCallReason;
 
@@ -26,7 +25,8 @@ public class Additional {
         this.callReason = ctx.getS2sCallReason();
     }
 
-    public Additional() { }
+    public Additional() {
+    }
 
     public String getPxCookie() {
         return pxCookie;
