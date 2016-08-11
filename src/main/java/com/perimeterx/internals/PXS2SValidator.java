@@ -27,12 +27,7 @@ public class PXS2SValidator {
      * @param request - request per context for querying server
      * @throws PXException
      */
-    public Scores verify(RiskRequest request) throws PXException {
-        RiskResponse riskResponse = sendRiskRequest(request);
-        return riskResponse.getScores();
-    }
-
-    private RiskResponse sendRiskRequest(RiskRequest request) throws PXException {
+    public RiskResponse verify(RiskRequest request) throws PXException {
         RiskResponse response;
         try {
             response = pxClient.riskApiCall(request);

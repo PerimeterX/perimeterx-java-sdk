@@ -39,6 +39,7 @@ import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
+import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.models.risk.Scores;
@@ -128,8 +129,9 @@ public class PerimeterX {
         context.setS2sCallReason(callReason);
         // Calls risk_api and populate the data retrieved to the context
         RiskRequest request = new RiskRequest(context);
-        Scores scores = serverValidator.verify(request);
-        context.setScore(scores.getNonHuman());
+        RiskResponse response = serverValidator.verify(request);
+        context.setScore(response.getScores().getNonHuman());
+        context.setUuid(response.getUuid());
         return handleVerification(context, responseWrapper, BlockReason.SERVER);
     }
 
