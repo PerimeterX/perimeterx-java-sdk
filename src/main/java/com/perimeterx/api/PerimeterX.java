@@ -42,7 +42,6 @@ import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
-import com.perimeterx.models.risk.Scores;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
@@ -121,7 +120,13 @@ public class PerimeterX {
         if (captchaValidator.verify(context)) {
             return handleVerification(context, responseWrapper, BlockReason.COOKIE);
         }
-        S2SCallReason callReason = cookieValidator.verify(context);
+        String[] signingFields;
+        if (configuration.wasSignedWithIP()) {
+            signingFields = new String[]{context.getIp(), context.getUserAgent()};
+        } else {
+            signingFields = new String[]{context.getUserAgent()};
+        }
+        S2SCallReason callReason = cookieValidator.verify(context, signingFields);
         // Cookie is valid (exists and not expired) so we can block according to it's score
         if (callReason == S2SCallReason.NONE) {
             return handleVerification(context, responseWrapper, BlockReason.COOKIE);

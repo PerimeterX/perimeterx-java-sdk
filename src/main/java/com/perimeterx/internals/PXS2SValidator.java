@@ -4,7 +4,6 @@ import com.perimeterx.http.PXClient;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.models.risk.Scores;
 
 import java.io.IOException;
 

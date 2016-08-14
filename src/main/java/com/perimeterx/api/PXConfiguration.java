@@ -27,6 +27,7 @@ public class PXConfiguration {
     private int apiTimeout;
     private boolean debugMode;
     private boolean sendPageActivities;
+    private boolean signedWithIP;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -41,6 +42,7 @@ public class PXConfiguration {
         apiTimeout = builder.apiTimeout;
         debugMode = builder.debugMode;
         sendPageActivities = builder.sendPageActivities;
+        signedWithIP = builder.signedWithIP;
     }
 
     public String getAppId() {
@@ -87,6 +89,10 @@ public class PXConfiguration {
         return sendPageActivities;
     }
 
+    public boolean wasSignedWithIP() {
+        return signedWithIP;
+    }
+
     public String getSdkName() {
         return sdkName;
     }
@@ -104,6 +110,7 @@ public class PXConfiguration {
         private int apiTimeout = 1000;
         private boolean debugMode = false;
         private boolean sendPageActivities = false;
+        public boolean signedWithIP = false;
 
         public Builder() {
         }
@@ -170,6 +177,11 @@ public class PXConfiguration {
 
         public Builder sendPageActivites(boolean val) {
             sendPageActivities = val;
+            return this;
+        }
+
+        public Builder signedWithIP(boolean val) {
+            signedWithIP = val;
             return this;
         }
 
