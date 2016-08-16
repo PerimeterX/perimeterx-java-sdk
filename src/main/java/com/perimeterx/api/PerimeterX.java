@@ -120,13 +120,7 @@ public class PerimeterX {
         if (captchaValidator.verify(context)) {
             return handleVerification(context, responseWrapper, BlockReason.COOKIE);
         }
-        String[] signingFields;
-        if (configuration.wasSignedWithIP()) {
-            signingFields = new String[]{context.getIp(), context.getUserAgent()};
-        } else {
-            signingFields = new String[]{context.getUserAgent()};
-        }
-        S2SCallReason callReason = cookieValidator.verify(context, signingFields);
+        S2SCallReason callReason = cookieValidator.verify(context);
         // Cookie is valid (exists and not expired) so we can block according to it's score
         if (callReason == S2SCallReason.NONE) {
             return handleVerification(context, responseWrapper, BlockReason.COOKIE);

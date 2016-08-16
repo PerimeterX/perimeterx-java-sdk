@@ -70,7 +70,12 @@ public class PXContext {
         this.hostname = request.getRemoteHost();
         this.s2sCallReason = S2SCallReason.NONE;
         this.httpMethod = request.getMethod();
-        this.httpVersion = Optional.ofNullable(request.getProtocol().split("/")[1]).orElse(StringUtils.EMPTY);// extracting only the version number from HTTP/x.x
+        String protocolDetails[] = request.getProtocol().split("/");
+        if (protocolDetails.length  > 1) {
+            this.httpVersion = protocolDetails[1];
+        } else {
+            this.httpMethod = StringUtils.EMPTY;
+        }
     }
 
     // Prefer to utilize this // throw exception for no cookie found

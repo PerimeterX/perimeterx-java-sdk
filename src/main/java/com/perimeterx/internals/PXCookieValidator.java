@@ -41,10 +41,9 @@ public class PXCookieValidator {
      * Verify cookie and set vid, uuid, score on context
      *
      * @param context - request context, data from cookie will be populated
-     * @param signingFields - all fields that cookie was signed by
      * @return S2S call reason according to the result of cookie verification
      */
-    public S2SCallReason verify(PXContext context, String[] signingFields) {
+    public S2SCallReason verify(PXContext context) {
         try {
             String pxCookie = context.getPxCookie();
             if (pxCookie == null || pxCookie.isEmpty()) {
@@ -54,7 +53,7 @@ public class PXCookieValidator {
             context.setVid(riskCookie.vid);
             context.setUuid(riskCookie.uuid);
             context.setScore(riskCookie.score.bot);
-            RiskCookieDecoder.ValidationResult validate = cookieDecoder.validate(riskCookie, signingFields);
+            RiskCookieDecoder.ValidationResult validate = cookieDecoder.validate(riskCookie, new String[]{context.getUserAgent()});
             switch (validate) {
                 case NO_SIGNING:
                 case INVALID:
