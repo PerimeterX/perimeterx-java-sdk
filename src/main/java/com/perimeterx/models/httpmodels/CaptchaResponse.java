@@ -1,5 +1,7 @@
 package com.perimeterx.models.httpmodels;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * CaptchaResponse model
  * <p>
@@ -11,6 +13,8 @@ public class CaptchaResponse {
     private String uuid;
     private String vid;
     private String cid;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String message;
 
     public CaptchaResponse() {
     }
@@ -52,5 +56,13 @@ public class CaptchaResponse {
 
     public String getCid() {
         return cid;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
