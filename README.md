@@ -80,7 +80,7 @@ compile group: 'com.perimeterx', name: 'perimeterx-sdk', version: '${VERSION}'
 
 ```java
 // Create configuration object
-PXConfig pxConfiguration = new PXconfiguration.Builder()
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	.cookieKey(COOKIE_KEY)
 	.authToken(AUTH_TOKEN)
 	.appId(APP_ID)
@@ -88,7 +88,7 @@ PXConfig pxConfiguration = new PXconfiguration.Builder()
 	.build();
 
 // Get instance
-PerimeterX px = PerimeterX.getInstance(pxConfig);
+PerimeterX px = PerimeterX.getInstance(pxConfiguration);
 
 // Inside the request / Filter
 @Override
@@ -104,7 +104,7 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 
 #### Configuring Required Parameters
 
-Configuration options are set in `PXconfiguration`
+Configuration options are set in `PXConfiguration`
 
 #### Required parameters:
 
@@ -117,7 +117,7 @@ Configuration options are set in `PXconfiguration`
 **default:** 70
 
 ```java
-PXConfig pxConfiguration = new PXconfiguration.Builder()
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	...
 	.blockingScore(50)
 	...
@@ -150,7 +150,7 @@ By enabling captcha support, a captcha will be served as part of the block page 
 **default: true**
 
 ```java
-PXConfig pxConfiguration = new PXconfiguration.Builder()
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	...
 	.captchaEnabled(true)
 	...
@@ -182,7 +182,7 @@ A user can define a list of sensitive header he want to prevent from being send 
 **default: cookie, cookies**
 
 ```java
-PXConfig pxConfiguration = new PXconfiguration.Builder()
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	...
 	.addSensitiveHeader("Authorization")
 	.addSensitiveHeader("Secret-Header")
@@ -199,7 +199,7 @@ invalid.
 **default:** 1000 Miliseconds
 
 ```java
-PXConfig pxConfiguration = new PXconfiguration.Builder()
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	...
 	.apiTimeout(2000)
 	...
@@ -216,7 +216,7 @@ amount requests blocked and API usage statistics.
 **default:** false
 
 ```java
-PXConfig pxConfiguration = new PXconfiguration.Builder()
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	...
 	.sendPageActivities(true)
 	...
