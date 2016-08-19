@@ -22,11 +22,10 @@ public class Request {
     }
 
     public Request(PXContext context) {
-        this.headers = new ArrayList<>();
+        this.headers = new ArrayList<>(context.getHeaders().entrySet());
         this.ip = context.getIp();
         this.uri = context.getUri();
         this.url = context.getFullUrl();
-        context.getHeaders().forEach((k, v) -> this.headers.add(new HeaderEntry(k, v)));
     }
 
     public void setIp(String ip) {

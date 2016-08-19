@@ -9,9 +9,9 @@ import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -48,11 +48,12 @@ public class PXContext {
 
     private void initContext(final HttpServletRequest request) {
         this.headers = new HashMap<>();
-        Enumeration<String> headerNames = request.getHeaderNames();
-        this.headers = Collections.list(headerNames)
-                .stream()
-                .filter(h -> !headers.containsKey(h))
-                .collect(Collectors.toMap(Function.identity(), request::getHeader));
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            final String name = (String) headerNames.nextElement();
+            final String value = request.getHeader(name);
+            this.headers.put(name, value);
+        }
         String cookie = this.headers.get("cookie");
         this.pxCookie = extractCookieByKey(cookie, Constants.COOKIE_KEY);
         String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
@@ -71,7 +72,7 @@ public class PXContext {
         this.s2sCallReason = S2SCallReason.NONE;
         this.httpMethod = request.getMethod();
         String protocolDetails[] = request.getProtocol().split("/");
-        if (protocolDetails.length  > 1) {
+        if (protocolDetails.length > 1) {
             this.httpVersion = protocolDetails[1];
         } else {
             this.httpMethod = StringUtils.EMPTY;
