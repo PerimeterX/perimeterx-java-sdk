@@ -1,4 +1,5 @@
-  [ ![Download](https://api.bintray.com/packages/perimeterx/maven/perimeterx-sdk/images/download.svg) ](https://bintray.com/perimeterx/maven/perimeterx-sdk/_latestVersion)
+[![Javadocs](http://www.javadoc.io/badge/com.perimeterx/perimeterx-sdk.svg?color=brightgreen)](http://www.javadoc.io/doc/com.perimeterx/perimeterx-sdk)
+
 
 ![image](https://843a2be0f3083c485676508ff87beaf088a889c0-www.googledrive.com/host/0B_r_WoIa581oY01QMWNVUElyM2M)
 
@@ -9,6 +10,7 @@ Table of Contents
 -----------------
 
 -   [Usage](#usage)
+  *   [Prerequisites](#prerequisites)
   *   [Installation](#installation)
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
@@ -20,7 +22,10 @@ Table of Contents
   *   [API Timeout Milliseconds](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
 
-<a name="Usage"></a>
+<a name="prerequisites"></a> Prerequisites
+----------------------------
+
+* `jdk 1.7.x` or higher.
 
 <a name="installation"></a> Installation
 ----------------------------------------
