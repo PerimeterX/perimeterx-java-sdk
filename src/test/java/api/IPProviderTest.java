@@ -3,14 +3,13 @@ package api;
 import com.perimeterx.api.ip.IPByHeaderProvider;
 import com.perimeterx.api.ip.RemoteAddressIPProvider;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Testing {@link com.perimeterx.api.ip.IPProvider}
@@ -20,29 +19,21 @@ import java.util.Map;
 @Test
 public class IPProviderTest {
 
-    public static final String IP_HEADER = "this-is-where-my-ip-is";
+    private static final String IP_HEADER = "this-is-where-my-ip-is";
     private HttpServletRequest request;
 
     public void setUp() throws Exception {
-        Map<String, String> headers = new HashMap<>();
+        final Map<String, String> headers = new HashMap<>();
         headers.put(IP_HEADER, "127.0.0.1");
         this.request = Mockito.mock(HttpServletRequest.class);
-        Iterator<String> iterator = headers.keySet().iterator();
-        Enumeration headerNames = new Enumeration() {
+        Mockito.when(request.getHeaderNames()).thenReturn(Collections.enumeration(headers.keySet()));
+        Mockito.doAnswer(new Answer() {
             @Override
-            public boolean hasMoreElements() {
-                return iterator.hasNext();
+            public String answer(final InvocationOnMock invocationOnMock) throws Throwable {
+                Object[] args = invocationOnMock.getArguments();
+                final String name = (String)args[0];
+                return headers.get(name);
             }
-
-            @Override
-            public Object nextElement() {
-                return iterator.next();
-            }
-        };
-        Mockito.when(request.getHeaderNames()).thenReturn(headerNames);
-        Mockito.doAnswer(invocationOnMock -> {
-            Object[] args = invocationOnMock.getArguments();
-            return headers.get(args[0]);
         }).when(request).getHeader(IP_HEADER);
         Mockito.when(request.getRemoteAddr()).thenReturn("81.82.81.82");
     }
