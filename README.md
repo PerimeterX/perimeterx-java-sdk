@@ -26,26 +26,8 @@ Table of Contents
 ----------------------------------------
 
 ####Maven:
-Add jcenter as you maven repository:
 
-In your `pom.xml` or (`settings.xml`):
-
-* Add `jcenter` as maven resolve repository:
-
-```xml
-<repositories>
- 	<repository>
- 		<snapshots>
- 			<enabled>false</enabled>
- 		</snapshots>
- 		<id>bintray-maven</id>
- 		<name>bintray</name>
- 		<url>https://dl.bintray.com/perimeterx/maven</url>
- 	</repository>
- </repositories>
-```
-
-* Add `perimeterx-sdk` as dependency:
+* Add `perimeterx-sdk` to `pom.xml`:
 
 ```xml
 <dependency>
@@ -57,17 +39,6 @@ In your `pom.xml` or (`settings.xml`):
 
 ####gradle:
 
-In your `build.gradle`:
-
-* Add `jcenter` as your maven resolve repository:
-
-```gradle
-repositories {
-    maven {
-        url  "http://jcenter.bintray.com"
-    }
-}
-```
 * Add `perimeterx-sdk` to your `build.gradle`:
 
 ```groovy
@@ -172,7 +143,15 @@ This SDK provided two implementations for this:
 You can set your own `IPProvider`:
 
 ```java
-px.setIpProvider((httpRequest) -> "127.0.0.1");
+// java < 8
+px.setIpProvider(new IPProvider() {
+    public String getRequestIP(HttpServletRequest request) {
+    	return "127.0.0.1";
+    }
+});
+
+// java >= 8
+px.setIpProvider(httpRequest -> "127.0.0.1");
 ```
 
 #### <a name="sensitive-headers"></a> Filter sensitive headers

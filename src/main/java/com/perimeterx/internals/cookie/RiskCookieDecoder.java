@@ -5,7 +5,6 @@ import com.perimeterx.utils.JsonUtils;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -55,7 +54,6 @@ public class RiskCookieDecoder {
         final int iterations = Integer.parseInt(parts[1]);
         final byte[] encrypted = Base64.getDecoder().decode(parts[2].getBytes(StandardCharsets.UTF_8));
         final int dkLen = (KEY_LEN + cipher.getBlockSize()) * 8;
-        //PBEKeySpec keySpec = new PBEKeySpec(password, salt, iterations, dkLen);
         byte[] encoded = getEncodedHash(password, salt, iterations, dkLen);
         byte[] key = Arrays.copyOf(encoded, KEY_LEN);
         byte[] iv = Arrays.copyOfRange(encoded, KEY_LEN, encoded.length);
