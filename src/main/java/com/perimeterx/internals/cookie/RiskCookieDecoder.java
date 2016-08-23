@@ -43,7 +43,7 @@ public class RiskCookieDecoder {
             return "";
         }
         final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");   // aes-256-cbc decryptData no salt
-        final int dkLen = (KEY_LEN + cipher.getBlockSize()) * 8;
+        final int dkLen = KEY_LEN + cipher.getBlockSize();
         PBKDF2Parameters p = new PBKDF2Parameters(HMAC_SHA_256, "UTF-8", salt, iterations);
         byte[] dk = new PBKDF2Engine(p).deriveKey(this.cookieKey, dkLen);
         byte[] key = Arrays.copyOf(dk, KEY_LEN);
