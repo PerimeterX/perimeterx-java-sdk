@@ -10,8 +10,10 @@ import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
@@ -21,6 +23,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
 
 /**
@@ -97,13 +100,11 @@ public class PXHttpClient implements PXClient {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(request);
-            HttpUriRequest httpRequest = RequestBuilder
-                    .post(route)
-                    .setEntity(new StringEntity(requestBody, UTF_8))
-                    .setHeader("Authorization", "Bearer " + authToken)
-                    .setHeader("Content-Type", "application/json")
-                    .build();
-            httpResponse = httpClient.execute(httpRequest);
+            HttpPost post = new HttpPost(route);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            post.setHeader("Authorization", "Bearer " + authToken);
+            post.setHeader("Content-Type", "application/json");
+            httpResponse = httpClient.execute(post);
             // If returned server response is not needed
             if (reader == null) {
                 EntityUtils.consume(httpResponse.getEntity());
