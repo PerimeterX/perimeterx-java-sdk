@@ -8,6 +8,7 @@ import com.perimeterx.models.risk.S2SCallReason;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -65,7 +66,7 @@ public class PXCookieValidator {
                 default:
                     return S2SCallReason.NONE;
             }
-        } catch (IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException |
+        } catch (IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | NoSuchPaddingException |
                 InvalidKeyException | InvalidKeySpecException | NoSuchAlgorithmException | IOException e) {
             return S2SCallReason.INVALID_DECRYPTION;
         }

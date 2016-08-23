@@ -1,4 +1,4 @@
-package internal;
+package com.perimeterx.internal;
 
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.PXCaptchaValidator;

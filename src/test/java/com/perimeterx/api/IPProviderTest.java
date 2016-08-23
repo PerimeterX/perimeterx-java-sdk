@@ -1,4 +1,4 @@
-package api;
+package com.perimeterx.api;
 
 import com.perimeterx.api.ip.IPByHeaderProvider;
 import com.perimeterx.api.ip.RemoteAddressIPProvider;
