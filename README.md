@@ -25,7 +25,17 @@ Table of Contents
 <a name="prerequisites"></a> Prerequisites
 ----------------------------
 
-* `jdk 1.7.x` or higher.
+##### JDK:
+Use `jdk 1.7` or higher.
+##### Unlimited Strength Jurisdiction Policy:
+
+Make sure your jdk support unlimited key length.
+
+If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion error on startup, follow the instructions below: 
+
+1. Download `JCE` for [jdk17](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html) or for [jdk18](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html).
+2. Replace `local_policy.jar` and `US_export_policy.jar` in your `$JAVA_HOME/jre/lib/security/` with those you have downloaded.
+3. Run your project again and the `Unlimited Strength Jurisdiction Policy` error should no appear.
 
 <a name="installation"></a> Installation
 ----------------------------------------
