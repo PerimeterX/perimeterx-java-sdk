@@ -17,6 +17,8 @@ public class Additional {
     private String httpVersion;
     @JsonProperty("s2s_call_reason")
     private S2SCallReason callReason;
+    @JsonProperty("module_version")
+    private String moduleVersion = "Java SDK 1.0";
 
     public Additional(PXContext ctx) {
         this.pxCookie = ctx.getPxCookie();
@@ -50,5 +52,21 @@ public class Additional {
 
     public void setHttpVersion(String httpVersion) {
         this.httpVersion = httpVersion;
+    }
+
+    public S2SCallReason getCallReason() {
+        return callReason;
+    }
+
+    public void setCallReason(S2SCallReason callReason) {
+        this.callReason = callReason;
+    }
+
+    public String getModuleVersion() {
+        return moduleVersion;
+    }
+
+    public void setModuleVersion(String moduleVersion) {
+        this.moduleVersion = moduleVersion;
     }
 }
