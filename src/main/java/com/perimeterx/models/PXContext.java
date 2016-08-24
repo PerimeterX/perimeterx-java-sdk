@@ -68,7 +68,7 @@ public class PXContext {
         this.userAgent = this.headers.get("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
-        this.hostname = request.getRemoteHost();
+        this.hostname = request.getServerName();
         this.s2sCallReason = S2SCallReason.NONE;
         this.httpMethod = request.getMethod();
         String protocolDetails[] = request.getProtocol().split("/");

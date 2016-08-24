@@ -30,6 +30,9 @@ public class RiskCookieDecoder {
 
     private String decryptData(String cookieData) throws InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
         final String[] parts = cookieData.split(":");
+        if (parts.length != 3) {
+            return "";
+        }
         final byte[] salt = Base64.decode(parts[0]);
         if (salt == null) {
             return "";
