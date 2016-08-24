@@ -138,7 +138,7 @@ public class PerimeterX {
         }
         context.setS2sCallReason(callReason);
         // Calls risk_api and populate the data retrieved to the context
-        RiskRequest request = new RiskRequest(context);
+        RiskRequest request = RiskRequest.fromContext(context);
         RiskResponse response = serverValidator.verify(request);
         context.setScore(response.getScores().getNonHuman());
         context.setUuid(response.getUuid());

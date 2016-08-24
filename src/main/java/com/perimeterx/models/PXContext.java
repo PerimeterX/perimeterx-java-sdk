@@ -159,11 +159,6 @@ public class PXContext {
         return httpVersion;
     }
 
-    public void addCookieDetails(RiskCookie riskCookie) {
-        this.vid = riskCookie.vid;
-        this.uuid = riskCookie.uuid;
-    }
-
     public void setScore(int score) {
         this.score = score;
     }
