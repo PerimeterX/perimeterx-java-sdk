@@ -22,6 +22,7 @@ public class CaptchaRequest {
 
     public static CaptchaRequest fromContext(PXContext context) {
         CaptchaRequest captchaRequest = new CaptchaRequest();
+        captchaRequest.Request = com.perimeterx.models.risk.Request.fromContext(context);
         captchaRequest.PxCaptcha = context.getPxCaptcha();
         captchaRequest.Vid = context.getVid();
         captchaRequest.Hostname = context.getHostname();
