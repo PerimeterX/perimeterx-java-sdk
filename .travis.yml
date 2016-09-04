@@ -3,4 +3,5 @@ sudo: false
 jdk:
   - oraclejdk8
   - oraclejdk7
-script: mvn clean test compile
+
+install: mvn clean test package
