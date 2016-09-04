@@ -37,7 +37,7 @@ Table of Contents
 ```xml
 <dependency>
 	<groupId>com.perimeterx</groupId>
-   <artifactId>perimeterx-sdk<</artifactId>
+   <artifactId>perimeterx-sdk</artifactId>
    <version>${VERSION}</version>
 </dependency>
 ```
