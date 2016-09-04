@@ -80,8 +80,7 @@ PerimeterX px = PerimeterX.getInstance(pxConfiguration);
 @Override
 protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws ServletException, IOExcption {
 ...
-	PXContext context = new PXContext(req);
-	px.pxVerify(context, new HttpServletResponseWrapper(resp);
+	px.pxVerify(req, new HttpServletResponseWrapper(resp);
 ...
 }
 
