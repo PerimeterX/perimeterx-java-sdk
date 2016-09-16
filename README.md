@@ -113,7 +113,7 @@ Perimeterx block page.
 ```java
 public class LoggerBlockHandler implements BlockHandler {
 
-	public void handleBlocking(HttpServletResponseWrapper responseWrapper) {
+	public void handleBlocking(PXContext context, HttpServletResponseWrapper responseWrapper) {
 		Systm.out.Println("Loggin request " + responseWrapper);
 	}
 }
