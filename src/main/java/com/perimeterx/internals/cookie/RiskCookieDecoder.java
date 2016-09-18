@@ -1,5 +1,6 @@
 package com.perimeterx.internals.cookie;
 
+import com.perimeterx.models.PXContext;
 import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PBKDF2Engine;

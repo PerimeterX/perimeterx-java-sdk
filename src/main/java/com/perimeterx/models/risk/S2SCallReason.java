@@ -1,11 +1,6 @@
 package com.perimeterx.models.risk;
 
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-
-import java.io.IOException;
 
 /**
  * S2SCallReason Enum
@@ -15,7 +10,7 @@ import java.io.IOException;
 
 public enum S2SCallReason {
 
-    NONE("none"), NO_COOKIE("no_cookie"), EXPIRED_COOKIE("expired_cookie"), INVALID_DECRYPTION("cookie_decryption_failed"), INVALID_VERIFICATION("cookie_verification_failed");
+    NONE("none"), NO_COOKIE("cookie_expired"), EXPIRED_COOKIE("expired_cookie"), INVALID_DECRYPTION("cookie_decryption_failed"), INVALID_VERIFICATION("cookie_verification_failed");
 
     private String value;
 

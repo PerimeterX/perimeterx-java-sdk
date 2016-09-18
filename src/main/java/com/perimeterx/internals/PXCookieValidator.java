@@ -51,6 +51,7 @@ public class PXCookieValidator {
                 return S2SCallReason.NO_COOKIE;
             }
             RiskCookie riskCookie = cookieDecoder.decryptRiskCookie(pxCookie);
+            context.setRiskCookie(riskCookie);
             context.setVid(riskCookie.vid);
             context.setUuid(riskCookie.uuid);
             context.setScore(riskCookie.score.bot);

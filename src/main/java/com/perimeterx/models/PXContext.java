@@ -35,6 +35,7 @@ public class PXContext {
     private String httpMethod;
     private String httpVersion;
     private int score;
+    private RiskCookie riskCookie;
 
     public PXContext(final HttpServletRequest request) {
         initContext(request);
@@ -173,5 +174,13 @@ public class PXContext {
 
     public int getScore() {
         return this.score;
+    }
+
+    public void setRiskCookie(RiskCookie riskCookie) {
+        this.riskCookie = riskCookie;
+    }
+
+    public RiskCookie getRiskCookie() {
+        return riskCookie;
     }
 }
