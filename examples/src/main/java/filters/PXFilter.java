@@ -24,11 +24,11 @@ public class PXFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         // Creating filter configuration
         PXConfiguration pxConf = new PXConfiguration.Builder()
-                .appId("PXb8brAzQ1") // Your PerimeterX application ID
-                .cookieKey("FekuuL9XWdWNbyy1FDl+ZkvMoXtJ6y6Gga15gyo8bTLmVTWqwa2XzkdRquC9E34b") // Should copy from RiskCookie section in https://console.perimeterx.com/#/app/policiesmgmt
+                .appId("") // Your PerimeterX application ID
+                .cookieKey("") // Should copy from RiskCookie section in https://console.perimeterx.com/#/app/policiesmgmt
                 .captchaEnabled(false) // This will trigger captcha validation flow when blocking
                 .blockingScore(50) // Any request getting higher score than this score will be displayed the blocking page
-                .authToken("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ2ODc2NjYxNSwic3ViIjoiUFhiOGJyQXpRMSIsImp0aSI6IjBmMjkyYTZlLWE5MDgtNDYwYi1iMmViLTg5MDY3NTk4ZDVlZiJ9.7gr2Kluofv08Qf9QFSt5DddreXGmAMuyXnRKeTQJuQs") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/#/app/applicationsmgmt
+                .authToken("") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/#/app/applicationsmgmt
                 .build();
         try {
             this.enforcer = PerimeterX.getInstance(pxConf);
