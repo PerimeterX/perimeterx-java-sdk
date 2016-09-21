@@ -84,7 +84,7 @@ public class PXContext {
     private String extractCookieByKey(String cookie, String key) {
         String cookieValue = null;
         if (cookie != null) {
-            String[] cookies = cookie.split("; ");
+            String[] cookies = cookie.split(";\s?");
             for (String c : cookies) {
                 String[] splicedCookie = c.split("=", 2);
                 if (key.equals(splicedCookie[0])) {
