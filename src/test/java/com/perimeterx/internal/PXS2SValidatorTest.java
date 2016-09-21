@@ -1,4 +1,4 @@
-package internal;
+package com.perimeterx.internal;
 
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.PXS2SValidator;
@@ -38,7 +38,7 @@ public class PXS2SValidatorTest {
         this.client = new PXClientMock(50, Constants.CAPTCHA_SUCCESS_CODE);
         this.request = new MockHttpServletRequest();
         this.context = new PXContext(request);
-        this.riskRequest = new RiskRequest(context);
+        this.riskRequest = RiskRequest.fromContext(context);
         validator = new PXS2SValidator(this.client);
     }
 

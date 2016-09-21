@@ -1,5 +1,7 @@
 package com.perimeterx.models.httpmodels;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.Request;
 
@@ -10,37 +12,18 @@ import com.perimeterx.models.risk.Request;
  */
 public class RiskRequest {
 
-    private Request request;
-    private String vid;
-    private Additional additional;
+    @JsonProperty("request")
+    public Request Request;
+    @JsonProperty("vid")
+    public String Vid;
+    @JsonProperty("additional")
+    public Additional Additional;
 
-    public RiskRequest(PXContext context) {
-        this.request = new Request(context);
-        this.vid = context.getVid();
-        this.additional = new Additional(context);
-    }
-
-    public Request getRequest() {
-        return request;
-    }
-
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
-    public String getVid() {
-        return vid;
-    }
-
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
-
-    public Additional getAdditional() {
-        return additional;
-    }
-
-    public void setAdditional(Additional additional) {
-        this.additional = additional;
+    public static RiskRequest fromContext(PXContext context) {
+        RiskRequest riskRequest = new RiskRequest();
+        riskRequest.Request = com.perimeterx.models.risk.Request.fromContext(context);
+        riskRequest.Vid = context.getVid();
+        riskRequest.Additional = com.perimeterx.models.httpmodels.Additional.fromContext(context);
+        return riskRequest;
     }
 }

@@ -1,9 +1,8 @@
-package api;
+package com.perimeterx.api;
 
 import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.PXClient;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
@@ -19,12 +18,9 @@ import java.security.Security;
 /**
  * Created by shikloshi on 13/07/2016.
  */
+
 @Test
 public class PerimeterXTest extends ConfiguredTest {
-
-    static {
-        Security.insertProviderAt(new BouncyCastleProvider(), 1);
-    }
 
     private PXConfiguration configuration;
 

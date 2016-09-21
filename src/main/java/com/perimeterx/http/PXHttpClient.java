@@ -10,8 +10,10 @@ import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.entity.StringEntity;
@@ -21,6 +23,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.Charset;
 
 /**
@@ -65,52 +68,56 @@ public class PXHttpClient implements PXClient {
 
     @Override
     public RiskResponse riskApiCall(RiskRequest riskRequest) throws PXException, IOException {
-        return callPXServer(riskRequest, JsonUtils.riskResponseReader, this.baseUrl + Constants.API_RISK);
+        CloseableHttpResponse httpResponse = null;
+        try {
+            String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
+            HttpPost post = new HttpPost(baseUrl + Constants.API_RISK);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            post.setHeader("Authorization", "Bearer " + authToken);
+            post.setHeader("Content-Type", "application/json");
+            httpResponse = httpClient.execute(post);
+            String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
+            return JsonUtils.riskResponseReader.readValue(s);
+        } catch (Exception e) {
+            throw new PXException(e);
+        } finally {
+            if (httpResponse != null) {
+                httpResponse.close();
+            }
+        }
     }
 
     @Override
     public void sendActivity(Activity activity) throws PXException, IOException {
-        callPXServer(activity, null, baseUrl + Constants.API_ACTIVITIES);
+        CloseableHttpResponse httpResponse = null;
+        try {
+            String requestBody = JsonUtils.writer.writeValueAsString(activity);
+            HttpPost post = new HttpPost(baseUrl + Constants.API_ACTIVITIES);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            post.setHeader("Authorization", "Bearer " + authToken);
+            post.setHeader("Content-Type", "application/json");
+            httpResponse = httpClient.execute(post);
+            EntityUtils.consume(httpResponse.getEntity());
+        } catch (Exception e) {
+            throw new PXException(e);
+        } finally {
+            if (httpResponse != null) {
+                httpResponse.close();
+            }
+        }
     }
 
     public CaptchaResponse sendCaptchaRequest(CaptchaRequest captchaRequest) throws PXException, IOException {
-        return callPXServer(captchaRequest, JsonUtils.captchaResponseReader, baseUrl + Constants.API_CAPTCHA);
-    }
-
-
-    /**
-     * Convenience method to utilize  server call when making a request to PX server
-     * When calling with {@link ObjectReader} equals to null - nothing will be parsed when returning from server
-     * and the entity will be consumed just to prevent connection leak
-     *
-     * @param request - server request
-     * @param reader  - type of {@link ObjectReader} to parse response back to POJO, if called with null -
-     *                response will not be parsed back to object and method will return null
-     * @param route   - PX server API endpoint
-     * @param <T>     - type of request
-     * @param <E>     - type of response
-     * @return - server response parsed back to POJO of type type E
-     * @throws PXException
-     * @throws IOException
-     */
-    private <T, E> E callPXServer(final T request, final ObjectReader reader, final String route) throws PXException, IOException {
         CloseableHttpResponse httpResponse = null;
         try {
-            String requestBody = JsonUtils.writer.writeValueAsString(request);
-            HttpUriRequest httpRequest = RequestBuilder
-                    .post(route)
-                    .setEntity(new StringEntity(requestBody, UTF_8))
-                    .setHeader("Authorization", "Bearer " + authToken)
-                    .setHeader("Content-Type", "application/json")
-                    .build();
-            httpResponse = httpClient.execute(httpRequest);
-            // If returned server response is not needed
-            if (reader == null) {
-                EntityUtils.consume(httpResponse.getEntity());
-                return null;
-            }
+            String requestBody = JsonUtils.writer.writeValueAsString(captchaRequest);
+            HttpPost post = new HttpPost(baseUrl + Constants.API_CAPTCHA);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            post.setHeader("Authorization", "Bearer " + authToken);
+            post.setHeader("Content-Type", "application/json");
+            httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
-            return reader.readValue(s);
+            return JsonUtils.captchaResponseReader.readValue(s);
         } catch (Exception e) {
             throw new PXException(e);
         } finally {

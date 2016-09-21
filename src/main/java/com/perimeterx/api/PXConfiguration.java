@@ -13,8 +13,6 @@ import java.util.Set;
  */
 public class PXConfiguration {
 
-    private final static String sdkName = "JAVA SDK v1.0";
-
     private String appId;
     private String cookieKey;
     private String authToken;
@@ -91,10 +89,6 @@ public class PXConfiguration {
 
     public boolean wasSignedWithIP() {
         return signedWithIP;
-    }
-
-    public String getSdkName() {
-        return sdkName;
     }
 
     public static final class Builder {

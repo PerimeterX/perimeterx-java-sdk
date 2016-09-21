@@ -35,6 +35,7 @@ public class PXContext {
     private String httpMethod;
     private String httpVersion;
     private int score;
+    private RiskCookie riskCookie;
 
     public PXContext(final HttpServletRequest request) {
         initContext(request);
@@ -68,7 +69,7 @@ public class PXContext {
         this.userAgent = this.headers.get("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
-        this.hostname = request.getRemoteHost();
+        this.hostname = request.getServerName();
         this.s2sCallReason = S2SCallReason.NONE;
         this.httpMethod = request.getMethod();
         String protocolDetails[] = request.getProtocol().split("/");
@@ -159,11 +160,6 @@ public class PXContext {
         return httpVersion;
     }
 
-    public void addCookieDetails(RiskCookie riskCookie) {
-        this.vid = riskCookie.vid;
-        this.uuid = riskCookie.uuid;
-    }
-
     public void setScore(int score) {
         this.score = score;
     }
@@ -178,5 +174,13 @@ public class PXContext {
 
     public int getScore() {
         return this.score;
+    }
+
+    public void setRiskCookie(RiskCookie riskCookie) {
+        this.riskCookie = riskCookie;
+    }
+
+    public RiskCookie getRiskCookie() {
+        return riskCookie;
     }
 }

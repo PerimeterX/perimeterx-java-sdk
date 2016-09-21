@@ -1,5 +1,6 @@
 package com.perimeterx.models.httpmodels;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.Request;
 
@@ -10,31 +11,22 @@ import com.perimeterx.models.risk.Request;
  */
 public class CaptchaRequest {
 
-    private Request request;
-    private String vid;
-    private String pxCaptcha;
-    private String hostname;
+    @JsonProperty("request")
+    public Request Request;
+    @JsonProperty("vid")
+    public String Vid;
+    @JsonProperty("pxCaptcha")
+    public String PxCaptcha;
+    @JsonProperty("hostname")
+    public String Hostname;
 
-    public CaptchaRequest(PXContext context) {
-        this.request = new Request(context);
-        this.pxCaptcha = context.getPxCaptcha();
-        this.vid = context.getVid();
-        this.hostname = context.getHostname();
+    public static CaptchaRequest fromContext(PXContext context) {
+        CaptchaRequest captchaRequest = new CaptchaRequest();
+        captchaRequest.Request = com.perimeterx.models.risk.Request.fromContext(context);
+        captchaRequest.PxCaptcha = context.getPxCaptcha();
+        captchaRequest.Vid = context.getVid();
+        captchaRequest.Hostname = context.getHostname();
+        return captchaRequest;
     }
 
-    public Request getRequest() {
-        return request;
-    }
-
-    public String getVid() {
-        return vid;
-    }
-
-    public String getPxCaptcha() {
-        return pxCaptcha;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
 }

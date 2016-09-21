@@ -1,4 +1,4 @@
-package api;
+package com.perimeterx.api;
 
 import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.activities.DefaultActivityHandler;

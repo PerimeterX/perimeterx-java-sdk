@@ -1,6 +1,7 @@
 package com.perimeterx.models.httpmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.S2SCallReason;
 
@@ -10,45 +11,22 @@ import com.perimeterx.models.risk.S2SCallReason;
 public class Additional {
 
     @JsonProperty("px_cookie")
-    private String pxCookie;
+    public RiskCookie PxCookie;
     @JsonProperty("http_method")
-    private String httpMethod;
+    public String HttpMethod;
     @JsonProperty("http_version")
-    private String httpVersion;
+    public String HttpVersion;
     @JsonProperty("s2s_call_reason")
-    private S2SCallReason callReason;
+    public S2SCallReason CallReason;
+    @JsonProperty("module_version")
+    public final String ModuleVersion = "Java SDK 1.0.8";
 
-    public Additional(PXContext ctx) {
-        this.pxCookie = ctx.getPxCookie();
-        this.httpMethod = ctx.getHttpMethod();
-        this.httpVersion = ctx.getHttpVersion();
-        this.callReason = ctx.getS2sCallReason();
-    }
-
-    public Additional() {
-    }
-
-    public String getPxCookie() {
-        return pxCookie;
-    }
-
-    public void setPxCookie(String pxCookie) {
-        this.pxCookie = pxCookie;
-    }
-
-    public String getHttpMethod() {
-        return httpMethod;
-    }
-
-    public void setHttpMethod(String httpMethod) {
-        this.httpMethod = httpMethod;
-    }
-
-    public String getHttpVersion() {
-        return httpVersion;
-    }
-
-    public void setHttpVersion(String httpVersion) {
-        this.httpVersion = httpVersion;
+    public static Additional fromContext(PXContext ctx) {
+        Additional additional = new Additional();
+        additional.PxCookie = ctx.getRiskCookie();
+        additional.HttpMethod = ctx.getHttpMethod();
+        additional.HttpVersion = ctx.getHttpVersion();
+        additional.CallReason = ctx.getS2sCallReason();
+        return additional;
     }
 }

@@ -1,10 +1,10 @@
 package com.perimeterx.internals.cookie;
 
-import com.fasterxml.jackson.databind.ObjectReader;
+import com.perimeterx.models.PXContext;
+import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.JsonUtils;
-import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.generators.PKCS5S2ParametersGenerator;
-import org.bouncycastle.crypto.params.KeyParameter;
+import com.perimeterx.utils.PBKDF2Engine;
+import com.perimeterx.utils.PBKDF2Parameters;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -15,49 +15,43 @@ import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
-import java.util.Base64;
 
 public class RiskCookieDecoder {
 
-    public static final String HMAC = "HmacSHA256";
-    public static final int KEY_LEN = 32;
-    private final Cipher cipher;
-    private final Mac mac;
-    private final ObjectReader jsonReader;
-    private final byte[] password;
+    private static final int KEY_LEN = 32;
+    private static final String HMAC_SHA_256 = "HmacSHA256";
+    private final String cookieKey;
 
     public enum ValidationResult {VALID, NO_SIGNING, EXPIRED, INVALID}
 
-    public RiskCookieDecoder(String cookieKey) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, UnsupportedEncodingException {
+    public RiskCookieDecoder(String cookieKey) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException, InvalidKeyException, UnsupportedEncodingException {
         // cookie key into secret
-        password = cookieKey.getBytes("UTF-8");
-        // aes-256-cbc decryptData no salt
-        cipher = Cipher.getInstance("AES/CBC/PKCS5Padding", "BC");
-        // mac digest
-        mac = Mac.getInstance(HMAC);
-        SecretKeySpec macKey = new SecretKeySpec(cookieKey.getBytes(StandardCharsets.UTF_8), HMAC);
-        mac.init(macKey);
-        // json parser
-        this.jsonReader = JsonUtils.riskCookieReader;
+        this.cookieKey = cookieKey;
     }
 
-    public byte[] getEncodedHash(byte[] password, byte[] salt, int iterations, int keyLen) {
-        // Returns only the last part of whole encoded password
-        PKCS5S2ParametersGenerator gen = new PKCS5S2ParametersGenerator(new SHA256Digest());
-        gen.init(password, salt, iterations);
-        return ((KeyParameter) gen.generateDerivedParameters(keyLen)).getKey();
-    }
-
-    private String decryptData(String cookieData) throws InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException {
+    private String decryptData(String cookieData) throws InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchPaddingException {
         final String[] parts = cookieData.split(":");
-        final byte[] salt = Base64.getDecoder().decode(parts[0].getBytes(StandardCharsets.UTF_8));
+        if (parts.length != 3) {
+            return "";
+        }
+        final byte[] salt = Base64.decode(parts[0]);
+        if (salt == null) {
+            return "";
+        }
         final int iterations = Integer.parseInt(parts[1]);
-        final byte[] encrypted = Base64.getDecoder().decode(parts[2].getBytes(StandardCharsets.UTF_8));
-        final int dkLen = (KEY_LEN + cipher.getBlockSize()) * 8;
-        byte[] encoded = getEncodedHash(password, salt, iterations, dkLen);
-        byte[] key = Arrays.copyOf(encoded, KEY_LEN);
-        byte[] iv = Arrays.copyOfRange(encoded, KEY_LEN, encoded.length);
-
+        if (iterations < 0 || iterations > 10000) {
+            return "";
+        }
+        final byte[] encrypted = Base64.decode(parts[2]);
+        if (encrypted == null) {
+            return "";
+        }
+        final Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");   // aes-256-cbc decryptData no salt
+        final int dkLen = KEY_LEN + cipher.getBlockSize();
+        PBKDF2Parameters p = new PBKDF2Parameters(HMAC_SHA_256, "UTF-8", salt, iterations);
+        byte[] dk = new PBKDF2Engine(p).deriveKey(this.cookieKey, dkLen);
+        byte[] key = Arrays.copyOf(dk, KEY_LEN);
+        byte[] iv = Arrays.copyOfRange(dk, KEY_LEN, dk.length);
         SecretKey secretKey = new SecretKeySpec(key, "AES");
         IvParameterSpec parameterSpec = new IvParameterSpec(iv);
         cipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
@@ -65,17 +59,17 @@ public class RiskCookieDecoder {
         return new String(data, StandardCharsets.UTF_8);
     }
 
-    public RiskCookie decryptRiskCookie(String cookieData) throws BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidAlgorithmParameterException, InvalidKeySpecException, IOException {
+    public RiskCookie decryptRiskCookie(String cookieData) throws BadPaddingException, InvalidKeyException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidAlgorithmParameterException, InvalidKeySpecException, IOException, NoSuchPaddingException {
         // decrypt and parse
         final String decryptData = decryptData(cookieData);
-        return jsonReader.readValue(decryptData);
+        return JsonUtils.riskCookieReader.readValue(decryptData);
     }
 
-    public boolean isValid(RiskCookie riskCookie, String[] signingFields) {
+    public boolean isValid(RiskCookie riskCookie, String[] signingFields) throws NoSuchAlgorithmException, InvalidKeyException {
         return validate(riskCookie, signingFields) == ValidationResult.VALID;
     }
 
-    public ValidationResult validate(RiskCookie riskCookie, String[] signingFields) {
+    public ValidationResult validate(RiskCookie riskCookie, String[] signingFields) throws InvalidKeyException, NoSuchAlgorithmException {
         // no hash
         if (riskCookie.hash == null || riskCookie.hash.length() == 0) {
             return ValidationResult.NO_SIGNING;
@@ -93,9 +87,11 @@ public class RiskCookieDecoder {
         return Arrays.equals(hash, cookieHash) ? ValidationResult.VALID : ValidationResult.INVALID;
     }
 
-    private byte[] digest(RiskCookie riskCookie, String[] signingFields) {
+    private byte[] digest(RiskCookie riskCookie, String[] signingFields) throws NoSuchAlgorithmException, InvalidKeyException {
         final String data = asSigningData(riskCookie, signingFields);
-        mac.reset();
+        final Mac mac = Mac.getInstance(HMAC_SHA_256);
+        SecretKeySpec macKey = new SecretKeySpec(cookieKey.getBytes(StandardCharsets.UTF_8), HMAC_SHA_256);
+        mac.init(macKey);
         mac.update(data.getBytes(StandardCharsets.UTF_8));
         return mac.doFinal();
     }

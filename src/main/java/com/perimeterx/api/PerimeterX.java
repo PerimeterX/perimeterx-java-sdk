@@ -45,6 +45,7 @@ import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.crypto.Cipher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -55,6 +56,16 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * Created by shikloshi on 03/07/2016.
  */
 public class PerimeterX {
+
+    // Checking for jre security prerequisites
+    static {
+        try {
+            int l = Cipher.getMaxAllowedKeyLength("AES");
+            assert l >= 256 : "PerimeterX Java SDK requires Unlimited Strength Jurisdiction Policy. Follow prerequisites section in the README file.";
+        } catch (Exception e) {
+            assert true : "PerimeterX Java SDK requires AES cipher.";
+        }
+    }
 
     private static PerimeterX instance = null;
 
@@ -127,7 +138,7 @@ public class PerimeterX {
         }
         context.setS2sCallReason(callReason);
         // Calls risk_api and populate the data retrieved to the context
-        RiskRequest request = new RiskRequest(context);
+        RiskRequest request = RiskRequest.fromContext(context);
         RiskResponse response = serverValidator.verify(request);
         context.setScore(response.getScores().getNonHuman());
         context.setUuid(response.getUuid());
