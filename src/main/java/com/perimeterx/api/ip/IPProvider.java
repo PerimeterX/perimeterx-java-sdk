@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
  * <p>
  * Created by shikloshi on 05/07/2016.
  */
-@FunctionalInterface
 public interface IPProvider {
 
     /**
