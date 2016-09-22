@@ -3,6 +3,7 @@ package com.perimeterx.api.blockhandler;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;

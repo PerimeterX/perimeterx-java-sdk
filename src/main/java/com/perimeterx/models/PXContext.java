@@ -36,15 +36,18 @@ public class PXContext {
     private String httpVersion;
     private int score;
     private RiskCookie riskCookie;
+    private final HttpServletRequest request;
 
     public PXContext(final HttpServletRequest request) {
         initContext(request);
         this.ip = new RemoteAddressIPProvider().getRequestIP(request);
+        this.request = request;
     }
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider) {
         initContext(request);
         this.ip = ipProvider.getRequestIP(request);
+        this.request = request;
     }
 
     private void initContext(final HttpServletRequest request) {
@@ -182,5 +185,9 @@ public class PXContext {
 
     public RiskCookie getRiskCookie() {
         return riskCookie;
+    }
+
+    public HttpServletRequest getRequest() {
+        return request;
     }
 }
