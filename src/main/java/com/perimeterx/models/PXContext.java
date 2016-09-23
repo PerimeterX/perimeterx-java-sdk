@@ -52,24 +52,25 @@ public class PXContext {
 
     private void initContext(final HttpServletRequest request) {
         this.headers = new HashMap<>();
-        Enumeration headerNames = request.getHeaderNames();
+        final Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             final String name = (String) headerNames.nextElement();
             final String value = request.getHeader(name);
             this.headers.put(name, value);
         }
-        String cookie = this.headers.get("cookie");
+
+        final String cookie = request.getHeader("cookie");
         this.pxCookie = extractCookieByKey(cookie, Constants.COOKIE_KEY);
-        String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
+        final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
-            String[] s = pxCaptchaCookie.split(":", 2);
+            final String[] s = pxCaptchaCookie.split(":", 2);
             if (s.length == 2) {
                 this.pxCaptcha = s[0];
                 this.vid = s[1];
             }
         }
 
-        this.userAgent = this.headers.get("user-agent");
+        this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
         this.hostname = request.getServerName();

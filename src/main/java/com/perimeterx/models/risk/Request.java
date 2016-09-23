@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.perimeterx.models.PXContext;
-import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
