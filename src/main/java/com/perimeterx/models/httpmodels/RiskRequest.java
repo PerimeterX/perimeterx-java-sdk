@@ -1,7 +1,6 @@
 package com.perimeterx.models.httpmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.Request;
 

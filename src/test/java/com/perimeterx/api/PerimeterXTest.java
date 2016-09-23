@@ -1,7 +1,5 @@
 package com.perimeterx.api;
 
-import com.perimeterx.api.PXConfiguration;
-import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.PXClient;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -13,7 +11,6 @@ import testutils.TestObjectUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.security.Security;
 
 /**
  * Created by shikloshi on 13/07/2016.

@@ -9,7 +9,9 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Testing {@link com.perimeterx.api.ip.IPProvider}

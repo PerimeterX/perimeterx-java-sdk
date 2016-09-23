@@ -1,6 +1,5 @@
 package com.perimeterx.api;
 
-import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;

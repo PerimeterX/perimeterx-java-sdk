@@ -20,10 +20,7 @@
 
 package com.perimeterx.utils;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 /**
  * This <b>Password Based Key Derivation Function 2</b> implementation.

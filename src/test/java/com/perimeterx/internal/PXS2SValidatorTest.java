@@ -6,7 +6,6 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.models.risk.Scores;
 import com.perimeterx.utils.Constants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
