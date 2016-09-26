@@ -7,12 +7,12 @@ package com.perimeterx.utils;
  */
 public final class Constants {
 
-    public final static String MODULE = "JAVA SDK v1.0";
+    public final static String SDK_VERSION = "JAVA SDK v1.0.12";
 
     public final static String ACTIVITY_BLOCKED = "blocked";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
 
-    public static final String SERVER_URL = "https://sapi-cdn.perimeterx.net";
+    public static final String SERVER_URL = "https://sapi.perimeterx.net";
     public final static String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
     public final static String COOKIE_KEY = "_px";
 

@@ -14,7 +14,7 @@ import com.perimeterx.utils.Constants;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ActivityDetails {
 
-    private String blockModule = Constants.MODULE;
+    private String blockModule = Constants.SDK_VERSION;
     @JsonProperty("block_score")
     private int blockScore;
     @JsonProperty("block_reason")
