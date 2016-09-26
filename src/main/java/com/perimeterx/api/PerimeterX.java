@@ -44,8 +44,9 @@ import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.crypto.Cipher;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -57,15 +58,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class PerimeterX {
 
-    // Checking for jre security prerequisites
-    static {
-        try {
-            int l = Cipher.getMaxAllowedKeyLength("AES");
-            assert l >= 256 : "PerimeterX Java SDK requires Unlimited Strength Jurisdiction Policy. Follow prerequisites section in the README file.";
-        } catch (Exception e) {
-            assert true : "PerimeterX Java SDK requires AES cipher.";
-        }
-    }
+    Logger logger = LoggerFactory.getLogger(PerimeterX.class);
 
     private static PerimeterX instance = null;
 
@@ -119,6 +112,7 @@ public class PerimeterX {
      */
     public boolean pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         if (!moduleEnabled()) {
+            logger.info("PerimeterX verification SDK is disabled");
             return true;
         }
 
@@ -132,10 +126,13 @@ public class PerimeterX {
             return handleVerification(context, responseWrapper, BlockReason.COOKIE);
         }
         S2SCallReason callReason = cookieValidator.verify(context);
+        logger.info("Risk API call reason: {}", callReason);
         // Cookie is valid (exists and not expired) so we can block according to it's score
         if (callReason == S2SCallReason.NONE) {
+            logger.info("No risk API Call is needed, using cookie");
             return handleVerification(context, responseWrapper, BlockReason.COOKIE);
         }
+
         context.setS2sCallReason(callReason);
         // Calls risk_api and populate the data retrieved to the context
         RiskRequest request = RiskRequest.fromContext(context);
@@ -147,14 +144,18 @@ public class PerimeterX {
 
     private boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper, BlockReason blockReason) throws PXException {
         int score = context.getScore();
+        int blockingScore = this.configuration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px
-        boolean verified = score < this.configuration.getBlockingScore();
+        boolean verified = score < blockingScore;
+        logger.info("Request score: {}, Blocking score: {}", score, blockingScore);
         if (verified) {
+            logger.info("Request valid");
             // Not blocking request and sending page_requested activity to px if configured as true
             if (this.configuration.shouldSendPageActivities()) {
                 this.activityHandler.handlePageRequestedActivity(context);
             }
         } else {
+            logger.info("Request invalid");
             context.setBlockReason(blockReason);
             this.activityHandler.handleBlockActivity(context);
             this.blockHandler.handleBlocking(context, responseWrapper);

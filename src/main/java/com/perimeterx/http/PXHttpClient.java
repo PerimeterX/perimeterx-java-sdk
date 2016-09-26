@@ -17,6 +17,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -27,6 +29,8 @@ import java.nio.charset.Charset;
  * Created by shikloshi on 04/07/2016.
  */
 public class PXHttpClient implements PXClient {
+
+    Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
 
     private static PXHttpClient instance;
     private static final Charset UTF_8 = Charset.forName("utf-8");
@@ -46,7 +50,7 @@ public class PXHttpClient implements PXClient {
         return instance;
     }
 
-    protected PXHttpClient(String baseUrl, int timeout, String authToken) {
+    private PXHttpClient(String baseUrl, int timeout, String authToken) {
         this.baseUrl = baseUrl;
         this.authToken = authToken;
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
@@ -66,12 +70,14 @@ public class PXHttpClient implements PXClient {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
+            logger.info("Risk API Request: {}", requestBody);
             HttpPost post = new HttpPost(baseUrl + Constants.API_RISK);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setHeader("Authorization", "Bearer " + authToken);
             post.setHeader("Content-Type", "application/json");
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
+            logger.info("Risk API Response: {}", s);
             return JsonUtils.riskResponseReader.readValue(s);
         } catch (Exception e) {
             throw new PXException(e);
@@ -87,6 +93,7 @@ public class PXHttpClient implements PXClient {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
+            logger.info("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(baseUrl + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setHeader("Authorization", "Bearer " + authToken);
@@ -106,12 +113,14 @@ public class PXHttpClient implements PXClient {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(captchaRequest);
+            logger.info("Sending captcha verification: {}", requestBody);
             HttpPost post = new HttpPost(baseUrl + Constants.API_CAPTCHA);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setHeader("Authorization", "Bearer " + authToken);
             post.setHeader("Content-Type", "application/json");
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
+            logger.info("Captcha verification response: {}", s);
             return JsonUtils.captchaResponseReader.readValue(s);
         } catch (Exception e) {
             throw new PXException(e);
