@@ -1,5 +1,6 @@
 package com.perimeterx.api;
 
+import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Arrays;
@@ -23,9 +24,9 @@ public class PXConfiguration {
     private Set<String> sensitiveHeaders;
     private int maxBufferLen;
     private int apiTimeout;
-    private boolean debugMode;
     private boolean sendPageActivities;
     private boolean signedWithIP;
+    private String serverURL;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -38,9 +39,9 @@ public class PXConfiguration {
         sensitiveHeaders = builder.sensitiveHeaders;
         maxBufferLen = builder.maxBufferLen;
         apiTimeout = builder.apiTimeout;
-        debugMode = builder.debugMode;
         sendPageActivities = builder.sendPageActivities;
         signedWithIP = builder.signedWithIP;
+        serverURL = builder.serverURL;
     }
 
     public String getAppId() {
@@ -91,6 +92,10 @@ public class PXConfiguration {
         return signedWithIP;
     }
 
+    public String getServerURL() {
+        return serverURL;
+    }
+
     public static final class Builder {
         private String appId;
         private String cookieKey;
@@ -102,9 +107,9 @@ public class PXConfiguration {
         private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookie", "cookies"));
         private int maxBufferLen = 1;
         private int apiTimeout = 1000;
-        private boolean debugMode = false;
         private boolean sendPageActivities = false;
-        public boolean signedWithIP = false;
+        private boolean signedWithIP = false;
+        private String serverURL = Constants.SERVER_URL;
 
         public Builder() {
         }
@@ -164,11 +169,6 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder debugeMode(boolean val) {
-            debugMode = val;
-            return this;
-        }
-
         public Builder sendPageActivites(boolean val) {
             sendPageActivities = val;
             return this;
@@ -176,6 +176,11 @@ public class PXConfiguration {
 
         public Builder signedWithIP(boolean val) {
             signedWithIP = val;
+            return this;
+        }
+
+        public Builder baseURL(String val) {
+            serverURL = val;
             return this;
         }
 

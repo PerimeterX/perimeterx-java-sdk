@@ -12,7 +12,7 @@ public final class Constants {
     public final static String ACTIVITY_BLOCKED = "blocked";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
 
-    public static final String SERVER_HOST = "http://collector.perimeterx.net";
+    public static final String SERVER_URL = "https://sapi-cdn.perimeterx.net";
     public final static String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
     public final static String COOKIE_KEY = "_px";
 
