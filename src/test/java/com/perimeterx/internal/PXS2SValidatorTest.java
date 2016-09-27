@@ -36,7 +36,7 @@ public class PXS2SValidatorTest {
     public void setUp() throws Exception {
         this.client = new PXClientMock(50, Constants.CAPTCHA_SUCCESS_CODE);
         this.request = new MockHttpServletRequest();
-        this.context = new PXContext(request);
+        this.context = new PXContext(request, "appId");
         this.riskRequest = RiskRequest.fromContext(context);
         validator = new PXS2SValidator(this.client);
     }

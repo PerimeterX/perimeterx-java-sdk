@@ -37,14 +37,17 @@ public class PXContext {
     private int score;
     private RiskCookie riskCookie;
     private final HttpServletRequest request;
+    private final String appId;
 
-    public PXContext(final HttpServletRequest request) {
+    public PXContext(final HttpServletRequest request, final String appId) {
+        this.appId = appId;
         initContext(request);
         this.ip = new RemoteAddressIPProvider().getRequestIP(request);
         this.request = request;
     }
 
-    public PXContext(final HttpServletRequest request, final IPProvider ipProvider) {
+    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final String appId) {
+        this.appId = appId;
         initContext(request);
         this.ip = ipProvider.getRequestIP(request);
         this.request = request;
@@ -190,5 +193,9 @@ public class PXContext {
 
     public HttpServletRequest getRequest() {
         return request;
+    }
+
+    public String getAppId() {
+        return appId;
     }
 }

@@ -121,7 +121,7 @@ public class PerimeterX {
         cookie.setMaxAge(0);
         responseWrapper.addCookie(cookie);
 
-        PXContext context = new PXContext(req, this.ipProvider);
+        PXContext context = new PXContext(req, this.ipProvider, configuration.getAppId());
         if (captchaValidator.verify(context)) {
             return handleVerification(context, responseWrapper, BlockReason.COOKIE);
         }

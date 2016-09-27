@@ -31,7 +31,7 @@ public class DefaultActivityHandlerTest {
     public void testHandleBlockActivity() {
         boolean thrown = false;
         MockHttpServletRequest request = new MockHttpServletRequest();
-        PXContext context = new PXContext(request);
+        PXContext context = new PXContext(request, "appId");
         try {
             activityHandler.handleBlockActivity(context);
         } catch (PXException e) {
@@ -44,7 +44,7 @@ public class DefaultActivityHandlerTest {
     public void testHandlePageRequestedActivity() throws Exception {
         boolean thrown = false;
         MockHttpServletRequest request = new MockHttpServletRequest();
-        PXContext context = new PXContext(request);
+        PXContext context = new PXContext(request, "appId");
         try {
             activityHandler.handlePageRequestedActivity(context);
         } catch (PXException e) {
