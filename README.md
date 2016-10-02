@@ -1,7 +1,7 @@
 [![Javadocs](http://www.javadoc.io/badge/com.perimeterx/perimeterx-sdk.svg?color=brightgreen)](http://www.javadoc.io/doc/com.perimeterx/perimeterx-sdk)
 
 
-![image](https://843a2be0f3083c485676508ff87beaf088a889c0-www.googledrive.com/host/0B_r_WoIa581oY01QMWNVUElyM2M)
+![image](http://media.marketwire.com/attachments/201604/34215_PerimeterX_logo.jpg)
 
 [PerimeterX](http://www.perimeterx.com) Java SDK
 =============================================================
