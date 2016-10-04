@@ -14,7 +14,6 @@ import com.perimeterx.utils.Constants;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ActivityDetails {
 
-    private String blockModule = Constants.SDK_VERSION;
     @JsonProperty("block_score")
     private int blockScore;
     @JsonProperty("block_reason")
@@ -31,10 +30,6 @@ public class ActivityDetails {
         this.blockUuid = context.getUuid();
         this.httpMethod = context.getHttpMethod();
         this.httpVersion = context.getHttpVersion();
-    }
-
-    public String getBlockModule() {
-        return blockModule;
     }
 
     public int getBlockScore() {

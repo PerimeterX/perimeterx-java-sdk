@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.S2SCallReason;
+import com.perimeterx.utils.Constants;
 
 /**
  * Created by shikloshi on 06/08/2016.
@@ -19,7 +20,7 @@ public class Additional {
     @JsonProperty("s2s_call_reason")
     public S2SCallReason CallReason;
     @JsonProperty("module_version")
-    public final String ModuleVersion = "Java SDK 1.0.8";
+    public final String ModuleVersion = Constants.SDK_VERSION;
 
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
