@@ -18,6 +18,7 @@ public class ActivityDetails {
     private int blockScore;
     @JsonProperty("block_reason")
     private BlockReason blockReason;
+    @JsonProperty("block_uuid")
     private String blockUuid;
     @JsonProperty("http_method")
     private String httpMethod;
