@@ -3,4 +3,4 @@ sudo: false
 jdk:
   - oraclejdk7
 
-install: mvn clean test package -Dmaven.javadoc.skip=true
+install: mvn deploy -Dmaven.javadoc.skip=true
