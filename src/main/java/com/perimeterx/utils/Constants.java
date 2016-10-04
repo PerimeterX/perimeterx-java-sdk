@@ -7,7 +7,7 @@ package com.perimeterx.utils;
  */
 public final class Constants {
 
-    public final static String SDK_VERSION = "JAVA SDK v1.0.12";
+    public final static String SDK_VERSION = "1.0.14-SNAPSHOT";
 
     public final static String ACTIVITY_BLOCKED = "blocked";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";

@@ -199,6 +199,24 @@
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>src/main/java/com/perimeterx/utils/Constants.java</file>
+                    <token>@moduleVersion@</token>
+                    <value>${version}</value>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
