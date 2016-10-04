@@ -7,9 +7,10 @@ package com.perimeterx.utils;
  */
 public final class Constants {
 
+    // This token is replaced by maven on validation stage to the pom version
     public final static String SDK_VERSION = "@moduleVersion@";
 
-    public final static String ACTIVITY_BLOCKED = "blocked";
+    public final static String ACTIVITY_BLOCKED = "block";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
 
     public static final String SERVER_URL = "https://sapi.perimeterx.net";
