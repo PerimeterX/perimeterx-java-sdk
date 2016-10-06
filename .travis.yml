@@ -7,7 +7,7 @@ before_install:
 - chmod +x ./deploy/before-deploy.sh
 - chmod +x ./deploy/deploy.sh
 
-install: mvn install !build-extras -DskipTests=true -Dmaven.javadoc.skip=true -B
+install: mvn install -P !build-extras -DskipTests=true -Dmaven.javadoc.skip=true -B
 
 script: mvn test -P !build-extras -B
 
