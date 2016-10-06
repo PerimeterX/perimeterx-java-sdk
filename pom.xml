@@ -216,7 +216,7 @@
                     <file>src/main/resources/com/perimeterx/utils/metadata.properties</file>
                     <outputFile>target/classes/com/perimeterx/utils/metadata.properties</outputFile>
                     <token>@sdk_version@</token>
-                    <value>${version}</value>
+                    <value>${project.version}</value>
                 </configuration>
             </plugin>
         </plugins>
