@@ -3,7 +3,7 @@ sudo: false
 jdk:
 - oraclejdk7
 
-install: mvn deploy -Dmaven.javadoc.skip=true
+install: mvn package -Dmaven.javadoc.skip=true
 
 after_success:
 - ./deploy/before-deploy.sh
