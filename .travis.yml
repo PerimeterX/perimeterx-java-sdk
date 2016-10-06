@@ -1,5 +1,5 @@
 language: java
-sudo: false
+sudo: true
 jdk:
 - oraclejdk7
 
@@ -7,7 +7,7 @@ install: mvn package -Dmaven.javadoc.skip=true
 
 after_success:
 - ./deploy/before-deploy.sh
-- ./cd/deploy.sh
+- ./deploy/deploy.sh
 
 env:
   global:
