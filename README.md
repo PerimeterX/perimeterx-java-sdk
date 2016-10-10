@@ -144,9 +144,9 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 
 ##### <a name="real-ip"></a>Extracting the Real User IP Address From HTTP Headers or by defining a function
 
-In order to evaluate user's score properly, the PerimeterX module
-requires the real socket ip (client IP address that created the HTTP
-request). The user ip can be passed to the PerimeterX module by implementing the `IPProvider` interface and set it on the `PerimeterX` object.
+> Note: IP extraction according to your network setup is important. It is common to have a load balancer/proxy on top of your applications, in this case the PerimeterX module will send an internal IP as the user's. In order to perform processing and detection for server-to-server calls, PerimeterX module need the real user ip.
+
+The user IP can be passed to the PerimeterX module by implementing the `IPProvider` interface and set it on the `PerimeterX` object.
 
 
 This SDK provided two implementations for this:
