@@ -16,9 +16,9 @@ public final class JsonUtils {
 
     private final static ObjectMapper mapper = new ObjectMapper();
 
-    public final static ObjectReader riskResponseReader = mapper.readerFor(RiskResponse.class);
-    public final static ObjectReader captchaResponseReader = mapper.readerFor(CaptchaResponse.class);
-    public final static ObjectReader riskCookieReader = mapper.readerFor(RiskCookie.class);
+    public final static ObjectReader riskResponseReader = mapper.reader(RiskResponse.class);
+    public final static ObjectReader captchaResponseReader = mapper.reader(CaptchaResponse.class);
+    public final static ObjectReader riskCookieReader = mapper.reader(RiskCookie.class);
     public final static ObjectWriter writer = mapper.writer();
 
     protected JsonUtils() {
