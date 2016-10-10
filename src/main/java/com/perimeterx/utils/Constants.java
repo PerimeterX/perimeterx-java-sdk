@@ -1,5 +1,9 @@
 package com.perimeterx.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
  * Constants container class
  * <p>
@@ -7,8 +11,23 @@ package com.perimeterx.utils;
  */
 public final class Constants {
 
-    // This token is replaced by maven on validation stage to the pom version
-    public final static String SDK_VERSION = "@moduleVersion@";
+    private static Properties prop;
+
+    static {
+        prop = new Properties();
+        InputStream propStream = Constants.class.getResourceAsStream("metadata.properties");
+        if (propStream != null) {
+            try {
+                prop.load(propStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.err.println("There is an error, could not found the metadata.properties file");
+        }
+    }
+
+    public final static String SDK_VERSION = String.valueOf(Constants.prop.get("sdkVersion"));
 
     public final static String ACTIVITY_BLOCKED = "block";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
