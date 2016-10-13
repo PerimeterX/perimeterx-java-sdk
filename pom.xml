@@ -7,7 +7,7 @@
     <name>PerimeterX JAVA SDK</name>
     <groupId>com.perimeterx</groupId>
     <artifactId>perimeterx-sdk</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.14-SNAPSHOT</version>
     <packaging>jar</packaging>
     <description>PerimeterX Java SDK</description>
     <url>https://github.com/PerimeterX/perimeterx-java-sdk</url>
@@ -36,6 +36,9 @@
 
     <scm>
         <url>https://github.com/PerimeterX/perimeterx-java-sdk</url>
+        <connection>scm:git:https://github.com/PerimeterX/perimeterx-java-sdk</connection>
+        <developerConnection>scm:git:https://github.com/PerimeterX/perimeterx-java-sdk</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <profiles>
@@ -92,6 +95,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -183,6 +189,11 @@
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
             </plugin>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>

@@ -19,6 +19,7 @@ public interface PXClient {
     /**
      * Calling PX Server with Risk API call
      *
+     * @param riskRequest - risk request to send
      * @return server response (in both failed or success) as object {@link RiskResponse}
      * @throws PXException
      * @throws IOException

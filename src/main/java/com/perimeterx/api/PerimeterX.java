@@ -75,7 +75,6 @@ public class PerimeterX {
      *
      * @param configuration - {@link PXConfiguration}
      * @return PerimeterX object
-     * @throws PXException
      */
     public static PerimeterX getInstance(PXConfiguration configuration) throws PXException {
         if (instance == null) {
@@ -107,8 +106,9 @@ public class PerimeterX {
      * Verify http request using cookie or PX server call
      *
      * @param req             - current http call examined by PX
-     * @param responseWrapper - response wrapper on which we will set the response according to PX verification. {@see javax.xml.ws.ResponseWrapper}
-     * @throws PXException
+     * @param responseWrapper - response wrapper on which we will set the response according to PX verification.
+     * @return true if request is valid
+     * @throws PXException - PXException
      */
     public boolean pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         if (!moduleEnabled()) {

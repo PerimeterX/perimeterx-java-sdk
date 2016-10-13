@@ -24,6 +24,7 @@ public class PXS2SValidator {
      * Verify if request is valid or not
      *
      * @param request - request per context for querying server
+     * @return risk response from PX servers
      * @throws PXException
      */
     public RiskResponse verify(RiskRequest request) throws PXException {

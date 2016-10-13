@@ -14,6 +14,7 @@ public interface ActivityHandler {
      * Sends BlockActivity upon the request that was blocked
      *
      * @param context - request context
+     * @throws PXException
      */
     void handleBlockActivity(PXContext context) throws PXException;
 
@@ -21,6 +22,7 @@ public interface ActivityHandler {
      * Sends PageRequested Activity upon the valid request
      *
      * @param context - request context
+     * @throws PXException
      */
     void handlePageRequestedActivity(PXContext context) throws PXException;
 }

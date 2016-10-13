@@ -8,7 +8,7 @@ import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.httpmodels.RiskResponse;
 
 /**
- * JsonUtils - Utility class for Object < - > Json string mapping
+ * JsonUtils - Utility class for Object to Json string mapping
  * <p>
  * Created by shikloshi on 10/07/2016.
  */
