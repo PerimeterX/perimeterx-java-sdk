@@ -36,7 +36,7 @@ public class PXCaptchaValidator {
         try {
             CaptchaRequest captchaRequest = CaptchaRequest.fromContext(context);
             CaptchaResponse r = this.pxClient.sendCaptchaRequest(captchaRequest);
-            if (r.getStatus() == Constants.CAPTCHA_SUCCESS_CODE) {
+            if (r != null && r.getStatus() == Constants.CAPTCHA_SUCCESS_CODE) {
                 context.setVid(r.getVid());
                 return true;
             }

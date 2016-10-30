@@ -111,35 +111,42 @@ public class PerimeterX {
      * @throws PXException - PXException
      */
     public boolean pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
-        if (!moduleEnabled()) {
-            logger.info("PerimeterX verification SDK is disabled");
+        try {
+            if (!moduleEnabled()) {
+                logger.info("PerimeterX verification SDK is disabled");
+                return true;
+            }
+            // Remove captcha cookie to prevent re-use
+            Cookie cookie = new Cookie(Constants.COOKIE_CAPTCHA_KEY, StringUtils.EMPTY);
+            cookie.setMaxAge(0);
+            responseWrapper.addCookie(cookie);
+
+            PXContext context = new PXContext(req, this.ipProvider, configuration.getAppId());
+            if (captchaValidator.verify(context)) {
+                return handleVerification(context, responseWrapper, BlockReason.COOKIE);
+            }
+            S2SCallReason callReason = cookieValidator.verify(context);
+            logger.info("Risk API call reason: {}", callReason);
+            // Cookie is valid (exists and not expired) so we can block according to it's score
+            if (callReason == S2SCallReason.NONE) {
+                logger.info("No risk API Call is needed, using cookie");
+                return handleVerification(context, responseWrapper, BlockReason.COOKIE);
+            }
+
+            context.setS2sCallReason(callReason);
+            // Calls risk_api and populate the data retrieved to the context
+            RiskRequest request = RiskRequest.fromContext(context);
+            RiskResponse response = serverValidator.verify(request);
+            if (response != null) {
+                context.setScore(response.getScores().getNonHuman());
+                context.setUuid(response.getUuid());
+                return handleVerification(context, responseWrapper, BlockReason.SERVER);
+            }
+            return true;
+        } catch(Exception e) {
+            logger.error("Unexpected error: {} - request passed", e.getMessage());
             return true;
         }
-
-        // Remove captcha cookie to prevent re-use
-        Cookie cookie = new Cookie(Constants.COOKIE_CAPTCHA_KEY, StringUtils.EMPTY);
-        cookie.setMaxAge(0);
-        responseWrapper.addCookie(cookie);
-
-        PXContext context = new PXContext(req, this.ipProvider, configuration.getAppId());
-        if (captchaValidator.verify(context)) {
-            return handleVerification(context, responseWrapper, BlockReason.COOKIE);
-        }
-        S2SCallReason callReason = cookieValidator.verify(context);
-        logger.info("Risk API call reason: {}", callReason);
-        // Cookie is valid (exists and not expired) so we can block according to it's score
-        if (callReason == S2SCallReason.NONE) {
-            logger.info("No risk API Call is needed, using cookie");
-            return handleVerification(context, responseWrapper, BlockReason.COOKIE);
-        }
-
-        context.setS2sCallReason(callReason);
-        // Calls risk_api and populate the data retrieved to the context
-        RiskRequest request = RiskRequest.fromContext(context);
-        RiskResponse response = serverValidator.verify(request);
-        context.setScore(response.getScores().getNonHuman());
-        context.setUuid(response.getUuid());
-        return handleVerification(context, responseWrapper, BlockReason.SERVER);
     }
 
     private boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper, BlockReason blockReason) throws PXException {
