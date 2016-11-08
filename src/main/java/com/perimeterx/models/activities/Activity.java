@@ -23,7 +23,7 @@ public class Activity {
     private String vid;
     private ActivityDetails details;
 
-    public Activity(String activityType, String appId, PXContext context) {
+    public Activity(String activityType, String appId, PXContext context, ActivityDetails details) {
         this.type = activityType;
         this.headers = context.getHeaders();
         this.timestamp = System.currentTimeMillis();
@@ -31,7 +31,7 @@ public class Activity {
         this.pxAppId = appId;
         this.url = context.getFullUrl();
         this.vid = context.getVid();
-        this.details = new ActivityDetails(context);
+        this.details = details;
     }
 
     public String getType() {

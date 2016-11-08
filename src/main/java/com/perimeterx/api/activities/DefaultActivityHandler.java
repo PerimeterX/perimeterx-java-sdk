@@ -4,6 +4,7 @@ import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.activities.ActivityFactory;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
 
@@ -26,7 +27,7 @@ public class DefaultActivityHandler implements ActivityHandler {
 
     @Override
     public void handleBlockActivity(PXContext context) throws PXException {
-        Activity activity = new Activity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
+        Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
         try {
             this.client.sendActivity(activity);
         } catch (IOException e) {
@@ -36,7 +37,7 @@ public class DefaultActivityHandler implements ActivityHandler {
 
     @Override
     public void handlePageRequestedActivity(PXContext context) throws PXException {
-        Activity activity = new Activity(Constants.ACTIVITY_PAGE_REQUESTED, configuration.getAppId(), context);
+        Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_PAGE_REQUESTED, configuration.getAppId(), context);
         try {
             this.client.sendActivity(activity);
         } catch (IOException e) {
