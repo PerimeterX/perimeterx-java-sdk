@@ -30,9 +30,9 @@ Table of Contents
 Use `jdk 1.7` or higher.
 ##### Unlimited Strength Jurisdiction Policy:
 
-Make sure your jdk support unlimited key length.
+Make sure your JDK supports unlimited key length.
 
-If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion error on startup, follow the instructions below: 
+If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors on startup, follow the instructions below: 
 
 1. Download `JCE` for [jdk17](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html) or for [jdk18](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html).
 2. Replace `local_policy.jar` and `US_export_policy.jar` in your `$JAVA_HOME/jre/lib/security/` with those you have downloaded.
@@ -92,7 +92,7 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 
 Configuration options are set in `PXConfiguration`
 
-#### Required parameters:
+#### Required Parameters:
 
 - appId
 - cookieKey
@@ -113,8 +113,8 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 #### <a name="custom-block"></a> Custom Blocking Actions
 Setting a custom block handler customizes is done by implementing the `BlockHandler` interface and set the `blockHandler` field in `PerimeterX` object and `pxVerify` method will run `blockHandler.handleBlocking`.
 
-**default:**  - `DefaultBlockHandler` supplied in this SDK return HTTP status code 403 and serve the
-Perimeterx block page.
+**default:**  The `DefaultBlockHandler` supplied in this SDK returns an HTTP status code 403 and serves the
+PerimeterX block page.
 
 ###### Examples
 
@@ -131,7 +131,7 @@ public class LoggerBlockHandler implements BlockHandler {
 
 #### <a name="captcha-support"></a>Enable/disable captcha in the block page
 
-By enabling captcha support, a captcha will be served as part of the block page giving real users the ability to answer, get score clean up and passed to the requested page.
+By enabling captcha support, a captcha will be served as part of the block page giving real users the ability to answer, get score clean up and be passed to the requested page.
 
 **default: true**
 
@@ -145,15 +145,15 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 
 ##### <a name="real-ip"></a>Extracting the Real User IP Address From HTTP Headers or by defining a function
 
-> Note: IP extraction according to your network setup is important. It is common to have a load balancer/proxy on top of your applications, in this case the PerimeterX module will send an internal IP as the user's. In order to perform processing and detection for server-to-server calls, PerimeterX module need the real user ip.
+> Note: IP extraction according to your network setup is important. It is common to have a load balancer/proxy on top of your applications. In this case, the PerimeterX module will send an internal IP as the user's. In order to perform processing and detection for server-to-server calls, the PerimeterX module needs the real user IP.
 
-The user IP can be passed to the PerimeterX module by implementing the `IPProvider` interface and set it on the `PerimeterX` object.
+The user IP can be passed to the PerimeterX module by implementing the `IPProvider` interface and configuring it on the `PerimeterX` object.
 
 
-This SDK provided two implementations for this:
+This SDK provids two implementations for this:
 
-- `RemoteAddressIPProvider` (deault) which extract the Remote address from raw servlet request.
-- `IPByHeaderProvider` which can be constructed with a header key and when applied will extract this value haeder as the true IP.
+- `RemoteAddressIPProvider` (deault) which extracts the Remote address from a raw servlet request.
+- `IPByHeaderProvider` which can be constructed with a header key, and when applied, will extract this value haeder as the true IP.
 
 You can set your own `IPProvider`:
 
@@ -171,7 +171,7 @@ px.setIpProvider(httpRequest -> "127.0.0.1");
 
 #### <a name="sensitive-headers"></a> Filter sensitive headers
 
-A user can define a list of sensitive header he want to prevent from being send to perimeterx servers, filtering cookie header for privacy is set by default and will be overriden if a user set the configuration
+A user can define a list of sensitive headers a user wants to prevent from being send to PerimeterX servers. Filtering the cookie header for privacy is set by default and will be overriden if a user sets the configuration.
 
 **default: cookie, cookies**
 
@@ -202,10 +202,10 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 
 #### <a name="send-page-activities"></a> Send Page Activities
 
-Boolean flag to enable or disable sending activities and metrics to
+A Boolean flag to enable or disable sending activities and metrics to
 PerimeterX on each page request. Enabling this feature will provide data
-that populates the PerimeterX portal with valuable information such as
-amount requests blocked and API usage statistics.
+that populates the PerimeterX portal with valuable information, such as
+amount of requests blocked and API usage statistics.
 
 **default:** false
 
