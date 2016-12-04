@@ -109,7 +109,7 @@ public class PXConfiguration {
         private int apiTimeout = 1000;
         private boolean sendPageActivities = false;
         private boolean signedWithIP = false;
-        private String serverURL = Constants.SERVER_URL;
+        private String serverURL = String.format(Constants.SERVER_URL, appId);
 
         public Builder() {
         }
