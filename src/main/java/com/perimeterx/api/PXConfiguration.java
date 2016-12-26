@@ -109,13 +109,14 @@ public class PXConfiguration {
         private int apiTimeout = 1000;
         private boolean sendPageActivities = false;
         private boolean signedWithIP = false;
-        private String serverURL = Constants.SERVER_URL;
+        private String serverURL;
 
         public Builder() {
         }
 
         public Builder appId(String val) {
             appId = val;
+            serverURL = String.format(Constants.SERVER_URL, appId.toLowerCase());
             return this;
         }
 

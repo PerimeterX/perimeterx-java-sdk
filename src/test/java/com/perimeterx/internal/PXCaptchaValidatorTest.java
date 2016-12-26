@@ -36,7 +36,7 @@ public class PXCaptchaValidatorTest {
 
     public void verifyNoCaptchaCookie_verified() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("cookie", "_pxCaptcha=test:vid");
+        request.addHeader("cookie", "_pxCaptcha=test:vid:uuid");
         PXContext context = new PXContext(request, "appId");
         boolean verify = this.captchaValidator.verify(context);
         Assert.assertEquals(verify, true);
@@ -44,7 +44,7 @@ public class PXCaptchaValidatorTest {
 
     public void verifyNoCaptchaCookie_notVerified() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("cookie", "_pxCaptcha=test:vid");
+        request.addHeader("cookie", "_pxCaptcha=test:vid:uuid");
         PXContext context = new PXContext(request, "appId");
         boolean verify = this.noValidateCaptchaValidator.verify(context);
         Assert.assertEquals(verify, false);
