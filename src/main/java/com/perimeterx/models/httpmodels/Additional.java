@@ -6,6 +6,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
+
 /**
  * Created by shikloshi on 06/08/2016.
  */
@@ -21,6 +22,7 @@ public class Additional {
     public S2SCallReason CallReason;
     @JsonProperty("module_version")
     public final String ModuleVersion = Constants.SDK_VERSION;
+    @JsonProperty("custom_params")
 
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();

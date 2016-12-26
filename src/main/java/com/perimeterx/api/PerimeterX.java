@@ -87,7 +87,7 @@ public class PerimeterX {
         return instance;
     }
 
-    private PerimeterX(PXConfiguration configuration) throws PXException {
+    public PerimeterX(PXConfiguration configuration) throws PXException {
         PXHttpClient pxClient = PXHttpClient.getInstance(configuration.getServerURL(), configuration.getApiTimeout(), configuration.getAuthToken());
         this.configuration = configuration;
         if (this.configuration.isCaptchaEnabled()) {

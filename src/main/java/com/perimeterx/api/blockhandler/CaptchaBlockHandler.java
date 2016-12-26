@@ -36,10 +36,11 @@ public class CaptchaBlockHandler implements BlockHandler {
                 "      <script src=\"https://www.google.com/recaptcha/api.js\"></script> " +
                 "      <script> " +
                 "           window.px_vid = '" + context.getVid() + "';\n" +
+                "           window.px_uuid = '" + context.getUuid() + "';\n" +
                 "           function handleCaptcha(response) { \n" +
                 "               var name = '_pxCaptcha';\n" +
                 "               var expiryUtc = new Date(Date.now() + 1000 * 10).toUTCString();\n" +
-                "               var cookieParts = [name, '=', response + ':' + window.px_vid, '; expires=', expiryUtc, '; path=/'];\n" +
+                "               var cookieParts = [name, '=', response + ':' + window.px_vid + ':' + window.px_uuid,'; expires=', expiryUtc, '; path=/'];\n" +
                 "               document.cookie = cookieParts.join('');\n" +
                 "               location.reload();\n" +
                 "           }\n" +
