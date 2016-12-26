@@ -66,10 +66,11 @@ public class PXContext {
         this.pxCookie = extractCookieByKey(cookie, Constants.COOKIE_KEY);
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
-            final String[] s = pxCaptchaCookie.split(":", 2);
-            if (s.length == 2) {
+            final String[] s = pxCaptchaCookie.split(":");
+            if (s.length == 3) {
                 this.pxCaptcha = s[0];
                 this.vid = s[1];
+                this.uuid = s[2];
             }
         }
 

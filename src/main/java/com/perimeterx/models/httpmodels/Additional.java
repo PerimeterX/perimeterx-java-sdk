@@ -1,13 +1,11 @@
 package com.perimeterx.models.httpmodels;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
-import java.util.List;
 
 /**
  * Created by shikloshi on 06/08/2016.
