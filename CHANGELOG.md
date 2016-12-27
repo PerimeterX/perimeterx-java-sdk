@@ -1,6 +1,6 @@
 # Change Log
 
-## [v.1.0.15](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.15...HEAD)
+## [v1.0.15](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.15...HEAD)
 
 - Decrypted risk cookie was added to page_requested activity.
 - UUID was added to captcha api request.
