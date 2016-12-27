@@ -1,6 +1,12 @@
 # Change Log
 
-## [Unreleased](https://github.com/PerimeterX/perimeterx-java-sdk/tree/HEAD)
+## [v.1.0.15](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.15...HEAD)
+
+- Decrypted risk cookie was added to page_requested activity.
+- UUID was added to captcha api request.
+- PerimeterX server base url changed.
+- Documentation updated.
+- Bug fix: page_requested payload do not include block activities field.
 
 [Full Changelog](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.14...HEAD)
 
