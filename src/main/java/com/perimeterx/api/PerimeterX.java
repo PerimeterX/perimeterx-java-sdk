@@ -93,8 +93,8 @@ public class PerimeterX {
     }
 
    private void init(PXConfiguration configuration) throws PXException {
-       PXHttpClient pxClient = PXHttpClient.getInstance(this.configuration.getServerURL(), this.configuration.getApiTimeout(), this.configuration.getAuthToken());
        this.configuration = configuration;
+       PXHttpClient pxClient = PXHttpClient.getInstance(this.configuration.getServerURL(), this.configuration.getApiTimeout(), this.configuration.getAuthToken());
        if (this.configuration.isCaptchaEnabled()) {
            this.blockHandler = new CaptchaBlockHandler();
        } else {
@@ -225,6 +225,11 @@ public class PerimeterX {
         this.ipProvider = ipProvider;
     }
 
+    /**
+     * Set Hostname Provider
+     *
+     * @param hostnameProvider - Used to extract hostname from request
+     */
     public void setHostnameProvider(HostnameProvider hostnameProvider) {
         this.hostnameProvider = hostnameProvider;
     }

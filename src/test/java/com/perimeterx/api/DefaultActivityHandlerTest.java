@@ -1,6 +1,10 @@
 package com.perimeterx.api;
 
 import com.perimeterx.api.activities.DefaultActivityHandler;
+import com.perimeterx.api.providers.DefaultHostnameProvider;
+import com.perimeterx.api.providers.HostnameProvider;
+import com.perimeterx.api.providers.IPProvider;
+import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
@@ -19,19 +23,23 @@ import testutils.TestObjectUtils;
 public class DefaultActivityHandlerTest {
 
     private DefaultActivityHandler activityHandler;
+    private IPProvider ipProvider;
+    private HostnameProvider hostnameProvider;
 
     @BeforeMethod
     public void setUp() {
         PXConfiguration config = TestObjectUtils.generateConfiguration();
         PXClient pxClient = TestObjectUtils.blockingPXClient(config.getBlockingScore());
         this.activityHandler = new DefaultActivityHandler(pxClient, config);
+        this.hostnameProvider = new DefaultHostnameProvider();
+        this.ipProvider = new RemoteAddressIPProvider();
     }
 
     @Test
     public void testHandleBlockActivity() {
         boolean thrown = false;
         MockHttpServletRequest request = new MockHttpServletRequest();
-        PXContext context = new PXContext(request, "appId");
+        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
         try {
             activityHandler.handleBlockActivity(context);
         } catch (PXException e) {
@@ -44,7 +52,7 @@ public class DefaultActivityHandlerTest {
     public void testHandlePageRequestedActivity() throws Exception {
         boolean thrown = false;
         MockHttpServletRequest request = new MockHttpServletRequest();
-        PXContext context = new PXContext(request, "appId");
+        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
         try {
             activityHandler.handlePageRequestedActivity(context);
         } catch (PXException e) {
