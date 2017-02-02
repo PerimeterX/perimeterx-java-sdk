@@ -1,4 +1,4 @@
-package com.perimeterx.api.ip;
+package com.perimeterx.api.providers;
 
 import javax.servlet.http.HttpServletRequest;
 

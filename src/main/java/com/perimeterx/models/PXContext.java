@@ -1,7 +1,7 @@
 package com.perimeterx.models;
 
-import com.perimeterx.api.ip.IPProvider;
-import com.perimeterx.api.ip.RemoteAddressIPProvider;
+import com.perimeterx.api.providers.HostnameProvider;
+import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
@@ -39,17 +39,13 @@ public class PXContext {
     private final HttpServletRequest request;
     private final String appId;
 
-    public PXContext(final HttpServletRequest request, final String appId) {
-        this.appId = appId;
-        initContext(request);
-        this.ip = new RemoteAddressIPProvider().getRequestIP(request);
-        this.request = request;
-    }
 
-    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final String appId) {
+    public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
+                     final HostnameProvider hostnameProvider, final String appId) {
         this.appId = appId;
         initContext(request);
         this.ip = ipProvider.getRequestIP(request);
+        this.hostname = hostnameProvider.getHostname(request);
         this.request = request;
     }
 

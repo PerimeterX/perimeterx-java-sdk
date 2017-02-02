@@ -30,8 +30,10 @@ import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.CaptchaBlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
-import com.perimeterx.api.ip.IPProvider;
-import com.perimeterx.api.ip.RemoteAddressIPProvider;
+import com.perimeterx.api.providers.DefaultHostnameProvider;
+import com.perimeterx.api.providers.HostnameProvider;
+import com.perimeterx.api.providers.IPProvider;
+import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
@@ -68,14 +70,17 @@ public class PerimeterX {
     private PXCookieValidator cookieValidator;
     private ActivityHandler activityHandler;
     private PXCaptchaValidator captchaValidator;
-    private IPProvider ipProvider;
+    private IPProvider ipProvider = new RemoteAddressIPProvider();
+    private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
 
     /**
      * Build a singleton object from configuration
      *
+     * @deprecated use public constructor instead
      * @param configuration - {@link PXConfiguration}
      * @return PerimeterX object
      */
+    @Deprecated
     public static PerimeterX getInstance(PXConfiguration configuration) throws PXException {
         if (instance == null) {
             synchronized (PerimeterX.class) {
@@ -87,19 +92,38 @@ public class PerimeterX {
         return instance;
     }
 
+   private void init(PXConfiguration configuration) throws PXException {
+       PXHttpClient pxClient = PXHttpClient.getInstance(this.configuration.getServerURL(), this.configuration.getApiTimeout(), this.configuration.getAuthToken());
+       this.configuration = configuration;
+       if (this.configuration.isCaptchaEnabled()) {
+           this.blockHandler = new CaptchaBlockHandler();
+       } else {
+           this.blockHandler = new DefaultBlockHandler();
+       }
+       this.serverValidator = new PXS2SValidator(pxClient);
+       this.captchaValidator = new PXCaptchaValidator(pxClient);
+       this.activityHandler = new DefaultActivityHandler(pxClient, this.configuration);
+       this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
+   }
+
     public PerimeterX(PXConfiguration configuration) throws PXException {
-        PXHttpClient pxClient = PXHttpClient.getInstance(configuration.getServerURL(), configuration.getApiTimeout(), configuration.getAuthToken());
-        this.configuration = configuration;
-        if (this.configuration.isCaptchaEnabled()) {
-            this.blockHandler = new CaptchaBlockHandler();
-        } else {
-            this.blockHandler = new DefaultBlockHandler();
-        }
-        this.serverValidator = new PXS2SValidator(pxClient);
-        this.captchaValidator = new PXCaptchaValidator(pxClient);
-        this.activityHandler = new DefaultActivityHandler(pxClient, configuration);
-        this.cookieValidator = PXCookieValidator.getDecoder(configuration.getCookieKey());
-        this.ipProvider = new RemoteAddressIPProvider();
+        init(configuration);
+    }
+
+    public PerimeterX(PXConfiguration configuration, IPProvider ipProvider, HostnameProvider hostnameProvider) throws PXException {
+        init(configuration);
+        this.ipProvider = ipProvider;
+        this.hostnameProvider = hostnameProvider;
+    }
+
+    public PerimeterX(PXConfiguration configuration, IPProvider ipProvider) throws PXException {
+        init(configuration);
+        this.ipProvider = ipProvider;
+    }
+
+    public PerimeterX(PXConfiguration configuration, HostnameProvider hostnameProvider) throws PXException {
+        init(configuration);
+        this.hostnameProvider = hostnameProvider;
     }
 
     /**
@@ -121,7 +145,7 @@ public class PerimeterX {
             cookie.setMaxAge(0);
             responseWrapper.addCookie(cookie);
 
-            PXContext context = new PXContext(req, this.ipProvider, configuration.getAppId());
+            PXContext context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration.getAppId());
             if (captchaValidator.verify(context)) {
                 return handleVerification(context, responseWrapper, BlockReason.COOKIE);
             }
@@ -199,5 +223,9 @@ public class PerimeterX {
      */
     public void setIpProvider(IPProvider ipProvider) {
         this.ipProvider = ipProvider;
+    }
+
+    public void setHostnameProvider(HostnameProvider hostnameProvider) {
+        this.hostnameProvider = hostnameProvider;
     }
 }
