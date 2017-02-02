@@ -46,7 +46,7 @@ public class TestObjectUtils {
     }
 
     public static PerimeterX testablePerimeterXObject(PXConfiguration configuration, PXClient client) throws Exception {
-        PerimeterX instance = PerimeterX.getInstance(configuration);
+        PerimeterX instance = new PerimeterX(configuration);
         PXS2SValidator validator = new PXS2SValidator(client);
         PXCaptchaValidator captchaValidator = new PXCaptchaValidator(client);
         ActivityHandler activityHandler = new DefaultActivityHandler(client, configuration);
