@@ -1,5 +1,10 @@
 # Change Log
 
+## [v1.0.16](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.16...HEAD) (2016-02-10)
+
+- `HostnameProvider` interface to allow user defined hostname extraction from http request.
+
+
 ## [v1.0.15](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.15...HEAD)
 
 - Decrypted risk cookie was added to page_requested activity.
