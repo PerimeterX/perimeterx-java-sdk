@@ -1,7 +1,7 @@
 package com.perimeterx.api;
 
-import com.perimeterx.api.ip.IPByHeaderProvider;
-import com.perimeterx.api.ip.RemoteAddressIPProvider;
+import com.perimeterx.api.providers.IPByHeaderProvider;
+import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Testing {@link com.perimeterx.api.ip.IPProvider}
+ * Testing {@link com.perimeterx.api.providers.IPProvider}
  * <p>
  * Created by shikloshi on 12/07/2016.
  */

@@ -1,5 +1,9 @@
 package com.perimeterx.internal;
 
+import com.perimeterx.api.providers.DefaultHostnameProvider;
+import com.perimeterx.api.providers.HostnameProvider;
+import com.perimeterx.api.providers.IPProvider;
+import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
@@ -27,6 +31,8 @@ public class PXS2SValidatorTest {
     private HttpServletRequest request;
 
     private PXContext context;
+    private IPProvider ipProvider;
+    private HostnameProvider hostnameProvider;
     private PXClient client;
 
     private PXS2SValidator validator;
@@ -36,7 +42,9 @@ public class PXS2SValidatorTest {
     public void setUp() throws Exception {
         this.client = new PXClientMock(50, Constants.CAPTCHA_SUCCESS_CODE);
         this.request = new MockHttpServletRequest();
-        this.context = new PXContext(request, "appId");
+        this.ipProvider = new RemoteAddressIPProvider();
+        this.hostnameProvider = new DefaultHostnameProvider();
+        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
         this.riskRequest = RiskRequest.fromContext(context);
         validator = new PXS2SValidator(this.client);
     }

@@ -1,7 +1,7 @@
 package com.perimeterx.models;
 
-import com.perimeterx.api.ip.IPProvider;
-import com.perimeterx.api.ip.RemoteAddressIPProvider;
+import com.perimeterx.api.providers.HostnameProvider;
+import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
@@ -39,17 +39,13 @@ public class PXContext {
     private final HttpServletRequest request;
     private final String appId;
 
-    public PXContext(final HttpServletRequest request, final String appId) {
-        this.appId = appId;
-        initContext(request);
-        this.ip = new RemoteAddressIPProvider().getRequestIP(request);
-        this.request = request;
-    }
 
-    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final String appId) {
+    public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
+                     final HostnameProvider hostnameProvider, final String appId) {
         this.appId = appId;
         initContext(request);
         this.ip = ipProvider.getRequestIP(request);
+        this.hostname = hostnameProvider.getHostname(request);
         this.request = request;
     }
 
@@ -66,11 +62,15 @@ public class PXContext {
         this.pxCookie = extractCookieByKey(cookie, Constants.COOKIE_KEY);
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
-            final String[] s = pxCaptchaCookie.split(":");
+            // Expecting captcha cookie in the form of: token:vid:uuid, vid and uuid may be empty to result in "token::"
+            final String[] s = pxCaptchaCookie.split(":", 3);
             if (s.length == 3) {
                 this.pxCaptcha = s[0];
                 this.vid = s[1];
                 this.uuid = s[2];
+            } else if (s.length == 1) {
+                // To support cookie from an invalid format of "token"
+                this.pxCaptcha = s[0];
             }
         }
 
