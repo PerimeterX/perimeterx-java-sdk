@@ -47,7 +47,7 @@ public class CaptchaBlockHandler implements BlockHandler {
                 "   </script> \n" +
                 "   </head>\n" +
                 "   <body cz-shortcut-listen=\"true\">\n" +
-                "      <div><img src=\"http://storage.googleapis.com/instapage-thumbnails/035ca0ab/e94de863/1460594818-1523851-467x110-perimeterx.png\"> </div>\n" +
+                "      <div><img src=\"https://s.perimeterx.net/logo.png\"> </div>\n" +
                 "      <span style=\"color: white; font-size: 34px;\">Access to This Page Has Been Blocked</span> \n" +
                 "      <div style=\"font-size: 24px;color: #000042;\">\n" +
                 "         <br> Access to '" + context.getFullUrl() + "' is blocked according to the site security policy.<br> Your browsing behaviour fingerprinting made us think you may be a bot. <br> <br> This may happen as a result of the following: \n" +
