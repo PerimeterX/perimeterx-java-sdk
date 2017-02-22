@@ -1,5 +1,6 @@
 package com.perimeterx.http;
 
+import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
@@ -16,12 +17,18 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.util.EntityUtils;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.BoundRequestBuilder;
+import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.asynchttpclient.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 /**
  * Low level HTTP client
@@ -36,33 +43,41 @@ public class PXHttpClient implements PXClient {
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
     private CloseableHttpClient httpClient;
+    private AsyncHttpClient asyncHttpClient;
     private String authToken;
     private String baseUrl;
+    private List<Activity> activitiesBuffer;
+    private PXConfiguration pxConfiguration;
 
-    public static PXHttpClient getInstance(String baseUrl, int timeout, String authToken) {
+    public static PXHttpClient getInstance(PXConfiguration pxConfiguration) {
         if (instance == null) {
             synchronized (PXHttpClient.class) {
                 if (instance == null) {
-                    instance = new PXHttpClient(baseUrl, timeout, authToken);
+                    instance = new PXHttpClient(pxConfiguration);
                 }
             }
         }
         return instance;
     }
 
-    private PXHttpClient(String baseUrl, int timeout, String authToken) {
-        this.baseUrl = baseUrl;
-        this.authToken = authToken;
+
+    private PXHttpClient(PXConfiguration pxConfiguration) {
+        this.pxConfiguration = pxConfiguration;
+        this.baseUrl = this.pxConfiguration.getServerURL();
+        this.authToken = this.pxConfiguration.getAuthToken();
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(200);
         cm.setDefaultMaxPerRoute(20);
         RequestConfig config = RequestConfig.custom()
-                .setConnectionRequestTimeout(timeout)
+                .setConnectionRequestTimeout(this.pxConfiguration.getApiTimeout())
                 .build();
         httpClient = HttpClients.custom()
                 .setConnectionManager(cm)
                 .setDefaultRequestConfig(config)
                 .build();
+        activitiesBuffer = new ArrayList<>();
+        asyncHttpClient = new DefaultAsyncHttpClient();
+
     }
 
     @Override
@@ -93,22 +108,24 @@ public class PXHttpClient implements PXClient {
 
     @Override
     public void sendActivity(Activity activity) throws PXException, IOException {
-        CloseableHttpResponse httpResponse = null;
+        Future<Response> httpAsyncResponse = null;
         try {
-            String requestBody = JsonUtils.writer.writeValueAsString(activity);
-            logger.info("Sending Activity: {}", requestBody);
-            HttpPost post = new HttpPost(baseUrl + Constants.API_ACTIVITIES);
-            post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setHeader("Authorization", "Bearer " + authToken);
-            post.setHeader("Content-Type", "application/json");
-            httpResponse = httpClient.execute(post);
-            EntityUtils.consume(httpResponse.getEntity());
+            // Add to activities buffer
+            activitiesBuffer.add(activity);
+            // Send activities only if buffer limit was reached
+            if (activitiesBuffer.size() == this.pxConfiguration.getMaxBufferLen()){
+                String requestBody = JsonUtils.writer.writeValueAsString(activitiesBuffer);
+                logger.info("Sending Activity: {}", requestBody);
+                BoundRequestBuilder asyncPost = asyncHttpClient.preparePost(baseUrl + Constants.API_ACTIVITIES);
+                asyncPost.setBody(requestBody);
+                asyncPost.setHeader("Authorization","Bearer " + authToken);
+                asyncPost.setHeader("Content-Type", "application/json");
+                asyncPost.execute( new PXHttpClientAsyncHandler() );
+                //Empty buffer
+                activitiesBuffer.clear();
+            }
         } catch (Exception e) {
             throw new PXException(e);
-        } finally {
-            if (httpResponse != null) {
-                httpResponse.close();
-            }
         }
     }
 
