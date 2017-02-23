@@ -46,6 +46,12 @@ import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,9 +98,27 @@ public class PerimeterX {
         return instance;
     }
 
+    private CloseableHttpClient getHttpClient(int timeout){
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(200);
+        cm.setDefaultMaxPerRoute(20);
+        RequestConfig config = RequestConfig.custom()
+                .setConnectionRequestTimeout(timeout)
+                .build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(cm)
+                .setDefaultRequestConfig(config)
+                .build();
+        return httpClient;
+    }
+
+    private AsyncHttpClient getAsyncHttpClient(){
+        return new DefaultAsyncHttpClient();
+    }
+
    private void init(PXConfiguration configuration) throws PXException {
        this.configuration = configuration;
-       PXHttpClient pxClient = PXHttpClient.getInstance(configuration);
+       PXHttpClient pxClient = PXHttpClient.getInstance(configuration,getAsyncHttpClient(),getHttpClient(this.configuration.getApiTimeout()));
        if (this.configuration.isCaptchaEnabled()) {
            this.blockHandler = new CaptchaBlockHandler();
        } else {
