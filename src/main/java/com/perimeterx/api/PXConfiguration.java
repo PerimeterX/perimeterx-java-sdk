@@ -107,7 +107,7 @@ public class PXConfiguration {
         private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookie", "cookies"));
         private int maxBufferLen = 10;
         private int apiTimeout = 1000;
-        private boolean sendPageActivities = false;
+        private boolean sendPageActivities = true;
         private boolean signedWithIP = false;
         private String serverURL;
 
