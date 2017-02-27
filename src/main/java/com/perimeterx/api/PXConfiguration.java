@@ -116,7 +116,9 @@ public class PXConfiguration {
 
         public Builder appId(String val) {
             appId = val;
-            serverURL = String.format(Constants.SERVER_URL, appId.toLowerCase());
+            if (serverURL == null) {
+                serverURL = String.format(Constants.SERVER_URL, appId.toLowerCase());
+            }
             return this;
         }
 

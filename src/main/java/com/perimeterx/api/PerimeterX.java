@@ -46,18 +46,22 @@ import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.message.BasicHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -112,8 +116,10 @@ public class PerimeterX {
         return httpClient;
     }
 
-    private AsyncHttpClient getAsyncHttpClient(){
-        return new DefaultAsyncHttpClient();
+    private CloseableHttpAsyncClient getAsyncHttpClient(){
+        return HttpAsyncClients.createDefault();
+
+
     }
 
    private void init(PXConfiguration configuration) throws PXException {

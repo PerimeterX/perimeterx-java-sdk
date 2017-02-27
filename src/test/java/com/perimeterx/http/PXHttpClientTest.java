@@ -10,7 +10,11 @@ import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.ActivityFactory;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
-import org.asynchttpclient.*;
+import org.apache.http.concurrent.FutureCallback;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.nio.protocol.BasicAsyncRequestProducer;
+import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -21,6 +25,7 @@ import static org.mockito.Mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.concurrent.Future;
 
 /**
  * Created by nitzangoldfeder on 23/02/2017.
@@ -33,17 +38,16 @@ public class PXHttpClientTest {
     private HttpServletRequest request;
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
-    private AsyncHttpClient mockAsyncHttpClient;
+    private CloseableHttpAsyncClient mockAsyncHttpClient;
 
 
     @BeforeMethod
     public void setUp() {
 
         configuration = TestObjectUtils.generateConfiguration();
-        mockAsyncHttpClient = spy(new DefaultAsyncHttpClient());
+        mockAsyncHttpClient = spy(HttpAsyncClients.createDefault());
 
-        doCallRealMethod().when(mockAsyncHttpClient).preparePost(anyString());
-        doReturn(mock(ListenableFuture.class)).when(mockAsyncHttpClient).executeRequest(any(Request.class),any(PXHttpClientAsyncHandler.class));
+        doReturn(mock(Future.class)).when(mockAsyncHttpClient).execute(any(BasicAsyncRequestProducer.class),any(HttpAsyncResponseConsumer.class),any(FutureCallback.class));
 
         pxClient = PXHttpClient.getInstance(this.configuration,mockAsyncHttpClient,null);
         this.request = new MockHttpServletRequest();
@@ -78,7 +82,7 @@ public class PXHttpClientTest {
             Assert.assertEquals(i+1,pxClient.getActivitiesBuffer().size());
         }
 
-        verify(mockAsyncHttpClient,never()).executeRequest(any(Request.class),any(PXHttpClientAsyncHandler.class));
+        verify(mockAsyncHttpClient,never()).execute(any(BasicAsyncRequestProducer.class),any(HttpAsyncResponseConsumer.class),any(FutureCallback.class));
         Assert.assertEquals(this.configuration.getMaxBufferLen()-1,pxClient.getActivitiesBuffer().size());
     }
 }
