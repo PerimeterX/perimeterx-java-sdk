@@ -48,4 +48,16 @@ public class PerimeterXTest extends ConfiguredTest {
         perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
         Assert.assertNotEquals(response.getStatus(), 403);
     }
+
+    @Test
+    public void testPXConfigURL_verified() throws Exception {
+        String appId = "PXJWbMQarF";
+        PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+                .cookieKey("cookieToken")
+                .authToken("authToken")
+                .appId(appId)
+                .build();
+
+        Assert.assertEquals(pxConfiguration.getServerURL(),"https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
+    }
 }
