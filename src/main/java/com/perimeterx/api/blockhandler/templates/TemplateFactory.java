@@ -6,43 +6,47 @@ import com.github.mustachejava.MustacheFactory;
 import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.utils.Constants;
+import org.apache.commons.io.IOUtils;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * Created by nitzangoldfeder on 02/03/2017.
+ * This class is a helper class, in order to get a template the factory receives a name of a template and returns
+ * the template compiled
  */
 public abstract class TemplateFactory {
 
     public static String getTemplate(PXContext pxContext, PXConfiguration pxConfig, String template) throws PXException {
-        try{
-            Map<String,String> props = getProps(pxContext,pxConfig);
+        try {
+            Map<String, String> props = getProps(pxContext, pxConfig);
 
             MustacheFactory mf = new DefaultMustacheFactory();
-            Mustache m = mf.compile(getResourceFolder(template));
+            Mustache m = mf.compile((getTemplate(template)),(getTemplate(template)).toString());
             StringWriter sw = new StringWriter();
             m.execute(sw, props).close();
-            String html = sw.toString();
-
-            return html;
-        }catch(IOException e){
+            return sw.toString();
+        } catch (IOException e) {
             throw new PXException(e);
         }
 
     }
 
-    private static Map<String,String> getProps(PXContext pxContext, PXConfiguration pxConfig){
-        Map<String,String> props = new HashMap<>();
+    private static Map<String, String> getProps(PXContext pxContext, PXConfiguration pxConfig) {
+        Map<String, String> props = new HashMap<>();
 
         props.put("appId", pxConfig.getAppId());
         props.put("refId", pxContext.getUuid());
         props.put("vid", pxContext.getVid());
         props.put("uuid", pxContext.getUuid());
+        props.put("customLogo",pxConfig.getCustomLogo());
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
         props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
@@ -50,26 +54,17 @@ public abstract class TemplateFactory {
         return props;
     }
 
-    private static String getResourceFolder(String template){
-        StringBuilder result = new StringBuilder("");
-
-        //Get file from resources folder
-        ClassLoader classLoader = TemplateFactory.class.getClassLoader();
-        File file = new File(classLoader.getResource(template).getFile());
-
-        try (Scanner scanner = new Scanner(file)) {
-
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                result.append(line).append("\n");
+    private static StringReader getTemplate(String template) {
+        String templateString;
+        InputStream templateStream = TemplateFactory.class.getResourceAsStream(template);
+        if (templateStream != null) {
+            try {
+                templateString = IOUtils.toString(templateStream);
+                return new StringReader(templateString);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            scanner.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-        return result.toString();
+        throw new RuntimeException("Unable to find " + template + " make sure its located in the resources dir");
     }
 }

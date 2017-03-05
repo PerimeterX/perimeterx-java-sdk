@@ -1,7 +1,5 @@
 package com.perimeterx.api;
 
-import com.perimeterx.api.providers.HostnameProvider;
-import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.http.PXClient;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;

@@ -24,6 +24,13 @@
             <organization>PerimeterX</organization>
             <organizationUrl>https://www.perimeterx.com/</organizationUrl>
         </developer>
+        <developer>
+            <name>Nitzan Goldfeder</name>
+            <email>nitzan@perimeterx.com</email>
+            <organization>PerimeterX</organization>
+            <organizationUrl>https://www.perimeterx.com/</organizationUrl>
+        </developer>
+
     </developers>
 
     <licenses>
@@ -83,7 +90,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
+                    <!--plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>2.10.3</version>
@@ -98,13 +105,21 @@
                         <configuration>
                             <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
-                    </plugin>
+                    </plugin -->
                 </plugins>
             </build>
         </profile>
     </profiles>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.github.spullara.mustache.java</groupId>
+            <artifactId>compiler</artifactId>
+            <version>0.8.18</version>
+            <!-- dont update version until deprecating djk7 -->
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
