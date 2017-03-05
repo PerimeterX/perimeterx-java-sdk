@@ -13,10 +13,8 @@ import com.perimeterx.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
@@ -28,8 +26,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.apache.http.entity.ContentType.*;
 
 /**
  * Low level HTTP client
@@ -117,7 +113,7 @@ public class PXHttpClient implements PXClient {
                 // Execute
                 producer = HttpAsyncMethods.create(post);
 
-                asyncHttpClient.execute(producer,new BasicAsyncResponseConsumer(),new PxClientAsyncHandler());
+                asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
                 //Empty buffer
                 activitiesBuffer.clear();
             }

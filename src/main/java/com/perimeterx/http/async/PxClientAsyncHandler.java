@@ -3,7 +3,6 @@ package com.perimeterx.http.async;
 import com.perimeterx.http.PXHttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.concurrent.FutureCallback;
-import org.apache.http.nio.protocol.HttpAsyncResponseConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

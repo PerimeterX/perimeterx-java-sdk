@@ -21,11 +21,11 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeMethod;
 import testutils.TestObjectUtils;
 
-import static org.mockito.Mockito.*;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.concurrent.Future;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Created by nitzangoldfeder on 23/02/2017.
@@ -47,9 +47,9 @@ public class PXHttpClientTest {
         configuration = TestObjectUtils.generateConfiguration();
         mockAsyncHttpClient = spy(HttpAsyncClients.createDefault());
 
-        doReturn(mock(Future.class)).when(mockAsyncHttpClient).execute(any(BasicAsyncRequestProducer.class),any(HttpAsyncResponseConsumer.class),any(FutureCallback.class));
+        doReturn(mock(Future.class)).when(mockAsyncHttpClient).execute(any(BasicAsyncRequestProducer.class), any(HttpAsyncResponseConsumer.class), any(FutureCallback.class));
 
-        pxClient = PXHttpClient.getInstance(this.configuration,mockAsyncHttpClient,null);
+        pxClient = PXHttpClient.getInstance(this.configuration, mockAsyncHttpClient, null);
         this.request = new MockHttpServletRequest();
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
@@ -57,15 +57,15 @@ public class PXHttpClientTest {
 
     @Test
     public void testSendActivityOnMaxBuffer() throws IOException, PXException {
-        try{
+        try {
             PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
-            for (int i = 0; i <= this.configuration.getMaxBufferLen(); i++){
+            for (int i = 0; i <= this.configuration.getMaxBufferLen(); i++) {
                 Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
                 pxClient.sendActivity(activity);
             }
 
-            Assert.assertEquals(0,pxClient.getActivitiesBuffer().size());
-        }catch(Exception e){
+            Assert.assertEquals(0, pxClient.getActivitiesBuffer().size());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -76,13 +76,13 @@ public class PXHttpClientTest {
 
         PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
 
-        for (int i = 0; i < this.configuration.getMaxBufferLen() - 1; i++){
+        for (int i = 0; i < this.configuration.getMaxBufferLen() - 1; i++) {
             Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
             pxClient.sendActivity(activity);
-            Assert.assertEquals(i+1,pxClient.getActivitiesBuffer().size());
+            Assert.assertEquals(i + 1, pxClient.getActivitiesBuffer().size());
         }
 
-        verify(mockAsyncHttpClient,never()).execute(any(BasicAsyncRequestProducer.class),any(HttpAsyncResponseConsumer.class),any(FutureCallback.class));
-        Assert.assertEquals(this.configuration.getMaxBufferLen()-1,pxClient.getActivitiesBuffer().size());
+        verify(mockAsyncHttpClient, never()).execute(any(BasicAsyncRequestProducer.class), any(HttpAsyncResponseConsumer.class), any(FutureCallback.class));
+        Assert.assertEquals(this.configuration.getMaxBufferLen() - 1, pxClient.getActivitiesBuffer().size());
     }
 }
