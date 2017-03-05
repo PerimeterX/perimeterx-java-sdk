@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class PXHttpClient implements PXClient {
 
-    Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
+    private Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
 
     private static PXHttpClient instance;
     private static final Charset UTF_8 = Charset.forName("utf-8");
@@ -93,28 +93,21 @@ public class PXHttpClient implements PXClient {
     public void sendActivity(Activity activity) throws PXException, IOException {
         HttpAsyncRequestProducer producer = null;
         try {
-            // Add to activities buffer
             activitiesBuffer.add(activity);
             // Send activities only if buffer limit was reached
             if (activitiesBuffer.size() == this.pxConfiguration.getMaxBufferLen()) {
-                // Prepare headers
                 asyncHttpClient.start();
 
-                // Prepare body
                 String requestBody = JsonUtils.writer.writeValueAsString(activitiesBuffer);
                 logger.info("Sending Activity: {}", requestBody);
-
-                // Build request
                 HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
                 post.setEntity(new StringEntity(requestBody, UTF_8));
                 post.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
                 post.setHeader("Content-Type", "application/json");
 
-                // Execute
                 producer = HttpAsyncMethods.create(post);
-
                 asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
-                //Empty buffer
+
                 activitiesBuffer.clear();
             }
         } catch (Exception e) {
