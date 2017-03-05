@@ -21,12 +21,10 @@ public class PxClientAsyncHandler implements FutureCallback<HttpResponse> {
     @Override
     public void failed(Exception e) {
         logger.error("Response failed {}", e.getMessage());
-
     }
 
     @Override
     public void cancelled() {
-        logger.warn("Response was canceled {}");
-
+        logger.warn("Response was canceled");
     }
 }

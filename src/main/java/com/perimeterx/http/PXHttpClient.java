@@ -19,6 +19,7 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class PXHttpClient implements PXClient {
 
     private CloseableHttpClient httpClient;
     private CloseableHttpAsyncClient asyncHttpClient;
-    private List<Activity> activitiesBuffer;
+
     private PXConfiguration pxConfiguration;
 
     public static PXHttpClient getInstance(PXConfiguration pxConfiguration, CloseableHttpAsyncClient asyncHttpClient, CloseableHttpClient httpClient) {
@@ -58,7 +59,6 @@ public class PXHttpClient implements PXClient {
 
     private PXHttpClient(PXConfiguration pxConfiguration, CloseableHttpAsyncClient asyncHttpClient, CloseableHttpClient httpClient) {
         this.pxConfiguration = pxConfiguration;
-        this.activitiesBuffer = new ArrayList<>();
         this.httpClient = httpClient;
         this.asyncHttpClient = asyncHttpClient;
     }
@@ -91,25 +91,41 @@ public class PXHttpClient implements PXClient {
 
     @Override
     public void sendActivity(Activity activity) throws PXException, IOException {
+        CloseableHttpResponse httpResponse = null;
+        try {
+            String requestBody = JsonUtils.writer.writeValueAsString(activity);
+            logger.info("Sending Activity: {}", requestBody);
+            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            post.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
+            post.setHeader("Content-Type", "application/json");
+            httpResponse = httpClient.execute(post);
+            EntityUtils.consume(httpResponse.getEntity());
+        } catch (Exception e) {
+            throw new PXException(e);
+        } finally {
+            if (httpResponse != null) {
+                httpResponse.close();
+            }
+        }
+    }
+
+    @Override
+    public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
         HttpAsyncRequestProducer producer = null;
         try {
-            activitiesBuffer.add(activity);
-            // Send activities only if buffer limit was reached
-            if (activitiesBuffer.size() == this.pxConfiguration.getMaxBufferLen()) {
-                asyncHttpClient.start();
+            asyncHttpClient.start();
 
-                String requestBody = JsonUtils.writer.writeValueAsString(activitiesBuffer);
-                logger.info("Sending Activity: {}", requestBody);
-                HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
-                post.setEntity(new StringEntity(requestBody, UTF_8));
-                post.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
-                post.setHeader("Content-Type", "application/json");
+            String requestBody = JsonUtils.writer.writeValueAsString(activities);
+            logger.info("Sending Activity: {}", requestBody);
+            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            post.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
+            post.setHeader("Content-Type", "application/json");
 
-                producer = HttpAsyncMethods.create(post);
-                asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
+            producer = HttpAsyncMethods.create(post);
+            asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
 
-                activitiesBuffer.clear();
-            }
         } catch (Exception e) {
             throw new PXException(e);
         } finally {
@@ -142,9 +158,5 @@ public class PXHttpClient implements PXClient {
                 httpResponse.close();
             }
         }
-    }
-
-    public List<Activity> getActivitiesBuffer() {
-        return activitiesBuffer;
     }
 }

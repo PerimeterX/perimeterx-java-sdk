@@ -1,6 +1,7 @@
 package com.perimeterx.http;
 
 import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -23,6 +24,7 @@ import testutils.TestObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Future;
 
 import static org.mockito.Mockito.*;
@@ -33,56 +35,43 @@ import static org.mockito.Mockito.*;
 @org.testng.annotations.Test
 public class PXHttpClientTest {
 
+    private BufferedActivityHandler bufferedActivityHandler;
     private PXHttpClient pxClient;
     private PXConfiguration configuration;
     private HttpServletRequest request;
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
-    private CloseableHttpAsyncClient mockAsyncHttpClient;
+    private PXContext context;
 
 
     @BeforeMethod
     public void setUp() {
+        this.pxClient = mock(PXHttpClient.class);
+        this.configuration = TestObjectUtils.generateConfiguration();
+        this.bufferedActivityHandler = new BufferedActivityHandler(pxClient,configuration);
 
-        configuration = TestObjectUtils.generateConfiguration();
-        mockAsyncHttpClient = spy(HttpAsyncClients.createDefault());
-
-        doReturn(mock(Future.class)).when(mockAsyncHttpClient).execute(any(BasicAsyncRequestProducer.class), any(HttpAsyncResponseConsumer.class), any(FutureCallback.class));
-
-        pxClient = PXHttpClient.getInstance(this.configuration, mockAsyncHttpClient, null);
         this.request = new MockHttpServletRequest();
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
+        this.context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
+
     }
 
     @Test
     public void testSendActivityOnMaxBuffer() throws IOException, PXException {
-        try {
-            PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
-            for (int i = 0; i <= this.configuration.getMaxBufferLen(); i++) {
-                Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
-                pxClient.sendActivity(activity);
-            }
-
-            Assert.assertEquals(0, pxClient.getActivitiesBuffer().size());
-        } catch (Exception e) {
-            e.printStackTrace();
+        for (int i = 0; i <= this.configuration.getMaxBufferLen(); i++) {
+            bufferedActivityHandler.handleBlockActivity(context);
         }
 
+        verify(pxClient,atLeastOnce()).sendBatchActivities(any(List.class));
     }
 
     @Test
     public void testDontSendActivityBelowMaxBuffer() throws IOException, PXException {
-
-        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
-
         for (int i = 0; i < this.configuration.getMaxBufferLen() - 1; i++) {
-            Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
-            pxClient.sendActivity(activity);
-            Assert.assertEquals(i + 1, pxClient.getActivitiesBuffer().size());
+            bufferedActivityHandler.handleBlockActivity(context);
         }
+        verify(pxClient,never()).sendBatchActivities(any(List.class));
 
-        verify(mockAsyncHttpClient, never()).execute(any(BasicAsyncRequestProducer.class), any(HttpAsyncResponseConsumer.class), any(FutureCallback.class));
-        Assert.assertEquals(this.configuration.getMaxBufferLen() - 1, pxClient.getActivitiesBuffer().size());
     }
 }

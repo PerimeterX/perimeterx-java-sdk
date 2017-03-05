@@ -26,6 +26,7 @@
 package com.perimeterx.api;
 
 import com.perimeterx.api.activities.ActivityHandler;
+import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.CaptchaBlockHandler;
@@ -128,7 +129,7 @@ public class PerimeterX {
         }
         this.serverValidator = new PXS2SValidator(pxClient);
         this.captchaValidator = new PXCaptchaValidator(pxClient);
-        this.activityHandler = new DefaultActivityHandler(pxClient, this.configuration);
+        this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
     }
 
