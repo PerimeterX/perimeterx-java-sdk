@@ -27,6 +27,9 @@ public class PXConfiguration {
     private boolean sendPageActivities;
     private boolean signedWithIP;
     private String serverURL;
+    private String customLogo;
+    private String cssRef;
+    private String jsRef;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -42,6 +45,10 @@ public class PXConfiguration {
         sendPageActivities = builder.sendPageActivities;
         signedWithIP = builder.signedWithIP;
         serverURL = builder.serverURL;
+        customLogo = builder.customLogo;
+        cssRef = builder.cssRef;
+        jsRef = builder.jsRef;
+
     }
 
     public String getAppId() {
@@ -96,6 +103,18 @@ public class PXConfiguration {
         return serverURL;
     }
 
+    public String getCssRef() {
+        return cssRef;
+    }
+
+    public String getCustomLogo() {
+        return customLogo;
+    }
+
+    public String getJsRef() {
+        return jsRef;
+    }
+
     public static final class Builder {
         private String appId;
         private String cookieKey;
@@ -110,6 +129,9 @@ public class PXConfiguration {
         private boolean sendPageActivities = false;
         private boolean signedWithIP = false;
         private String serverURL;
+        private String customLogo;
+        private String cssRef;
+        private String jsRef;
 
         public Builder() {
         }
@@ -184,6 +206,22 @@ public class PXConfiguration {
             serverURL = val;
             return this;
         }
+
+        public Builder customLogo(String val){
+            customLogo = val;
+            return this;
+        }
+
+        public Builder cssRef(String val){
+            cssRef = val;
+            return this;
+        }
+
+        public Builder jsRef(String val){
+            jsRef = val;
+            return this;
+        }
+
 
         public PXConfiguration build() {
             Validate.notEmpty(this.appId, "Application ID (appId) must be set");
