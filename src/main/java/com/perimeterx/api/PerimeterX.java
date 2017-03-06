@@ -66,7 +66,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class PerimeterX {
 
-    Logger logger = LoggerFactory.getLogger(PerimeterX.class);
+    private Logger logger = LoggerFactory.getLogger(PerimeterX.class);
 
     private static PerimeterX instance = null;
 

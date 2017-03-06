@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Buffered activities and sends them to PX servers when buffer is full
+ *
  * Created by nitzangoldfeder on 05/03/2017.
  */
 public class BufferedActivityHandler implements ActivityHandler {
@@ -41,31 +43,19 @@ public class BufferedActivityHandler implements ActivityHandler {
         handleSendActivities(activity);
     }
 
-    public void handleSendActivities(Activity activity) throws PXException {
-        add(activity);
-        if (isFull()) {
-            flush();
-            clear();
-        }
-    }
-
-    public void add(Activity activity) {
+    private void handleSendActivities(Activity activity) throws PXException {
         bufferedActivities.add(activity);
-    }
-
-    public int size() {
-        return bufferedActivities.size();
-    }
-
-    public boolean isFull() {
-        return size() >= this.maxBufferLength;
+        if (bufferedActivities.size() >= maxBufferLength) {
+            flush();
+            bufferedActivities.clear();
+        }
     }
 
     /**
      * Will trigger the client to send a batch of activities to PX Servers
      * Most likely to call clear after to remove sent activities
      *
-     * @throws PXException
+     * @throws PXException - when transport layer fails to report activities
      */
     public void flush() throws PXException {
         try {
@@ -73,9 +63,5 @@ public class BufferedActivityHandler implements ActivityHandler {
         } catch (Exception e) {
             throw new PXException(e);
         }
-    }
-
-    public void clear() {
-        bufferedActivities.clear();
     }
 }
