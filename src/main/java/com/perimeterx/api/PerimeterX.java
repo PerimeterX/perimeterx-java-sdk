@@ -213,7 +213,7 @@ public class PerimeterX {
             logger.info("Request invalid");
             context.setBlockReason(blockReason);
             this.activityHandler.handleBlockActivity(context);
-            this.blockHandler.handleBlocking(context, responseWrapper);
+            this.blockHandler.handleBlocking(context, this.configuration, responseWrapper);
         }
         return verified;
     }
