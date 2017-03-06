@@ -16,6 +16,7 @@ Table of Contents
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
+  *   [Customizing Default Block Blocking Pages](#custom-block-page)
   *   [Custom Block Action](#custom-block)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Extracting Real IP Address](#real-ip)
@@ -129,7 +130,7 @@ public class LoggerBlockHandler implements BlockHandler {
 }
 ```
 
-##Customizing Default Block Blocking Pages##
+## <a name="custom-block-page"></a> Customizing Default Block Blocking Pages ##
 **Custom logo insertion**
 
 Adding a custom logo to the blocking page is by providing the pxConfig a key ```customLogo``` , the logo will be displayed at the top div of the the block page
