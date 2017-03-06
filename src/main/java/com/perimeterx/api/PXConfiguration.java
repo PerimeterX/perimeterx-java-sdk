@@ -124,9 +124,9 @@ public class PXConfiguration {
         private boolean encryptionEnabled = true;
         private int blockingScore = 70;
         private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookie", "cookies"));
-        private int maxBufferLen = 1;
+        private int maxBufferLen = 10;
         private int apiTimeout = 1000;
-        private boolean sendPageActivities = false;
+        private boolean sendPageActivities = true;
         private boolean signedWithIP = false;
         private String serverURL;
         private String customLogo;
@@ -138,7 +138,9 @@ public class PXConfiguration {
 
         public Builder appId(String val) {
             appId = val;
-            serverURL = String.format(Constants.SERVER_URL, appId.toLowerCase());
+            if (serverURL == null) {
+                serverURL = String.format(Constants.SERVER_URL, appId.toLowerCase());
+            }
             return this;
         }
 

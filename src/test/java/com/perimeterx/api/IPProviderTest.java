@@ -33,7 +33,7 @@ public class IPProviderTest {
             @Override
             public String answer(final InvocationOnMock invocationOnMock) throws Throwable {
                 Object[] args = invocationOnMock.getArguments();
-                final String name = (String)args[0];
+                final String name = (String) args[0];
                 return headers.get(name);
             }
         }).when(request).getHeader(IP_HEADER);

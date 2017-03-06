@@ -10,6 +10,7 @@ import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.Scores;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Mocking PXClient that is usually create an http request to PX servers
@@ -34,6 +35,11 @@ public class PXClientMock implements PXClient {
 
     @Override
     public void sendActivity(Activity activity) throws PXException, IOException {
+        // noop
+    }
+
+    @Override
+    public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
         // noop
     }
 
