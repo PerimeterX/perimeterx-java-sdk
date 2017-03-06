@@ -10,7 +10,7 @@ import com.perimeterx.models.PXContext;
  * Created by shikloshi on 07/11/2016.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class PageRequestedActivityDetails implements ActivityDetails{
+public class PageRequestedActivityDetails implements ActivityDetails {
 
     @JsonProperty("http_method")
     private String httpMethod;

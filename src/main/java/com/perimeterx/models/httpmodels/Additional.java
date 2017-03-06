@@ -22,6 +22,7 @@ public class Additional {
     public S2SCallReason CallReason;
     @JsonProperty("module_version")
     public final String ModuleVersion = Constants.SDK_VERSION;
+
     @JsonProperty("custom_params")
 
     public static Additional fromContext(PXContext ctx) {

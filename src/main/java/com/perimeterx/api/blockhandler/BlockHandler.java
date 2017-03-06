@@ -16,7 +16,7 @@ public interface BlockHandler {
     /**
      * Blocking handle will be called when pxVerify will return that user is not verified
      *
-     * @param context - requests context
+     * @param context         - requests context
      * @param responseWrapper - response wrapper
      * @throws PXException
      */

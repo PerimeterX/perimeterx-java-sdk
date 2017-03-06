@@ -12,7 +12,7 @@ import com.perimeterx.models.risk.BlockReason;
  * Created by shikloshi on 06/07/2016.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class BlockActivityDetails implements ActivityDetails{
+public class BlockActivityDetails implements ActivityDetails {
 
     @JsonProperty("block_score")
     private int blockScore;
