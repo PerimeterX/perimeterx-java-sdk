@@ -27,7 +27,6 @@ package com.perimeterx.api;
 
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
-import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.CaptchaBlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
@@ -115,8 +114,6 @@ public class PerimeterX {
 
     private CloseableHttpAsyncClient getAsyncHttpClient() {
         return HttpAsyncClients.createDefault();
-
-
     }
 
     private void init(PXConfiguration configuration) throws PXException {

@@ -14,14 +14,14 @@ import java.util.List;
 /**
  * Created by nitzangoldfeder on 05/03/2017.
  */
-public class BufferedActivityHandler implements ActivityHandler{
+public class BufferedActivityHandler implements ActivityHandler {
 
     private int maxBufferLength;
     private List<Activity> bufferedActivities;
     private PXConfiguration configuration;
     private PXClient client;
 
-    public BufferedActivityHandler(PXClient client, PXConfiguration configuration){
+    public BufferedActivityHandler(PXClient client, PXConfiguration configuration) {
         this.configuration = configuration;
         this.client = client;
         this.maxBufferLength = configuration.getMaxBufferLen();
@@ -43,43 +43,39 @@ public class BufferedActivityHandler implements ActivityHandler{
 
     public void handleSendActivities(Activity activity) throws PXException {
         add(activity);
-        if (isFull()){
+        if (isFull()) {
             flush();
             clear();
         }
     }
 
-    public void add(Activity activity){
+    public void add(Activity activity) {
         bufferedActivities.add(activity);
     }
 
-    public int size(){
+    public int size() {
         return bufferedActivities.size();
     }
 
-    public boolean isFull(){
+    public boolean isFull() {
         return size() >= this.maxBufferLength;
     }
 
     /**
      * Will trigger the client to send a batch of activities to PX Servers
      * Most likely to call clear after to remove sent activities
+     *
      * @throws PXException
      */
     public void flush() throws PXException {
-        try{
+        try {
             client.sendBatchActivities(bufferedActivities);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PXException(e);
         }
     }
 
-    public void clear(){
+    public void clear() {
         bufferedActivities.clear();
     }
-
-
-
-
-
 }
