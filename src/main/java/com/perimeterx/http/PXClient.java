@@ -8,6 +8,7 @@ import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Interface for com.perimeterx.http request between PerimeterX Server and running Server
@@ -34,6 +35,15 @@ public interface PXClient {
      * @throws IOException
      */
     void sendActivity(Activity activity) throws PXException, IOException;
+
+    /**
+     * Calling PX Server to report Activity
+     *
+     * @param activities - the activites we want to report
+     * @throws PXException
+     * @throws IOException
+     */
+    void sendBatchActivities(List<Activity> activities) throws PXException, IOException;
 
     /**
      * Calling PX Server to validate user captcha

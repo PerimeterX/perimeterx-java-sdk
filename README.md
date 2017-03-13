@@ -16,6 +16,7 @@ Table of Contents
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
   *   [Blocking Score](#blocking-score)
+  *   [Customizing Default Blocking Pages](#custom-block-page)
   *   [Custom Block Action](#custom-block)
   *   [Enable/Disable Captcha](#captcha-support)
   *   [Extracting Real IP Address](#real-ip)
@@ -128,6 +129,48 @@ public class LoggerBlockHandler implements BlockHandler {
 	}
 }
 ```
+
+## <a name="custom-block-page"></a> Customizing Default Block Pages
+**Custom logo insertion**
+
+Adding a custom logo to the blocking page is by providing the pxConfig a key ```customLogo``` , the logo will be displayed at the top div of the the block page
+The logo's ```max-heigh``` property would be 150px and width would be set to ```auto```
+
+The key ```customLogo```  expects a valid URL address such as ```https://s.perimeterx.net/logo.png```
+
+Example below:
+```java
+// Create configuration object
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+	.cookieKey(COOKIE_KEY)
+	.authToken(AUTH_TOKEN)
+	.appId(APP_ID)
+	.blockingScore(SCORE)
+    .customLogo(LOGO_URL)
+	.build();
+```
+
+**Custom JS/CSS**
+
+The block page can be modified with a custom CSS by adding to the ```pxConfig``` the key ```cssRef``` and providing a valid URL to the css
+In addition there is also the option to add a custom JS file by adding ```jsRef``` key to the ```pxConfig``` and providing the JS file that will be loaded with the block page, this key also expects a valid URL
+
+On both cases if the URL is not a valid format an exception will be thrown
+
+Example below:
+```java
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+	.cookieKey(COOKIE_KEY)
+	.authToken(AUTH_TOKEN)
+	.appId(APP_ID)
+ .cssRef(CSS_URL)
+ .jsRef(URL)
+	.blockingScore(SCORE)
+	.build();
+```
+
+Side notes: Custom logo/js/css can be added together
+
 
 #### <a name="captcha-support"></a>Enable/disable captcha in the block page
 
