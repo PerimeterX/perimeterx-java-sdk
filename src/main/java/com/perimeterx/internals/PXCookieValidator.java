@@ -59,6 +59,7 @@ public class PXCookieValidator {
             switch (validate) {
                 case NO_SIGNING:
                 case INVALID:
+                    context.setPxCookieOrig(pxCookie);
                     return S2SCallReason.INVALID_VERIFICATION;
                 case EXPIRED:
                     return S2SCallReason.EXPIRED_COOKIE;
