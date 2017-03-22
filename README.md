@@ -146,7 +146,7 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	.authToken(AUTH_TOKEN)
 	.appId(APP_ID)
 	.blockingScore(SCORE)
-    .customLogo(LOGO_URL)
+   	.customLogo(LOGO_URL)
 	.build();
 ```
 
@@ -163,8 +163,8 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	.cookieKey(COOKIE_KEY)
 	.authToken(AUTH_TOKEN)
 	.appId(APP_ID)
- .cssRef(CSS_URL)
- .jsRef(URL)
+ 	.cssRef(CSS_URL)
+ 	.jsRef(URL)
 	.blockingScore(SCORE)
 	.build();
 ```
