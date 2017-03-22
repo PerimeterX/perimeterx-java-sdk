@@ -1,6 +1,6 @@
 # Change Log
 
-§## [v1.0.17](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-03-13)
+## [v1.0.17](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-03-13)
 
 - Support invalid cookie format
 - Updated server URL
