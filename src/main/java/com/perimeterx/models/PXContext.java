@@ -21,6 +21,7 @@ import java.util.Map;
 public class PXContext {
 
     private String pxCookie;
+    private String pxCookieOrig;
     private String pxCaptcha;
     private String ip;
     private String vid;
@@ -198,5 +199,13 @@ public class PXContext {
 
     public String getAppId() {
         return appId;
+    }
+
+    public String getPxCookieOrig() {
+        return pxCookieOrig;
+    }
+
+    public void setPxCookieOrig(String pxCookieOrig) {
+        this.pxCookieOrig = pxCookieOrig;
     }
 }

@@ -54,4 +54,5 @@ public class PXS2SValidatorTest {
         RiskResponse verify = validator.verify(this.riskRequest);
         Assert.assertEquals(verify.getScores().getNonHuman(), 50);
     }
+
 }
