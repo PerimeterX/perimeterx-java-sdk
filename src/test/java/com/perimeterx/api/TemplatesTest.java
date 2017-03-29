@@ -6,19 +6,11 @@ import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.models.PXContext;
-import com.perimeterx.models.exceptions.PXException;
-import static org.junit.Assert.*;
-
-import org.apache.commons.io.IOUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by nitzangoldfeder on 05/03/2017.
