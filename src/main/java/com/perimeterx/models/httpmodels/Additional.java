@@ -1,7 +1,6 @@
 package com.perimeterx.models.httpmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
@@ -13,7 +12,7 @@ import com.perimeterx.utils.Constants;
 public class Additional {
 
     @JsonProperty("px_cookie")
-    public RiskCookie PxCookie;
+    public String PxCookie;
     @JsonProperty("http_method")
     public String HttpMethod;
     @JsonProperty("http_version")

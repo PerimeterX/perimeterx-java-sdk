@@ -2,16 +2,14 @@ package com.perimeterx.models;
 
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
-import com.perimeterx.internals.cookie.RiskCookie;
+import com.perimeterx.internals.cookie.PXCookie;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -20,7 +18,7 @@ import java.util.Map;
  */
 public class PXContext {
 
-    private String pxCookie;
+    private Map<String,String> pxCookies;
     private String pxCookieOrig;
     private String pxCaptcha;
     private String ip;
@@ -36,10 +34,11 @@ public class PXContext {
     private String httpMethod;
     private String httpVersion;
     private int score;
-    private RiskCookie riskCookie;
+    private String riskCookie;
     private final HttpServletRequest request;
     private final String appId;
-
+    private String blockAction;
+    private String cookieHmac;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
                      final HostnameProvider hostnameProvider, final String appId) {
@@ -60,7 +59,7 @@ public class PXContext {
         }
 
         final String cookie = request.getHeader("cookie");
-        this.pxCookie = extractCookieByKey(cookie, Constants.COOKIE_KEY);
+        this.pxCookies = extractPXCookies(cookie);
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
             // Expecting captcha cookie in the form of: token:vid:uuid, vid and uuid may be empty to result in "token::"
@@ -105,8 +104,34 @@ public class PXContext {
         return cookieValue;
     }
 
+  private Map<String,String> extractPXCookies(String cookie) {
+        Map<String,String> cookieValue = new HashMap<>();
+        if (cookie != null) {
+            String[] cookies = cookie.split(";\\s?");
+            for (String c : cookies) {
+                String[] splicedCookie = c.split("=", 2);
+                switch (splicedCookie[0]){
+                    case Constants.COOKIE_V1_KEY:
+                        cookieValue.put("PXCookieV1", splicedCookie[1]);
+                        break;
+                    case Constants.COOKIE_V3_KEY:
+                        cookieValue.put("PXCookieV3", splicedCookie[1]);
+                        break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
     public String getPxCookie() {
-        return pxCookie;
+        if (pxCookies.isEmpty()){
+            return null;
+        }
+        return pxCookies.containsKey("PXCookieV3") ? pxCookies.get("PXCookieV3") : pxCookies.get("PXCookieV1");
+    }
+
+    public Map<String,String> getPxCookies() {
+        return pxCookies;
     }
 
     public String getPxCaptcha() {
@@ -185,11 +210,11 @@ public class PXContext {
         return this.score;
     }
 
-    public void setRiskCookie(RiskCookie riskCookie) {
-        this.riskCookie = riskCookie;
+    public void setRiskCookie(PXCookie riskCookie) {
+        this.riskCookie = riskCookie.getDecodedCookie().toString();
     }
 
-    public RiskCookie getRiskCookie() {
+    public String getRiskCookie() {
         return riskCookie;
     }
 
@@ -208,4 +233,13 @@ public class PXContext {
     public void setPxCookieOrig(String pxCookieOrig) {
         this.pxCookieOrig = pxCookieOrig;
     }
+
+    public void setBlockAction(String blockAction) {
+        this.blockAction = blockAction;
+    }
+
+    public void setCookieHmac(String cookieHmac) {
+        this.cookieHmac = cookieHmac;
+    }
+
 }
