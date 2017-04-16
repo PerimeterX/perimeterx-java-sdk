@@ -14,7 +14,9 @@ public class PXCookieV3 extends PXCookieV1 {
 
     public PXCookieV3(PXConfiguration pxConfiguration, PXContext pxContext) {
         super(pxConfiguration, pxContext);
-        String[] splicedCookie = pxContext.getPxCookie().split(":", 2);
+        //Cut the _px3= String
+        String cookiePayload = pxContext.getPxCookie().substring(pxContext.getPxCookie().indexOf("=")+1);
+        String[] splicedCookie = cookiePayload.split(":", 2);
         if (splicedCookie.length > 1) {
             this.pxCookie = splicedCookie[1];
             this.hmac = splicedCookie[0];
@@ -48,7 +50,7 @@ public class PXCookieV3 extends PXCookieV1 {
     @Override
     public boolean isSecured() throws PXException {
         String hmacString = new StringBuilder()
-                .append(this.pxCookie)
+                .append(this.getPxCookie())
                 .append(this.pxContext.getUserAgent())
                 .toString();
         return this.isHmacValid(hmacString, this.getHmac());
