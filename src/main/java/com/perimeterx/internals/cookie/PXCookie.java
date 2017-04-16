@@ -1,6 +1,5 @@
 package com.perimeterx.internals.cookie;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.api.PXConfiguration;

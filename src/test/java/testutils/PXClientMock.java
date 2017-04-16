@@ -7,7 +7,6 @@ import com.perimeterx.models.httpmodels.CaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.models.risk.Scores;
 
 import java.io.IOException;
 import java.util.List;

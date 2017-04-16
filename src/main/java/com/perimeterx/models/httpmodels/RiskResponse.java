@@ -1,8 +1,5 @@
 package com.perimeterx.models.httpmodels;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.perimeterx.models.risk.Scores;
-
 /**
  * Risk API server Response POJO
  * <p>
