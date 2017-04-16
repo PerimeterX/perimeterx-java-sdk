@@ -184,7 +184,7 @@ public class PerimeterX {
             RiskRequest request = RiskRequest.fromContext(context);
             RiskResponse response = serverValidator.verify(request);
             if (response != null) {
-                context.setScore(response.getScores().getNonHuman());
+                context.setScore(response.getScore());
                 context.setUuid(response.getUuid());
                 return handleVerification(context, responseWrapper, BlockReason.SERVER);
             }

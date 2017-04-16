@@ -37,7 +37,7 @@ public final class Constants {
     public final static String COOKIE_V1_KEY = "_px";
     public final static String COOKIE_V3_KEY = "_px3";
 
-    public static final String API_RISK = "/api/v1/risk";
+    public static final String API_RISK = "/api/v2/risk";
     public static final String API_ACTIVITIES = "/api/v1/collector/s2s";
     public static final String API_CAPTCHA = "/api/v1/risk/captcha";
 
