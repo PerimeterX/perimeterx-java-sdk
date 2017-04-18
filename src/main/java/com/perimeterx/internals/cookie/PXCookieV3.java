@@ -8,15 +8,13 @@ import com.perimeterx.models.exceptions.PXException;
 /**
  * Created by nitzangoldfeder on 13/04/2017.
  */
-public class PXCookieV3 extends PXCookieV1 {
+public class PXCookieV3 extends PXCookie {
 
     private String hmac;
 
     public PXCookieV3(PXConfiguration pxConfiguration, PXContext pxContext) {
         super(pxConfiguration, pxContext);
-        //Cut the _px3= String
-        String cookiePayload = pxContext.getPxCookie().substring(pxContext.getPxCookie().indexOf("=")+1);
-        String[] splicedCookie = cookiePayload.split(":", 2);
+        String[] splicedCookie = getPxCookie().split(":", 2);
         if (splicedCookie.length > 1) {
             this.pxCookie = splicedCookie[1];
             this.hmac = splicedCookie[0];

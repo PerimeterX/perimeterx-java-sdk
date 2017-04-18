@@ -114,10 +114,10 @@ public class PXContext {
                 String[] splicedCookie = c.split("=", 2);
                 switch (splicedCookie[0]){
                     case Constants.COOKIE_V1_KEY:
-                        cookieValue.put("PXCookieV1", splicedCookie[1]);
+                        cookieValue.put(Constants.COOKIE_V1_KEY, splicedCookie[1]);
                         break;
                     case Constants.COOKIE_V3_KEY:
-                        cookieValue.put("PXCookieV3", splicedCookie[1]);
+                        cookieValue.put(Constants.COOKIE_V3_KEY, splicedCookie[1]);
                         break;
                 }
             }
@@ -129,7 +129,7 @@ public class PXContext {
         if (pxCookies.isEmpty()){
             return null;
         }
-        return pxCookies.containsKey("PXCookieV3") ? pxCookies.get("PXCookieV3") : pxCookies.get("PXCookieV1");
+        return pxCookies.containsKey(Constants.COOKIE_V3_KEY) ? pxCookies.get(Constants.COOKIE_V3_KEY) : pxCookies.get(Constants.COOKIE_V1_KEY);
     }
 
     public Map<String,String> getPxCookies() {

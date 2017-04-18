@@ -23,7 +23,7 @@ import java.util.Arrays;
 /**
  * Created by nitzangoldfeder on 13/04/2017.
  */
-public abstract class PXCookie implements IPXCookie{
+public abstract class PXCookie implements PXCookieImpl {
 
     private static final int KEY_LEN = 32;
     private static final String HMAC_SHA_256 = "HmacSHA256";

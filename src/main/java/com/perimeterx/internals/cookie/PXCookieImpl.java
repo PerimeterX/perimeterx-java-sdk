@@ -6,7 +6,7 @@ import com.perimeterx.models.exceptions.PXException;
 /**
  * Created by nitzangoldfeder on 13/04/2017.
  */
-public interface IPXCookie {
+public interface PXCookieImpl {
     String getHmac();
     String getUUID();
     String getVID();
