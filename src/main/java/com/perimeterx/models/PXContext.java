@@ -237,7 +237,17 @@ public class PXContext {
     }
 
     public void setBlockAction(String blockAction) {
-        this.blockAction = blockAction;
+        switch (blockAction){
+            case Constants.CAPTCHA_ACTION_CAPTCHA:
+                this.blockAction = "captcha";
+                break;
+            case Constants.BLOCK_ACTION_CAPTCHA:
+                this.blockAction = "block";
+                break;
+            default:
+                this.blockAction = "captcha";
+                break;
+        }
     }
 
     public void setCookieHmac(String cookieHmac) {

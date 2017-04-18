@@ -56,6 +56,8 @@ public class PXCookieValidator {
             context.setVid(pxCookie.getVID());
             context.setUuid(pxCookie.getUUID());
             context.setScore(pxCookie.getScore());
+            context.setBlockAction(pxCookie.getBlockAction());
+            context.setCookieHmac(pxCookie.getHmac());
 
             if (pxCookie.isExpired()){
                 context.setS2sCallReason(S2SCallReason.EXPIRED_COOKIE);

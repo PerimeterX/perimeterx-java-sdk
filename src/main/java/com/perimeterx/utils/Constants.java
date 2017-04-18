@@ -44,5 +44,6 @@ public final class Constants {
     public static final int CAPTCHA_SUCCESS_CODE = 0;
     public static final int CAPTCHA_FAILED_CODE = -1;
 
-    public static final String BLOCK_REASON_COOKIE_HIGH_SCORE = "cookie_high_score";
+    public static final String CAPTCHA_ACTION_CAPTCHA = "c";
+    public static final String BLOCK_ACTION_CAPTCHA = "b";
 }
