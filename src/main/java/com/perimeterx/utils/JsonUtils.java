@@ -3,7 +3,6 @@ package com.perimeterx.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.httpmodels.RiskResponse;
 
@@ -18,7 +17,6 @@ public final class JsonUtils {
 
     public final static ObjectReader riskResponseReader = mapper.reader(RiskResponse.class);
     public final static ObjectReader captchaResponseReader = mapper.reader(CaptchaResponse.class);
-    public final static ObjectReader riskCookieReader = mapper.reader(RiskCookie.class);
     public final static ObjectWriter writer = mapper.writer();
 
     protected JsonUtils() {

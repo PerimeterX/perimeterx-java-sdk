@@ -3,7 +3,6 @@ package com.perimeterx.models.activities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.PXContext;
 
 /**
@@ -17,7 +16,7 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     @JsonProperty("http_version")
     private String httpVersion;
     @JsonPropertyOrder("px_cookie")
-    private RiskCookie riskCookie;
+    private String riskCookie;
 
 
     public PageRequestedActivityDetails(PXContext context) {
@@ -34,7 +33,7 @@ public class PageRequestedActivityDetails implements ActivityDetails {
         return httpVersion;
     }
 
-    public RiskCookie getRiskCookie() {
+    public String getRiskCookie() {
         return riskCookie;
     }
 }

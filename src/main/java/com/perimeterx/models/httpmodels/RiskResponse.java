@@ -1,30 +1,27 @@
 package com.perimeterx.models.httpmodels;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.perimeterx.models.risk.Scores;
-
 /**
  * Risk API server Response POJO
  * <p>
  * Created by Shikloshi on 04/07/2016.
  */
+
+//{"status":0,"uuid":"bb319090-2282-11e7-ba72-5d47483a3678","score":0,"action":"c"}
 public class RiskResponse {
 
     private String uuid;
     private int status;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Scores scores = new Scores(0, -1, 0);
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String message;
+    private int score;
+    private String action;
 
     public RiskResponse() {
     }
 
-    public RiskResponse(String uuid, int status, Scores scores, String message) {
+    public RiskResponse(String uuid, int status, int score, String action) {
         this.uuid = uuid;
         this.status = status;
-        this.scores = scores;
-        this.message = message;
+        this.score = score;
+        this.action = action;
     }
 
     public String getUuid() {
@@ -43,19 +40,19 @@ public class RiskResponse {
         this.status = status;
     }
 
-    public Scores getScores() {
-        return scores;
+    public int getScore() {
+        return score;
     }
 
-    public void setScores(Scores scores) {
-        this.scores = scores;
+    public void setScore(int score) {
+        this.score = score;
     }
 
-    public String getMessage() {
-        return message;
+    public String getAction() {
+        return action;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setAction(String action) {
+        this.action = action;
     }
 }

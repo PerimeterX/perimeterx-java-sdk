@@ -52,7 +52,7 @@ public class PXS2SValidatorTest {
     @Test
     public void verifyTest() throws PXException, IOException {
         RiskResponse verify = validator.verify(this.riskRequest);
-        Assert.assertEquals(verify.getScores().getNonHuman(), 50);
+        Assert.assertEquals(verify.getScore(), 50);
     }
 
 }

@@ -43,7 +43,6 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
-import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
@@ -173,27 +172,26 @@ public class PerimeterX {
             if (captchaValidator.verify(context)) {
                 return handleVerification(context, responseWrapper, BlockReason.COOKIE);
             }
-            S2SCallReason callReason = cookieValidator.verify(context);
-            logger.info("Risk API call reason: {}", callReason);
+
+            boolean cookieVerified = cookieValidator.verify(this.configuration ,context);
             // Cookie is valid (exists and not expired) so we can block according to it's score
-            if (callReason == S2SCallReason.NONE) {
+            if (cookieVerified) {
                 logger.info("No risk API Call is needed, using cookie");
                 return handleVerification(context, responseWrapper, BlockReason.COOKIE);
             }
 
-            context.setS2sCallReason(callReason);
             // Calls risk_api and populate the data retrieved to the context
             RiskRequest request = RiskRequest.fromContext(context);
             RiskResponse response = serverValidator.verify(request);
             if (response != null) {
-                context.setScore(response.getScores().getNonHuman());
+                context.setScore(response.getScore());
                 context.setUuid(response.getUuid());
                 return handleVerification(context, responseWrapper, BlockReason.SERVER);
             }
             return true;
         } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());
-            return true;
+            return false;
         }
     }
 

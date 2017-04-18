@@ -34,12 +34,16 @@ public final class Constants {
 
     public static final String SERVER_URL = "https://sapi-%s.perimeterx.net";
     public final static String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
-    public final static String COOKIE_KEY = "_px";
+    public final static String COOKIE_V1_KEY = "_px";
+    public final static String COOKIE_V3_KEY = "_px3";
 
-    public static final String API_RISK = "/api/v1/risk";
+    public static final String API_RISK = "/api/v2/risk";
     public static final String API_ACTIVITIES = "/api/v1/collector/s2s";
     public static final String API_CAPTCHA = "/api/v1/risk/captcha";
 
     public static final int CAPTCHA_SUCCESS_CODE = 0;
     public static final int CAPTCHA_FAILED_CODE = -1;
+
+    public static final String CAPTCHA_ACTION_CAPTCHA = "c";
+    public static final String BLOCK_ACTION_CAPTCHA = "b";
 }
