@@ -5,8 +5,6 @@ package com.perimeterx.models.httpmodels;
  * <p>
  * Created by Shikloshi on 04/07/2016.
  */
-
-//{"status":0,"uuid":"bb319090-2282-11e7-ba72-5d47483a3678","score":0,"action":"c"}
 public class RiskResponse {
 
     private String uuid;

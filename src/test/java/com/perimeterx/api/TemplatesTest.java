@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 @Test
 public class TemplatesTest {
 
-
     private String appId;
     private PXContext pxContext;
 

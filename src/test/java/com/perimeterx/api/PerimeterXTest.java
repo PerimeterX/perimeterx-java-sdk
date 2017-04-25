@@ -38,7 +38,6 @@ public class PerimeterXTest extends ConfiguredTest {
 
     @Test
     public void testPxVerify_verified() throws Exception {
-        System.out.println(configuration);
         PXClient client = TestObjectUtils.nonBlockingPXClient(configuration.getBlockingScore());
         PerimeterX perimeterx = TestObjectUtils.testablePerimeterXObject(configuration, client);
         HttpServletRequest request = new MockHttpServletRequest();
@@ -49,7 +48,7 @@ public class PerimeterXTest extends ConfiguredTest {
 
     @Test
     public void testPXConfigURL_verified() throws Exception {
-        String appId = "PXJWbMQarF";
+        String appId = "nitzan";
         PXConfiguration pxConfiguration = new PXConfiguration.Builder()
                 .cookieKey("cookieToken")
                 .authToken("authToken")
