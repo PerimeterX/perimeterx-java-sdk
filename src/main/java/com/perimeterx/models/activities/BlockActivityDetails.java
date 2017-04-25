@@ -2,7 +2,6 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.internals.cookie.RiskCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.BlockReason;
 
@@ -12,7 +11,7 @@ import com.perimeterx.models.risk.BlockReason;
  * Created by shikloshi on 06/07/2016.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class BlockActivityDetails implements ActivityDetails{
+public class BlockActivityDetails implements ActivityDetails {
 
     @JsonProperty("block_score")
     private int blockScore;
@@ -25,7 +24,7 @@ public class BlockActivityDetails implements ActivityDetails{
     @JsonProperty("http_version")
     private String httpVersion;
     @JsonProperty("px_cookie")
-    private RiskCookie pxCookie;
+    private String pxCookie;
 
     public BlockActivityDetails(PXContext context) {
         this.blockScore = context.getScore();
@@ -56,7 +55,7 @@ public class BlockActivityDetails implements ActivityDetails{
         return httpVersion;
     }
 
-    public RiskCookie getPxCookie() {
+    public String getPxCookie() {
         return pxCookie;
     }
 }

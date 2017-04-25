@@ -20,7 +20,7 @@ import testutils.TestObjectUtils;
  * Created by shikloshi on 17/07/2016.
  */
 @Test
-public class DefaultActivityHandlerTest {
+public class BufferedActivityHandlerTest {
 
     private DefaultActivityHandler activityHandler;
     private IPProvider ipProvider;

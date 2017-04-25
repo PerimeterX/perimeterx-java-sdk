@@ -1,5 +1,16 @@
 # Change Log
 
+## [v2.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-25-04)
+
+- Support cookie v3 
+- Support risk API v2
+- Support custom css/javascript/logo on block page
+- Send px_cookie_orig when cookie decryption fails
+- Invalid cookie format handling 
+- Buffered activities handling (async send)
+- Updated server URL
+- Redesign block/captcha page
+
 ## [v1.0.16](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.16...HEAD) (2016-02-10)
 
 - `HostnameProvider` interface to allow user defined hostname extraction from http request.

@@ -1,19 +1,16 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.internals.cookie.RiskCookie;
-import com.perimeterx.internals.cookie.RiskCookieDecoder;
+import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.api.PerimeterX;
+import com.perimeterx.internals.cookie.PXCookie;
+import com.perimeterx.internals.cookie.PXCookieFactory;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * PXCookieValidator
@@ -22,16 +19,11 @@ import java.security.spec.InvalidKeySpecException;
  */
 public class PXCookieValidator {
 
-    private RiskCookieDecoder cookieDecoder;
-
-    private void init(String cookieKey) throws Exception {
-        this.cookieDecoder = new RiskCookieDecoder(cookieKey);
-    }
+    private Logger L = LoggerFactory.getLogger(PerimeterX.class);
 
     public static PXCookieValidator getDecoder(String cookieKey) throws PXException {
         try {
             PXCookieValidator cookieValidator = new PXCookieValidator();
-            cookieValidator.init(cookieKey);
             return cookieValidator;
         } catch (Exception e) {
             throw new PXException(e);
@@ -44,32 +36,53 @@ public class PXCookieValidator {
      * @param context - request context, data from cookie will be populated
      * @return S2S call reason according to the result of cookie verification
      */
-    public S2SCallReason verify(PXContext context) {
+    public boolean verify(PXConfiguration pxConfiguration, PXContext context) {
         try {
-            String pxCookie = context.getPxCookie();
-            if (pxCookie == null || pxCookie.isEmpty()) {
-                return S2SCallReason.NO_COOKIE;
+            PXCookie pxCookie = PXCookieFactory.create( pxConfiguration,context);
+            if (pxCookie == null ) {
+                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                 return false;
             }
-            RiskCookie riskCookie = cookieDecoder.decryptRiskCookie(pxCookie);
-            context.setRiskCookie(riskCookie);
-            context.setVid(riskCookie.vid);
-            context.setUuid(riskCookie.uuid);
-            context.setScore(riskCookie.score.bot);
-            RiskCookieDecoder.ValidationResult validate = cookieDecoder.validate(riskCookie, new String[]{context.getUserAgent()});
-            switch (validate) {
-                case NO_SIGNING:
-                case INVALID:
-                    return S2SCallReason.INVALID_VERIFICATION;
-                case EXPIRED:
-                    return S2SCallReason.EXPIRED_COOKIE;
-                case VALID:
-                    return S2SCallReason.NONE;
-                default:
-                    return S2SCallReason.NONE;
+
+            // In case pxCookie will be modified from the outside extracting the cookie on the constructor
+            // will fail, we test for null for the cookie before, if its null then we want to set pxCookieOrig
+            if (pxCookie.getPxCookie() == null || !pxCookie.deserialize()){
+                context.setPxCookieOrig(context.getPxCookie());
+                context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+                return false;
             }
-        } catch (IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException | NoSuchPaddingException |
-                InvalidKeyException | InvalidKeySpecException | NoSuchAlgorithmException | IOException e) {
-            return S2SCallReason.INVALID_DECRYPTION;
+
+            context.setRiskCookie(pxCookie);
+            context.setVid(pxCookie.getVID());
+            context.setUuid(pxCookie.getUUID());
+            context.setScore(pxCookie.getScore());
+            context.setBlockAction(pxCookie.getBlockAction());
+            context.setCookieHmac(pxCookie.getHmac());
+
+            if (pxCookie.isExpired()){
+                context.setS2sCallReason(S2SCallReason.EXPIRED_COOKIE);
+                return false;
+            }
+
+            if (pxCookie.isHighScore()){
+                context.setBlockReason(BlockReason.COOKIE);
+                return true;
+            }
+
+            if (!pxCookie.isSecured()){
+                context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION);
+                return false;
+            }
+
+            context.setS2sCallReason(S2SCallReason.NONE);
+            return true;
+
+        } catch ( PXException | PXCookieDecryptionException e) {
+            L.error(e.getMessage());
+
+            context.setPxCookieOrig(context.getPxCookie());
+            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+            return false;
         }
     }
 }

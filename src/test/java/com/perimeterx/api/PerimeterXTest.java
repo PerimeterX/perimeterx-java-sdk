@@ -1,7 +1,5 @@
 package com.perimeterx.api;
 
-import com.perimeterx.api.providers.HostnameProvider;
-import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.http.PXClient;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -40,12 +38,23 @@ public class PerimeterXTest extends ConfiguredTest {
 
     @Test
     public void testPxVerify_verified() throws Exception {
-        System.out.println(configuration);
         PXClient client = TestObjectUtils.nonBlockingPXClient(configuration.getBlockingScore());
         PerimeterX perimeterx = TestObjectUtils.testablePerimeterXObject(configuration, client);
         HttpServletRequest request = new MockHttpServletRequest();
         HttpServletResponse response = new MockHttpServletResponse();
         perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
         Assert.assertNotEquals(response.getStatus(), 403);
+    }
+
+    @Test
+    public void testPXConfigURL_verified() throws Exception {
+        String appId = "nitzan";
+        PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+                .cookieKey("cookieToken")
+                .authToken("authToken")
+                .appId(appId)
+                .build();
+
+        Assert.assertEquals(pxConfiguration.getServerURL(),"https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
     }
 }

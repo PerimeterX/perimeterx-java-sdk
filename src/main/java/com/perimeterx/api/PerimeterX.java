@@ -26,7 +26,7 @@
 package com.perimeterx.api;
 
 import com.perimeterx.api.activities.ActivityHandler;
-import com.perimeterx.api.activities.DefaultActivityHandler;
+import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.CaptchaBlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
@@ -43,9 +43,14 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
-import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +65,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class PerimeterX {
 
-    Logger logger = LoggerFactory.getLogger(PerimeterX.class);
+    private Logger logger = LoggerFactory.getLogger(PerimeterX.class);
 
     private static PerimeterX instance = null;
 
@@ -76,9 +81,9 @@ public class PerimeterX {
     /**
      * Build a singleton object from configuration
      *
-     * @deprecated use public constructor instead
      * @param configuration - {@link PXConfiguration}
      * @return PerimeterX object
+     * @deprecated use public constructor instead
      */
     @Deprecated
     public static PerimeterX getInstance(PXConfiguration configuration) throws PXException {
@@ -92,19 +97,37 @@ public class PerimeterX {
         return instance;
     }
 
-   private void init(PXConfiguration configuration) throws PXException {
-       this.configuration = configuration;
-       PXHttpClient pxClient = PXHttpClient.getInstance(this.configuration.getServerURL(), this.configuration.getApiTimeout(), this.configuration.getAuthToken());
-       if (this.configuration.isCaptchaEnabled()) {
-           this.blockHandler = new CaptchaBlockHandler();
-       } else {
-           this.blockHandler = new DefaultBlockHandler();
-       }
-       this.serverValidator = new PXS2SValidator(pxClient);
-       this.captchaValidator = new PXCaptchaValidator(pxClient);
-       this.activityHandler = new DefaultActivityHandler(pxClient, this.configuration);
-       this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
-   }
+    private CloseableHttpClient getHttpClient(int timeout) {
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(200);
+        cm.setDefaultMaxPerRoute(20);
+        RequestConfig config = RequestConfig.custom()
+                .setConnectionRequestTimeout(timeout)
+                .build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(cm)
+                .setDefaultRequestConfig(config)
+                .build();
+        return httpClient;
+    }
+
+    private CloseableHttpAsyncClient getAsyncHttpClient() {
+        return HttpAsyncClients.createDefault();
+    }
+
+    private void init(PXConfiguration configuration) throws PXException {
+        this.configuration = configuration;
+        PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient(this.configuration.getApiTimeout()));
+        if (this.configuration.isCaptchaEnabled()) {
+            this.blockHandler = new CaptchaBlockHandler();
+        } else {
+            this.blockHandler = new DefaultBlockHandler();
+        }
+        this.serverValidator = new PXS2SValidator(pxClient);
+        this.captchaValidator = new PXCaptchaValidator(pxClient);
+        this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
+        this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
+    }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
         init(configuration);
@@ -149,27 +172,26 @@ public class PerimeterX {
             if (captchaValidator.verify(context)) {
                 return handleVerification(context, responseWrapper, BlockReason.COOKIE);
             }
-            S2SCallReason callReason = cookieValidator.verify(context);
-            logger.info("Risk API call reason: {}", callReason);
+
+            boolean cookieVerified = cookieValidator.verify(this.configuration ,context);
             // Cookie is valid (exists and not expired) so we can block according to it's score
-            if (callReason == S2SCallReason.NONE) {
+            if (cookieVerified) {
                 logger.info("No risk API Call is needed, using cookie");
                 return handleVerification(context, responseWrapper, BlockReason.COOKIE);
             }
 
-            context.setS2sCallReason(callReason);
             // Calls risk_api and populate the data retrieved to the context
             RiskRequest request = RiskRequest.fromContext(context);
             RiskResponse response = serverValidator.verify(request);
             if (response != null) {
-                context.setScore(response.getScores().getNonHuman());
+                context.setScore(response.getScore());
                 context.setUuid(response.getUuid());
                 return handleVerification(context, responseWrapper, BlockReason.SERVER);
             }
             return true;
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());
-            return true;
+            return false;
         }
     }
 
@@ -189,7 +211,7 @@ public class PerimeterX {
             logger.info("Request invalid");
             context.setBlockReason(blockReason);
             this.activityHandler.handleBlockActivity(context);
-            this.blockHandler.handleBlocking(context, responseWrapper);
+            this.blockHandler.handleBlocking(context, this.configuration, responseWrapper);
         }
         return verified;
     }

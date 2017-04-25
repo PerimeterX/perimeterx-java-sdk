@@ -1,5 +1,7 @@
 package com.perimeterx.http;
 
+import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
@@ -9,19 +11,21 @@ import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.nio.client.methods.HttpAsyncMethods;
+import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
+import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * Low level HTTP client
@@ -30,39 +34,32 @@ import java.nio.charset.Charset;
  */
 public class PXHttpClient implements PXClient {
 
-    Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
+    private Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
 
     private static PXHttpClient instance;
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
     private CloseableHttpClient httpClient;
-    private String authToken;
-    private String baseUrl;
+    private CloseableHttpAsyncClient asyncHttpClient;
 
-    public static PXHttpClient getInstance(String baseUrl, int timeout, String authToken) {
+    private PXConfiguration pxConfiguration;
+
+    public static PXHttpClient getInstance(PXConfiguration pxConfiguration, CloseableHttpAsyncClient asyncHttpClient, CloseableHttpClient httpClient) {
         if (instance == null) {
             synchronized (PXHttpClient.class) {
                 if (instance == null) {
-                    instance = new PXHttpClient(baseUrl, timeout, authToken);
+                    instance = new PXHttpClient(pxConfiguration, asyncHttpClient, httpClient);
                 }
             }
         }
         return instance;
     }
 
-    private PXHttpClient(String baseUrl, int timeout, String authToken) {
-        this.baseUrl = baseUrl;
-        this.authToken = authToken;
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(200);
-        cm.setDefaultMaxPerRoute(20);
-        RequestConfig config = RequestConfig.custom()
-                .setConnectionRequestTimeout(timeout)
-                .build();
-        httpClient = HttpClients.custom()
-                .setConnectionManager(cm)
-                .setDefaultRequestConfig(config)
-                .build();
+
+    private PXHttpClient(PXConfiguration pxConfiguration, CloseableHttpAsyncClient asyncHttpClient, CloseableHttpClient httpClient) {
+        this.pxConfiguration = pxConfiguration;
+        this.httpClient = httpClient;
+        this.asyncHttpClient = asyncHttpClient;
     }
 
     @Override
@@ -71,9 +68,9 @@ public class PXHttpClient implements PXClient {
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
             logger.info("Risk API Request: {}", requestBody);
-            HttpPost post = new HttpPost(baseUrl + Constants.API_RISK);
+            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setHeader("Authorization", "Bearer " + authToken);
+            post.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
             post.setHeader("Content-Type", "application/json");
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
@@ -97,9 +94,9 @@ public class PXHttpClient implements PXClient {
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
             logger.info("Sending Activity: {}", requestBody);
-            HttpPost post = new HttpPost(baseUrl + Constants.API_ACTIVITIES);
+            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setHeader("Authorization", "Bearer " + authToken);
+            post.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
             post.setHeader("Content-Type", "application/json");
             httpResponse = httpClient.execute(post);
             EntityUtils.consume(httpResponse.getEntity());
@@ -112,14 +109,39 @@ public class PXHttpClient implements PXClient {
         }
     }
 
+    @Override
+    public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
+        HttpAsyncRequestProducer producer = null;
+        try {
+            asyncHttpClient.start();
+
+            String requestBody = JsonUtils.writer.writeValueAsString(activities);
+            logger.info("Sending Activity: {}", requestBody);
+            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            post.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
+            post.setHeader("Content-Type", "application/json");
+
+            producer = HttpAsyncMethods.create(post);
+            asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
+
+        } catch (Exception e) {
+            throw new PXException(e);
+        } finally {
+            if (producer != null) {
+                producer.close();
+            }
+        }
+    }
+
     public CaptchaResponse sendCaptchaRequest(CaptchaRequest captchaRequest) throws PXException, IOException {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(captchaRequest);
             logger.info("Sending captcha verification: {}", requestBody);
-            HttpPost post = new HttpPost(baseUrl + Constants.API_CAPTCHA);
+            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_CAPTCHA);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setHeader("Authorization", "Bearer " + authToken);
+            post.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
             post.setHeader("Content-Type", "application/json");
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);

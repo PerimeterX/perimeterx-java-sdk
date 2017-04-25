@@ -7,9 +7,9 @@ import com.perimeterx.models.httpmodels.CaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.models.risk.Scores;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Mocking PXClient that is usually create an http request to PX servers
@@ -29,11 +29,16 @@ public class PXClientMock implements PXClient {
 
     @Override
     public RiskResponse riskApiCall(RiskRequest riskRequest) throws PXException, IOException {
-        return new RiskResponse("uuid", 0, new Scores(0, score, 0), null);
+        return new RiskResponse("uuid", 0, this.score, "c");
     }
 
     @Override
     public void sendActivity(Activity activity) throws PXException, IOException {
+        // noop
+    }
+
+    @Override
+    public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
         // noop
     }
 
