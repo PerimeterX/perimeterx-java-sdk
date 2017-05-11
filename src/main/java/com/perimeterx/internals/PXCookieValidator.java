@@ -60,7 +60,7 @@ public class PXCookieValidator {
             context.setCookieHmac(pxCookie.getHmac());
 
             if (pxCookie.isExpired()){
-                context.setS2sCallReason(S2SCallReason.EXPIRED_COOKIE);
+                context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED);
                 return false;
             }
 
