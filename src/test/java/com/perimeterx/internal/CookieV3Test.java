@@ -97,7 +97,7 @@ public class CookieV3Test {
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
         assertEquals(false, verify);
-        assertEquals(S2SCallReason.EXPIRED_COOKIE, context.getS2sCallReason());
+        assertEquals(S2SCallReason.COOKIE_EXPIRED, context.getS2sCallReason());
     }
 
     @Test
