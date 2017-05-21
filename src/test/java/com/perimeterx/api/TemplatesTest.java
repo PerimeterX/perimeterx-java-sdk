@@ -23,14 +23,18 @@ public class TemplatesTest {
 
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
-
+    private PXConfiguration config;
     @BeforeClass
     public void setUp() throws Exception {
         appId = "PX_APPID";
+        config = new PXConfiguration.Builder()
+                .appId(appId)
+                .authToken("AUTH_123")
+                .cookieKey("COOKIE_123").build();
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
         MockHttpServletRequest noCaptchaCookieReq = new MockHttpServletRequest();
-        pxContext = new PXContext(noCaptchaCookieReq, this.ipProvider, this.hostnameProvider, appId);
+        pxContext = new PXContext(noCaptchaCookieReq, this.ipProvider, this.hostnameProvider, config);
         pxContext.setUuid("PX_UUID");
         pxContext.setVid("PX_VID");
     }

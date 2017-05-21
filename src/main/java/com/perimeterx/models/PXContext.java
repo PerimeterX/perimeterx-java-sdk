@@ -1,5 +1,6 @@
 package com.perimeterx.models;
 
+import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.PXCookie;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -41,17 +43,18 @@ public class PXContext {
     private final String appId;
     private String blockAction;
     private String cookieHmac;
+    private boolean sensitiveRoute;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
-                     final HostnameProvider hostnameProvider, final String appId) {
-        this.appId = appId;
-        initContext(request);
+                     final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
+        this.appId = pxConfiguration.getAppId();
+        initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);
         this.hostname = hostnameProvider.getHostname(request);
         this.request = request;
     }
 
-    private void initContext(final HttpServletRequest request) {
+    private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
         this.headers = new HashMap<>();
         final Enumeration headerNames = request.getHeaderNames();
         while (headerNames.hasMoreElements()) {
@@ -88,6 +91,8 @@ public class PXContext {
         } else {
             this.httpMethod = StringUtils.EMPTY;
         }
+
+        this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
     }
 
     // Prefer to utilize this // throw exception for no cookie found
@@ -254,4 +259,16 @@ public class PXContext {
         this.cookieHmac = cookieHmac;
     }
 
+    public boolean isSensitiveRoute(){
+        return this.sensitiveRoute;
+    }
+
+    public boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri){
+        for (String sensitiveRoutePrefix : sensitiveRoutes){
+            if (uri.startsWith(sensitiveRoutePrefix)){
+                return true;
+            }
+        }
+        return false;
+    }
 }
