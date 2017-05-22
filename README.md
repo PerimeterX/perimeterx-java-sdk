@@ -48,7 +48,7 @@ If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors
 
 ```xml
 <dependency>
-	<groupId>com.perimeterx</groupId>
+   <groupId>com.perimeterx</groupId>
    <artifactId>perimeterx-sdk</artifactId>
    <version>${VERSION}</version>
 </dependency>
