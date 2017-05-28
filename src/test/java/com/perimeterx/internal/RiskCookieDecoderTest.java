@@ -35,13 +35,13 @@ public class RiskCookieDecoderTest {
         ((MockHttpServletRequest) request).addHeader("cookie", "_px=" + pxCookie);
         IPProvider ipProvider = new RemoteAddressIPProvider();
         HostnameProvider hostnameProvider = new DefaultHostnameProvider();
-        this.context = new PXContext(request, ipProvider, hostnameProvider, "appId");
         this.cookieValidator = PXCookieValidator.getDecoder("cookie_token");
         this.pxConfiguration = new PXConfiguration.Builder()
                 .cookieKey("COOKIE_KEY_STRING")
                 .appId("APP_ID")
                 .authToken("AUTH_TOKEN")
                 .build();
+        this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
     }
 
     @Test
