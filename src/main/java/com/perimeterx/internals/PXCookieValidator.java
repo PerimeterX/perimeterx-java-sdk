@@ -74,6 +74,11 @@ public class PXCookieValidator {
                 return false;
             }
 
+            if (context.isSensitiveRoute()){
+                context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
+                return false;
+            }
+
             context.setS2sCallReason(S2SCallReason.NONE);
             return true;
 
