@@ -240,7 +240,7 @@ public class PerimeterX {
     }
 
      /**
-     * Set Hostname Provider
+     * Set Set Verification Handler
      *
      * @param verificationHandler - sets the verification handler for user customization
      */

@@ -4,7 +4,7 @@ import com.perimeterx.models.risk.BlockReason;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- * An interface that describes how to handle the verification after the PerimeterX finished analyzing the request
+ * Interface for handling verification after PerimeterX service finished analyzing the request.
  * Created by nitzangoldfeder on 28/05/2017.
  */
 public interface VerificationHandler {
