@@ -34,6 +34,8 @@ import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
+import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
+import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
@@ -77,6 +79,7 @@ public class PerimeterX {
     private PXCaptchaValidator captchaValidator;
     private IPProvider ipProvider = new RemoteAddressIPProvider();
     private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
+    private VerificationHandler verificationHandler;
 
     /**
      * Build a singleton object from configuration
@@ -127,6 +130,7 @@ public class PerimeterX {
         this.captchaValidator = new PXCaptchaValidator(pxClient);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
+        this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
@@ -170,14 +174,14 @@ public class PerimeterX {
 
             PXContext context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration.getAppId());
             if (captchaValidator.verify(context)) {
-                return handleVerification(context, responseWrapper, BlockReason.COOKIE);
+                return verificationHandler.handleVerification(context, responseWrapper, BlockReason.COOKIE);
             }
 
             boolean cookieVerified = cookieValidator.verify(this.configuration ,context);
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
                 logger.info("No risk API Call is needed, using cookie");
-                return handleVerification(context, responseWrapper, BlockReason.COOKIE);
+                return verificationHandler.handleVerification(context, responseWrapper, BlockReason.COOKIE);
             }
 
             // Calls risk_api and populate the data retrieved to the context
@@ -186,34 +190,13 @@ public class PerimeterX {
             if (response != null) {
                 context.setScore(response.getScore());
                 context.setUuid(response.getUuid());
-                return handleVerification(context, responseWrapper, BlockReason.SERVER);
+                return verificationHandler.handleVerification(context, responseWrapper, BlockReason.SERVER);
             }
             return true;
         } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());
             return false;
         }
-    }
-
-    private boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper, BlockReason blockReason) throws PXException {
-        int score = context.getScore();
-        int blockingScore = this.configuration.getBlockingScore();
-        // If should block this request we will apply our block handle and send the block activity to px
-        boolean verified = score < blockingScore;
-        logger.info("Request score: {}, Blocking score: {}", score, blockingScore);
-        if (verified) {
-            logger.info("Request valid");
-            // Not blocking request and sending page_requested activity to px if configured as true
-            if (this.configuration.shouldSendPageActivities()) {
-                this.activityHandler.handlePageRequestedActivity(context);
-            }
-        } else {
-            logger.info("Request invalid");
-            context.setBlockReason(blockReason);
-            this.activityHandler.handleBlockActivity(context);
-            this.blockHandler.handleBlocking(context, this.configuration, responseWrapper);
-        }
-        return verified;
     }
 
     private boolean moduleEnabled() {
@@ -254,5 +237,14 @@ public class PerimeterX {
      */
     public void setHostnameProvider(HostnameProvider hostnameProvider) {
         this.hostnameProvider = hostnameProvider;
+    }
+
+     /**
+     * Set Hostname Provider
+     *
+     * @param verificationHandler - sets the verification handler for user customization
+     */
+    public void setVerificationHandler(VerificationHandler verificationHandler){
+        this.verificationHandler = verificationHandler;
     }
 }
