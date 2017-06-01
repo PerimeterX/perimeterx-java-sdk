@@ -10,9 +10,11 @@ import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
+import com.sun.corba.se.impl.orbutil.threadpool.TimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
@@ -79,8 +81,6 @@ public class PXHttpClient implements PXClient {
                 return JsonUtils.riskResponseReader.readValue(s);
             }
             return null;
-        } catch (Exception e) {
-            throw new PXException(e);
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();
@@ -124,7 +124,6 @@ public class PXHttpClient implements PXClient {
 
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
-
         } catch (Exception e) {
             throw new PXException(e);
         } finally {
@@ -150,8 +149,6 @@ public class PXHttpClient implements PXClient {
                 return JsonUtils.captchaResponseReader.readValue(s);
             }
             return null;
-        } catch (Exception e) {
-            throw new PXException(e);
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();

@@ -37,7 +37,6 @@ public class PXS2SValidatorTest {
     private PXClient client;
 
     private PXS2SValidator validator;
-    private RiskRequest riskRequest;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -50,15 +49,14 @@ public class PXS2SValidatorTest {
         this.request = new MockHttpServletRequest();
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
-        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, pxConfig);
-        this.riskRequest = RiskRequest.fromContext(context);
-        validator = new PXS2SValidator(this.client);
+        this.context = new PXContext(request, this.ipProvider, this.hostnameProvider, pxConfig);
+        validator = new PXS2SValidator(this.client, pxConfig);
     }
 
     @Test
     public void verifyTest() throws PXException, IOException {
-        RiskResponse verify = validator.verify(this.riskRequest);
-        Assert.assertEquals(verify.getScore(), 50);
+        boolean verify = validator.verify(context);
+        Assert.assertEquals(context.getScore(), 50);
     }
 
 }

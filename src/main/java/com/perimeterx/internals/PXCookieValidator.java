@@ -8,6 +8,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class PXCookieValidator {
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
                 return false;
             }
-
+            context.setPassReason(PassReason.COOKIE);
             context.setS2sCallReason(S2SCallReason.NONE);
             return true;
 

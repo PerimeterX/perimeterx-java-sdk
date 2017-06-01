@@ -5,7 +5,10 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
+import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
+import org.apache.http.conn.ConnectTimeoutException;
 
 import java.io.IOException;
 
@@ -33,16 +36,26 @@ public class PXCaptchaValidator {
         if (captchaCookieIsEmpty(context.getPxCaptcha())) {
             return false;
         }
+        long startRiskRtt = System.currentTimeMillis();
         try {
             CaptchaRequest captchaRequest = CaptchaRequest.fromContext(context);
             CaptchaResponse r = this.pxClient.sendCaptchaRequest(captchaRequest);
+            context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
             if (r != null && r.getStatus() == Constants.CAPTCHA_SUCCESS_CODE) {
                 context.setVid(r.getVid());
+                context.setPassReason(PassReason.CAPTCHA);
                 return true;
             }
+            context.setBlockReason(BlockReason.SERVER);
             return false;
-        } catch (IOException e) {
-            return false;
+        } catch (Exception e) {
+            context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
+            //Handle timeout exception, else it a different error
+            if (e instanceof ConnectTimeoutException){
+                context.setPassReason(PassReason.CAPTCHA_TIMEOUT);
+                return true;
+            }
+            throw new PXException(e);
         }
     }
 

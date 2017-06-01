@@ -30,7 +30,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
     }
 
     @Override
-    public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper, BlockReason blockReason) throws PXException {
+    public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws PXException {
         int score = context.getScore();
         int blockingScore = this.configuration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px
@@ -44,7 +44,6 @@ public class DefaultVerificationHandler implements VerificationHandler {
             }
         } else {
             logger.info("Request invalid");
-            context.setBlockReason(blockReason);
             this.activityHandler.handleBlockActivity(context);
             this.blockHandler.handleBlocking(context, this.configuration, responseWrapper);
         }

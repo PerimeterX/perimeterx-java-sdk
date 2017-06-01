@@ -12,9 +12,8 @@ public interface VerificationHandler {
      * A Method that handles the verification after PerimeterX finished its processing
      * @param context
      * @param responseWrapper
-     * @param blockReason
      * @return
      * @throws Exception
      */
-    boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper, BlockReason blockReason) throws Exception;
+    boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws Exception;
 }
