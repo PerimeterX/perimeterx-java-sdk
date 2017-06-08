@@ -51,7 +51,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

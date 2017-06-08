@@ -1,6 +1,7 @@
 package com.perimeterx.api.verificationhandler;
+
 import com.perimeterx.models.PXContext;
-import com.perimeterx.models.risk.BlockReason;
+
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**

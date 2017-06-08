@@ -10,8 +10,6 @@ import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import org.apache.http.conn.ConnectTimeoutException;
 
-import java.io.IOException;
-
 /**
  * High level Abstracted interface for calling PerimeterX servers
  * <p>
@@ -43,21 +41,19 @@ public class PXS2SValidator {
             pxContext.setScore(response.getScore());
             pxContext.setUuid(response.getUuid());
 
-            if (pxContext.getScore() <= pxConfiguration.getBlockingScore()){
+            if (pxContext.getScore() <= pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);
                 return true;
             }
             pxContext.setBlockReason(BlockReason.SERVER);
             return false;
+        } catch (ConnectTimeoutException e) {
+            // Timeout handling - report pass reason and proceed with request
+            pxContext.setPassReason(PassReason.S2S_TIMEOUT);
+            return true;
         } catch (Exception e) {
             pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
-            //Handle timeout exception, else it a different error
-            if (e instanceof ConnectTimeoutException){
-                pxContext.setPassReason(PassReason.S2S_TIMEOUT);
-                return true;
-            }
             throw new PXException(e);
         }
-
     }
 }

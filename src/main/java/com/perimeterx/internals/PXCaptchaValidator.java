@@ -10,8 +10,6 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import org.apache.http.conn.ConnectTimeoutException;
 
-import java.io.IOException;
-
 /**
  * PXCaptchaValidator - Validate captcha token from request using PX Server
  * <p>
@@ -48,13 +46,12 @@ public class PXCaptchaValidator {
             }
             context.setBlockReason(BlockReason.SERVER);
             return false;
+        } catch (ConnectTimeoutException e) {
+            // Timeout handling - report pass reason and proceed with request
+            context.setPassReason(PassReason.CAPTCHA_TIMEOUT);
+            return true;
         } catch (Exception e) {
             context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
-            //Handle timeout exception, else it a different error
-            if (e instanceof ConnectTimeoutException){
-                context.setPassReason(PassReason.CAPTCHA_TIMEOUT);
-                return true;
-            }
             throw new PXException(e);
         }
     }

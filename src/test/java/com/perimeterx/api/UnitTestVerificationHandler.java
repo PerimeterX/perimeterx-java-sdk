@@ -2,9 +2,7 @@ package com.perimeterx.api;
 
 import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.models.PXContext;
-import com.perimeterx.models.risk.BlockReason;
 import org.apache.http.HttpStatus;
-
 
 import javax.servlet.http.HttpServletResponseWrapper;
 

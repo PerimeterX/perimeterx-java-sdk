@@ -6,7 +6,6 @@ import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.risk.BlockReason;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
