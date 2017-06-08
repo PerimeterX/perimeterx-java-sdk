@@ -42,9 +42,7 @@ import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.RiskRequest;
-import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
@@ -105,7 +103,9 @@ public class PerimeterX {
         cm.setMaxTotal(200);
         cm.setDefaultMaxPerRoute(20);
         RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout)
                 .build();
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(cm)
@@ -126,7 +126,7 @@ public class PerimeterX {
         } else {
             this.blockHandler = new DefaultBlockHandler();
         }
-        this.serverValidator = new PXS2SValidator(pxClient);
+        this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.captchaValidator = new PXCaptchaValidator(pxClient);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
@@ -162,6 +162,7 @@ public class PerimeterX {
      * @throws PXException - PXException
      */
     public boolean pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
+        PXContext context = null;
         try {
             if (!moduleEnabled()) {
                 logger.info("PerimeterX verification SDK is disabled");
@@ -172,30 +173,30 @@ public class PerimeterX {
             cookie.setMaxAge(0);
             responseWrapper.addCookie(cookie);
 
-            PXContext context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
             if (captchaValidator.verify(context)) {
-                return verificationHandler.handleVerification(context, responseWrapper, BlockReason.COOKIE);
+                return verificationHandler.handleVerification(context, responseWrapper);
             }
 
             boolean cookieVerified = cookieValidator.verify(this.configuration ,context);
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
                 logger.info("No risk API Call is needed, using cookie");
-                return verificationHandler.handleVerification(context, responseWrapper, BlockReason.COOKIE);
+                return verificationHandler.handleVerification(context, responseWrapper);
             }
 
             // Calls risk_api and populate the data retrieved to the context
-            RiskRequest request = RiskRequest.fromContext(context);
-            RiskResponse response = serverValidator.verify(request);
-            if (response != null) {
-                context.setScore(response.getScore());
-                context.setUuid(response.getUuid());
-                return verificationHandler.handleVerification(context, responseWrapper, BlockReason.SERVER);
-            }
-            return true;
+            serverValidator.verify(context);
+
+            return verificationHandler.handleVerification(context,responseWrapper);
         } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());
-            return false;
+            // If any general exception is being thrown, notify in page_request activity
+            if (context != null){
+                context.setPassReason(PassReason.ERROR);
+                activityHandler.handlePageRequestedActivity(context);
+            }
+            return true;
         }
     }
 

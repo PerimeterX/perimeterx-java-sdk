@@ -6,7 +6,6 @@ import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.risk.BlockReason;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +29,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
     }
 
     @Override
-    public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper, BlockReason blockReason) throws PXException {
+    public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws PXException {
         int score = context.getScore();
         int blockingScore = this.configuration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px
@@ -44,7 +43,6 @@ public class DefaultVerificationHandler implements VerificationHandler {
             }
         } else {
             logger.info("Request invalid");
-            context.setBlockReason(blockReason);
             this.activityHandler.handleBlockActivity(context);
             this.blockHandler.handleBlocking(context, this.configuration, responseWrapper);
         }

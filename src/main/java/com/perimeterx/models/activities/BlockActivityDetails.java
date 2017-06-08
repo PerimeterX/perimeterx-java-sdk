@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.utils.Constants;
 
 /**
  * BlockActivityDetails model
@@ -25,6 +26,11 @@ public class BlockActivityDetails implements ActivityDetails {
     private String httpVersion;
     @JsonProperty("px_cookie")
     private String pxCookie;
+    @JsonProperty("risk_rtt")
+    private long riskRtt;
+    @JsonProperty("module_version")
+    private String moduleVersion;
+
 
     public BlockActivityDetails(PXContext context) {
         this.blockScore = context.getScore();
@@ -33,6 +39,8 @@ public class BlockActivityDetails implements ActivityDetails {
         this.httpMethod = context.getHttpMethod();
         this.httpVersion = context.getHttpVersion();
         this.pxCookie = context.getRiskCookie();
+        this.riskRtt = context.getRiskRtt();
+        this.moduleVersion = Constants.SDK_VERSION;
     }
 
     public int getBlockScore() {
@@ -58,4 +66,8 @@ public class BlockActivityDetails implements ActivityDetails {
     public String getPxCookie() {
         return pxCookie;
     }
+
+    public long getRiskRtt() { return riskRtt; }
+
+    public String getModuleVersion() { return moduleVersion; }
 }

@@ -2,8 +2,9 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.risk.PassReason;
+import com.perimeterx.utils.Constants;
 
 /**
  * Created by shikloshi on 07/11/2016.
@@ -15,14 +16,24 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     private String httpMethod;
     @JsonProperty("http_version")
     private String httpVersion;
-    @JsonPropertyOrder("px_cookie")
+    @JsonProperty("px_cookie")
     private String riskCookie;
+    @JsonProperty("pass_reason")
+    private PassReason passReason;
+    @JsonProperty("risk_rtt")
+    private long riskRtt;
+    @JsonProperty("module_version")
+    private String moduleVersion;
+
 
 
     public PageRequestedActivityDetails(PXContext context) {
         this.httpMethod = context.getHttpMethod();
         this.httpVersion = context.getHttpVersion();
         this.riskCookie = context.getRiskCookie();
+        this.passReason = context.getPassReason();
+        this.riskRtt = context.getRiskRtt();
+        this.moduleVersion = Constants.SDK_VERSION;
     }
 
     public String getHttpMethod() {
@@ -35,5 +46,15 @@ public class PageRequestedActivityDetails implements ActivityDetails {
 
     public String getRiskCookie() {
         return riskCookie;
+    }
+
+    public PassReason getPassReason() { return passReason; }
+
+    public long getRiskRtt(){
+        return riskRtt;
+    }
+
+    public String getModuleVersion() {
+        return moduleVersion;
     }
 }

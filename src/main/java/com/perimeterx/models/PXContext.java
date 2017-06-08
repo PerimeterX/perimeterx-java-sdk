@@ -5,6 +5,7 @@ import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.PXCookie;
 import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +45,8 @@ public class PXContext {
     private String blockAction;
     private String cookieHmac;
     private boolean sensitiveRoute;
+    private PassReason passReason;
+    private long riskRtt;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
                      final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
@@ -84,6 +87,9 @@ public class PXContext {
         this.fullUrl = request.getRequestURL().toString();
         this.hostname = request.getServerName();
         this.s2sCallReason = S2SCallReason.NONE;
+        this.passReason = PassReason.NONE;
+        this.riskRtt = 0;
+
         this.httpMethod = request.getMethod();
         String protocolDetails[] = request.getProtocol().split("/");
         if (protocolDetails.length > 1) {
@@ -237,6 +243,14 @@ public class PXContext {
         return pxCookieOrig;
     }
 
+    public PassReason getPassReason(){
+        return this.passReason;
+    }
+
+    public void setPassReason(PassReason passReason){
+        this.passReason = passReason;
+    }
+
     public void setPxCookieOrig(String pxCookieOrig) {
         this.pxCookieOrig = pxCookieOrig;
     }
@@ -261,6 +275,14 @@ public class PXContext {
 
     public boolean isSensitiveRoute(){
         return this.sensitiveRoute;
+    }
+
+    public long getRiskRtt(){
+        return this.riskRtt;
+    }
+
+    public void setRiskRtt(long riskRtt){
+        this.riskRtt = riskRtt;
     }
 
     public boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri){
