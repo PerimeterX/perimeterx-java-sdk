@@ -24,6 +24,8 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     private long riskRtt;
     @JsonProperty("module_version")
     private String moduleVersion;
+    @JsonProperty("client_uuid")
+    private String clientUuid;
 
 
 
@@ -34,6 +36,7 @@ public class PageRequestedActivityDetails implements ActivityDetails {
         this.passReason = context.getPassReason();
         this.riskRtt = context.getRiskRtt();
         this.moduleVersion = Constants.SDK_VERSION;
+        this.clientUuid = context.getUuid();
     }
 
     public String getHttpMethod() {
@@ -56,5 +59,9 @@ public class PageRequestedActivityDetails implements ActivityDetails {
 
     public String getModuleVersion() {
         return moduleVersion;
+    }
+
+    public String getClientUuid() {
+        return clientUuid;
     }
 }
