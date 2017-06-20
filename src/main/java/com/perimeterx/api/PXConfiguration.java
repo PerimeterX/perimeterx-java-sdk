@@ -1,5 +1,6 @@
 package com.perimeterx.api;
 
+import com.perimeterx.models.configuration.PXConfigurationStub;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.Validate;
 
@@ -31,6 +32,9 @@ public class PXConfiguration {
     private String cssRef;
     private String jsRef;
     private Set<String> sensitiveRoutes;
+    private String blockPageTemplate;
+    private String captchaPageTemplate;
+    private String checksum;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -51,6 +55,16 @@ public class PXConfiguration {
         jsRef = builder.jsRef;
         sensitiveRoutes = builder.sensitiveRoutes;
 
+    }
+
+    public void updateConfigurationFromStub(PXConfigurationStub pxConfigurationStub){
+        this.appId = pxConfigurationStub.getAppId();
+        this.checksum = pxConfigurationStub.getChecksum();
+        this.cookieKey = pxConfigurationStub.getCookieSecert();
+        this.blockingScore = pxConfigurationStub.getBlockingScore();
+        this.apiTimeout = pxConfigurationStub.getApiConnectTimeout();
+        this.blockPageTemplate = pxConfigurationStub.getTemplateBlockPage();
+        this.captchaPageTemplate = pxConfigurationStub.getTemplateCaptchaPage();
     }
 
     public String getAppId() {
@@ -119,6 +133,18 @@ public class PXConfiguration {
 
     public Set<String> getSensitiveRoutes() {
         return sensitiveRoutes;
+    }
+
+    public String getChecksum(){
+        return this.checksum;
+    }
+
+    public String getBlockPageTemplate(){
+        return this.blockPageTemplate;
+    }
+
+    public String getCaptchaPageTemplate(){
+        return this.captchaPageTemplate;
     }
 
     public static final class Builder {

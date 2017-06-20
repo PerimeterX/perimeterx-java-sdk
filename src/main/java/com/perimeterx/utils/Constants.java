@@ -32,6 +32,7 @@ public final class Constants {
     public final static String ACTIVITY_BLOCKED = "block";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
 
+    public static final String REMOTE_CONFIGURATION_SERVER_URL = "http://px-conf-mgmt-stg.perimeterx.net";
     public static final String SERVER_URL = "https://sapi-%s.perimeterx.net";
     public final static String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
     public final static String COOKIE_V1_KEY = "_px";
@@ -40,6 +41,7 @@ public final class Constants {
     public static final String API_RISK = "/api/v2/risk";
     public static final String API_ACTIVITIES = "/api/v1/collector/s2s";
     public static final String API_CAPTCHA = "/api/v1/risk/captcha";
+    public static final String API_REMOTE_CONFIGUTATION = "/module/";
 
     public static final int CAPTCHA_SUCCESS_CODE = 0;
     public static final int CAPTCHA_FAILED_CODE = -1;

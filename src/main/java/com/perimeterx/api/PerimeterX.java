@@ -34,6 +34,8 @@ import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
+import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigurationManager;
+import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
 import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
@@ -57,6 +59,11 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -78,6 +85,7 @@ public class PerimeterX {
     private IPProvider ipProvider = new RemoteAddressIPProvider();
     private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
     private VerificationHandler verificationHandler;
+    private RemoteConfigurationManager remoteConfigurationManager;
 
     /**
      * Build a singleton object from configuration
@@ -131,6 +139,9 @@ public class PerimeterX {
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
+        this.remoteConfigurationManager = new DefaultRemoteConfigurationManager(configuration, getHttpClient(this.configuration.getApiTimeout()));
+        Timer timer = new Timer();
+        timer.schedule((TimerTask) remoteConfigurationManager,0, 1000*60);
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
