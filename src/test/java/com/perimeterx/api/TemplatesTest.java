@@ -6,6 +6,7 @@ import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -45,7 +46,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(true)
                 .blockingScore(70)
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
@@ -59,7 +59,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
@@ -74,7 +73,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(true)
                 .blockingScore(70)
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
@@ -88,7 +86,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
@@ -102,7 +99,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .cssRef("http://www.google.com/script.js")
                 .build();
@@ -116,7 +112,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(true)
                 .blockingScore(70)
                 .cssRef("http://www.google.com/script.js")
                 .build();
@@ -130,7 +125,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(true)
                 .blockingScore(70)
                 .build();
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
@@ -143,7 +137,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .build();
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
@@ -156,7 +149,6 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .build();
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");

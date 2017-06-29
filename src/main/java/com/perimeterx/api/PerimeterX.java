@@ -28,7 +28,6 @@ package com.perimeterx.api;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
-import com.perimeterx.api.blockhandler.CaptchaBlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
@@ -43,6 +42,7 @@ import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
@@ -61,9 +61,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -129,19 +126,20 @@ public class PerimeterX {
     private void init(PXConfiguration configuration) throws PXException {
         this.configuration = configuration;
         PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient(this.configuration.getApiTimeout()));
-        if (this.configuration.isCaptchaEnabled()) {
-            this.blockHandler = new CaptchaBlockHandler();
-        } else {
-            this.blockHandler = new DefaultBlockHandler();
+
+        if (configuration.isRemoteConfigurationEnabled()){
+            this.remoteConfigurationManager = new DefaultRemoteConfigurationManager(configuration, pxClient);
+            Timer timer = new Timer();
+            timer.schedule((TimerTask) remoteConfigurationManager, Constants.REMOTE_CONFIGURATION_DELAY, Constants.REMOTE_CONFIGURATION_INTERVAL);
         }
+
+        this.blockHandler = new DefaultBlockHandler();
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.captchaValidator = new PXCaptchaValidator(pxClient);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
-        this.remoteConfigurationManager = new DefaultRemoteConfigurationManager(configuration, getHttpClient(this.configuration.getApiTimeout()));
-        Timer timer = new Timer();
-        timer.schedule((TimerTask) remoteConfigurationManager,0, 1000*60);
+
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
@@ -166,7 +164,6 @@ public class PerimeterX {
 
     /**
      * Verify http request using cookie or PX server call
-     *
      * @param req             - current http call examined by PX
      * @param responseWrapper - response wrapper on which we will set the response according to PX verification.
      * @return true if request is valid

@@ -1,6 +1,6 @@
 package testutils;
 
-import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.DefaultActivityHandler;
@@ -41,6 +41,7 @@ public class TestObjectUtils {
                 .appId("appId")
                 .authToken("token")
                 .cookieKey("cookieKey")
+                .remoteConfigurationEnabled(false)
                 .blockingScore(30)
                 .build();
     }

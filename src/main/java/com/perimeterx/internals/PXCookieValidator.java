@@ -1,6 +1,6 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.internals.cookie.PXCookie;
 import com.perimeterx.internals.cookie.PXCookieFactory;

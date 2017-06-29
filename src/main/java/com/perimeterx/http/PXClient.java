@@ -1,6 +1,7 @@
 package com.perimeterx.http;
 
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.configuration.PXConfigurationStub;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
@@ -54,4 +55,15 @@ public interface PXClient {
      * @throws IOException
      */
     CaptchaResponse sendCaptchaRequest(CaptchaRequest captchaRequest) throws PXException, IOException;
+
+    /**
+     * Calling remote configuration server and fetching the latest configuration values
+     * @return PXConfigurationStub
+     */
+    PXConfigurationStub getConfigurationFromServer();
+
+    /**
+     *  Updates the httpClient stored on the instance if any values of timeouts needs to be updated
+     */
+    void updateHttpClient();
 }

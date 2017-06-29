@@ -33,6 +33,9 @@ public final class Constants {
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
 
     public static final String REMOTE_CONFIGURATION_SERVER_URL = "http://px-conf-mgmt-stg.perimeterx.net";
+    public static final int REMOTE_CONFIGURATION_INTERVAL = 1000*60; // seconds
+    public static final int REMOTE_CONFIGURATION_DELAY = 0; // seconds
+
     public static final String SERVER_URL = "https://sapi-%s.perimeterx.net";
     public final static String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
     public final static String COOKIE_V1_KEY = "_px";

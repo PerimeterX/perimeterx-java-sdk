@@ -1,8 +1,9 @@
 package com.perimeterx.http;
 
-import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.configuration.PXConfigurationStub;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
@@ -11,10 +12,15 @@ import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
@@ -26,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Low level HTTP client
@@ -152,5 +160,57 @@ public class PXHttpClient implements PXClient {
                 httpResponse.close();
             }
         }
+    }
+
+    @Override
+    public PXConfigurationStub getConfigurationFromServer(){
+        logger.debug("DefaultRemoteConfigurationManager[getConfiguration]");
+        CloseableHttpResponse httpResponse;
+        String queryParams = "";
+        if (pxConfiguration.getChecksum() != null){
+            logger.debug("DefaultRemoteConfigurationManager[getConfiguration]: adding checksum");
+            queryParams = "?checksum=" + pxConfiguration.getChecksum();
+        }
+        PXConfigurationStub stub = null;
+        try {
+            HttpGet get = new HttpGet(Constants.REMOTE_CONFIGURATION_SERVER_URL + Constants.API_REMOTE_CONFIGUTATION + queryParams);
+
+            get.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
+            get.setHeader("Content-Type", "application/json");
+
+            httpResponse = httpClient.execute(get);
+            int httpCode = httpResponse.getStatusLine().getStatusCode();
+            if (httpCode == HttpStatus.SC_OK) {
+                String bodyContent = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
+                stub = JsonUtils.pxConfigurationStubReader.readValue(bodyContent);
+                logger.debug("DefaultRemoteConfigurationManager[getConfiguration] GET request successfully executed {}", bodyContent);
+            }else if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT){
+                logger.debug("DefaultRemoteConfigurationManager[getConfiguration] No updates found");
+            }else{
+                logger.debug("DefaultRemoteConfigurationManager[getConfiguration] Failed to get remote configuration, status code {}", httpCode);
+            }
+            return stub;
+        } catch (Exception e) {
+            logger.error("DefaultRemoteConfigurationManager[getConfiguration] EXCEPTION {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public void updateHttpClient(){
+        logger.error("DefaultRemoteConfigurationManager[updateHttpClient]: new values are set to http client connection manager api {} connection {}", pxConfiguration.getApiTimeout(), pxConfiguration.getConnectionTimeout());
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(200);
+        cm.setDefaultMaxPerRoute(20);
+        RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(pxConfiguration.getConnectionTimeout())
+                .setConnectionRequestTimeout(pxConfiguration.getConnectionTimeout())
+                .setSocketTimeout(pxConfiguration.getApiTimeout())
+                .build();
+        CloseableHttpClient httpClient = HttpClients.custom()
+                .setConnectionManager(cm)
+                .setDefaultRequestConfig(config)
+                .build();
+        this.httpClient = httpClient;
     }
 }

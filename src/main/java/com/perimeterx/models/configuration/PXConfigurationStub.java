@@ -1,37 +1,46 @@
 package com.perimeterx.models.configuration;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
+import java.util.Set;
 
 /**
  * Created by nitzangoldfeder on 19/06/2017.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PXConfigurationStub {
+
+    @JsonProperty("moduleEnabled")
+    private boolean moduleEnabled;
     @JsonProperty("checksum")
     private String checksum;
     @JsonProperty("cookieKey")
-    private String cookieSecert;
+    private String cookieSecret;
     @JsonProperty("appId")
     private String appId;
     @JsonProperty("blockingScore")
     private int blockingScore;
     @JsonProperty("debugMode")
     private boolean debugMode;
-    @JsonProperty("scoreHeader")
-    private String scoreHeaderName;
     @JsonProperty("moduleMode")
-    private String moduleMode;
+    private ModuleMode moduleMode;
     @JsonProperty("connectTimeout")
     private int apiConnectTimeout;
     @JsonProperty("riskTimeout")
     private int s2sTimeout;
-    @JsonProperty("blockPageTemplate")
-    private String templateBlockPage;
-    @JsonProperty("captchaPageTemplate")
-    private String templateCaptchaPage;
-    @JsonProperty("monitoringMode")
-    private String monitoringMode;
+    @JsonProperty("sensitiveHeaders")
+    private Set<String> sensitiveHeaders;
+
+    public boolean isModuleEnabled() {
+        return moduleEnabled;
+    }
+
+    public void setModuleEnabled(boolean moduleEnabled) {
+        this.moduleEnabled = moduleEnabled;
+    }
 
     public String getChecksum() {
         return checksum;
@@ -41,12 +50,12 @@ public class PXConfigurationStub {
         this.checksum = checksum;
     }
 
-    public String getCookieSecert() {
-        return cookieSecert;
+    public String getCookieSecret() {
+        return cookieSecret;
     }
 
-    public void setCookieSecert(String cookieSecert) {
-        this.cookieSecert = cookieSecert;
+    public void setCookieSecret(String cookieSecert) {
+        this.cookieSecret = cookieSecert;
     }
 
     public String getAppId() {
@@ -73,19 +82,11 @@ public class PXConfigurationStub {
         this.debugMode = debugMode;
     }
 
-    public String getScoreHeaderName() {
-        return scoreHeaderName;
-    }
-
-    public void setScoreHeaderName(String scoreHeaderName) {
-        this.scoreHeaderName = scoreHeaderName;
-    }
-
-    public String getModuleMode() {
+    public ModuleMode getModuleMode() {
         return moduleMode;
     }
 
-    public void setModuleMode(String moduleMode) {
+    public void setModuleMode(ModuleMode moduleMode) {
         this.moduleMode = moduleMode;
     }
 
@@ -105,27 +106,11 @@ public class PXConfigurationStub {
         this.s2sTimeout = s2sTimeout;
     }
 
-    public String getTemplateBlockPage() {
-        return templateBlockPage;
+    public Set<String> getSensitiveHeaders() {
+        return this.sensitiveHeaders;
     }
 
-    public void setTemplateBlockPage(String templateBlockPage) {
-        this.templateBlockPage = templateBlockPage;
-    }
-
-    public String getTemplateCaptchaPage() {
-        return templateCaptchaPage;
-    }
-
-    public void setTemplateCaptchaPage(String templateCaptchaPage) {
-        this.templateCaptchaPage = templateCaptchaPage;
-    }
-
-    public String getMonitoringMode(){
-        return this.monitoringMode;
-    }
-
-    public void setMonitoringMode(String monitoringMode){
-        this.monitoringMode = monitoringMode;
+    public void setSensitiveHeaders(Set<String> sensitiveHeaders){
+        this.sensitiveHeaders = sensitiveHeaders;
     }
 }

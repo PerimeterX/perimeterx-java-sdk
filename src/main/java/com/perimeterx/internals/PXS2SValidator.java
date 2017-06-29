@@ -1,6 +1,6 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
@@ -40,7 +40,7 @@ public class PXS2SValidator {
             response = pxClient.riskApiCall(request);
             pxContext.setScore(response.getScore());
             pxContext.setUuid(response.getUuid());
-
+            pxContext.setBlockAction(response.getAction());
             if (pxContext.getScore() <= pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);
                 return true;

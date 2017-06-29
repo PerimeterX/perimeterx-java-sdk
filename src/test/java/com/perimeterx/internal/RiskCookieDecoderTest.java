@@ -1,6 +1,6 @@
 package com.perimeterx.internal;
 
-import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;

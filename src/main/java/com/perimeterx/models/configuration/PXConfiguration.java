@@ -1,6 +1,5 @@
-package com.perimeterx.api;
+package com.perimeterx.models.configuration;
 
-import com.perimeterx.models.configuration.PXConfigurationStub;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.Validate;
 
@@ -19,12 +18,14 @@ public class PXConfiguration {
     private String cookieKey;
     private String authToken;
     private boolean moduleEnabled;
+    @Deprecated
     private boolean captchaEnabled;
     private boolean encryptionEnabled;
     private int blockingScore;
     private Set<String> sensitiveHeaders;
     private int maxBufferLen;
     private int apiTimeout;
+    private int connectionTimeout;
     private boolean sendPageActivities;
     private boolean signedWithIP;
     private String serverURL;
@@ -32,21 +33,21 @@ public class PXConfiguration {
     private String cssRef;
     private String jsRef;
     private Set<String> sensitiveRoutes;
-    private String blockPageTemplate;
-    private String captchaPageTemplate;
     private String checksum;
+    private boolean remoteConfigurationEnabled;
+    private ModuleMode moduleMode;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
         cookieKey = builder.cookieKey;
         authToken = builder.authToken;
         moduleEnabled = builder.moduleEnabled;
-        captchaEnabled = builder.captchaEnabled;
         encryptionEnabled = builder.encryptionEnabled;
         blockingScore = builder.blockingScore;
         sensitiveHeaders = builder.sensitiveHeaders;
         maxBufferLen = builder.maxBufferLen;
         apiTimeout = builder.apiTimeout;
+        connectionTimeout = builder.connectionTimeout;
         sendPageActivities = builder.sendPageActivities;
         signedWithIP = builder.signedWithIP;
         serverURL = builder.serverURL;
@@ -54,17 +55,24 @@ public class PXConfiguration {
         cssRef = builder.cssRef;
         jsRef = builder.jsRef;
         sensitiveRoutes = builder.sensitiveRoutes;
-
+        remoteConfigurationEnabled = builder.remoteConfigurationEnabled;
+        moduleMode = builder.moduleMode;
     }
 
     public void updateConfigurationFromStub(PXConfigurationStub pxConfigurationStub){
         this.appId = pxConfigurationStub.getAppId();
         this.checksum = pxConfigurationStub.getChecksum();
-        this.cookieKey = pxConfigurationStub.getCookieSecert();
+        this.cookieKey = pxConfigurationStub.getCookieSecret();
         this.blockingScore = pxConfigurationStub.getBlockingScore();
         this.apiTimeout = pxConfigurationStub.getApiConnectTimeout();
-        this.blockPageTemplate = pxConfigurationStub.getTemplateBlockPage();
-        this.captchaPageTemplate = pxConfigurationStub.getTemplateCaptchaPage();
+        this.connectionTimeout = pxConfigurationStub.getApiConnectTimeout();
+        this.sensitiveHeaders = pxConfigurationStub.getSensitiveHeaders();
+        this.moduleEnabled = pxConfigurationStub.isModuleEnabled();
+        this.moduleMode = pxConfigurationStub.getModuleMode();
+    }
+
+    public void disableModule(){
+        this.moduleEnabled = false;
     }
 
     public String getAppId() {
@@ -87,6 +95,7 @@ public class PXConfiguration {
         return moduleEnabled;
     }
 
+    @Deprecated
     public boolean isCaptchaEnabled() {
         return captchaEnabled;
     }
@@ -105,6 +114,10 @@ public class PXConfiguration {
 
     public int getApiTimeout() {
         return apiTimeout;
+    }
+
+    public int getConnectionTimeout() {
+        return this.connectionTimeout;
     }
 
     public boolean shouldSendPageActivities() {
@@ -139,12 +152,12 @@ public class PXConfiguration {
         return this.checksum;
     }
 
-    public String getBlockPageTemplate(){
-        return this.blockPageTemplate;
+    public boolean isRemoteConfigurationEnabled(){
+        return this.remoteConfigurationEnabled;
     }
 
-    public String getCaptchaPageTemplate(){
-        return this.captchaPageTemplate;
+    public ModuleMode getModuleMode() {
+        return moduleMode;
     }
 
     public static final class Builder {
@@ -152,12 +165,14 @@ public class PXConfiguration {
         private String cookieKey;
         private String authToken;
         private boolean moduleEnabled = true;
+        @Deprecated
         private boolean captchaEnabled = true;
         private boolean encryptionEnabled = true;
         private int blockingScore = 70;
         private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookie", "cookies"));
         private int maxBufferLen = 10;
         private int apiTimeout = 1000;
+        private int connectionTimeout = 1000;
         private boolean sendPageActivities = true;
         private boolean signedWithIP = false;
         private String serverURL;
@@ -165,6 +180,8 @@ public class PXConfiguration {
         private String cssRef;
         private String jsRef;
         private Set<String> sensitiveRoutes = new HashSet<>();
+        private boolean remoteConfigurationEnabled = true;
+        private ModuleMode moduleMode = ModuleMode.BLOCKING;
 
         public Builder() {
         }
@@ -192,6 +209,7 @@ public class PXConfiguration {
             return this;
         }
 
+        @Deprecated
         public Builder captchaEnabled(boolean val) {
             captchaEnabled = val;
             return this;
@@ -259,6 +277,21 @@ public class PXConfiguration {
 
         public Builder sensitiveRoutes(Set<String> val){
             sensitiveRoutes = val;
+            return this;
+        }
+
+        public Builder remoteConfigurationEnabled(boolean val){
+            remoteConfigurationEnabled = val;
+            return this;
+        }
+
+        public Builder moduleMode(ModuleMode val){
+            moduleMode = val;
+            return this;
+        }
+
+        public Builder connectionTimeout(int val){
+            connectionTimeout = val;
             return this;
         }
 

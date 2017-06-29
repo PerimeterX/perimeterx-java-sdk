@@ -1,6 +1,7 @@
 package com.perimeterx.api.verificationhandler;
 
-import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.models.configuration.ModuleMode;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
@@ -34,15 +35,15 @@ public class DefaultVerificationHandler implements VerificationHandler {
         int blockingScore = this.configuration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px
         boolean verified = score < blockingScore;
-        logger.info("Request score: {}, Blocking score: {}", score, blockingScore);
-        if (verified) {
-            logger.info("Request valid");
+//        logger.info("Request score: {}, Blocking score: {}", score, blockingScore);
+        if (verified || this.configuration.getModuleMode().equals(ModuleMode.MONITOR)) {
+            logger.info("Passing request {} {}", verified ,this.configuration.getModuleMode());
             // Not blocking request and sending page_requested activity to px if configured as true
             if (this.configuration.shouldSendPageActivities()) {
                 this.activityHandler.handlePageRequestedActivity(context);
             }
         } else {
-            logger.info("Request invalid");
+//            logger.info("Request invalid");
             this.activityHandler.handleBlockActivity(context);
             this.blockHandler.handleBlocking(context, this.configuration, responseWrapper);
         }

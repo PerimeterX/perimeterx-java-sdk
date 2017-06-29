@@ -2,6 +2,8 @@ package testutils;
 
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.configuration.ModuleMode;
+import com.perimeterx.models.configuration.PXConfigurationStub;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
@@ -9,6 +11,7 @@ import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -45,5 +48,25 @@ public class PXClientMock implements PXClient {
     @Override
     public CaptchaResponse sendCaptchaRequest(CaptchaRequest captchaRequest) throws PXException, IOException {
         return new CaptchaResponse(captchaReturnStatus, "1", "vid", "cid");
+    }
+
+    @Override
+    public PXConfigurationStub getConfigurationFromServer() {
+        PXConfigurationStub stub = new PXConfigurationStub();
+        stub.setAppId("stub_app_id");
+        stub.setChecksum("stub_checksum");
+        stub.setBlockingScore(1000);
+        stub.setCookieSecret("stub_cookie_key");
+        stub.setS2sTimeout(1500);
+        stub.setApiConnectTimeout(1500);
+        stub.setSensitiveHeaders(new HashSet<String>());
+        stub.setModuleEnabled(false);
+        stub.setModuleMode(ModuleMode.BLOCKING);
+        return stub;
+    }
+
+    @Override
+    public void updateHttpClient() {
+        //noop
     }
 }

@@ -3,7 +3,7 @@ package com.perimeterx.api.blockhandler.templates;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
-import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 import org.apache.commons.io.IOUtils;

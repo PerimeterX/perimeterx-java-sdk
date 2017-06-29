@@ -1,12 +1,13 @@
 package com.perimeterx.models;
 
-import com.perimeterx.api.PXConfiguration;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.PXCookie;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
+import com.perimeterx.utils.BlockActionEnum;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
@@ -42,7 +43,7 @@ public class PXContext {
     private String riskCookie;
     private final HttpServletRequest request;
     private final String appId;
-    private String blockAction;
+    private BlockActionEnum blockAction;
     private String cookieHmac;
     private boolean sensitiveRoute;
     private PassReason passReason;
@@ -258,15 +259,19 @@ public class PXContext {
     public void setBlockAction(String blockAction) {
         switch (blockAction){
             case Constants.CAPTCHA_ACTION_CAPTCHA:
-                this.blockAction = "captcha";
+                this.blockAction = BlockActionEnum.CAPTCHA;
                 break;
             case Constants.BLOCK_ACTION_CAPTCHA:
-                this.blockAction = "block";
+                this.blockAction = BlockActionEnum.BLOCK;
                 break;
             default:
-                this.blockAction = "captcha";
+                this.blockAction = BlockActionEnum.CAPTCHA;
                 break;
         }
+    }
+
+    public BlockActionEnum getBlockAction(){
+        return this.blockAction;
     }
 
     public void setCookieHmac(String cookieHmac) {
