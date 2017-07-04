@@ -180,7 +180,7 @@ public class PXConfiguration {
         private String cssRef;
         private String jsRef;
         private Set<String> sensitiveRoutes = new HashSet<>();
-        private boolean remoteConfigurationEnabled = true;
+        private boolean remoteConfigurationEnabled = false;
         private ModuleMode moduleMode = ModuleMode.BLOCKING;
 
         public Builder() {
