@@ -67,7 +67,11 @@ public class BlockActivityDetails implements ActivityDetails {
         return pxCookie;
     }
 
-    public long getRiskRtt() { return riskRtt; }
+    public long getRiskRtt() {
+        return riskRtt;
+    }
 
-    public String getModuleVersion() { return moduleVersion; }
+    public String getModuleVersion() {
+        return moduleVersion;
+    }
 }

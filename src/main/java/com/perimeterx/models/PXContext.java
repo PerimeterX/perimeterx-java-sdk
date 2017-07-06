@@ -1,9 +1,9 @@
 package com.perimeterx.models;
 
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.PXCookie;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
@@ -24,7 +24,7 @@ import java.util.Set;
  */
 public class PXContext {
 
-    private Map<String,String> pxCookies;
+    private Map<String, String> pxCookies;
     private String pxCookieOrig;
     private String pxCaptcha;
     private String ip;
@@ -118,13 +118,13 @@ public class PXContext {
         return cookieValue;
     }
 
-  private Map<String,String> extractPXCookies(String cookie) {
-        Map<String,String> cookieValue = new HashMap<>();
+    private Map<String, String> extractPXCookies(String cookie) {
+        Map<String, String> cookieValue = new HashMap<>();
         if (cookie != null) {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
                 String[] splicedCookie = c.split("=", 2);
-                switch (splicedCookie[0]){
+                switch (splicedCookie[0]) {
                     case Constants.COOKIE_V1_KEY:
                         cookieValue.put(Constants.COOKIE_V1_KEY, splicedCookie[1]);
                         break;
@@ -138,13 +138,13 @@ public class PXContext {
     }
 
     public String getPxCookie() {
-        if (pxCookies.isEmpty()){
+        if (pxCookies.isEmpty()) {
             return null;
         }
         return pxCookies.containsKey(Constants.COOKIE_V3_KEY) ? pxCookies.get(Constants.COOKIE_V3_KEY) : pxCookies.get(Constants.COOKIE_V1_KEY);
     }
 
-    public Map<String,String> getPxCookies() {
+    public Map<String, String> getPxCookies() {
         return pxCookies;
     }
 
@@ -244,11 +244,11 @@ public class PXContext {
         return pxCookieOrig;
     }
 
-    public PassReason getPassReason(){
+    public PassReason getPassReason() {
         return this.passReason;
     }
 
-    public void setPassReason(PassReason passReason){
+    public void setPassReason(PassReason passReason) {
         this.passReason = passReason;
     }
 
@@ -257,7 +257,7 @@ public class PXContext {
     }
 
     public void setBlockAction(String blockAction) {
-        switch (blockAction){
+        switch (blockAction) {
             case Constants.CAPTCHA_ACTION_CAPTCHA:
                 this.blockAction = BlockActionEnum.CAPTCHA;
                 break;
@@ -270,7 +270,7 @@ public class PXContext {
         }
     }
 
-    public BlockActionEnum getBlockAction(){
+    public BlockActionEnum getBlockAction() {
         return this.blockAction;
     }
 
@@ -278,21 +278,21 @@ public class PXContext {
         this.cookieHmac = cookieHmac;
     }
 
-    public boolean isSensitiveRoute(){
+    public boolean isSensitiveRoute() {
         return this.sensitiveRoute;
     }
 
-    public long getRiskRtt(){
+    public long getRiskRtt() {
         return this.riskRtt;
     }
 
-    public void setRiskRtt(long riskRtt){
+    public void setRiskRtt(long riskRtt) {
         this.riskRtt = riskRtt;
     }
 
-    public boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri){
-        for (String sensitiveRoutePrefix : sensitiveRoutes){
-            if (uri.startsWith(sensitiveRoutePrefix)){
+    public boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri) {
+        for (String sensitiveRoutePrefix : sensitiveRoutes) {
+            if (uri.startsWith(sensitiveRoutePrefix)) {
                 return true;
             }
         }

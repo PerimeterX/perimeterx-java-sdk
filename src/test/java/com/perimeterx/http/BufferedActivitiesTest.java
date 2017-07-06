@@ -1,12 +1,12 @@
 package com.perimeterx.http;
 
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

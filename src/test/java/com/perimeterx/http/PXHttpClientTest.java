@@ -2,7 +2,7 @@ package com.perimeterx.http;
 
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.models.configuration.PXConfigurationStub;
+import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import junit.framework.Assert;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 import testutils.TestObjectUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 
@@ -36,10 +37,10 @@ public class PXHttpClientTest {
     }
 
     @Test
-    public void testGetRemoteConfigurations(){
+    public void testGetRemoteConfigurations() throws IOException{
         mockValidRequest();
         pxClient = PXHttpClient.getInstance(pxConfig, asyncClient, httpClient);
-        PXConfigurationStub config = pxClient.getConfigurationFromServer();
+        PXDynamicConfiguration config = pxClient.getConfigurationFromServer();
         Assert.assertTrue(config.getAppId().equals("a_app_id"));
         Assert.assertTrue(config.getChecksum().equals("a_check_sum"));
         Assert.assertTrue(config.getCookieSecret().equals("a_cookie_key"));
@@ -52,7 +53,7 @@ public class PXHttpClientTest {
     }
 
     private void mockValidRequest() {
-        try{
+        try {
             String json = "{\"moduleEnabled\":false,\"cookieKey\":\"a_cookie_key\",\"blockingScore\":1000,\"appId\":\"a_app_id\",\"moduleMode\":\"blocking\",\"sensitiveHeaders\":[],\"connectTimeout\":3000,\"riskTimeout\":3000,\"debugMode\":false,\"checksum\":\"a_check_sum\"}";
             HttpEntity entity = mock(HttpEntity.class);
             CloseableHttpResponse response = mock(CloseableHttpResponse.class);
@@ -62,7 +63,7 @@ public class PXHttpClientTest {
             when(response.getEntity()).thenReturn(entity);
             when(httpClient.execute(isA(HttpUriRequest.class))).thenReturn(response);
             when(response.getStatusLine()).thenReturn(statusLine);
-        }catch (Exception e){
+        } catch (Exception e) {
             Assert.assertTrue(false);
         }
     }

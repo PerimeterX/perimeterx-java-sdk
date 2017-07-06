@@ -1,12 +1,12 @@
 package testutils;
 
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXS2SValidator;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.Constants;
 
 import java.lang.reflect.Field;

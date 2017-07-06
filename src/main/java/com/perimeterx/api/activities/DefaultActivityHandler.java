@@ -1,10 +1,10 @@
 package com.perimeterx.api.activities;
 
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.ActivityFactory;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
 

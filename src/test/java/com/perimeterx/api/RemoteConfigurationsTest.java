@@ -1,33 +1,39 @@
 package com.perimeterx.api;
 
-import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigurationManager;
+import com.perimeterx.api.remoteconfigurations.ObserverRemoteConfigManager;
 import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
-import com.perimeterx.http.PXClient;
+import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import junit.framework.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import testutils.PXClientMock;
 import testutils.TestObjectUtils;
 
+import java.io.IOException;
 import java.util.HashSet;
+
+import static org.mockito.Mockito.*;
 
 
 @Test
 public class RemoteConfigurationsTest {
     PXConfiguration config;
-    PXClient pxClient;
+    PXHttpClient pxClient;
 
     @BeforeMethod
     public void setUp() {
         config = TestObjectUtils.generateConfiguration();
-        pxClient = new PXClientMock(100, 403);
+        pxClient = mock(PXHttpClient.class);
     }
 
     @Test
-    public void pullConfigurationsSuccess(){
-        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigurationManager(config, pxClient);
+    public void pullConfigurationsSuccess() throws IOException{
+        PXDynamicConfiguration pxDynamicConfiguration = getDynamicConfiguration("stub_app_id", "stub_checksum",
+                                1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), false, ModuleMode.BLOCKING);
+        when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
+        RemoteConfigurationManager remoteConfigurationManager = new ObserverRemoteConfigManager(config, pxClient);
         remoteConfigurationManager.getConfiguration();
         Assert.assertTrue(config.getAppId().equals("stub_app_id"));
         Assert.assertTrue(config.getCookieKey().equals("stub_cookie_key"));
@@ -38,5 +44,42 @@ public class RemoteConfigurationsTest {
         Assert.assertTrue(config.getSensitiveHeaders().equals(new HashSet<String>()));
         Assert.assertTrue(config.isModuleEnabled() == false);
         Assert.assertTrue(config.getModuleMode().equals(ModuleMode.BLOCKING));
+    }
+
+    @Test
+    public void  pullConfigurationsFailed() throws IOException{
+        PXDynamicConfiguration pxDynamicConfiguration = getDynamicConfiguration("stub_app_id", "stub_checksum",
+                1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), true, ModuleMode.BLOCKING);
+        when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
+        RemoteConfigurationManager remoteConfigurationManager = new ObserverRemoteConfigManager(config, pxClient);
+        remoteConfigurationManager.getConfiguration();
+        when(pxClient.getConfigurationFromServer()).thenReturn(null);
+        remoteConfigurationManager.getConfiguration();
+        Assert.assertTrue(config.isModuleEnabled() == true);
+    }
+
+    @Test
+    public void pullConfigurationsFirstTimeFailed() throws IOException{
+        when(pxClient.getConfigurationFromServer()).thenReturn(null);
+        RemoteConfigurationManager remoteConfigurationManager = new ObserverRemoteConfigManager(config, pxClient);
+        remoteConfigurationManager.getConfiguration();
+        Assert.assertTrue(config.isModuleEnabled() == false);
+    }
+
+
+    private PXDynamicConfiguration getDynamicConfiguration(String appId, String checksum, int blockingScore, String cookieSecert,
+                                   int s2sTimeout, int connectionTimeout, HashSet<String> sensitiveRotues, boolean moduleEnabled, ModuleMode moduleMode){
+        PXDynamicConfiguration pxDynamicConfig = new PXDynamicConfiguration();
+        pxDynamicConfig.setAppId(appId);
+        pxDynamicConfig.setChecksum(checksum);
+        pxDynamicConfig.setBlockingScore(blockingScore);
+        pxDynamicConfig.setCookieSecret(cookieSecert);
+        pxDynamicConfig.setS2sTimeout(s2sTimeout);
+        pxDynamicConfig.setApiConnectTimeout(connectionTimeout);
+        pxDynamicConfig.setSensitiveHeaders(sensitiveRotues);
+        pxDynamicConfig.setModuleEnabled(moduleEnabled);
+        pxDynamicConfig.setModuleMode(moduleMode);
+
+        return pxDynamicConfig;
     }
 }

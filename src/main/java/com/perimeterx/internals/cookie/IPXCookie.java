@@ -8,13 +8,19 @@ import com.perimeterx.models.exceptions.PXException;
  */
 public interface IPXCookie {
     String getHmac();
+
     String getUUID();
+
     String getVID();
+
     String getBlockAction();
+
     long getTimestamp();
+
     int getScore();
 
     boolean isCookieFormatValid(JsonNode decodedCookie);
+
     boolean isSecured() throws PXException;
 
 }

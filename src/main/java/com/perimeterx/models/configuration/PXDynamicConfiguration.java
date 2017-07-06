@@ -1,9 +1,7 @@
 package com.perimeterx.models.configuration;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.Set;
 
@@ -11,7 +9,7 @@ import java.util.Set;
  * Created by nitzangoldfeder on 19/06/2017.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PXConfigurationStub {
+public class PXDynamicConfiguration {
 
     @JsonProperty("moduleEnabled")
     private boolean moduleEnabled;
@@ -110,7 +108,7 @@ public class PXConfigurationStub {
         return this.sensitiveHeaders;
     }
 
-    public void setSensitiveHeaders(Set<String> sensitiveHeaders){
+    public void setSensitiveHeaders(Set<String> sensitiveHeaders) {
         this.sensitiveHeaders = sensitiveHeaders;
     }
 }

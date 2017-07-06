@@ -1,11 +1,11 @@
 package com.perimeterx.api.verificationhandler;
 
-import com.perimeterx.models.configuration.ModuleMode;
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.ModuleMode;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +19,11 @@ public class DefaultVerificationHandler implements VerificationHandler {
 
     private Logger logger = LoggerFactory.getLogger(PerimeterX.class);
 
-    private  PXConfiguration configuration;
+    private PXConfiguration configuration;
     private ActivityHandler activityHandler;
     private BlockHandler blockHandler;
 
-    public DefaultVerificationHandler(PXConfiguration pxConfiguration, ActivityHandler activityHandler, BlockHandler blockHandler){
+    public DefaultVerificationHandler(PXConfiguration pxConfiguration, ActivityHandler activityHandler, BlockHandler blockHandler) {
         this.configuration = pxConfiguration;
         this.activityHandler = activityHandler;
         this.blockHandler = blockHandler;
@@ -37,7 +37,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
         boolean verified = score < blockingScore;
         logger.info("Request score: {}, Blocking score: {}", score, blockingScore);
         if (verified || this.configuration.getModuleMode().equals(ModuleMode.MONITOR)) {
-            logger.info("Passing request {} {}", verified ,this.configuration.getModuleMode());
+            logger.info("Passing request {} {}", verified, this.configuration.getModuleMode());
             // Not blocking request and sending page_requested activity to px if configured as true
             if (this.configuration.shouldSendPageActivities()) {
                 this.activityHandler.handlePageRequestedActivity(context);

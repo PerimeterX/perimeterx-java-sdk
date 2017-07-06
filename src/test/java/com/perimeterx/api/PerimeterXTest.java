@@ -58,7 +58,7 @@ public class PerimeterXTest extends ConfiguredTest {
                 .appId(appId)
                 .build();
 
-        Assert.assertEquals(pxConfiguration.getServerURL(),"https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
+        Assert.assertEquals(pxConfiguration.getServerURL(), "https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
     }
 
     @Test

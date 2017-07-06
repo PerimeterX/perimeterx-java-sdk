@@ -1,8 +1,8 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;

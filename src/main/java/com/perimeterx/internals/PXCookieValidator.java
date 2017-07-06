@@ -1,10 +1,10 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.internals.cookie.PXCookie;
 import com.perimeterx.internals.cookie.PXCookieFactory;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PXCookieValidator {
 
-    private Logger L = LoggerFactory.getLogger(PerimeterX.class);
+    private Logger L = LoggerFactory.getLogger(PXCookieValidator.class);
 
     public static PXCookieValidator getDecoder(String cookieKey) throws PXException {
         try {
@@ -39,15 +39,15 @@ public class PXCookieValidator {
      */
     public boolean verify(PXConfiguration pxConfiguration, PXContext context) {
         try {
-            PXCookie pxCookie = PXCookieFactory.create( pxConfiguration,context);
-            if (pxCookie == null ) {
-                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
-                 return false;
+            PXCookie pxCookie = PXCookieFactory.create(pxConfiguration, context);
+            if (pxCookie == null) {
+                context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                return false;
             }
 
             // In case pxCookie will be modified from the outside extracting the cookie on the constructor
             // will fail, we test for null for the cookie before, if its null then we want to set pxCookieOrig
-            if (pxCookie.getPxCookie() == null || !pxCookie.deserialize()){
+            if (pxCookie.getPxCookie() == null || !pxCookie.deserialize()) {
                 context.setPxCookieOrig(context.getPxCookie());
                 context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
                 return false;
@@ -60,22 +60,22 @@ public class PXCookieValidator {
             context.setBlockAction(pxCookie.getBlockAction());
             context.setCookieHmac(pxCookie.getHmac());
 
-            if (pxCookie.isExpired()){
+            if (pxCookie.isExpired()) {
                 context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED);
                 return false;
             }
 
-            if (pxCookie.isHighScore()){
+            if (pxCookie.isHighScore()) {
                 context.setBlockReason(BlockReason.COOKIE);
                 return true;
             }
 
-            if (!pxCookie.isSecured()){
+            if (!pxCookie.isSecured()) {
                 context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION);
                 return false;
             }
 
-            if (context.isSensitiveRoute()){
+            if (context.isSensitiveRoute()) {
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
                 return false;
             }
@@ -83,7 +83,7 @@ public class PXCookieValidator {
             context.setS2sCallReason(S2SCallReason.NONE);
             return true;
 
-        } catch ( PXException | PXCookieDecryptionException e) {
+        } catch (PXException | PXCookieDecryptionException e) {
             L.error(e.getMessage());
 
             context.setPxCookieOrig(context.getPxCookie());

@@ -1,10 +1,10 @@
 package com.perimeterx.api.activities;
 
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.ActivityFactory;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Buffered activities and sends them to PX servers when buffer is full
- *
+ * <p>
  * Created by nitzangoldfeder on 05/03/2017.
  */
 public class BufferedActivityHandler implements ActivityHandler {

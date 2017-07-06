@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 public interface VerificationHandler {
     /**
      * A Method that handles the verification after PerimeterX finished its processing
+     *
      * @param context
      * @param responseWrapper
      * @return

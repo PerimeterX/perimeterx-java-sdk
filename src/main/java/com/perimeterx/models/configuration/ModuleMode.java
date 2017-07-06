@@ -12,7 +12,7 @@ public enum ModuleMode {
 
     private String value;
 
-    ModuleMode(String value){
+    ModuleMode(String value) {
         this.value = value;
     }
 

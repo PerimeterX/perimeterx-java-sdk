@@ -1,12 +1,12 @@
 package com.perimeterx.internal;
 
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.S2SCallReason;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -45,7 +45,7 @@ public class RiskCookieDecoderTest {
     }
 
     @Test
-    public void testOrigPXCookieSentOnCookieDecryptFails(){
+    public void testOrigPXCookieSentOnCookieDecryptFails() {
         boolean verify = cookieValidator.verify(pxConfiguration, context);
         assertEquals(context.getS2sCallReason(), S2SCallReason.INVALID_DECRYPTION);
         assertEquals(context.getPxCookieOrig(), pxCookie);

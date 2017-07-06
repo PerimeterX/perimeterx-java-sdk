@@ -1,25 +1,25 @@
 package com.perimeterx.models.configuration;
 
+import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * PX configuration object
  * <p>
  * Created by shikloshi on 03/07/2016.
  */
-public class PXConfiguration {
+public class PXConfiguration implements Observer {
+    private Logger L = LoggerFactory.getLogger(PXCookieValidator.class);
 
     private String appId;
     private String cookieKey;
     private String authToken;
     private boolean moduleEnabled;
-    @Deprecated
-    private boolean captchaEnabled;
     private boolean encryptionEnabled;
     private int blockingScore;
     private Set<String> sensitiveHeaders;
@@ -36,6 +36,8 @@ public class PXConfiguration {
     private String checksum;
     private boolean remoteConfigurationEnabled;
     private ModuleMode moduleMode;
+    private int remoteConfigurationInterval;
+    private int remoteConfigurationDelay;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -57,21 +59,11 @@ public class PXConfiguration {
         sensitiveRoutes = builder.sensitiveRoutes;
         remoteConfigurationEnabled = builder.remoteConfigurationEnabled;
         moduleMode = builder.moduleMode;
+        remoteConfigurationInterval = builder.remoteConfigurationInterval;
+        remoteConfigurationDelay = builder.remoteConfigurationDelay;
     }
 
-    public void updateConfigurationFromStub(PXConfigurationStub pxConfigurationStub){
-        this.appId = pxConfigurationStub.getAppId();
-        this.checksum = pxConfigurationStub.getChecksum();
-        this.cookieKey = pxConfigurationStub.getCookieSecret();
-        this.blockingScore = pxConfigurationStub.getBlockingScore();
-        this.apiTimeout = pxConfigurationStub.getApiConnectTimeout();
-        this.connectionTimeout = pxConfigurationStub.getApiConnectTimeout();
-        this.sensitiveHeaders = pxConfigurationStub.getSensitiveHeaders();
-        this.moduleEnabled = pxConfigurationStub.isModuleEnabled();
-        this.moduleMode = pxConfigurationStub.getModuleMode();
-    }
-
-    public void disableModule(){
+    public void disableModule() {
         this.moduleEnabled = false;
     }
 
@@ -93,11 +85,6 @@ public class PXConfiguration {
 
     public boolean isModuleEnabled() {
         return moduleEnabled;
-    }
-
-    @Deprecated
-    public boolean isCaptchaEnabled() {
-        return captchaEnabled;
     }
 
     public boolean isEncryptionEnabled() {
@@ -148,11 +135,11 @@ public class PXConfiguration {
         return sensitiveRoutes;
     }
 
-    public String getChecksum(){
+    public String getChecksum() {
         return this.checksum;
     }
 
-    public boolean isRemoteConfigurationEnabled(){
+    public boolean isRemoteConfigurationEnabled() {
         return this.remoteConfigurationEnabled;
     }
 
@@ -160,13 +147,37 @@ public class PXConfiguration {
         return moduleMode;
     }
 
+    public int getRemoteConfigurationInterval(){
+        return this.remoteConfigurationInterval;
+    }
+
+    public int getRemoteConfigurationDelay(){
+        return this.remoteConfigurationDelay;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if (arg instanceof  PXDynamicConfiguration){
+            L.info("Updating PXConfiguration file");
+            PXDynamicConfiguration pxDynamicConfiguration = (PXDynamicConfiguration) arg;
+
+            this.appId = pxDynamicConfiguration.getAppId();
+            this.checksum = pxDynamicConfiguration.getChecksum();
+            this.cookieKey = pxDynamicConfiguration.getCookieSecret();
+            this.blockingScore = pxDynamicConfiguration.getBlockingScore();
+            this.apiTimeout = pxDynamicConfiguration.getApiConnectTimeout();
+            this.connectionTimeout = pxDynamicConfiguration.getApiConnectTimeout();
+            this.sensitiveHeaders = pxDynamicConfiguration.getSensitiveHeaders();
+            this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
+            this.moduleMode = pxDynamicConfiguration.getModuleMode();
+        }
+    }
+
     public static final class Builder {
         private String appId;
         private String cookieKey;
         private String authToken;
         private boolean moduleEnabled = true;
-        @Deprecated
-        private boolean captchaEnabled = true;
         private boolean encryptionEnabled = true;
         private int blockingScore = 70;
         private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookie", "cookies"));
@@ -182,6 +193,8 @@ public class PXConfiguration {
         private Set<String> sensitiveRoutes = new HashSet<>();
         private boolean remoteConfigurationEnabled = false;
         private ModuleMode moduleMode = ModuleMode.BLOCKING;
+        private int remoteConfigurationInterval = 1000 * 5;
+        private int remoteConfigurationDelay = 0;
 
         public Builder() {
         }
@@ -206,12 +219,6 @@ public class PXConfiguration {
 
         public Builder moduleEnabled(boolean val) {
             moduleEnabled = val;
-            return this;
-        }
-
-        @Deprecated
-        public Builder captchaEnabled(boolean val) {
-            captchaEnabled = val;
             return this;
         }
 
@@ -260,40 +267,52 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder customLogo(String val){
+        public Builder customLogo(String val) {
             customLogo = val;
             return this;
         }
 
-        public Builder cssRef(String val){
+        public Builder cssRef(String val) {
             cssRef = val;
             return this;
         }
 
-        public Builder jsRef(String val){
+        public Builder jsRef(String val) {
             jsRef = val;
             return this;
         }
 
-        public Builder sensitiveRoutes(Set<String> val){
+        public Builder sensitiveRoutes(Set<String> val) {
             sensitiveRoutes = val;
             return this;
         }
 
-        public Builder remoteConfigurationEnabled(boolean val){
+        public Builder remoteConfigurationEnabled(boolean val) {
             remoteConfigurationEnabled = val;
             return this;
         }
 
-        public Builder moduleMode(ModuleMode val){
+        public Builder moduleMode(ModuleMode val) {
             moduleMode = val;
             return this;
         }
 
-        public Builder connectionTimeout(int val){
+        public Builder connectionTimeout(int val) {
             connectionTimeout = val;
             return this;
         }
+
+        public Builder remoteConfigurationInterval(int val) {
+            remoteConfigurationInterval = val;
+            return this;
+        }
+
+
+        public Builder remoteConfigurationDelay(int val) {
+            remoteConfigurationDelay = val;
+            return this;
+        }
+
 
         public PXConfiguration build() {
             Validate.notEmpty(this.appId, "Application ID (appId) must be set");

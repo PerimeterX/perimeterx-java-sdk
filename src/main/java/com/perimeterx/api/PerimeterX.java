@@ -33,10 +33,12 @@ import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
-import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigurationManager;
+import com.perimeterx.api.remoteconfigurations.ObserverRemoteConfigManager;
 import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
+import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
 import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
+import com.perimeterx.http.PXClient;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
@@ -59,8 +61,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -82,7 +82,7 @@ public class PerimeterX {
     private IPProvider ipProvider = new RemoteAddressIPProvider();
     private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
     private VerificationHandler verificationHandler;
-    private RemoteConfigurationManager remoteConfigurationManager;
+    private TimerConfigUpdater configUpdater; // might be better create ConfigUpdater interface
 
     /**
      * Build a singleton object from configuration
@@ -103,14 +103,14 @@ public class PerimeterX {
         return instance;
     }
 
-    private CloseableHttpClient getHttpClient(int timeout) {
+    private CloseableHttpClient getHttpClient() {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(200);
         cm.setDefaultMaxPerRoute(20);
         RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout)
+                .setConnectTimeout(configuration.getConnectionTimeout())
+                .setConnectionRequestTimeout(configuration.getConnectionTimeout())
+                .setSocketTimeout(configuration.getApiTimeout())
                 .build();
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(cm)
@@ -125,12 +125,12 @@ public class PerimeterX {
 
     private void init(PXConfiguration configuration) throws PXException {
         this.configuration = configuration;
-        PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient(this.configuration.getApiTimeout()));
+        PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient());
 
-        if (configuration.isRemoteConfigurationEnabled()){
-            this.remoteConfigurationManager = new DefaultRemoteConfigurationManager(configuration, pxClient);
-            Timer timer = new Timer();
-            timer.schedule((TimerTask) remoteConfigurationManager, Constants.REMOTE_CONFIGURATION_DELAY, Constants.REMOTE_CONFIGURATION_INTERVAL);
+        if (configuration.isRemoteConfigurationEnabled()) {
+            RemoteConfigurationManager remoteConfigManager = new ObserverRemoteConfigManager(configuration, pxClient);
+            this.configUpdater = new TimerConfigUpdater(remoteConfigManager);
+            this.configUpdater.schedule(configuration.getRemoteConfigurationDelay(), configuration.getRemoteConfigurationInterval());
         }
 
         this.blockHandler = new DefaultBlockHandler();
@@ -164,6 +164,7 @@ public class PerimeterX {
 
     /**
      * Verify http request using cookie or PX server call
+     *
      * @param req             - current http call examined by PX
      * @param responseWrapper - response wrapper on which we will set the response according to PX verification.
      * @return true if request is valid
@@ -186,7 +187,7 @@ public class PerimeterX {
                 return verificationHandler.handleVerification(context, responseWrapper);
             }
 
-            boolean cookieVerified = cookieValidator.verify(this.configuration ,context);
+            boolean cookieVerified = cookieValidator.verify(this.configuration, context);
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
                 logger.info("No risk API Call is needed, using cookie");
@@ -196,11 +197,11 @@ public class PerimeterX {
             // Calls risk_api and populate the data retrieved to the context
             serverValidator.verify(context);
 
-            return verificationHandler.handleVerification(context,responseWrapper);
+            return verificationHandler.handleVerification(context, responseWrapper);
         } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
-            if (context != null){
+            if (context != null) {
                 context.setPassReason(PassReason.ERROR);
                 activityHandler.handlePageRequestedActivity(context);
             }
@@ -248,12 +249,12 @@ public class PerimeterX {
         this.hostnameProvider = hostnameProvider;
     }
 
-     /**
+    /**
      * Set Set Verification Handler
      *
      * @param verificationHandler - sets the verification handler for user customization
      */
-    public void setVerificationHandler(VerificationHandler verificationHandler){
+    public void setVerificationHandler(VerificationHandler verificationHandler) {
         this.verificationHandler = verificationHandler;
     }
 }

@@ -25,6 +25,7 @@ public class TemplatesTest {
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private PXConfiguration config;
+
     @BeforeClass
     public void setUp() throws Exception {
         appId = "PX_APPID";
@@ -49,8 +50,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
-        assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "captcha.mustache");
+        assertTrue(actualHTML.contains("http://www.google.com/logo.jpg"));
     }
 
     @Test
@@ -62,8 +63,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
-        assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "block.mustache");
+        assertTrue(actualHTML.contains("http://www.google.com/logo.jpg"));
     }
 
 
@@ -76,8 +77,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
-        assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "captcha.mustache");
+        assertTrue(actualHTML.contains("http://www.google.com/stylesheet.css"));
     }
 
     @Test
@@ -89,8 +90,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
-        assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "block.mustache");
+        assertTrue(actualHTML.contains("http://www.google.com/stylesheet.css"));
     }
 
     @Test
@@ -102,8 +103,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .cssRef("http://www.google.com/script.js")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
-        assertTrue( actualHTML.contains("http://www.google.com/script.js") );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "block.mustache");
+        assertTrue(actualHTML.contains("http://www.google.com/script.js"));
     }
 
     @Test
@@ -115,8 +116,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .cssRef("http://www.google.com/script.js")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
-        assertTrue( actualHTML.contains("http://www.google.com/script.js") );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "captcha.mustache");
+        assertTrue(actualHTML.contains("http://www.google.com/script.js"));
     }
 
     @Test
@@ -127,8 +128,8 @@ public class TemplatesTest {
                 .cookieKey("COOKIE_123")
                 .blockingScore(70)
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
-        assertTrue( actualHTML.contains( pxContext.getUuid()) );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "captcha.mustache");
+        assertTrue(actualHTML.contains(pxContext.getUuid()));
     }
 
     @Test
@@ -139,8 +140,8 @@ public class TemplatesTest {
                 .cookieKey("COOKIE_123")
                 .blockingScore(70)
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
-        assertTrue( actualHTML.contains( pxContext.getUuid()) );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "block.mustache");
+        assertTrue(actualHTML.contains(pxContext.getUuid()));
     }
 
     @Test
@@ -151,8 +152,8 @@ public class TemplatesTest {
                 .cookieKey("COOKIE_123")
                 .blockingScore(70)
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
-        assertTrue( actualHTML.contains( pxContext.getVid() ) );
+        String actualHTML = TemplateFactory.getTemplate(pxContext, pxConfig, "captcha.mustache");
+        assertTrue(actualHTML.contains(pxContext.getVid()));
     }
 
 }

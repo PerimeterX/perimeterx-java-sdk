@@ -2,8 +2,8 @@ package com.perimeterx.internals.cookie;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Base64;
@@ -35,7 +35,7 @@ public abstract class PXCookie implements IPXCookie {
     protected JsonNode decodedCookie;
     protected String cookieKey;
 
-    public PXCookie(PXConfiguration pxConfiguration, PXContext pxContext){
+    public PXCookie(PXConfiguration pxConfiguration, PXContext pxContext) {
         this.mapper = new ObjectMapper();
         this.pxConfiguration = pxConfiguration;
         this.pxContext = pxContext;
@@ -61,18 +61,18 @@ public abstract class PXCookie implements IPXCookie {
 
     public boolean deserialize() throws PXCookieDecryptionException {
 
-        if (this.decodedCookie != null){
+        if (this.decodedCookie != null) {
             return true;
         }
 
         JsonNode decodedCookie = null;
         if (this.pxConfiguration.isEncryptionEnabled()) {
             decodedCookie = this.decrypt();
-        }else{
+        } else {
             decodedCookie = this.decode();
         }
 
-        if (!isCookieFormatValid(decodedCookie)){
+        if (!isCookieFormatValid(decodedCookie)) {
             return false;
         }
 
@@ -113,8 +113,8 @@ public abstract class PXCookie implements IPXCookie {
 
             String decryptedString = new String(data, StandardCharsets.UTF_8);
             return mapper.readTree(decryptedString);
-        } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException| InvalidKeyException|
-                BadPaddingException| IllegalBlockSizeException| InvalidAlgorithmParameterException e) {
+        } catch (IOException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException |
+                BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             throw new PXCookieDecryptionException("Cookie decryption failed in reason => ".concat(e.getMessage()));
         }
     }
@@ -133,7 +133,7 @@ public abstract class PXCookie implements IPXCookie {
         return this.getScore() >= this.pxConfiguration.getBlockingScore();
     }
 
-    public boolean isExpired(){
+    public boolean isExpired() {
         return this.getTimestamp() < System.currentTimeMillis();
     }
 
@@ -146,8 +146,8 @@ public abstract class PXCookie implements IPXCookie {
             byte[] b_cookieHmac = hexStringToByteArray(cookieHmac);
 
             return Arrays.equals(b_hmac, b_cookieHmac);
-        } catch (NoSuchAlgorithmException |InvalidKeyException e) {
-           throw new PXException("Failed to validate HMAC => ".concat(e.getMessage()));
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new PXException("Failed to validate HMAC => ".concat(e.getMessage()));
         }
     }
 
@@ -155,7 +155,7 @@ public abstract class PXCookie implements IPXCookie {
         int len = s.length();
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
-        if(s.charAt(i) == ' ') continue;
+            if (s.charAt(i) == ' ') continue;
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
         }
         return data;

@@ -3,7 +3,7 @@ package testutils;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.configuration.ModuleMode;
-import com.perimeterx.models.configuration.PXConfigurationStub;
+import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
@@ -51,8 +51,8 @@ public class PXClientMock implements PXClient {
     }
 
     @Override
-    public PXConfigurationStub getConfigurationFromServer() {
-        PXConfigurationStub stub = new PXConfigurationStub();
+    public PXDynamicConfiguration getConfigurationFromServer() {
+        PXDynamicConfiguration stub = new PXDynamicConfiguration();
         stub.setAppId("stub_app_id");
         stub.setChecksum("stub_checksum");
         stub.setBlockingScore(1000);
@@ -65,8 +65,4 @@ public class PXClientMock implements PXClient {
         return stub;
     }
 
-    @Override
-    public void updateHttpClient() {
-        //noop
-    }
 }
