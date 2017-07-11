@@ -14,7 +14,7 @@ import java.util.*;
  * Created by shikloshi on 03/07/2016.
  */
 public class PXConfiguration implements Observer {
-    private Logger L = LoggerFactory.getLogger(PXCookieValidator.class);
+    private static Logger L = LoggerFactory.getLogger(PXConfiguration.class);
 
     private String appId;
     private String cookieKey;

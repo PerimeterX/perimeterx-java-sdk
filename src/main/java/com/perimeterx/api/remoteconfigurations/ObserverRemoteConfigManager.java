@@ -16,8 +16,8 @@ public class ObserverRemoteConfigManager extends Observable implements RemoteCon
 
     private Logger logger = LoggerFactory.getLogger(ObserverRemoteConfigManager.class);
 
-    PXConfiguration pxConfiguration;
-    PXHttpClient pxClient;
+    private PXConfiguration pxConfiguration;
+    private PXHttpClient pxClient;
 
     public ObserverRemoteConfigManager(PXConfiguration pxConfiguration, PXHttpClient pxClient){
         this.pxConfiguration = pxConfiguration;

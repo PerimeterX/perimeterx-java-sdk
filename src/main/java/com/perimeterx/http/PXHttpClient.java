@@ -79,7 +79,7 @@ public class PXHttpClient implements PXClient, Observer {
             logger.info("Risk API Request: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            this.setRequestHeaders(post);
+            post = this.setRequestHeaders(post);
 
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
@@ -103,7 +103,7 @@ public class PXHttpClient implements PXClient, Observer {
             logger.info("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            this.setRequestHeaders(post);
+            post = this.setRequestHeaders(post);
 
             httpResponse = httpClient.execute(post);
             EntityUtils.consume(httpResponse.getEntity());
@@ -126,7 +126,7 @@ public class PXHttpClient implements PXClient, Observer {
             logger.info("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            this.setRequestHeaders(post);
+            post = this.setRequestHeaders(post);
 
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
@@ -146,7 +146,7 @@ public class PXHttpClient implements PXClient, Observer {
             logger.info("Sending captcha verification: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_CAPTCHA);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            this.setRequestHeaders(post);
+            post = this.setRequestHeaders(post);
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
             logger.info("Captcha verification response: {}", s);
@@ -173,7 +173,7 @@ public class PXHttpClient implements PXClient, Observer {
         PXDynamicConfiguration stub = null;
         try {
             HttpGet get = new HttpGet(Constants.REMOTE_CONFIGURATION_SERVER_URL + Constants.API_REMOTE_CONFIGURATION + queryParams);
-            this.setRequestHeaders(get);
+            get = this.setRequestHeaders(get);
 
             httpResponse = httpClient.execute(get);
             int httpCode = httpResponse.getStatusLine().getStatusCode();
@@ -197,9 +197,10 @@ public class PXHttpClient implements PXClient, Observer {
         }
     }
 
-    private void setRequestHeaders(HttpRequestBase request){
+    private <T extends HttpRequestBase> T setRequestHeaders(T  request){
         request.setHeader("Authorization", "Bearer " + this.pxConfiguration.getAuthToken());
         request.setHeader("Content-Type", "application/json");
+        return request;
     }
 
     @Override

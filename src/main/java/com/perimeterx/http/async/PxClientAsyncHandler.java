@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PxClientAsyncHandler implements FutureCallback<HttpResponse> {
 
-    private Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
+    private Logger logger = LoggerFactory.getLogger(PxClientAsyncHandler.class);
 
     @Override
     public void completed(HttpResponse httpResponse) {

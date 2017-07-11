@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class DefaultVerificationHandler implements VerificationHandler {
 
-    private Logger logger = LoggerFactory.getLogger(PerimeterX.class);
+    private Logger logger = LoggerFactory.getLogger(DefaultVerificationHandler.class);
 
     private PXConfiguration configuration;
     private ActivityHandler activityHandler;
