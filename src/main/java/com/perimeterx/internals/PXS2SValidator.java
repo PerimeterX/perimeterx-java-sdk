@@ -52,8 +52,9 @@ public class PXS2SValidator {
             pxContext.setPassReason(PassReason.S2S_TIMEOUT);
             return true;
         } catch (Exception e) {
-            pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
             throw new PXException(e);
+        } finally {
+            pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
         }
     }
 }
