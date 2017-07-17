@@ -1,7 +1,8 @@
 package com.perimeterx.api;
 
-import com.perimeterx.api.remoteconfigurations.ObserverRemoteConfigManager;
+import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigManager;
 import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
+import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -33,8 +34,9 @@ public class RemoteConfigurationsTest {
         PXDynamicConfiguration pxDynamicConfiguration = getDynamicConfiguration("stub_app_id", "stub_checksum",
                                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), false, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
-        RemoteConfigurationManager remoteConfigurationManager = new ObserverRemoteConfigManager(config, pxClient);
-        remoteConfigurationManager.getConfiguration();
+        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(pxClient);
+        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
+        timerConfigUpdater.run();
         Assert.assertTrue(config.getAppId().equals("stub_app_id"));
         Assert.assertTrue(config.getCookieKey().equals("stub_cookie_key"));
         Assert.assertTrue(config.getChecksum().equals("stub_checksum"));
@@ -51,18 +53,20 @@ public class RemoteConfigurationsTest {
         PXDynamicConfiguration pxDynamicConfiguration = getDynamicConfiguration("stub_app_id", "stub_checksum",
                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), true, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
-        RemoteConfigurationManager remoteConfigurationManager = new ObserverRemoteConfigManager(config, pxClient);
-        remoteConfigurationManager.getConfiguration();
+        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(pxClient);
+        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
+        timerConfigUpdater.run();
         when(pxClient.getConfigurationFromServer()).thenReturn(null);
-        remoteConfigurationManager.getConfiguration();
+        timerConfigUpdater.run();
         Assert.assertTrue(config.isModuleEnabled() == true);
     }
 
     @Test
     public void pullConfigurationsFirstTimeFailed() throws IOException{
         when(pxClient.getConfigurationFromServer()).thenReturn(null);
-        RemoteConfigurationManager remoteConfigurationManager = new ObserverRemoteConfigManager(config, pxClient);
-        remoteConfigurationManager.getConfiguration();
+        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(pxClient);
+        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
+        timerConfigUpdater.run();
         Assert.assertTrue(config.isModuleEnabled() == false);
     }
 

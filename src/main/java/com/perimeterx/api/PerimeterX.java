@@ -33,12 +33,11 @@ import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
-import com.perimeterx.api.remoteconfigurations.ObserverRemoteConfigManager;
+import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigManager;
 import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
 import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
 import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
-import com.perimeterx.http.PXClient;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
@@ -48,6 +47,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXCommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -82,41 +82,16 @@ public class PerimeterX {
     private IPProvider ipProvider = new RemoteAddressIPProvider();
     private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
     private VerificationHandler verificationHandler;
-    private TimerConfigUpdater configUpdater; // might be better create ConfigUpdater interface
-
-    /**
-     * Build a singleton object from configuration
-     *
-     * @param configuration - {@link PXConfiguration}
-     * @return PerimeterX object
-     * @deprecated use public constructor instead
-     */
-    @Deprecated
-    public static PerimeterX getInstance(PXConfiguration configuration) throws PXException {
-        if (instance == null) {
-            synchronized (PerimeterX.class) {
-                if (instance == null) {
-                    instance = new PerimeterX(configuration);
-                }
-            }
-        }
-        return instance;
-    }
+    private TimerConfigUpdater configUpdater;
 
     private CloseableHttpClient getHttpClient() {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(200);
         cm.setDefaultMaxPerRoute(20);
-        RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(configuration.getConnectionTimeout())
-                .setConnectionRequestTimeout(configuration.getConnectionTimeout())
-                .setSocketTimeout(configuration.getApiTimeout())
-                .build();
-        CloseableHttpClient httpClient = HttpClients.custom()
+        return HttpClients.custom()
                 .setConnectionManager(cm)
-                .setDefaultRequestConfig(config)
+                .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(configuration.getAuthToken()))
                 .build();
-        return httpClient;
     }
 
     private CloseableHttpAsyncClient getAsyncHttpClient() {
@@ -128,8 +103,8 @@ public class PerimeterX {
         PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient());
 
         if (configuration.isRemoteConfigurationEnabled()) {
-            RemoteConfigurationManager remoteConfigManager = new ObserverRemoteConfigManager(configuration, pxClient);
-            this.configUpdater = new TimerConfigUpdater(remoteConfigManager);
+            RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(pxClient);
+            this.configUpdater = new TimerConfigUpdater(remoteConfigManager, configuration);
             this.configUpdater.schedule(configuration.getRemoteConfigurationDelay(), configuration.getRemoteConfigurationInterval());
         }
 

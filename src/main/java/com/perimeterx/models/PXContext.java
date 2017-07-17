@@ -2,12 +2,12 @@ package com.perimeterx.models;
 
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
-import com.perimeterx.internals.cookie.PXCookie;
+import com.perimeterx.internals.cookie.DefaultPXCookie;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
-import com.perimeterx.utils.BlockActionEnum;
+import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
@@ -43,7 +43,7 @@ public class PXContext {
     private String riskCookie;
     private final HttpServletRequest request;
     private final String appId;
-    private BlockActionEnum blockAction;
+    private BlockAction blockAction;
     private String cookieHmac;
     private boolean sensitiveRoute;
     private PassReason passReason;
@@ -224,7 +224,7 @@ public class PXContext {
         return this.score;
     }
 
-    public void setRiskCookie(PXCookie riskCookie) {
+    public void setRiskCookie(DefaultPXCookie riskCookie) {
         this.riskCookie = riskCookie.getDecodedCookie().toString();
     }
 
@@ -259,18 +259,18 @@ public class PXContext {
     public void setBlockAction(String blockAction) {
         switch (blockAction) {
             case Constants.CAPTCHA_ACTION_CAPTCHA:
-                this.blockAction = BlockActionEnum.CAPTCHA;
+                this.blockAction = BlockAction.CAPTCHA;
                 break;
             case Constants.BLOCK_ACTION_CAPTCHA:
-                this.blockAction = BlockActionEnum.BLOCK;
+                this.blockAction = BlockAction.BLOCK;
                 break;
             default:
-                this.blockAction = BlockActionEnum.CAPTCHA;
+                this.blockAction = BlockAction.CAPTCHA;
                 break;
         }
     }
 
-    public BlockActionEnum getBlockAction() {
+    public BlockAction getBlockAction() {
         return this.blockAction;
     }
 

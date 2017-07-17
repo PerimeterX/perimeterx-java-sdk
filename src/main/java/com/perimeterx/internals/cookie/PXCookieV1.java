@@ -8,7 +8,7 @@ import com.perimeterx.models.exceptions.PXException;
 /**
  * Created by nitzangoldfeder on 13/04/2017.
  */
-public class PXCookieV1 extends PXCookie {
+public class PXCookieV1 extends DefaultPXCookie {
 
     public PXCookieV1(PXConfiguration pxConfiguration, PXContext pxContext) {
         super(pxConfiguration, pxContext);

@@ -4,7 +4,7 @@ import com.perimeterx.api.blockhandler.templates.TemplateFactory;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.BlockActionEnum;
+import com.perimeterx.utils.BlockAction;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -19,7 +19,7 @@ public class DefaultBlockHandler implements BlockHandler {
 
     public void handleBlocking(PXContext context, PXConfiguration pxConfig, HttpServletResponseWrapper responseWrapper) throws PXException {
         String pageTemplate = "block.mustache";
-        if (context.getBlockAction().equals(BlockActionEnum.CAPTCHA)) {
+        if (context.getBlockAction().equals(BlockAction.CAPTCHA)) {
             pageTemplate = "captcha.mustache";
         }
         String page = TemplateFactory.getTemplate(context, pxConfig, pageTemplate);

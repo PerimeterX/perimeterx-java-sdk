@@ -13,7 +13,7 @@ import java.util.*;
  * <p>
  * Created by shikloshi on 03/07/2016.
  */
-public class PXConfiguration implements Observer {
+public class PXConfiguration {
     private static Logger L = LoggerFactory.getLogger(PXConfiguration.class);
 
     private String appId;
@@ -155,12 +155,8 @@ public class PXConfiguration implements Observer {
         return this.remoteConfigurationDelay;
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        if (arg instanceof  PXDynamicConfiguration){
+    public void update(PXDynamicConfiguration pxDynamicConfiguration) {
             L.info("Updating PXConfiguration file");
-            PXDynamicConfiguration pxDynamicConfiguration = (PXDynamicConfiguration) arg;
-
             this.appId = pxDynamicConfiguration.getAppId();
             this.checksum = pxDynamicConfiguration.getChecksum();
             this.cookieKey = pxDynamicConfiguration.getCookieSecret();
@@ -170,7 +166,6 @@ public class PXConfiguration implements Observer {
             this.sensitiveHeaders = pxDynamicConfiguration.getSensitiveHeaders();
             this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
             this.moduleMode = pxDynamicConfiguration.getModuleMode();
-        }
     }
 
     public static final class Builder {

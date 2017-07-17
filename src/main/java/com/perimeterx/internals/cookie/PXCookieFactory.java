@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public abstract class PXCookieFactory {
 
-    public static PXCookie create(PXConfiguration pxConfiguration, PXContext pxContext) throws PXException {
+    public static DefaultPXCookie create(PXConfiguration pxConfiguration, PXContext pxContext) throws PXException {
         // Return null if no cookies
         Set<String> cookieKeys = pxContext.getPxCookies().keySet();
         if (cookieKeys.isEmpty()) {
