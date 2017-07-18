@@ -47,6 +47,7 @@ public class PXContext {
     private boolean sensitiveRoute;
     private PassReason passReason;
     private long riskRtt;
+    private boolean verified;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
                      final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
@@ -292,5 +293,13 @@ public class PXContext {
             }
         }
         return false;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 }
