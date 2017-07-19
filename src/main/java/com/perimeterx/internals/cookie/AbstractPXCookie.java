@@ -23,7 +23,7 @@ import java.util.Arrays;
 /**
  * Created by nitzangoldfeder on 13/04/2017.
  */
-public abstract class DefaultPXCookie implements PXCookie {
+public abstract class AbstractPXCookie implements PXCookie {
 
     private static final int KEY_LEN = 32;
     private static final String HMAC_SHA_256 = "HmacSHA256";
@@ -35,7 +35,7 @@ public abstract class DefaultPXCookie implements PXCookie {
     protected JsonNode decodedCookie;
     protected String cookieKey;
 
-    public DefaultPXCookie(PXConfiguration pxConfiguration, PXContext pxContext) {
+    public AbstractPXCookie(PXConfiguration pxConfiguration, PXContext pxContext) {
         this.mapper = new ObjectMapper();
         this.pxConfiguration = pxConfiguration;
         this.pxContext = pxContext;

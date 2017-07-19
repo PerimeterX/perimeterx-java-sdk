@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public class DefaultRemoteConfigManager implements RemoteConfigurationManager {
 
-    private Logger logger = LoggerFactory.getLogger(DefaultRemoteConfigManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(DefaultRemoteConfigManager.class);
 
     private PXHttpClient pxClient;
 

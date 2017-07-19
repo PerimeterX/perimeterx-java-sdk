@@ -2,7 +2,7 @@ package com.perimeterx.models;
 
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
-import com.perimeterx.internals.cookie.DefaultPXCookie;
+import com.perimeterx.internals.cookie.AbstractPXCookie;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
@@ -224,7 +224,7 @@ public class PXContext {
         return this.score;
     }
 
-    public void setRiskCookie(DefaultPXCookie riskCookie) {
+    public void setRiskCookie(AbstractPXCookie riskCookie) {
         this.riskCookie = riskCookie.getDecodedCookie().toString();
     }
 

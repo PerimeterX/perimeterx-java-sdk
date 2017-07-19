@@ -69,9 +69,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class PerimeterX {
 
-    private Logger logger = LoggerFactory.getLogger(PerimeterX.class);
-
-    private static PerimeterX instance = null;
+    private static final Logger logger = LoggerFactory.getLogger(PerimeterX.class);
 
     private PXConfiguration configuration;
     private BlockHandler blockHandler;
@@ -82,12 +80,11 @@ public class PerimeterX {
     private IPProvider ipProvider = new RemoteAddressIPProvider();
     private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
     private VerificationHandler verificationHandler;
-    private TimerConfigUpdater configUpdater;
 
     private CloseableHttpClient getHttpClient() {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(200);
-        cm.setDefaultMaxPerRoute(20);
+        cm.setMaxTotal(configuration.getMaxConnections());
+        cm.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         return HttpClients.custom()
                 .setConnectionManager(cm)
                 .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(configuration.getAuthToken()))
@@ -104,8 +101,8 @@ public class PerimeterX {
 
         if (configuration.isRemoteConfigurationEnabled()) {
             RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(pxClient);
-            this.configUpdater = new TimerConfigUpdater(remoteConfigManager, configuration);
-            this.configUpdater.schedule(configuration.getRemoteConfigurationDelay(), configuration.getRemoteConfigurationInterval());
+            TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigManager, configuration);
+            timerConfigUpdater.schedule(configuration.getRemoteConfigurationDelay(), configuration.getRemoteConfigurationInterval());
         }
 
         this.blockHandler = new DefaultBlockHandler();

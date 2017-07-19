@@ -8,7 +8,7 @@ import com.perimeterx.models.exceptions.PXException;
 /**
  * Created by nitzangoldfeder on 13/04/2017.
  */
-public class PXCookieV3 extends DefaultPXCookie {
+public class PXCookieV3 extends AbstractPXCookie {
 
     private String hmac;
 

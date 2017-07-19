@@ -1,6 +1,5 @@
 package com.perimeterx.models.configuration;
 
-import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -14,7 +13,7 @@ import java.util.*;
  * Created by shikloshi on 03/07/2016.
  */
 public class PXConfiguration {
-    private static Logger L = LoggerFactory.getLogger(PXConfiguration.class);
+    private static final Logger L = LoggerFactory.getLogger(PXConfiguration.class);
 
     private String appId;
     private String cookieKey;
@@ -38,6 +37,8 @@ public class PXConfiguration {
     private ModuleMode moduleMode;
     private int remoteConfigurationInterval;
     private int remoteConfigurationDelay;
+    private int maxConnections;
+    private int maxConnectionsPerRoute;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -61,6 +62,8 @@ public class PXConfiguration {
         moduleMode = builder.moduleMode;
         remoteConfigurationInterval = builder.remoteConfigurationInterval;
         remoteConfigurationDelay = builder.remoteConfigurationDelay;
+        maxConnections = builder.maxConnections;
+        maxConnectionsPerRoute = builder.maxConnectionsPerRoute;
     }
 
     public void disableModule() {
@@ -155,6 +158,14 @@ public class PXConfiguration {
         return this.remoteConfigurationDelay;
     }
 
+    public int getMaxConnections(){
+        return this.maxConnections;
+    }
+
+    public int getMaxConnectionsPerRoute(){
+        return this.maxConnectionsPerRoute;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
             L.info("Updating PXConfiguration file");
             this.appId = pxDynamicConfiguration.getAppId();
@@ -190,6 +201,8 @@ public class PXConfiguration {
         private ModuleMode moduleMode = ModuleMode.BLOCKING;
         private int remoteConfigurationInterval = 1000 * 5;
         private int remoteConfigurationDelay = 0;
+        private int maxConnectionsPerRoute = 20;
+        private int maxConnections = 20;
 
         public Builder() {
         }
@@ -305,6 +318,16 @@ public class PXConfiguration {
 
         public Builder remoteConfigurationDelay(int val) {
             remoteConfigurationDelay = val;
+            return this;
+        }
+
+        public Builder maxConnection(int val){
+            maxConnections = val;
+            return this;
+        }
+
+        public Builder maxConnectionsPerRoute(int val){
+            maxConnectionsPerRoute = val;
             return this;
         }
 

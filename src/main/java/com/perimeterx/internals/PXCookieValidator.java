@@ -1,6 +1,6 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.internals.cookie.DefaultPXCookie;
+import com.perimeterx.internals.cookie.AbstractPXCookie;
 import com.perimeterx.internals.cookie.PXCookieFactory;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PXCookieValidator {
 
-    private Logger L = LoggerFactory.getLogger(PXCookieValidator.class);
+    private static final Logger L = LoggerFactory.getLogger(PXCookieValidator.class);
 
     public static PXCookieValidator getDecoder(String cookieKey) throws PXException {
         try {
@@ -38,7 +38,7 @@ public class PXCookieValidator {
      */
     public boolean verify(PXConfiguration pxConfiguration, PXContext context) {
         try {
-            DefaultPXCookie pxCookie = PXCookieFactory.create(pxConfiguration, context);
+            AbstractPXCookie pxCookie = PXCookieFactory.create(pxConfiguration, context);
             if (pxCookie == null) {
                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
                 return false;

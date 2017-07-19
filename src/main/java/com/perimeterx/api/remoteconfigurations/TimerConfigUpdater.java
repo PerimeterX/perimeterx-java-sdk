@@ -8,12 +8,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * Created by nitzangoldfeder on 19/06/2017.
- */
 public class TimerConfigUpdater extends TimerTask {
 
-    private Logger logger = LoggerFactory.getLogger(TimerConfigUpdater.class);
+    private static final Logger logger = LoggerFactory.getLogger(TimerConfigUpdater.class);
 
     private RemoteConfigurationManager configManager;
     private PXConfiguration pxConfiguration;
@@ -35,6 +32,12 @@ public class TimerConfigUpdater extends TimerTask {
         }
     }
 
+
+    /**
+     * Sets a new timer object and runs its execution method
+     * @param interval
+     * @param delay
+     */
     public void schedule(int interval, int delay) {
         Timer timer = new Timer();
         timer.schedule(this, interval, delay);

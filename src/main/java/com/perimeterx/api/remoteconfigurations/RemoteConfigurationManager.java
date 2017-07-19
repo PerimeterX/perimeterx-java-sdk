@@ -7,5 +7,9 @@ import com.perimeterx.models.configuration.PXDynamicConfiguration;
  * Created by nitzangoldfeder on 19/06/2017.
  */
 public interface RemoteConfigurationManager {
+    /**
+     * Returns new values to update PXConfiguration settings
+     * @return PXDynamicConfiguration
+     */
     PXDynamicConfiguration getConfiguration();
 }

@@ -44,7 +44,7 @@ import java.util.Observer;
  */
 public class PXHttpClient implements PXClient {
 
-    private Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
 
     private static PXHttpClient instance;
     private static final Charset UTF_8 = Charset.forName("utf-8");
