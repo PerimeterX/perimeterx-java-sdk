@@ -158,16 +158,19 @@
     <script>
       window.px_vid = '{{vid}}';
       function handleCaptcha(response){
+        var cookieValue = response + ":" + uuid + ":" + vid;
         var vid = '{{vid}}';
         var uuid = '{{uuid}}';
         var name = "_pxCaptcha";
 
+        if (window.btoa) {
+           cookieValue = btoa(JSON.stringify({r:response,u:uuid,v:vid}));
+        }
         var expiryUtc = new Date(Date.now()+1000*10).toUTCString();
-
         var cookieParts = [
           name,
           "=",
-          response+":"+vid+":"+uuid,
+          cookieValue,
           "; expires=",
           expiryUtc,
           "; path=/"

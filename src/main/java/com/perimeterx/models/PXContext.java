@@ -346,20 +346,25 @@ public class PXContext {
         this.riskRtt = riskRtt;
     }
 
-    public boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri){
-        for (String sensitiveRoutePrefix : sensitiveRoutes){
-            if (uri.startsWith(sensitiveRoutePrefix)){
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Check if request is verified or not
+     *
+     * @return true if request is valid, false otherwise
+     */
     public boolean isVerified() {
         return verified;
     }
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    private boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri) {
+        for (String sensitiveRoutePrefix : sensitiveRoutes) {
+            if (uri.startsWith(sensitiveRoutePrefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

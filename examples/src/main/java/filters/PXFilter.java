@@ -46,7 +46,7 @@ public class PXFilter implements Filter {
         HttpServletRequest httpReq = (HttpServletRequest) servletRequest;
         HttpServletResponse httpRes = (HttpServletResponse) servletResponse;
         try {
-            PXcontext ctx = enforcer.pxVerify(httpReq, new HttpServletResponseWrapper(httpRes));
+            PXContext ctx = enforcer.pxVerify(httpReq, new HttpServletResponseWrapper(httpRes));
             if (ctx.isVerified()) {
                 filterChain.doFilter(servletRequest, servletResponse);
             }

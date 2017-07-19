@@ -38,6 +38,12 @@ public class PXS2SValidator {
         try {
             RiskRequest request = RiskRequest.fromContext(pxContext);
             response = pxClient.riskApiCall(request);
+            if (response == null) {
+                // Error from PX service
+                pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
+                pxContext.setPassReason(PassReason.ERROR);
+                return true;
+            }
             pxContext.setRiskScore(response.getScore());
             pxContext.setUuid(response.getUuid());
 
@@ -53,6 +59,7 @@ public class PXS2SValidator {
             return true;
         } catch (Exception e) {
             pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
+            pxContext.setPassReason(PassReason.ERROR);
             throw new PXException(e);
         }
     }
