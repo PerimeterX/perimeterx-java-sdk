@@ -5,6 +5,7 @@ import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,12 +24,18 @@ public class TimerConfigUpdater extends TimerTask {
 
     @Override
     public void run() {
-        // Fetch the configuration from server
-        PXDynamicConfiguration dynamicConfig = configManager.getConfiguration();
-        if (dynamicConfig != null){
-            pxConfiguration.update(dynamicConfig);
-        } else if (pxConfiguration.getChecksum() == null) {
-            pxConfiguration.disableModule();
+        try{
+            // Fetch the configuration from server
+            PXDynamicConfiguration dynamicConfig = configManager.getConfiguration();
+            if (dynamicConfig != null){
+                configManager.updateConfiguration(dynamicConfig);
+            } else if (pxConfiguration.getChecksum() == null) {
+                configManager.disableModuleOnError();
+            }
+        } catch (IOException e){
+            if (pxConfiguration.getChecksum() == null){
+                configManager.disableModuleOnError();
+            }
         }
     }
 

@@ -1,6 +1,8 @@
 package com.perimeterx.api.remoteconfigurations;
 
+import com.perimeterx.http.PXClient;
 import com.perimeterx.http.PXHttpClient;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,22 +16,28 @@ public class DefaultRemoteConfigManager implements RemoteConfigurationManager {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultRemoteConfigManager.class);
 
-    private PXHttpClient pxClient;
+    private PXClient pxClient;
+    private PXConfiguration pxConfiguration;
 
-    public DefaultRemoteConfigManager(PXHttpClient pxClient){
+    public DefaultRemoteConfigManager(PXConfiguration pxConfiguration, PXClient pxClient){
         this.pxClient = pxClient;
+        this.pxConfiguration = pxConfiguration;
     }
 
     @Override
-    public PXDynamicConfiguration getConfiguration() {
+    public PXDynamicConfiguration getConfiguration() throws IOException {
         logger.debug("Getting configuration from server");
-        PXDynamicConfiguration dynamicConfig = null;
-        try {
-            dynamicConfig = pxClient.getConfigurationFromServer();
-        } catch (IOException e){
-            logger.debug("an error was caught while trying to close the connection {}", e.getMessage() );
-        }
-        return dynamicConfig;
+        return pxClient.getConfigurationFromServer();
+    }
+
+    @Override
+    public void updateConfiguration(PXDynamicConfiguration pxDynamicConfiguration) {
+        pxConfiguration.update(pxDynamicConfiguration);
+    }
+
+    @Override
+    public void disableModuleOnError() {
+        pxConfiguration.disableModule();
     }
 
 }
