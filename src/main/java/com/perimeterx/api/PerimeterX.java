@@ -189,7 +189,6 @@ public class PerimeterX {
 
             // Calls risk_api and populate the data retrieved to the context
             serverValidator.verify(context);
-
             context.setVerified(verificationHandler.handleVerification(context,responseWrapper));
         } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());

@@ -38,10 +38,10 @@ public class PXS2SValidator {
         try {
             RiskRequest request = RiskRequest.fromContext(pxContext);
             response = pxClient.riskApiCall(request);
-            pxContext.setScore(response.getScore());
+            pxContext.setRiskScore(response.getScore());
             pxContext.setUuid(response.getUuid());
 
-            if (pxContext.getScore() <= pxConfiguration.getBlockingScore()) {
+            if (pxContext.getRiskScore() <= pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);
                 return true;
             }

@@ -56,7 +56,7 @@ public class PXCookieValidator {
             context.setRiskCookie(pxCookie);
             context.setVid(pxCookie.getVID());
             context.setUuid(pxCookie.getUUID());
-            context.setScore(pxCookie.getScore());
+            context.setRiskScore(pxCookie.getScore());
             context.setBlockAction(pxCookie.getBlockAction());
             context.setCookieHmac(pxCookie.getHmac());
 
