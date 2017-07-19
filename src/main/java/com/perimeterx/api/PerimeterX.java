@@ -100,9 +100,9 @@ public class PerimeterX {
         PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient());
 
         if (configuration.isRemoteConfigurationEnabled()) {
-            RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(pxClient);
+            RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(configuration, pxClient);
             TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigManager, configuration);
-            timerConfigUpdater.schedule(configuration.getRemoteConfigurationDelay(), configuration.getRemoteConfigurationInterval());
+            timerConfigUpdater.schedule();
         }
 
         this.blockHandler = new DefaultBlockHandler();

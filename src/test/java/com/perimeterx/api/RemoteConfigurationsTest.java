@@ -34,7 +34,7 @@ public class RemoteConfigurationsTest {
         PXDynamicConfiguration pxDynamicConfiguration = getDynamicConfiguration("stub_app_id", "stub_checksum",
                                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), false, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
-        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(pxClient);
+        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
         TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
         timerConfigUpdater.run();
         Assert.assertTrue(config.getAppId().equals("stub_app_id"));
@@ -53,7 +53,7 @@ public class RemoteConfigurationsTest {
         PXDynamicConfiguration pxDynamicConfiguration = getDynamicConfiguration("stub_app_id", "stub_checksum",
                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), true, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
-        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(pxClient);
+        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
         TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
         timerConfigUpdater.run();
         when(pxClient.getConfigurationFromServer()).thenReturn(null);
@@ -64,7 +64,7 @@ public class RemoteConfigurationsTest {
     @Test
     public void pullConfigurationsFirstTimeFailed() throws IOException{
         when(pxClient.getConfigurationFromServer()).thenReturn(null);
-        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(pxClient);
+        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
         TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
         timerConfigUpdater.run();
         Assert.assertTrue(config.isModuleEnabled() == false);

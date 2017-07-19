@@ -42,12 +42,10 @@ public class TimerConfigUpdater extends TimerTask {
 
     /**
      * Sets a new timer object and runs its execution method
-     * @param interval
-     * @param delay
      */
-    public void schedule(int interval, int delay) {
+    public void schedule() {
         Timer timer = new Timer();
-        timer.schedule(this, interval, delay);
+        timer.schedule(this, pxConfiguration.getRemoteConfigurationInterval(), pxConfiguration.getRemoteConfigurationDelay());
     }
 
 
