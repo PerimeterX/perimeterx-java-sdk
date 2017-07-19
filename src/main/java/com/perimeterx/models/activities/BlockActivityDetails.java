@@ -33,7 +33,7 @@ public class BlockActivityDetails implements ActivityDetails {
 
 
     public BlockActivityDetails(PXContext context) {
-        this.blockScore = context.getScore();
+        this.blockScore = context.getRiskScore();
         this.blockReason = context.getBlockReason();
         this.blockUuid = context.getUuid();
         this.httpMethod = context.getHttpMethod();

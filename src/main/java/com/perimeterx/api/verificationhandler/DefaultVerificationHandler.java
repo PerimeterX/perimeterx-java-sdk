@@ -30,11 +30,11 @@ public class DefaultVerificationHandler implements VerificationHandler {
 
     @Override
     public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws PXException {
-        int score = context.getScore();
+        int riskScore = context.getRiskScore();
         int blockingScore = this.configuration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px
-        boolean verified = score < blockingScore;
-        logger.info("Request score: {}, Blocking score: {}", score, blockingScore);
+        boolean verified = riskScore < blockingScore;
+        logger.info("Request score: {}, Blocking score: {}", riskScore, blockingScore);
         if (verified) {
             logger.info("Request valid");
             // Not blocking request and sending page_requested activity to px if configured as true

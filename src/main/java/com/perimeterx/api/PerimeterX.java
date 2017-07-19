@@ -158,15 +158,15 @@ public class PerimeterX {
      *
      * @param req             - current http call examined by PX
      * @param responseWrapper - response wrapper on which we will set the response according to PX verification.
-     * @return true if request is valid
+     * @return PXContext, or null if module is disabled
      * @throws PXException - PXException
      */
-    public boolean pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
+    public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
         try {
             if (!moduleEnabled()) {
                 logger.info("PerimeterX verification SDK is disabled");
-                return true;
+                return null;
             }
             // Remove captcha cookie to prevent re-use
             Cookie cookie = new Cookie(Constants.COOKIE_CAPTCHA_KEY, StringUtils.EMPTY);
@@ -175,29 +175,31 @@ public class PerimeterX {
 
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
             if (captchaValidator.verify(context)) {
-                return verificationHandler.handleVerification(context, responseWrapper);
+                context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
+                return context;
             }
 
             boolean cookieVerified = cookieValidator.verify(this.configuration ,context);
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
                 logger.info("No risk API Call is needed, using cookie");
-                return verificationHandler.handleVerification(context, responseWrapper);
+                context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
+                return context;
             }
 
             // Calls risk_api and populate the data retrieved to the context
             serverValidator.verify(context);
-
-            return verificationHandler.handleVerification(context,responseWrapper);
+            context.setVerified(verificationHandler.handleVerification(context,responseWrapper));
         } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null){
                 context.setPassReason(PassReason.ERROR);
                 activityHandler.handlePageRequestedActivity(context);
+                context.setVerified(true);
             }
-            return true;
         }
+        return context;
     }
 
     private boolean moduleEnabled() {
