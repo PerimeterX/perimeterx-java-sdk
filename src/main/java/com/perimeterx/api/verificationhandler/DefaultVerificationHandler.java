@@ -46,7 +46,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
     }
 
     private boolean shouldPassRequest(PXContext context){
-        int score = context.getScore();
+        int score = context.getRiskScore();
         int blockingScore = this.pxConfiguration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px
         boolean verified = score < blockingScore;

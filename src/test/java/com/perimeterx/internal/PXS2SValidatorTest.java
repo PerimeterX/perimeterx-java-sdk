@@ -54,7 +54,7 @@ public class PXS2SValidatorTest {
     @Test
     public void verifyTest() throws PXException, IOException {
         boolean verify = validator.verify(context);
-        Assert.assertEquals(context.getScore(), 50);
+        Assert.assertEquals(context.getRiskScore(), 50);
     }
 
 }

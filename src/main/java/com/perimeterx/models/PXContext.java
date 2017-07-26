@@ -24,10 +24,34 @@ import java.util.Set;
  */
 public class PXContext {
 
-    private Map<String, String> pxCookies;
+    /**
+     * Original HTTP request
+     */
+    private final HttpServletRequest request;
+
+    /**
+     * PerimeterX cookies - _px$cookie_version$, _pxCaptcha.
+     */
+    private Map<String,String> pxCookies;
+
+    /**
+     * Original _px cookie
+     */
     private String pxCookieOrig;
+
+    /**
+     * Original Captcha cookie
+     */
     private String pxCaptcha;
+
+    /**
+     * Request IP as extracted with IPProvider.
+     *
+     * @see com.perimeterx.api.providers.IPProvider#getRequestIP(HttpServletRequest)
+     */
     private String ip;
+
+    // Additional fields extracted from the original HTTP request
     private String vid;
     private String uuid;
     private Map<String, String> headers;
@@ -35,19 +59,59 @@ public class PXContext {
     private String uri;
     private String userAgent;
     private String fullUrl;
-    private S2SCallReason s2sCallReason;
-    private BlockReason blockReason;
     private String httpMethod;
     private String httpVersion;
-    private int score;
+
+    // PerimeterX computed data on the request
     private String riskCookie;
-    private final HttpServletRequest request;
     private final String appId;
-    private BlockAction blockAction;
+
+
     private String cookieHmac;
+
+    /**
+     * Score for the current request - if riskScore is above configured {@link com.perimeterx.models.configuration.PXConfiguration#blockingScore} on
+     * PXConfiguration then the {@link com.perimeterx.models.PXContext#verified} is set to false
+     */
+    private int riskScore;
+
+    /**
+     * Reason for calling PX Service
+     *
+     * @see com.perimeterx.models.risk.S2SCallReason
+     */
+    private S2SCallReason s2sCallReason;
+
+    /**
+     * Which action to take after being blocked
+     */
+    private BlockAction blockAction;
+
+    /**
+     * if true - calling risk_api to verified request even if cookie data is valid
+     */
     private boolean sensitiveRoute;
+
+    /**
+     * Reason for request being verified
+     * @see com.perimeterx.models.risk.PassReason
+     */
     private PassReason passReason;
+
+    /**
+     * Risk api timing
+     */
     private long riskRtt;
+
+    /**
+     * Request verification status - if {@link com.perimeterx.models.PXContext#verified} is true, the request is safe to pass to server.
+     */
+    private boolean verified;
+
+    /**
+     * Reason for why request should be blocked - relevant when request is not verified, meaning - verified {@link com.perimeterx.models.PXContext#verified} is false
+     */
+    private BlockReason blockReason;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
                      final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
@@ -102,7 +166,6 @@ public class PXContext {
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
     }
 
-    // Prefer to utilize this // throw exception for no cookie found
     private String extractCookieByKey(String cookie, String key) {
         String cookieValue = null;
         if (cookie != null) {
@@ -208,8 +271,8 @@ public class PXContext {
         return httpVersion;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public void setRiskScore(int riskScore) {
+        this.riskScore = riskScore;
     }
 
     public void setVid(String vid) {
@@ -220,8 +283,8 @@ public class PXContext {
         this.uuid = uuid;
     }
 
-    public int getScore() {
-        return this.score;
+    public int getRiskScore() {
+        return this.riskScore;
     }
 
     public void setRiskCookie(AbstractPXCookie riskCookie) {
@@ -290,7 +353,20 @@ public class PXContext {
         this.riskRtt = riskRtt;
     }
 
-    public boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri) {
+    /**
+     * Check if request is verified or not
+     *
+     * @return true if request is valid, false otherwise
+     */
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
+
+    private boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri) {
         for (String sensitiveRoutePrefix : sensitiveRoutes) {
             if (uri.startsWith(sensitiveRoutePrefix)) {
                 return true;
