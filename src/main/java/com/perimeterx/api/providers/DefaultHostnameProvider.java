@@ -9,6 +9,6 @@ public class DefaultHostnameProvider implements HostnameProvider {
 
     @Override
     public String getHostname(HttpServletRequest req) {
-        return req.getRemoteHost();
+        return req.getServerName();
     }
 }
