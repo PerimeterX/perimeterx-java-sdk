@@ -150,7 +150,6 @@ public class PXContext {
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
-        this.hostname = request.getServerName();
         this.s2sCallReason = S2SCallReason.NONE;
         this.passReason = PassReason.NONE;
         this.riskRtt = 0;
