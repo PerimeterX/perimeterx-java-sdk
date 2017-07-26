@@ -345,8 +345,10 @@ public class PXConfiguration {
 
 
         public PXConfiguration build() {
-            Validate.notEmpty(this.appId, "Application ID (appId) must be set");
-            Validate.notEmpty(this.cookieKey, "Cookie Key (cookieKey) must be set");
+            if (!this.remoteConfigurationEnabled) {
+                Validate.notEmpty(this.appId, "Application ID (appId) must be set");
+                Validate.notEmpty(this.cookieKey, "Cookie Key (cookieKey) must be set");
+            }
             Validate.notEmpty(this.authToken, "Authentication Token (authToken) must be set");
             return new PXConfiguration(this);
         }

@@ -16,8 +16,8 @@ import java.util.List;
 public class PXCommonUtils {
     
     public static List<Header> getDefaultHeaders(String authToken){
-        Header contentType = new BasicHeader(HttpHeaders.CONTENT_TYPE, MediaType.ANY_APPLICATION_TYPE.toString());
-        Header authorization = new BasicHeader(HttpHeaders.AUTHORIZATION, authToken);
+        Header contentType = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+        Header authorization = new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authToken);
         return Arrays.asList(contentType, authorization);
     }
 
