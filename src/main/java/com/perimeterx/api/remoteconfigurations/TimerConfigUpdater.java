@@ -45,7 +45,7 @@ public class TimerConfigUpdater extends TimerTask {
      */
     public void schedule() {
         Timer timer = new Timer();
-        timer.schedule(this, pxConfiguration.getRemoteConfigurationInterval(), pxConfiguration.getRemoteConfigurationDelay());
+        timer.schedule(this,pxConfiguration.getRemoteConfigurationDelay(),  pxConfiguration.getRemoteConfigurationInterval());
     }
 
 
