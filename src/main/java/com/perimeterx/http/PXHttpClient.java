@@ -163,37 +163,31 @@ public class PXHttpClient implements PXClient {
     }
 
     @Override
-    public PXDynamicConfiguration getConfigurationFromServer() throws IOException{
+    public PXDynamicConfiguration getConfigurationFromServer() {
         logger.debug("TimerConfigUpdater[getConfiguration]");
-        CloseableHttpResponse httpResponse = null;
         String queryParams = "";
         if (pxConfiguration.getChecksum() != null) {
             logger.debug("TimerConfigUpdater[getConfiguration]: adding checksum");
             queryParams = "?checksum=" + pxConfiguration.getChecksum();
         }
         PXDynamicConfiguration stub = null;
-        try {
-            HttpGet get = new HttpGet(Constants.REMOTE_CONFIGURATION_SERVER_URL + Constants.API_REMOTE_CONFIGURATION + queryParams);
+        HttpGet get = new HttpGet(pxConfiguration.getRemoteConfigurationUrl() + Constants.API_REMOTE_CONFIGURATION + queryParams);
 
-            httpResponse = httpClient.execute(get);
+        try (CloseableHttpResponse httpResponse = httpClient.execute(get)){
             int httpCode = httpResponse.getStatusLine().getStatusCode();
             if (httpCode == HttpStatus.SC_OK) {
                 String bodyContent = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
                 stub = JsonUtils.pxConfigurationStubReader.readValue(bodyContent);
-                logger.debug("TimerConfigUpdater[getConfiguration] GET request successfully executed {}", bodyContent);
+                logger.debug("[getConfiguration] GET request successfully executed {}", bodyContent);
             } else if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
-                logger.debug("TimerConfigUpdater[getConfiguration] No updates found");
+                logger.debug("[getConfiguration] No updates found");
             } else {
-                logger.debug("TimerConfigUpdater[getConfiguration] Failed to get remote configuration, status code {}", httpCode);
+                logger.debug("[getConfiguration] Failed to get remote configuration, status code {}", httpCode);
             }
             return stub;
         } catch (Exception e) {
-            logger.error("TimerConfigUpdater[getConfiguration] EXCEPTION {}", e.getMessage());
+            logger.error("[getConfiguration] EXCEPTION {}", e.getMessage());
             return null;
-        } finally {
-            if (httpResponse != null) {
-                httpResponse.close();
-            }
         }
     }
 }

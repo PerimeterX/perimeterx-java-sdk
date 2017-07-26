@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PXCookieValidator {
 
-    private static final Logger L = LoggerFactory.getLogger(PXCookieValidator.class);
+    private static final Logger logger = LoggerFactory.getLogger(PXCookieValidator.class);
 
     public static PXCookieValidator getDecoder(String cookieKey) throws PXException {
         try {
@@ -83,7 +83,7 @@ public class PXCookieValidator {
             return true;
 
         } catch (PXException | PXCookieDecryptionException e) {
-            L.error(e.getMessage());
+            logger.error(e.getMessage());
 
             context.setPxCookieOrig(context.getPxCookie());
             context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);

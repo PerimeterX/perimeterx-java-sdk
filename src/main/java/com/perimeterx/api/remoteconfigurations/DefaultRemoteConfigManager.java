@@ -25,7 +25,7 @@ public class DefaultRemoteConfigManager implements RemoteConfigurationManager {
     }
 
     @Override
-    public PXDynamicConfiguration getConfiguration() throws IOException {
+    public PXDynamicConfiguration getConfiguration() {
         logger.debug("Getting configuration from server");
         return pxClient.getConfigurationFromServer();
     }

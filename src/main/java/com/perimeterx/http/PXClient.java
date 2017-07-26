@@ -62,6 +62,6 @@ public interface PXClient {
      * @return PXDynamicConfiguration
      * @throws IOException when trying to close the connection
      */
-    PXDynamicConfiguration getConfigurationFromServer() throws IOException;
+    PXDynamicConfiguration getConfigurationFromServer();
 
 }

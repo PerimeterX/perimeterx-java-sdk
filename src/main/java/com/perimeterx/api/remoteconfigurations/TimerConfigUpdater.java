@@ -24,18 +24,10 @@ public class TimerConfigUpdater extends TimerTask {
 
     @Override
     public void run() {
-        try{
-            // Fetch the configuration from server
-            PXDynamicConfiguration dynamicConfig = configManager.getConfiguration();
-            if (dynamicConfig != null){
-                configManager.updateConfiguration(dynamicConfig);
-            } else if (pxConfiguration.getChecksum() == null) {
-                configManager.disableModuleOnError();
-            }
-        } catch (IOException e){
-            if (pxConfiguration.getChecksum() == null){
-                configManager.disableModuleOnError();
-            }
+        // Fetch the configuration from server
+        PXDynamicConfiguration dynamicConfig = configManager.getConfiguration();
+        if (dynamicConfig != null) {
+            configManager.updateConfiguration(dynamicConfig);
         }
     }
 

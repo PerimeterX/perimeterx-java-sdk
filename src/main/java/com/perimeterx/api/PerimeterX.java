@@ -44,6 +44,7 @@ import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
@@ -61,6 +62,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -101,6 +103,12 @@ public class PerimeterX {
 
         if (configuration.isRemoteConfigurationEnabled()) {
             RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(configuration, pxClient);
+            PXDynamicConfiguration initialConfig = remoteConfigManager.getConfiguration();
+            if (initialConfig == null) {
+                remoteConfigManager.disableModuleOnError();
+            } else {
+                remoteConfigManager.updateConfiguration(initialConfig);
+            }
             TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigManager, configuration);
             timerConfigUpdater.schedule();
         }

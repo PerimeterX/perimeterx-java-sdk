@@ -13,7 +13,7 @@ import java.util.*;
  * Created by shikloshi on 03/07/2016.
  */
 public class PXConfiguration {
-    private static final Logger L = LoggerFactory.getLogger(PXConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(PXConfiguration.class);
 
     private String appId;
     private String cookieKey;
@@ -39,6 +39,7 @@ public class PXConfiguration {
     private int remoteConfigurationDelay;
     private int maxConnections;
     private int maxConnectionsPerRoute;
+    private String remoteConfigurationUrl;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -64,6 +65,11 @@ public class PXConfiguration {
         remoteConfigurationDelay = builder.remoteConfigurationDelay;
         maxConnections = builder.maxConnections;
         maxConnectionsPerRoute = builder.maxConnectionsPerRoute;
+        remoteConfigurationUrl = builder.remoteConfigurationUrl;
+    }
+
+    public String getRemoteConfigurationUrl(){
+        return this.remoteConfigurationUrl;
     }
 
     public void disableModule() {
@@ -167,7 +173,7 @@ public class PXConfiguration {
     }
 
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
-            L.info("Updating PXConfiguration file");
+            logger.info("Updating PXConfiguration file");
             this.appId = pxDynamicConfiguration.getAppId();
             this.checksum = pxDynamicConfiguration.getChecksum();
             this.cookieKey = pxDynamicConfiguration.getCookieSecret();
@@ -203,8 +209,14 @@ public class PXConfiguration {
         private int remoteConfigurationDelay = 0;
         private int maxConnectionsPerRoute = 20;
         private int maxConnections = 20;
+        private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
 
         public Builder() {
+        }
+
+        public Builder remoteConfigurationUrl(String val) {
+            remoteConfigurationUrl = val;
+            return this;
         }
 
         public Builder appId(String val) {

@@ -12,7 +12,7 @@ public interface RemoteConfigurationManager {
      * Returns new values to update PXConfiguration settings
      * @return PXDynamicConfiguration
      */
-    PXDynamicConfiguration getConfiguration() throws IOException;
+    PXDynamicConfiguration getConfiguration();
 
     /**
      * Method that updates PXConfiguration with values from a PXDynamicConfiguration object
