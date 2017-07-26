@@ -61,16 +61,6 @@ public class RemoteConfigurationsTest {
         Assert.assertTrue(config.isModuleEnabled() == true);
     }
 
-    @Test
-    public void pullConfigurationsFirstTimeFailed() throws IOException{
-        when(pxClient.getConfigurationFromServer()).thenReturn(null);
-        RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
-        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
-        timerConfigUpdater.run();
-        Assert.assertTrue(config.isModuleEnabled() == false);
-    }
-
-
     private PXDynamicConfiguration getDynamicConfiguration(String appId, String checksum, int blockingScore, String cookieSecert,
                                    int s2sTimeout, int connectionTimeout, HashSet<String> sensitiveRotues, boolean moduleEnabled, ModuleMode moduleMode){
         PXDynamicConfiguration pxDynamicConfig = new PXDynamicConfiguration();
