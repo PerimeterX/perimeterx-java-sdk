@@ -1,11 +1,14 @@
 package com.perimeterx.internals;
 
+import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.http.PXClient;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
-
-import java.io.IOException;
+import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.PassReason;
+import org.apache.http.conn.ConnectTimeoutException;
 
 /**
  * High level Abstracted interface for calling PerimeterX servers
@@ -15,25 +18,49 @@ import java.io.IOException;
 public class PXS2SValidator {
 
     private PXClient pxClient;
+    private PXConfiguration pxConfiguration;
 
-    public PXS2SValidator(PXClient pxClient) {
+    public PXS2SValidator(PXClient pxClient, PXConfiguration pxConfiguration) {
         this.pxClient = pxClient;
+        this.pxConfiguration = pxConfiguration;
     }
 
     /**
      * Verify if request is valid or not
      *
-     * @param request - request per context for querying server
+     * @param pxContext - Request context
      * @return risk response from PX servers
      * @throws PXException
      */
-    public RiskResponse verify(RiskRequest request) throws PXException {
+    public boolean verify(PXContext pxContext) throws PXException {
         RiskResponse response;
+        long startRiskRtt = System.currentTimeMillis();
         try {
+            RiskRequest request = RiskRequest.fromContext(pxContext);
             response = pxClient.riskApiCall(request);
-        } catch (IOException e) {
+            if (response == null) {
+                // Error from PX service
+                pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
+                pxContext.setPassReason(PassReason.ERROR);
+                return true;
+            }
+            pxContext.setRiskScore(response.getScore());
+            pxContext.setUuid(response.getUuid());
+
+            if (pxContext.getRiskScore() <= pxConfiguration.getBlockingScore()) {
+                pxContext.setPassReason(PassReason.S2S);
+                return true;
+            }
+            pxContext.setBlockReason(BlockReason.SERVER);
+            return false;
+        } catch (ConnectTimeoutException e) {
+            // Timeout handling - report pass reason and proceed with request
+            pxContext.setPassReason(PassReason.S2S_TIMEOUT);
+            return true;
+        } catch (Exception e) {
+            pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
+            pxContext.setPassReason(PassReason.ERROR);
             throw new PXException(e);
         }
-        return response;
     }
 }

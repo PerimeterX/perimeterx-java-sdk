@@ -44,6 +44,8 @@ public class PerimeterXTest extends ConfiguredTest {
         HttpServletResponse response = new MockHttpServletResponse();
         perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
         Assert.assertNotEquals(response.getStatus(), 403);
+        StringBuilder sb = new StringBuilder();
+
     }
 
     @Test
@@ -57,4 +59,17 @@ public class PerimeterXTest extends ConfiguredTest {
 
         Assert.assertEquals(pxConfiguration.getServerURL(),"https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
     }
+
+    @Test
+    public void testPxVerifyCustomVerificationHandler() throws Exception {
+        PXClient client = TestObjectUtils.blockingPXClient(configuration.getBlockingScore());
+        PerimeterX perimeterx = TestObjectUtils.testablePerimeterXObject(configuration, client);
+        perimeterx.setVerificationHandler(new UnitTestVerificationHandler());
+        HttpServletRequest request = new MockHttpServletRequest();
+        HttpServletResponse response = new MockHttpServletResponse();
+        perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
+        Assert.assertEquals(response.getStatus(), 200);
+        Assert.assertEquals((((MockHttpServletResponse) response).getContentAsString()), "custom verification handle");
+    }
+
 }

@@ -25,10 +25,11 @@ public class BufferedActivityHandlerTest {
     private DefaultActivityHandler activityHandler;
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
+    private PXConfiguration config;
 
     @BeforeMethod
     public void setUp() {
-        PXConfiguration config = TestObjectUtils.generateConfiguration();
+        config = TestObjectUtils.generateConfiguration();
         PXClient pxClient = TestObjectUtils.blockingPXClient(config.getBlockingScore());
         this.activityHandler = new DefaultActivityHandler(pxClient, config);
         this.hostnameProvider = new DefaultHostnameProvider();
@@ -39,7 +40,7 @@ public class BufferedActivityHandlerTest {
     public void testHandleBlockActivity() {
         boolean thrown = false;
         MockHttpServletRequest request = new MockHttpServletRequest();
-        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
+        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, config);
         try {
             activityHandler.handleBlockActivity(context);
         } catch (PXException e) {
@@ -52,7 +53,7 @@ public class BufferedActivityHandlerTest {
     public void testHandlePageRequestedActivity() throws Exception {
         boolean thrown = false;
         MockHttpServletRequest request = new MockHttpServletRequest();
-        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
+        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, config);
         try {
             activityHandler.handlePageRequestedActivity(context);
         } catch (PXException e) {

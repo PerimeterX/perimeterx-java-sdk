@@ -32,10 +32,16 @@ public class PXHttpClientTest {
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private PXContext context;
+    private PXConfiguration config;
 
 
     @BeforeMethod
     public void setUp() {
+        config = new PXConfiguration.Builder()
+                .appId("APP_ID")
+                .authToken("AUTH_123")
+                .cookieKey("COOKIE_123")
+                .build();
         this.pxClient = mock(PXHttpClient.class);
         this.configuration = TestObjectUtils.generateConfiguration();
         this.bufferedActivityHandler = new BufferedActivityHandler(pxClient, configuration);
@@ -43,7 +49,7 @@ public class PXHttpClientTest {
         this.request = new MockHttpServletRequest();
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
-        this.context = new PXContext(request, this.ipProvider, this.hostnameProvider, "appId");
+        this.context = new PXContext(request, this.ipProvider, this.hostnameProvider, config);
 
     }
 

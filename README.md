@@ -15,7 +15,7 @@ Table of Contents
   *   [Installation](#installation)
   *   [Basic Usage Example](#basic-usage)
 -   [Configuration](#configuration)
-  *   [Blocking Score](#blocking-score)
+  *   [Blocking Score](#blocking-riskScore)
   *   [Customizing Default Blocking Pages](#custom-block-page)
   *   [Custom Block Action](#custom-block)
   *   [Enable/Disable Captcha](#captcha-support)
@@ -23,6 +23,7 @@ Table of Contents
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeout Milliseconds](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
+  *   [Custom Blocking Actions](#custom-blocking-action)
 
 <a name="prerequisites"></a> Prerequisites
 ----------------------------
@@ -76,13 +77,16 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	.build();
 
 // Get instance
-PerimeterX px = PerimeterX.getInstance(pxConfiguration);
+PerimeterX enforcer = new PerimeterX(pxConfiguration);
 
 // Inside the request / Filter
 @Override
 protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws ServletException, IOExcption {
 ...
-	px.pxVerify(req, new HttpServletResponseWrapper(resp);
+	PXContext ctx = enforcer.pxVerify(req, new HttpServletResponseWrapper(resp);
+	if (!ctx.isVerified()) {
+	   // request should be blocked and BlockHandler was triggered on HttpServerResponseWrapper
+	}
 ...
 }
 
@@ -99,7 +103,7 @@ Configuration options are set in `PXConfiguration`
 - cookieKey
 - authToken
 
-##### <a name="blocking-score"></a> Changing the Minimum Score for Blocking
+##### <a name="blocking-riskScore"></a> Changing the Minimum Score for Blocking
 
 **default:** 70
 
@@ -174,7 +178,7 @@ Side notes: Custom logo/js/css can be added together
 
 #### <a name="captcha-support"></a>Enable/disable captcha in the block page
 
-By enabling captcha support, a captcha will be served as part of the block page giving real users the ability to answer, get score clean up and be passed to the requested page.
+By enabling captcha support, a captcha will be served as part of the block page giving real users the ability to answer, get riskScore clean up and be passed to the requested page.
 
 **default: true**
 
@@ -258,4 +262,30 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	.sendPageActivities(true)
 	...
 	.build()
+```
+
+#### <a name="custom-blocking-action"></a> Custom Blocking Actions
+In order to customize the action performed on a valid block value, implement the interface `VerificationHandler`, and set it after the initialization of PerimeterX class.
+
+The custom handler should contain the action to be taken, when a visitor receives a score higher than the 'blockingScore' value. Common customization options are presenting of a reCAPTCHA, or supplying a custom branded block page.
+
+**Default block behaviour:** return an HTTP status code of 403 and serve the PerimeterX block page.
+
+```java
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+	...
+	.build();
+
+PerimeterX enforcer = new PerimeterX(pxConfiguration);
+enforcer.setVerificationHandler(new VerificationHandler() {
+    @Override
+    public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws Exception {
+        if (context.getRiskScore() >= configuration.getBlockingScore()) {
+            // Score was higher than threshold, request should be blocked
+            return false;
+        }
+        // Score was below threshold, request should pass
+        return true;
+    }
+});
 ```

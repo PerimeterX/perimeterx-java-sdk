@@ -34,15 +34,15 @@ import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
+import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
+import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.RiskRequest;
-import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
@@ -77,6 +77,7 @@ public class PerimeterX {
     private PXCaptchaValidator captchaValidator;
     private IPProvider ipProvider = new RemoteAddressIPProvider();
     private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
+    private VerificationHandler verificationHandler;
 
     /**
      * Build a singleton object from configuration
@@ -102,7 +103,9 @@ public class PerimeterX {
         cm.setMaxTotal(200);
         cm.setDefaultMaxPerRoute(20);
         RequestConfig config = RequestConfig.custom()
+                .setConnectTimeout(timeout)
                 .setConnectionRequestTimeout(timeout)
+                .setSocketTimeout(timeout)
                 .build();
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(cm)
@@ -123,10 +126,11 @@ public class PerimeterX {
         } else {
             this.blockHandler = new DefaultBlockHandler();
         }
-        this.serverValidator = new PXS2SValidator(pxClient);
+        this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.captchaValidator = new PXCaptchaValidator(pxClient);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
+        this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
@@ -154,66 +158,48 @@ public class PerimeterX {
      *
      * @param req             - current http call examined by PX
      * @param responseWrapper - response wrapper on which we will set the response according to PX verification.
-     * @return true if request is valid
+     * @return PXContext, or null if module is disabled
      * @throws PXException - PXException
      */
-    public boolean pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
+    public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
+        PXContext context = null;
         try {
             if (!moduleEnabled()) {
                 logger.info("PerimeterX verification SDK is disabled");
-                return true;
+                return null;
             }
             // Remove captcha cookie to prevent re-use
             Cookie cookie = new Cookie(Constants.COOKIE_CAPTCHA_KEY, StringUtils.EMPTY);
             cookie.setMaxAge(0);
             responseWrapper.addCookie(cookie);
 
-            PXContext context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration.getAppId());
+            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
             if (captchaValidator.verify(context)) {
-                return handleVerification(context, responseWrapper, BlockReason.COOKIE);
+                context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
+                return context;
             }
 
             boolean cookieVerified = cookieValidator.verify(this.configuration ,context);
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
                 logger.info("No risk API Call is needed, using cookie");
-                return handleVerification(context, responseWrapper, BlockReason.COOKIE);
+                context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
+                return context;
             }
 
             // Calls risk_api and populate the data retrieved to the context
-            RiskRequest request = RiskRequest.fromContext(context);
-            RiskResponse response = serverValidator.verify(request);
-            if (response != null) {
-                context.setScore(response.getScore());
-                context.setUuid(response.getUuid());
-                return handleVerification(context, responseWrapper, BlockReason.SERVER);
-            }
-            return true;
+            serverValidator.verify(context);
+            context.setVerified(verificationHandler.handleVerification(context,responseWrapper));
         } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());
-            return false;
-        }
-    }
-
-    private boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper, BlockReason blockReason) throws PXException {
-        int score = context.getScore();
-        int blockingScore = this.configuration.getBlockingScore();
-        // If should block this request we will apply our block handle and send the block activity to px
-        boolean verified = score < blockingScore;
-        logger.info("Request score: {}, Blocking score: {}", score, blockingScore);
-        if (verified) {
-            logger.info("Request valid");
-            // Not blocking request and sending page_requested activity to px if configured as true
-            if (this.configuration.shouldSendPageActivities()) {
-                this.activityHandler.handlePageRequestedActivity(context);
+            // If any general exception is being thrown, notify in page_request activity
+            if (context != null){
+                context.setPassReason(PassReason.ERROR);
+                activityHandler.handlePageRequestedActivity(context);
+                context.setVerified(true);
             }
-        } else {
-            logger.info("Request invalid");
-            context.setBlockReason(blockReason);
-            this.activityHandler.handleBlockActivity(context);
-            this.blockHandler.handleBlocking(context, this.configuration, responseWrapper);
         }
-        return verified;
+        return context;
     }
 
     private boolean moduleEnabled() {
@@ -254,5 +240,14 @@ public class PerimeterX {
      */
     public void setHostnameProvider(HostnameProvider hostnameProvider) {
         this.hostnameProvider = hostnameProvider;
+    }
+
+     /**
+     * Set Set Verification Handler
+     *
+     * @param verificationHandler - sets the verification handler for user customization
+     */
+    public void setVerificationHandler(VerificationHandler verificationHandler){
+        this.verificationHandler = verificationHandler;
     }
 }

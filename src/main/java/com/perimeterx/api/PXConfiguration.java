@@ -30,6 +30,7 @@ public class PXConfiguration {
     private String customLogo;
     private String cssRef;
     private String jsRef;
+    private Set<String> sensitiveRoutes;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -48,6 +49,7 @@ public class PXConfiguration {
         customLogo = builder.customLogo;
         cssRef = builder.cssRef;
         jsRef = builder.jsRef;
+        sensitiveRoutes = builder.sensitiveRoutes;
 
     }
 
@@ -115,6 +117,10 @@ public class PXConfiguration {
         return jsRef;
     }
 
+    public Set<String> getSensitiveRoutes() {
+        return sensitiveRoutes;
+    }
+
     public static final class Builder {
         private String appId;
         private String cookieKey;
@@ -132,6 +138,7 @@ public class PXConfiguration {
         private String customLogo;
         private String cssRef;
         private String jsRef;
+        private Set<String> sensitiveRoutes = new HashSet<>();
 
         public Builder() {
         }
@@ -224,6 +231,10 @@ public class PXConfiguration {
             return this;
         }
 
+        public Builder sensitiveRoutes(Set<String> val){
+            sensitiveRoutes = val;
+            return this;
+        }
 
         public PXConfiguration build() {
             Validate.notEmpty(this.appId, "Application ID (appId) must be set");

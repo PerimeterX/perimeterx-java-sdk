@@ -5,8 +5,6 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 
 /**

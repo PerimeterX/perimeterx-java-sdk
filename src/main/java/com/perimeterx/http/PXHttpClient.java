@@ -79,8 +79,6 @@ public class PXHttpClient implements PXClient {
                 return JsonUtils.riskResponseReader.readValue(s);
             }
             return null;
-        } catch (Exception e) {
-            throw new PXException(e);
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();
@@ -124,7 +122,6 @@ public class PXHttpClient implements PXClient {
 
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
-
         } catch (Exception e) {
             throw new PXException(e);
         } finally {
@@ -150,8 +147,6 @@ public class PXHttpClient implements PXClient {
                 return JsonUtils.captchaResponseReader.readValue(s);
             }
             return null;
-        } catch (Exception e) {
-            throw new PXException(e);
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();

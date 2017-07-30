@@ -8,6 +8,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,12 +56,12 @@ public class PXCookieValidator {
             context.setRiskCookie(pxCookie);
             context.setVid(pxCookie.getVID());
             context.setUuid(pxCookie.getUUID());
-            context.setScore(pxCookie.getScore());
+            context.setRiskScore(pxCookie.getScore());
             context.setBlockAction(pxCookie.getBlockAction());
             context.setCookieHmac(pxCookie.getHmac());
 
             if (pxCookie.isExpired()){
-                context.setS2sCallReason(S2SCallReason.EXPIRED_COOKIE);
+                context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED);
                 return false;
             }
 
@@ -74,6 +75,11 @@ public class PXCookieValidator {
                 return false;
             }
 
+            if (context.isSensitiveRoute()){
+                context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
+                return false;
+            }
+            context.setPassReason(PassReason.COOKIE);
             context.setS2sCallReason(S2SCallReason.NONE);
             return true;
 
