@@ -1,11 +1,11 @@
 # Change Log
 
-## [v2.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-25-04)
+## [v2.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-30-07)
  - Renamed expired_cookie call reason to cookie_expired
  - Custom verification handler is now supported
  - Added `pass_reason` to `page_requested`
  - Sending `client_uuid` on `page_requested` activities
- - Returning context instead of boolean value on verification
+ - `pxVerify` now returning context instead of boolean value
  - Fixed wrong hostname being collected on `DefualtHostnameProvider`
 
 ## [v2.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-25-04)
