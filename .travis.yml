@@ -1,5 +1,5 @@
 language: java
-sudo: falsegit add -u
+sudo: true
 install: mvn install
 jdk:
 - oraclejdk7
