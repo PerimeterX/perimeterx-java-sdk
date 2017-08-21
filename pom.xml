@@ -267,7 +267,7 @@
                     <value>${project.version}</value>
                 </configuration>
             </plugin>
-        </plugins>
+    </plugins>
     </build>
 
     <distributionManagement>

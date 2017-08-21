@@ -142,7 +142,7 @@ public class CookieV3Test {
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
         assertEquals(verify, true);
-        assertEquals(context.getBlockReason(), null);
+        assertEquals(context.getBlockReason(), BlockReason.NONE);
         assertEquals(context.getS2sCallReason(), S2SCallReason.NONE);
     }
 
