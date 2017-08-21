@@ -10,6 +10,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import javax.swing.text.html.HTMLDocument;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -49,6 +51,7 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
+        pxContext.setBlockAction("c");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
@@ -63,6 +66,7 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
+        pxContext.setBlockAction("b");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
@@ -78,6 +82,7 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
+        pxContext.setBlockAction("c");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
     }
@@ -92,6 +97,7 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
+        pxContext.setBlockAction("b");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
     }
@@ -106,6 +112,7 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .cssRef("http://www.google.com/script.js")
                 .build();
+        pxContext.setBlockAction("b");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/script.js") );
     }
@@ -120,6 +127,7 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .cssRef("http://www.google.com/script.js")
                 .build();
+        pxContext.setBlockAction("c");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/script.js") );
     }
@@ -133,6 +141,7 @@ public class TemplatesTest {
                 .captchaEnabled(true)
                 .blockingScore(70)
                 .build();
+        pxContext.setBlockAction("c");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
@@ -146,6 +155,7 @@ public class TemplatesTest {
                 .captchaEnabled(false)
                 .blockingScore(70)
                 .build();
+        pxContext.setBlockAction("b");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
@@ -159,6 +169,7 @@ public class TemplatesTest {
                 .captchaEnabled(false)
                 .blockingScore(70)
                 .build();
+        pxContext.setBlockAction("c");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains( pxContext.getVid() ) );
     }
