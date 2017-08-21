@@ -1,5 +1,6 @@
 language: java
-sudo: false
+sudo: falsegit add -u
+install: mvn install
 jdk:
 - oraclejdk7
 - oraclejdk8
