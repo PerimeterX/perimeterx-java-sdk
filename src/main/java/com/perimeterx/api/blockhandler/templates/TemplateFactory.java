@@ -25,8 +25,12 @@ public abstract class TemplateFactory {
 
     public static String getTemplate(PXContext pxContext, PXConfiguration pxConfig, String template) throws PXException {
         try {
-            Map<String, String> props = getProps(pxContext, pxConfig);
+            // In case of challenge
+            if (pxContext.getBlockAction().equals("challenge") && pxContext.getBlockActionData() != null) {
+                return pxContext.getBlockActionData();
+            }
 
+            Map<String, String> props = getProps(pxContext, pxConfig);
             MustacheFactory mf = new DefaultMustacheFactory();
             Mustache m = mf.compile((getTemplate(template)), (getTemplate(template)).toString());
             StringWriter sw = new StringWriter();

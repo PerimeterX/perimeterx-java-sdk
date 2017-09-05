@@ -1,5 +1,7 @@
 package com.perimeterx.models.httpmodels;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Risk API server Response POJO
  * <p>
@@ -11,15 +13,18 @@ public class RiskResponse {
     private int status;
     private int score;
     private String action;
+    @JsonProperty("action_data")
+    private RiskResponseBody actionData;
 
     public RiskResponse() {
     }
 
-    public RiskResponse(String uuid, int status, int score, String action) {
+    public RiskResponse(String uuid, int status, int score, String action, RiskResponseBody actionData) {
         this.uuid = uuid;
         this.status = status;
         this.score = score;
         this.action = action;
+        this.actionData = actionData;
     }
 
     public String getUuid() {
@@ -52,5 +57,13 @@ public class RiskResponse {
 
     public void setAction(String action) {
         this.action = action;
+    }
+
+    public RiskResponseBody getActionData() {
+        return actionData;
+    }
+
+    public void setActionData(RiskResponseBody actionData) {
+        this.actionData = actionData;
     }
 }
