@@ -42,6 +42,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
             this.activityHandler.handleBlockActivity(context);
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
         }
+
         return verified;
     }
 

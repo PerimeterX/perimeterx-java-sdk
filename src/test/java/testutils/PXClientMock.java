@@ -5,10 +5,7 @@ import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.CaptchaRequest;
-import com.perimeterx.models.httpmodels.CaptchaResponse;
-import com.perimeterx.models.httpmodels.RiskRequest;
-import com.perimeterx.models.httpmodels.RiskResponse;
+import com.perimeterx.models.httpmodels.*;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -24,15 +21,29 @@ public class PXClientMock implements PXClient {
 
     private final int score;
     private final int captchaReturnStatus;
+    private boolean forceChallenge;
 
     public PXClientMock(int scoreToReturn, int captchaReturnStatus) {
+        this.forceChallenge = false;
+        this.score = scoreToReturn;
+        this.captchaReturnStatus = captchaReturnStatus;
+    }
+
+    public PXClientMock(int scoreToReturn, int captchaReturnStatus, boolean forceChallenge) {
+        this.forceChallenge = forceChallenge;
         this.score = scoreToReturn;
         this.captchaReturnStatus = captchaReturnStatus;
     }
 
     @Override
     public RiskResponse riskApiCall(RiskRequest riskRequest) throws PXException, IOException {
-        return new RiskResponse("uuid", 0, this.score, "c");
+        RiskResponse riskResponse = new RiskResponse("uuid", 0, this.score, "c", null);
+        if (forceChallenge) {
+            riskResponse.setAction("j");
+            riskResponse.setActionData(new RiskResponseBody());
+            riskResponse.getActionData().setBody("<html><body></body></html>");
+        }
+        return riskResponse;
     }
 
     @Override

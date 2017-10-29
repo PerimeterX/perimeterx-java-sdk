@@ -82,6 +82,7 @@ public class PXContext {
      */
     private S2SCallReason s2sCallReason;
 
+    private boolean madeS2SApiCall;
     /**
      * Which action to take after being blocked
      */
@@ -112,6 +113,7 @@ public class PXContext {
      * Reason for why request should be blocked - relevant when request is not verified, meaning - verified {@link com.perimeterx.models.PXContext#verified} is false
      */
     private BlockReason blockReason;
+    private String blockActionData;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
                      final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
@@ -151,7 +153,9 @@ public class PXContext {
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
         this.s2sCallReason = S2SCallReason.NONE;
+        this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
+        this.madeS2SApiCall = false;
         this.riskRtt = 0;
 
         this.httpMethod = request.getMethod();
@@ -326,13 +330,16 @@ public class PXContext {
             case Constants.BLOCK_ACTION_CAPTCHA:
                 this.blockAction = BlockAction.BLOCK;
                 break;
+            case Constants.BLOCK_ACTION_CHALLENGE:
+                this.blockAction = "challenge";
+                break;
             default:
                 this.blockAction = BlockAction.CAPTCHA;
                 break;
         }
     }
 
-    public BlockAction getBlockAction() {
+    public String getBlockAction() {
         return this.blockAction;
     }
 
@@ -340,7 +347,12 @@ public class PXContext {
         this.cookieHmac = cookieHmac;
     }
 
-    public boolean isSensitiveRoute() {
+
+    public String getCookieHmac() {
+        return this.cookieHmac;
+    }
+
+    public boolean isSensitiveRoute(){
         return this.sensitiveRoute;
     }
 
@@ -372,5 +384,21 @@ public class PXContext {
             }
         }
         return false;
+    }
+
+    public void setMadeS2SApiCall(boolean flag) {
+        this.madeS2SApiCall = flag;
+    }
+
+    public boolean isMadeS2SApiCall(){
+        return this.madeS2SApiCall;
+    }
+
+    public String getBlockActionData() {
+        return blockActionData;
+    }
+
+    public void setBlockActionData(String blockActionData) {
+        this.blockActionData = blockActionData;
     }
 }

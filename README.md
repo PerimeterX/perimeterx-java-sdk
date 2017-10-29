@@ -23,6 +23,7 @@ Table of Contents
   *   [Filter Sensitive Headers](#sensitive-headers)
   *   [API Timeout Milliseconds](#api-timeout)
   *   [Send Page Activities](#send-page-activities)
+  *   [Custom Blocking Actions](#custom-blocking-action)
 
 <a name="prerequisites"></a> Prerequisites
 ----------------------------
@@ -76,7 +77,7 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	.build();
 
 // Get instance
-PerimeterX enforcer = PerimeterX.getInstance(pxConfiguration);
+PerimeterX enforcer = new PerimeterX(pxConfiguration);
 
 // Inside the request / Filter
 @Override
@@ -261,4 +262,30 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	.sendPageActivities(true)
 	...
 	.build()
+```
+
+#### <a name="custom-blocking-action"></a> Custom Blocking Actions
+In order to customize the action performed on a valid block value, implement the interface `VerificationHandler`, and set it after the initialization of PerimeterX class.
+
+The custom handler should contain the action to be taken, when a visitor receives a score higher than the 'blockingScore' value. Common customization options are presenting of a reCAPTCHA, or supplying a custom branded block page.
+
+**Default block behaviour:** return an HTTP status code of 403 and serve the PerimeterX block page.
+
+```java
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+	...
+	.build();
+
+PerimeterX enforcer = new PerimeterX(pxConfiguration);
+enforcer.setVerificationHandler(new VerificationHandler() {
+    @Override
+    public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws Exception {
+        if (context.getRiskScore() >= configuration.getBlockingScore()) {
+            // Score was higher than threshold, request should be blocked
+            return false;
+        }
+        // Score was below threshold, request should pass
+        return true;
+    }
+});
 ```

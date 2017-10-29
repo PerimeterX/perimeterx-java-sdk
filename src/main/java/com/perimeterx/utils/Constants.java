@@ -49,4 +49,5 @@ public final class Constants {
 
     public static final String CAPTCHA_ACTION_CAPTCHA = "c";
     public static final String BLOCK_ACTION_CAPTCHA = "b";
+    public static final String BLOCK_ACTION_CHALLENGE = "j";
 }
