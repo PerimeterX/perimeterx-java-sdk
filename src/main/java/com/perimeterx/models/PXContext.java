@@ -331,7 +331,7 @@ public class PXContext {
                 this.blockAction = BlockAction.BLOCK;
                 break;
             case Constants.BLOCK_ACTION_CHALLENGE:
-                this.blockAction = "challenge";
+                this.blockAction = BlockAction.CHALLENGE;
                 break;
             default:
                 this.blockAction = BlockAction.CAPTCHA;
@@ -339,7 +339,7 @@ public class PXContext {
         }
     }
 
-    public String getBlockAction() {
+    public BlockAction getBlockAction() {
         return this.blockAction;
     }
 
