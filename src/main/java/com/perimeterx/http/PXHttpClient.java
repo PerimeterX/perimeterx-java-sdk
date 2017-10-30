@@ -132,7 +132,7 @@ public class PXHttpClient implements PXClient {
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
             post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAppId());
+            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
         } catch (Exception e) {
@@ -207,7 +207,7 @@ public class PXHttpClient implements PXClient {
             post.setEntity(new StringEntity(requestBody, UTF_8));
             PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());
             post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAppId());
+            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
