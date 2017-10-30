@@ -198,8 +198,8 @@ public class PXHttpClient implements PXClient {
         HttpAsyncRequestProducer producer = null;
         try {
             asyncHttpClient.start();
-
             String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
+            logger.info("Sending enforcer telemetryß: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
