@@ -2,6 +2,7 @@ package testutils;
 
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
@@ -74,6 +75,11 @@ public class PXClientMock implements PXClient {
         stub.setModuleEnabled(false);
         stub.setModuleMode(ModuleMode.BLOCKING);
         return stub;
+    }
+
+    @Override
+    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException {
+        // noop
     }
 
 }

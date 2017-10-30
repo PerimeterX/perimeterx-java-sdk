@@ -1,7 +1,9 @@
 package com.perimeterx.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
@@ -188,6 +190,28 @@ public class PXHttpClient implements PXClient {
         } catch (Exception e) {
             logger.error("[getConfiguration] EXCEPTION {}", e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException{
+        HttpAsyncRequestProducer producer = null;
+        try {
+            asyncHttpClient.start();
+
+            String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
+            logger.info("Sending enforcer telemetry: {}", requestBody);
+            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
+            producer = HttpAsyncMethods.create(post);
+            asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (producer != null) {
+                producer.close();
+            }
         }
     }
 }

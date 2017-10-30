@@ -120,6 +120,8 @@ public class PerimeterX {
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
 
+        this.activityHandler.handleEnforcerTelemetryActivity(configuration);
+
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {

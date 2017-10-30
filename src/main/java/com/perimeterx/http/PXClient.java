@@ -1,6 +1,7 @@
 package com.perimeterx.http;
 
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
@@ -63,5 +64,11 @@ public interface PXClient {
      * @throws IOException when trying to close the connection
      */
     PXDynamicConfiguration getConfigurationFromServer();
+
+    /**
+     * Calling PX Servers and reporting enforcer telemetry asynchronously
+     * @param enforcerTelemetry
+     */
+    void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException;
 
 }
