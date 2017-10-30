@@ -15,6 +15,7 @@ import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PXCommonUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -130,6 +131,8 @@ public class PXHttpClient implements PXClient {
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
+            post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAppId());
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
         } catch (Exception e) {
@@ -199,9 +202,12 @@ public class PXHttpClient implements PXClient {
         try {
             asyncHttpClient.start();
             String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
-            logger.info("Sending enforcer telemetryß: {}", requestBody);
+            logger.info("Sending enforcer telemetry: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY);
             post.setEntity(new StringEntity(requestBody, UTF_8));
+            PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());
+            post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAppId());
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
