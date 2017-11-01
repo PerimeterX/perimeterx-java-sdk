@@ -35,7 +35,7 @@ public class RemoteConfigurationsTest {
                                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), false, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
         RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
-        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
+        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config, pxClient);
         timerConfigUpdater.run();
         Assert.assertTrue(config.getAppId().equals("stub_app_id"));
         Assert.assertTrue(config.getCookieKey().equals("stub_cookie_key"));
@@ -54,7 +54,7 @@ public class RemoteConfigurationsTest {
                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), true, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
         RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
-        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config);
+        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config, pxClient);
         timerConfigUpdater.run();
         when(pxClient.getConfigurationFromServer()).thenReturn(null);
         timerConfigUpdater.run();

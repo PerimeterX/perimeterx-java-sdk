@@ -124,8 +124,6 @@ public class PXHttpClient implements PXClient {
     public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
         HttpAsyncRequestProducer producer = null;
         try {
-            asyncHttpClient.start();
-
             String requestBody = JsonUtils.writer.writeValueAsString(activities);
             logger.info("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
@@ -200,7 +198,6 @@ public class PXHttpClient implements PXClient {
     public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException{
         HttpAsyncRequestProducer producer = null;
         try {
-            asyncHttpClient.start();
             String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
             logger.info("Sending enforcer telemetry: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY);

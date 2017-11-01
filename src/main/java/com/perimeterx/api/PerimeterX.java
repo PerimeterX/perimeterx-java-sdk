@@ -94,7 +94,9 @@ public class PerimeterX {
     }
 
     private CloseableHttpAsyncClient getAsyncHttpClient() {
-        return HttpAsyncClients.createDefault();
+        CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createDefault();
+        closeableHttpAsyncClient.start();
+        return closeableHttpAsyncClient;
     }
 
     private void init(PXConfiguration configuration) throws PXException {
@@ -109,7 +111,7 @@ public class PerimeterX {
             } else {
                 remoteConfigManager.updateConfiguration(initialConfig);
             }
-            TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigManager, configuration);
+            TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigManager, configuration, pxClient);
             timerConfigUpdater.schedule();
         }
 
