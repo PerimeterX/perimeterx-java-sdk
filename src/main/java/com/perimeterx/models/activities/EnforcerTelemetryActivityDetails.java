@@ -23,11 +23,13 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
     private String osName;
     @JsonProperty("node_name")
     private String nodeName;
+    @JsonProperty("update_reason")
+    private UpdateReason updateReason;
 
-    public EnforcerTelemetryActivityDetails(PXConfiguration pxConfiguration) {
+    public EnforcerTelemetryActivityDetails(PXConfiguration pxConfiguration, UpdateReason updateReason) {
         this.moduleVersion = Constants.SDK_VERSION;
         this.osName = System.getProperty("os.name");
-
+        this.updateReason = updateReason;
         try {
             this.nodeName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
