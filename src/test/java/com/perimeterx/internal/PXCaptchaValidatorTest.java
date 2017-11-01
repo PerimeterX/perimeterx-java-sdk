@@ -36,8 +36,8 @@ public class PXCaptchaValidatorTest {
                 .build();
         PXClient client = TestObjectUtils.verifiedCaptchaClient();
         PXClient noVerificationClient = TestObjectUtils.notVerifiedCaptchaClient();
-        this.captchaValidator = new PXCaptchaValidator(client);
-        this.noValidateCaptchaValidator = new PXCaptchaValidator(noVerificationClient);
+        this.captchaValidator = new PXCaptchaValidator(client, pxConfig);
+        this.noValidateCaptchaValidator = new PXCaptchaValidator(noVerificationClient, pxConfig);
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
     }

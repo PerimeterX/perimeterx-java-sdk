@@ -40,6 +40,7 @@ public class PXConfiguration {
     private int maxConnections;
     private int maxConnectionsPerRoute;
     private String remoteConfigurationUrl;
+    private CaptchaProvider captchaProvider;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -66,6 +67,7 @@ public class PXConfiguration {
         maxConnections = builder.maxConnections;
         maxConnectionsPerRoute = builder.maxConnectionsPerRoute;
         remoteConfigurationUrl = builder.remoteConfigurationUrl;
+        captchaProvider = builder.captchaProvider;
     }
 
     public String getRemoteConfigurationUrl(){
@@ -172,6 +174,10 @@ public class PXConfiguration {
         return this.maxConnectionsPerRoute;
     }
 
+    public CaptchaProvider getCaptchaProvider() {
+        return captchaProvider;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
             logger.info("Updating PXConfiguration file");
             this.appId = pxDynamicConfiguration.getAppId();
@@ -210,6 +216,7 @@ public class PXConfiguration {
         private int maxConnectionsPerRoute = 20;
         private int maxConnections = 20;
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
+        private CaptchaProvider captchaProvider = CaptchaProvider.RECAPTCHA;
 
         public Builder() {
         }
@@ -340,6 +347,11 @@ public class PXConfiguration {
 
         public Builder maxConnectionsPerRoute(int val){
             maxConnectionsPerRoute = val;
+            return this;
+        }
+
+        public Builder captchaProvider(CaptchaProvider captchaProvider) {
+            this.captchaProvider = captchaProvider;
             return this;
         }
 

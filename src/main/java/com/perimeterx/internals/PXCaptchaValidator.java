@@ -2,6 +2,7 @@ package com.perimeterx.internals;
 
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.CaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
@@ -18,9 +19,11 @@ import org.apache.http.conn.ConnectTimeoutException;
 public class PXCaptchaValidator {
 
     private PXClient pxClient;
+    private PXConfiguration pxConfiguration;
 
-    public PXCaptchaValidator(PXClient pxClient) {
+    public PXCaptchaValidator(PXClient pxClient, PXConfiguration pxConfiguration) {
         this.pxClient = pxClient;
+        this.pxConfiguration = pxConfiguration;
     }
 
     /**
@@ -36,7 +39,7 @@ public class PXCaptchaValidator {
         }
         long startRiskRtt = System.currentTimeMillis();
         try {
-            CaptchaRequest captchaRequest = CaptchaRequest.fromContext(context);
+            CaptchaRequest captchaRequest = CaptchaRequest.fromContext(context, pxConfiguration);
             CaptchaResponse r = this.pxClient.sendCaptchaRequest(captchaRequest);
             context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
             if (r != null && r.getStatus() == Constants.CAPTCHA_SUCCESS_CODE) {
