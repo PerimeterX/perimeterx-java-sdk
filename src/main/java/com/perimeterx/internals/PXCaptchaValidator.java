@@ -4,7 +4,7 @@ import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.CaptchaRequest;
+import com.perimeterx.models.httpmodels.ResetCaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
@@ -39,8 +39,8 @@ public class PXCaptchaValidator {
         }
         long startRiskRtt = System.currentTimeMillis();
         try {
-            CaptchaRequest captchaRequest = CaptchaRequest.fromContext(context, pxConfiguration);
-            CaptchaResponse r = this.pxClient.sendCaptchaRequest(captchaRequest);
+            ResetCaptchaRequest resetCaptchaRequest = ResetCaptchaRequest.fromContext(context, pxConfiguration);
+            CaptchaResponse r = this.pxClient.sendCaptchaRequest(resetCaptchaRequest);
             context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
             if (r != null && r.getStatus() == Constants.CAPTCHA_SUCCESS_CODE) {
                 context.setVid(r.getVid());
