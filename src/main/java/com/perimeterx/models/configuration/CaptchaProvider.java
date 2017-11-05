@@ -16,6 +16,6 @@ public enum CaptchaProvider {
 
     @JsonValue
     public String getValue() {
-        return this.name();
+        return this.template;
     }
 }

@@ -13,11 +13,11 @@ import java.util.ArrayList;
  */
 public class RequestCaptcha extends Request {
     @JsonProperty("captchaType")
-    public CaptchaProvider catpchaType;
+    public CaptchaProvider captchaType;
 
     public static Request fromContext(PXContext pxContext, PXConfiguration pxConfiguration) {
         RequestCaptcha requestCaptcha = new RequestCaptcha();
-        requestCaptcha.catpchaType = pxConfiguration.getCaptchaProvider();
+        requestCaptcha.captchaType = pxConfiguration.getCaptchaProvider();
         requestCaptcha.Headers = new ArrayList<>(pxContext.getHeaders().entrySet());
         requestCaptcha.IP = pxContext.getIp();
         requestCaptcha.URI = pxContext.getUri();
