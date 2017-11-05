@@ -6,11 +6,9 @@ import com.perimeterx.models.activities.EnforcerTelemetryActivityDetails;
 import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
-import com.perimeterx.models.exceptions.PXException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -37,7 +35,7 @@ public class TimerConfigUpdater extends TimerTask {
             configManager.updateConfiguration(dynamicConfig);
 
             try {
-                EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfiguration, UpdateReason.REMMOTE_CONFIG);
+                EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfiguration, UpdateReason.REMOTE_CONFIG);
                 EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry",pxConfiguration.getAppId(),details);
                 pxClient.sendEnforcerTelemetry(enforcerTelemetry);
             } catch (Exception e) {
