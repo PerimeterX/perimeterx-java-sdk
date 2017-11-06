@@ -222,7 +222,7 @@ public class PXConfiguration {
         private int remoteConfigurationInterval = 1000 * 5;
         private int remoteConfigurationDelay = 0;
         private int maxConnectionsPerRoute = 20;
-        private int maxConnections = 20;
+        private int maxConnections = 200;
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
         private CaptchaProvider captchaProvider = CaptchaProvider.RECAPTCHA;
         private Set<String> ipHeaders = new HashSet<>();
