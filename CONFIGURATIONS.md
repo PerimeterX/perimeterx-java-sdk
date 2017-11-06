@@ -33,6 +33,7 @@ Directives
 |remoteConfigurationDelay|Set amount of time to delay the remote configuration thread before it starts|0|Number|Milliseconds|
 |remoteConfigurationUrl|Set the url for PerimeterX configuration service||String| |
 |captchaProvider|Set the captcha provider on the default block page|CaptchaProvider.RECAPTCHA|CaptchaProvider.RECAPTCHA / CaptchaProvider.FUNCAPTCHA|enum|
+|ipHeaders|List of headers to extract the user ip from, if not set, it will be taken from default|Empty List|Set<String>|Use with `CombinedIPProvider`|
 
 
 ## <a name="interfaces"></a> Interfaces
@@ -72,6 +73,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
     .build();
 ```
 
+<a name="module-mode"></a>
 ##### Module Enabled/Disabled
  ```java
 PXConfiguration pxConf = new PXConfiguration.Builder()
@@ -79,7 +81,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
     .moduleEnabled(false) // default is true
 ...
 ```
-
+<a name="blocking-score"></a>
 ##### Tune Blocking Score Threshold
  ```java
 PXConfiguration pxConf = new PXConfiguration.Builder()
@@ -87,6 +89,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
     .blockingScore(95)
 ```
 
+<a name="sensitive-headers"></a>
 ##### Sensitive Headers
  ```java
 PXConfiguration pxConf = new PXConfiguration.Builder()
@@ -94,7 +97,16 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
     .sensitiveHeaders(new HashSet<String>(Arrays.asList("cookie", "cookies")))
 ...
 ```
+<a name="ip-headers"></a>
+##### Ip Headers
+ ```java
+PXConfiguration pxConf = new PXConfiguration.Builder()
+...
+    .ipHeaders(new HashSet<String>(Arrays.asList("x-px-true-ip", "x-true-ip")))
+...
+```
 
+<a name="sensitive-routes"></a>
 ##### Sensitive Routes
  ```java
 PXConfiguration pxConf = new PXConfiguration.Builder()
@@ -102,7 +114,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
     .sensitiveRoutes(new HashSet<String>(Arrays.asList("/cartCheckout")))
 ...
 ```
-
+<a name="css-js-logo"></a>
 ##### Customizing Default Block Page
  ```java
 PXConfiguration pxConf = new PXConfiguration.Builder()
@@ -113,6 +125,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
+<a name="captcha-provider"></a>
 ##### Captcha Provider
 ```
 PXConfiguration pxConf = new PXConfiguration.Builder()
