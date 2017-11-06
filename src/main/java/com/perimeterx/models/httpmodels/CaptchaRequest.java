@@ -2,35 +2,27 @@ package com.perimeterx.models.httpmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.CaptchaProvider;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.Request;
 
+import java.util.ArrayList;
+
 /**
- * CaptchaRequest model
- * <p>
- * Created by shikloshi on 07/07/2016.
+ * Created by nitzangoldfeder on 01/11/2017.
  */
-public class CaptchaRequest {
+public class CaptchaRequest extends Request {
+    @JsonProperty("captchaType")
+    public CaptchaProvider captchaType;
 
-    @JsonProperty("request")
-    public Request Request;
-    @JsonProperty("vid")
-    public String Vid;
-    @JsonProperty("uuid")
-    public String Uuid;
-    @JsonProperty("pxCaptcha")
-    public String PxCaptcha;
-    @JsonProperty("hostname")
-    public String Hostname;
+    public static Request fromContext(PXContext pxContext, PXConfiguration pxConfiguration) {
+        CaptchaRequest requestCaptcha = new CaptchaRequest();
+        requestCaptcha.captchaType = pxConfiguration.getCaptchaProvider();
+        requestCaptcha.Headers = new ArrayList<>(pxContext.getHeaders().entrySet());
+        requestCaptcha.IP = pxContext.getIp();
+        requestCaptcha.URI = pxContext.getUri();
+        requestCaptcha.URL = pxContext.getFullUrl();
 
-
-    public static CaptchaRequest fromContext(PXContext context) {
-        CaptchaRequest captchaRequest = new CaptchaRequest();
-        captchaRequest.Request = com.perimeterx.models.risk.Request.fromContext(context);
-        captchaRequest.PxCaptcha = context.getPxCaptcha();
-        captchaRequest.Uuid = context.getUuid();
-        captchaRequest.Vid = context.getVid();
-        captchaRequest.Hostname = context.getHostname();
-        return captchaRequest;
+        return requestCaptcha;
     }
-
 }

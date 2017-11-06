@@ -1,7 +1,7 @@
 package com.perimeterx.internals.cookie;
 
-import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
 
@@ -12,16 +12,16 @@ import java.util.Set;
  */
 public abstract class PXCookieFactory {
 
-    public static PXCookie create(PXConfiguration pxConfiguration, PXContext pxContext) throws PXException {
+    public static AbstractPXCookie create(PXConfiguration pxConfiguration, PXContext pxContext) throws PXException {
         // Return null if no cookies
         Set<String> cookieKeys = pxContext.getPxCookies().keySet();
-        if (cookieKeys.isEmpty()){
+        if (cookieKeys.isEmpty()) {
             return null;
         }
 
         // Will get the higher cookie because keys are sorted as a ordered set
         String cookieType = cookieKeys.iterator().next();
-        switch (cookieType){
+        switch (cookieType) {
             case Constants.COOKIE_V1_KEY:
                 return new PXCookieV1(pxConfiguration, pxContext);
             case Constants.COOKIE_V3_KEY:

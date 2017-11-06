@@ -11,7 +11,7 @@ before_install:
 
 script: mvn test -P !build-extras -B
 
-install: mvn install -P !build-extras -DskipTests=true -Dmaven.javadoc.skip=true -B
+install: mvn install -P !build-extras -Dmaven.javadoc.skip=true -B
 
 after_success:
 - ./deploy/before-deploy.sh

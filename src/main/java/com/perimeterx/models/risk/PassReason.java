@@ -16,7 +16,7 @@ public enum PassReason {
 
     public String value;
 
-    PassReason(String value){
+    PassReason(String value) {
         this.value = value;
     }
 

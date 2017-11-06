@@ -28,12 +28,11 @@ package com.perimeterx.api;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
-import com.perimeterx.api.blockhandler.CaptchaBlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
-import com.perimeterx.api.providers.DefaultHostnameProvider;
-import com.perimeterx.api.providers.HostnameProvider;
-import com.perimeterx.api.providers.IPProvider;
-import com.perimeterx.api.providers.RemoteAddressIPProvider;
+import com.perimeterx.api.providers.*;
+import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigManager;
+import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
+import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
 import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
@@ -41,9 +40,13 @@ import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.activities.UpdateReason;
+import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXCommonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -57,6 +60,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -65,9 +69,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class PerimeterX {
 
-    private Logger logger = LoggerFactory.getLogger(PerimeterX.class);
-
-    private static PerimeterX instance = null;
+    private static final Logger logger = LoggerFactory.getLogger(PerimeterX.class);
 
     private PXConfiguration configuration;
     private BlockHandler blockHandler;
@@ -75,62 +77,53 @@ public class PerimeterX {
     private PXCookieValidator cookieValidator;
     private ActivityHandler activityHandler;
     private PXCaptchaValidator captchaValidator;
-    private IPProvider ipProvider = new RemoteAddressIPProvider();
-    private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
+    private IPProvider ipProvider;
+    private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
 
-    /**
-     * Build a singleton object from configuration
-     *
-     * @param configuration - {@link PXConfiguration}
-     * @return PerimeterX object
-     * @deprecated use public constructor instead
-     */
-    @Deprecated
-    public static PerimeterX getInstance(PXConfiguration configuration) throws PXException {
-        if (instance == null) {
-            synchronized (PerimeterX.class) {
-                if (instance == null) {
-                    instance = new PerimeterX(configuration);
-                }
-            }
-        }
-        return instance;
-    }
-
-    private CloseableHttpClient getHttpClient(int timeout) {
+    private CloseableHttpClient getHttpClient() {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(200);
-        cm.setDefaultMaxPerRoute(20);
-        RequestConfig config = RequestConfig.custom()
-                .setConnectTimeout(timeout)
-                .setConnectionRequestTimeout(timeout)
-                .setSocketTimeout(timeout)
-                .build();
-        CloseableHttpClient httpClient = HttpClients.custom()
+        cm.setMaxTotal(configuration.getMaxConnections());
+        cm.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
+        return HttpClients.custom()
                 .setConnectionManager(cm)
-                .setDefaultRequestConfig(config)
+                .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(configuration.getAuthToken()))
                 .build();
-        return httpClient;
     }
 
     private CloseableHttpAsyncClient getAsyncHttpClient() {
-        return HttpAsyncClients.createDefault();
+        CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createDefault();
+        closeableHttpAsyncClient.start();
+        return closeableHttpAsyncClient;
     }
 
     private void init(PXConfiguration configuration) throws PXException {
         this.configuration = configuration;
-        PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient(this.configuration.getApiTimeout()));
-        if (this.configuration.isCaptchaEnabled()) {
-            this.blockHandler = new CaptchaBlockHandler();
-        } else {
-            this.blockHandler = new DefaultBlockHandler();
-        }
-        this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
-        this.captchaValidator = new PXCaptchaValidator(pxClient);
+        hostnameProvider = new DefaultHostnameProvider();
+        ipProvider = new CombinedIPProvider(configuration);
+        PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient());
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
+
+        if (configuration.isRemoteConfigurationEnabled()) {
+            RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(configuration, pxClient);
+            PXDynamicConfiguration initialConfig = remoteConfigManager.getConfiguration();
+            if (initialConfig == null) {
+                remoteConfigManager.disableModuleOnError();
+            } else {
+                remoteConfigManager.updateConfiguration(initialConfig);
+            }
+            TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigManager, configuration, activityHandler);
+            timerConfigUpdater.schedule();
+        }
+
+        this.blockHandler = new DefaultBlockHandler();
+        this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
+        this.captchaValidator = new PXCaptchaValidator(pxClient, configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
+
+        this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
+
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
@@ -179,7 +172,7 @@ public class PerimeterX {
                 return context;
             }
 
-            boolean cookieVerified = cookieValidator.verify(this.configuration ,context);
+            boolean cookieVerified = cookieValidator.verify(this.configuration, context);
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
                 logger.info("No risk API Call is needed, using cookie");
@@ -193,7 +186,7 @@ public class PerimeterX {
         } catch (Exception e) {
             logger.error("Unexpected error: {} - request passed", e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
-            if (context != null){
+            if (context != null) {
                 context.setPassReason(PassReason.ERROR);
                 activityHandler.handlePageRequestedActivity(context);
                 context.setVerified(true);
@@ -242,12 +235,12 @@ public class PerimeterX {
         this.hostnameProvider = hostnameProvider;
     }
 
-     /**
+    /**
      * Set Set Verification Handler
      *
      * @param verificationHandler - sets the verification handler for user customization
      */
-    public void setVerificationHandler(VerificationHandler verificationHandler){
+    public void setVerificationHandler(VerificationHandler verificationHandler) {
         this.verificationHandler = verificationHandler;
     }
 }

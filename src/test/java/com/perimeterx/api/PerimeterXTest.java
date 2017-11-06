@@ -1,6 +1,7 @@
 package com.perimeterx.api;
 
 import com.perimeterx.http.PXClient;
+import com.perimeterx.models.configuration.PXConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
@@ -57,7 +58,7 @@ public class PerimeterXTest extends ConfiguredTest {
                 .appId(appId)
                 .build();
 
-        Assert.assertEquals(pxConfiguration.getServerURL(),"https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
+        Assert.assertEquals(pxConfiguration.getServerURL(), "https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
     }
 
     @Test

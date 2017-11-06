@@ -1,6 +1,5 @@
 package com.perimeterx.internal;
 
-import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -8,9 +7,11 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
+import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
@@ -66,9 +67,8 @@ public class PXS2SValidatorTest {
         this.validator = new PXS2SValidator(this.client, this.pxConfig);
         context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
         boolean verify = validator.verify(context);
-        Assert.assertEquals("challenge",context.getBlockAction());
+        Assert.assertEquals(BlockAction.CHALLENGE,context.getBlockAction());
         Assert.assertEquals("<html><body></body></html>",context.getBlockActionData());
         Assert.assertEquals(BlockReason.CHALLENGE,context.getBlockReason());
     }
-
 }

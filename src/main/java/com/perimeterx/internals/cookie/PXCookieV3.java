@@ -1,14 +1,14 @@
 package com.perimeterx.internals.cookie;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 
 /**
  * Created by nitzangoldfeder on 13/04/2017.
  */
-public class PXCookieV3 extends PXCookie {
+public class PXCookieV3 extends AbstractPXCookie {
 
     private String hmac;
 
