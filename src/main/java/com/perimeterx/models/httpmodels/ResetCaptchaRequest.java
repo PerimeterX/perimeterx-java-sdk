@@ -21,7 +21,7 @@ public class ResetCaptchaRequest {
 
     public static ResetCaptchaRequest fromContext(PXContext context, PXConfiguration pxConfiguration) {
         ResetCaptchaRequest resetCaptchaRequest = new ResetCaptchaRequest();
-        resetCaptchaRequest.request = RequestCaptcha.fromContext(context, pxConfiguration);
+        resetCaptchaRequest.request = CaptchaRequest.fromContext(context, pxConfiguration);
         resetCaptchaRequest.hostname = context.getHostname();
         resetCaptchaRequest.pxCaptcha = context.getPxCaptcha();
         return resetCaptchaRequest;
