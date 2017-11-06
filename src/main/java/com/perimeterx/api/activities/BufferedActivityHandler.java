@@ -44,9 +44,9 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     @Override
-    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfig) throws PXException {
+    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason) throws PXException {
         try {
-            EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfig, UpdateReason.INIT);
+            EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfig, updateReason);
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry",pxConfig.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry);
         } catch (IOException e) {

@@ -1,5 +1,7 @@
 package com.perimeterx.api;
 
+import com.perimeterx.api.activities.ActivityHandler;
+import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigManager;
 import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
 import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
@@ -22,11 +24,13 @@ import static org.mockito.Mockito.*;
 public class RemoteConfigurationsTest {
     PXConfiguration config;
     PXHttpClient pxClient;
+    ActivityHandler activityHandler;
 
     @BeforeMethod
     public void setUp() {
         config = TestObjectUtils.generateConfiguration();
         pxClient = mock(PXHttpClient.class);
+        activityHandler = mock(DefaultActivityHandler.class);
     }
 
     @Test
@@ -35,7 +39,7 @@ public class RemoteConfigurationsTest {
                                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), false, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
         RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
-        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config, pxClient);
+        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config, activityHandler);
         timerConfigUpdater.run();
         Assert.assertTrue(config.getAppId().equals("stub_app_id"));
         Assert.assertTrue(config.getCookieKey().equals("stub_cookie_key"));
@@ -54,7 +58,7 @@ public class RemoteConfigurationsTest {
                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), true, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
         RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
-        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config, pxClient);
+        TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config, activityHandler);
         timerConfigUpdater.run();
         when(pxClient.getConfigurationFromServer()).thenReturn(null);
         timerConfigUpdater.run();

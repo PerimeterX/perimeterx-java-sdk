@@ -1,6 +1,7 @@
 package com.perimeterx.api.activities;
 
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 
@@ -30,7 +31,8 @@ public interface ActivityHandler {
     /**
      * Sends enforcer telemetry activity upon init/new configuration
      * @param pxConfig
+     * @param updateReason
      * @throws PXException
      */
-    void handleEnforcerTelemetryActivity(PXConfiguration pxConfig) throws PXException;
+    void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason) throws PXException;
 }
