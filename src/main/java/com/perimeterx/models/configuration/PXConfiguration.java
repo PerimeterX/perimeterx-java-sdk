@@ -205,7 +205,7 @@ public class PXConfiguration {
         private String authToken;
         private boolean moduleEnabled = true;
         private boolean encryptionEnabled = true;
-        private int blockingScore = 70;
+        private int blockingScore = 100;
         private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookie", "cookies"));
         private int maxBufferLen = 10;
         private int apiTimeout = 1000;
@@ -218,7 +218,7 @@ public class PXConfiguration {
         private String jsRef;
         private Set<String> sensitiveRoutes = new HashSet<>();
         private boolean remoteConfigurationEnabled = false;
-        private ModuleMode moduleMode = ModuleMode.BLOCKING;
+        private ModuleMode moduleMode = ModuleMode.MONITOR;
         private int remoteConfigurationInterval = 1000 * 5;
         private int remoteConfigurationDelay = 0;
         private int maxConnectionsPerRoute = 20;
