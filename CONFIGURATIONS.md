@@ -2,8 +2,9 @@ Directives
 ===========================================
 
 - [PXConfiguration](#px-config)
+- [Examples](#examples)
 
-## <a name="#px-config"></a>PXConfiguration
+## <a name="px-config"></a>PXConfiguration
 
 |Directive Name| Description   | Default value   | Values  | Note |
 |--------------|---------------|-----------------|---------|------|
@@ -21,7 +22,6 @@ Directives
 |maxConnectionsPerRoute|Set the maximum connection per route for risk api requests in the connections pool|20|Number| |
 |maxConnections|Set the total maximum connections for risk api client|20|Number| |
 |sendPageActivities|Toggle sending asynchronous page activities|true|Boolean| |
-|signedWithIP|Toggles if signing cookie with user-ip|false|Boolean|Must be aligned in portal|
 |serverURL|Set the base url for PerimeterX servers|https://sapi-\<app_id>.perimeterx.net|String| |
 |customLogo|The logo will be displayed at the top div of the the block page. The logo's max-height property would be 150px and width would be set to auto.|null|String| |
 |cssRef|The block page can be modified with a custom CSS by adding the CSSRef directive and providing a valid URL to the css|null|String| |
@@ -32,3 +32,66 @@ Directives
 |remoteConfigurationDelay|Set amount of time to delay the remote configuration thread before it starts|0|Number|Milliseconds|
 |remoteConfigurationUrl|Set the url for PerimeterX configuration service||String| |
 |captchaProvider|Set the captcha provider on the default block page|CaptchaProvider.RECAPTCHA|CaptchaProvider.RECAPTCHA / CaptchaProvider.FUNCAPTCHA|enum|
+
+Examples below
+
+## <a name="examples"></a>Examples
+
+##### Basic Active And Blocking Configuration
+ ```java
+PXConfiguration pxConf = new PXConfiguration.Builder()
+    .appId("APP_ID")
+    .cookieKey("AUTH_TOKEN") // Should copy from RiskCookie section in https://console.perimeterx.com/#/app/policiesmgmt
+    .moduleMode(ModuleMode.BLOCKING)
+    .authToken("AUTH_TOKEN") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/#/app/applicationsmgmt
+    .build();
+```
+
+##### Module Enabled/Disabled
+ ```java
+PXConfiguration pxConf = new PXConfiguration.Builder()
+...
+    .moduleEnabled(false) // default is true
+...
+```
+
+##### Tune Blocking Score Threshold
+ ```java
+PXConfiguration pxConf = new PXConfiguration.Builder()
+...
+    .blockingScore(95)
+```
+
+##### Sensitive Headers
+ ```java
+PXConfiguration pxConf = new PXConfiguration.Builder()
+...
+    .sensitiveHeaders(new HashSet<String>(Arrays.asList("cookie", "cookies")))
+...
+```
+
+##### Sensitive Routes
+ ```java
+PXConfiguration pxConf = new PXConfiguration.Builder()
+...
+    .sensitiveRoutes(new HashSet<String>(Arrays.asList("/cartCheckout")))
+...
+```
+
+##### Customizing Default Block Page
+ ```java
+PXConfiguration pxConf = new PXConfiguration.Builder()
+...
+    .customLogo(URL_TO_LOGO)
+    .cssRef(URL_TO_CSS)
+    .jsRef(URL_TO_JS)
+...
+```
+
+##### Captcha Provider
+```
+PXConfiguration pxConf = new PXConfiguration.Builder()
+...
+    .captchaProvider(CaptchaProvider.FUNCAPTCHA)
+...
+```
