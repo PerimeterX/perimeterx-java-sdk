@@ -10,6 +10,7 @@ Directives
 |appId|PX custom application id in the format of PX______|null|String|mandatory|
 |cookieKey|Key used for cookie signing - Can be found \ generated in PX portal - Policy page.|null|String|mandatory|
 |authToken|JWT token used for REST API - Can be found \ generated in PX portal - Application page.|null|String|mandatory|
+|moduleMode|Set the mode for PerimeterX module, Blocking or Monitor, setting to blocking mode meaning the module will be active blocking, monitor mode will only inspect the request but will not block it|Monitor|ModuleMode.BLOCKING / ModuleMode.MONITOR|enum, mandatory for active blocking|
 |moduleEnabled|Flag for enabling \ disabling Perimeterx protection|true|Boolean| |
 |encryptionEnabled|Flag indicating the module to decode or decrypt a cookie|true|Boolean| |
 |blockingScore|When requests with a score equal to or higher value they will be blocked.|100|Number| |
@@ -26,7 +27,6 @@ Directives
 |cssRef|The block page can be modified with a custom CSS by adding the CSSRef directive and providing a valid URL to the css|null|String| |
 |jsRef|The block page can be added with custom JS file by adding JSRef directive and providing the JS file that will be loaded with the block page.|null|String| |
 |sensitiveRoutes|List of routes the Perimeterx module will always do a server-to-server call for, even if the cookie score is low and valid|Empty list|Set<String>| |
-|moduleMode|Set the mode for PerimeterX module, Blocking or Monitor|Monitor|ModuleMode|enum|
 |remoteConfigurationEnabled|Toggle remote configurations, when true, initial configurations will be set through constructor, then can be tuned from the portal|false|Boolean| |
 |remoteConfigurationInterval|Set the interval value for when to fetch configurations from PerimeterX configuration service|5000|Number|Milliseconds|
 |remoteConfigurationDelay|Set amount of time to delay the remote configuration thread before it starts|0|Number|Milliseconds|

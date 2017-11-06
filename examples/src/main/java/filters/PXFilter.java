@@ -3,8 +3,10 @@ package filters;
 import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.models.configuration.ModuleMode;
 import org.springframework.stereotype.Component;
 import px.CustomBlockHandler;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +29,7 @@ public class PXFilter implements Filter {
                 .cookieKey("") // Should copy from RiskCookie section in https://console.perimeterx.com/#/app/policiesmgmt
                 .captchaEnabled(false) // This will trigger captcha validation flow when blocking
                 .blockingScore(50) // Any request getting higher score than this score will be displayed the blocking page
+                .moduleMode(ModuleMode.BLOCKING)
                 .authToken("") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/#/app/applicationsmgmt
                 .build();
         try {

@@ -27,7 +27,7 @@ Use `jdk 1.7` or higher.
 
 Make sure your JDK supports unlimited key length.
 
-If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors on startup, follow the instructions below: 
+If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors on startup, follow the instructions below:
 
 1. Download `JCE` for [jdk17](http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html) or for [jdk18](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html).
 2. Replace `local_policy.jar` and `US_export_policy.jar` in your `$JAVA_HOME/jre/lib/security/` with those you have downloaded.
@@ -36,7 +36,7 @@ If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors
 <a name="installation"></a> Installation
 ----------------------------------------
 
-####Maven:
+#### Maven:
 
 * Add `perimeterx-sdk` to `pom.xml`:
 
@@ -48,7 +48,7 @@ If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors
 </dependency>
 ```
 
-####gradle:
+#### gradle:
 
 * Add `perimeterx-sdk` to your `build.gradle`:
 
@@ -67,6 +67,7 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 	.authToken(AUTH_TOKEN)
 	.appId(APP_ID)
 	.blockingScore(SCORE)
+  .moduleMode(ModuleMode.BLOCKING)
 	.build();
 
 // Get instance
@@ -84,3 +85,26 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 }
 
 ```
+
+### <a name="loggin-troubleshoot"></a> Logging and Troubleshooting
+
+### <a name="contribute"></a> Logging and Contributing
+The following steps are welcome when contributing to our project.
+
+#### Fork/Clone
+
+First and foremost, <a href="https://guides.github.com/activities/forking/">Create</a> a fork of the repository, and clone it locally. Create a branch on your fork, preferably using a self descriptive branch name.
+
+#### Code/Run
+
+Code your way out of your mess, and help improve our project by implementing missing features, adding capabilities or fixing bugs.
+
+To run the code, simply follow the steps in the <a name="installation">installation guide</a>. Grab the keys from the PerimeterX Portal, and try refreshing your page several times continuously. If no default behaviors have been overriden, you should see the PerimeterX block page. Solve the CAPTCHA to clean yourself and start fresh again.
+
+#### Pull Request
+
+After you have completed the process, create a pull request to the Upstream repository. Please provide a complete and thorough description explaining the changes. Remember this code has to be read by our maintainers, so keep it simple, smart and accurate.
+
+#### Thanks
+
+After all, you are helping us by contributing to this project, and we want to thank you for it. We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.
