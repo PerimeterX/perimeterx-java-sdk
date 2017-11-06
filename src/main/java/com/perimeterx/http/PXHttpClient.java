@@ -7,7 +7,7 @@ import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.CaptchaRequest;
+import com.perimeterx.models.httpmodels.ResetCaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
@@ -17,15 +17,11 @@ import com.perimeterx.utils.PXCommonUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
@@ -37,8 +33,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Low level HTTP client
@@ -142,10 +136,10 @@ public class PXHttpClient implements PXClient {
         }
     }
 
-    public CaptchaResponse sendCaptchaRequest(CaptchaRequest captchaRequest) throws PXException, IOException {
+    public CaptchaResponse sendCaptchaRequest(ResetCaptchaRequest resetCaptchaRequest) throws PXException, IOException {
         CloseableHttpResponse httpResponse = null;
         try {
-            String requestBody = JsonUtils.writer.writeValueAsString(captchaRequest);
+            String requestBody = JsonUtils.writer.writeValueAsString(resetCaptchaRequest);
             logger.info("Sending captcha verification: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_CAPTCHA);
             post.setEntity(new StringEntity(requestBody, UTF_8));

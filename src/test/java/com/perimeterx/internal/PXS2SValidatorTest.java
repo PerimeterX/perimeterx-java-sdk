@@ -71,5 +71,4 @@ public class PXS2SValidatorTest {
         Assert.assertEquals("<html><body></body></html>",context.getBlockActionData());
         Assert.assertEquals(BlockReason.CHALLENGE,context.getBlockReason());
     }
-
 }

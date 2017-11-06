@@ -20,7 +20,9 @@ public class DefaultBlockHandler implements BlockHandler {
     public void handleBlocking(PXContext context, PXConfiguration pxConfig, HttpServletResponseWrapper responseWrapper) throws PXException {
         String pageTemplate = "block.mustache";
         if (context.getBlockAction().equals(BlockAction.CAPTCHA)) {
-            pageTemplate = "captcha.mustache";
+            String fileName = pxConfig.getCaptchaProvider().name().toLowerCase();
+            String ext = ".mustache";
+            pageTemplate = fileName + ext;
         }
         String page = TemplateFactory.getTemplate(context, pxConfig, pageTemplate);
         responseWrapper.setStatus(HttpServletResponse.SC_FORBIDDEN);

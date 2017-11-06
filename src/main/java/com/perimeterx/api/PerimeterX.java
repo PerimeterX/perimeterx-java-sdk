@@ -119,7 +119,7 @@ public class PerimeterX {
 
         this.blockHandler = new DefaultBlockHandler();
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
-        this.captchaValidator = new PXCaptchaValidator(pxClient);
+        this.captchaValidator = new PXCaptchaValidator(pxClient, configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
 
