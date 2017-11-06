@@ -63,12 +63,12 @@ compile group: 'com.perimeterx', name: 'perimeterx-sdk', version: '${VERSION}'
 ```java
 // Create configuration object
 PXConfiguration pxConfiguration = new PXConfiguration.Builder()
-	.cookieKey(COOKIE_KEY)
-	.authToken(AUTH_TOKEN)
-	.appId(APP_ID)
-	.blockingScore(SCORE)
-  .moduleMode(ModuleMode.BLOCKING)
-	.build();
+	 .cookieKey(COOKIE_KEY)
+	 .authToken(AUTH_TOKEN)
+	 .appId(APP_ID)
+	 .blockingScore(SCORE)
+	 .moduleMode(ModuleMode.BLOCKING)
+	 .build();
 
 // Get instance
 PerimeterX enforcer = new PerimeterX(pxConfiguration);
