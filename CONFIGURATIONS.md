@@ -7,8 +7,8 @@ Directives
 
 ## <a name="px-config"></a>PXConfiguration
 
-|Interface Name| Description   | Default value   | Values  | Note |
-|--------------|---------------|-----------------|---------|------|
+|Interface Name| Description | Default value | Values | Note |
+|--------------|:-------------:|---------------|--------|------|
 |appId|PX custom application id in the format of PX______|null|String|mandatory|
 |cookieKey|Key used for cookie signing - Can be found \ generated in PX portal - Policy page.|null|String|mandatory|
 |authToken|JWT token used for REST API - Can be found \ generated in PX portal - Application page.|null|String|mandatory|
