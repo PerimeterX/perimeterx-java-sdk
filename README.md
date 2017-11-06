@@ -7,6 +7,8 @@
 [PerimeterX](http://www.perimeterx.com) Java SDK
 =============================================================
 
+> Latest stable version: [v2.10.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C2.1.0%7Cjar)
+
 Table of Contents
 -----------------
 
@@ -111,4 +113,3 @@ After you have completed the process, create a pull request to the Upstream repo
 
 #### Thanks
 
-After all, you are helping us by contributing to this project, and we want to thank you for it. We highly appreciate your time invested in contributing to our project, and are glad to have people like you - kind helpers.
