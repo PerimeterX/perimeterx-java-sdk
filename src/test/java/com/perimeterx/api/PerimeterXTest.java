@@ -45,8 +45,6 @@ public class PerimeterXTest extends ConfiguredTest {
         HttpServletResponse response = new MockHttpServletResponse();
         perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
         Assert.assertNotEquals(response.getStatus(), 403);
-        StringBuilder sb = new StringBuilder();
-
     }
 
     @Test
