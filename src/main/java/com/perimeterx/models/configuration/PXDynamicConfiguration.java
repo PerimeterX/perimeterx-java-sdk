@@ -31,6 +31,8 @@ public class PXDynamicConfiguration {
     private int s2sTimeout;
     @JsonProperty("sensitiveHeaders")
     private Set<String> sensitiveHeaders;
+    @JsonProperty("ipHeaders")
+    private Set<String> ipHeaders;
 
     public boolean isModuleEnabled() {
         return moduleEnabled;
@@ -110,5 +112,13 @@ public class PXDynamicConfiguration {
 
     public void setSensitiveHeaders(Set<String> sensitiveHeaders) {
         this.sensitiveHeaders = sensitiveHeaders;
+    }
+
+    public Set<String> getIpHeaders() {
+        return this.ipHeaders;
+    }
+
+    public void setIpHeaders(Set<String> ipHeaders) {
+        this.ipHeaders = ipHeaders;
     }
 }

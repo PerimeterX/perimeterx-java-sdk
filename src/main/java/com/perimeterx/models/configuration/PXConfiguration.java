@@ -32,6 +32,7 @@ public class PXConfiguration {
     private String cssRef;
     private String jsRef;
     private Set<String> sensitiveRoutes;
+    private Set<String> ipHeaders;
     private String checksum;
     private boolean remoteConfigurationEnabled;
     private ModuleMode moduleMode;
@@ -68,6 +69,8 @@ public class PXConfiguration {
         maxConnectionsPerRoute = builder.maxConnectionsPerRoute;
         remoteConfigurationUrl = builder.remoteConfigurationUrl;
         captchaProvider = builder.captchaProvider;
+        ipHeaders = builder.ipHeaders;
+
     }
 
     public String getRemoteConfigurationUrl(){
@@ -178,6 +181,10 @@ public class PXConfiguration {
         return captchaProvider;
     }
 
+    public Set<String> getIpHeaders() {
+        return ipHeaders;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
             logger.info("Updating PXConfiguration file");
             this.appId = pxDynamicConfiguration.getAppId();
@@ -189,6 +196,7 @@ public class PXConfiguration {
             this.sensitiveHeaders = pxDynamicConfiguration.getSensitiveHeaders();
             this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
             this.moduleMode = pxDynamicConfiguration.getModuleMode();
+            this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
     }
 
     public static final class Builder {
@@ -217,6 +225,7 @@ public class PXConfiguration {
         private int maxConnections = 20;
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
         private CaptchaProvider captchaProvider = CaptchaProvider.RECAPTCHA;
+        private Set<String> ipHeaders = new HashSet<>();
 
         public Builder() {
         }
@@ -355,6 +364,10 @@ public class PXConfiguration {
             return this;
         }
 
+        public Builder ipHeaders(Set<String> ipHeaders) {
+            this.ipHeaders = ipHeaders;
+            return this;
+        }
 
         public PXConfiguration build() {
             if (!this.remoteConfigurationEnabled) {

@@ -2,11 +2,12 @@ Directives
 ===========================================
 
 - [PXConfiguration](#px-config)
+- [Interfaces](#interfaces)
 - [Examples](#examples)
 
 ## <a name="px-config"></a>PXConfiguration
 
-|Directive Name| Description   | Default value   | Values  | Note |
+|Interface Name| Description   | Default value   | Values  | Note |
 |--------------|---------------|-----------------|---------|------|
 |appId|PX custom application id in the format of PX______|null|String|mandatory|
 |cookieKey|Key used for cookie signing - Can be found \ generated in PX portal - Policy page.|null|String|mandatory|
@@ -33,9 +34,33 @@ Directives
 |remoteConfigurationUrl|Set the url for PerimeterX configuration service||String| |
 |captchaProvider|Set the captcha provider on the default block page|CaptchaProvider.RECAPTCHA|CaptchaProvider.RECAPTCHA / CaptchaProvider.FUNCAPTCHA|enum|
 
-Examples below
 
-## <a name="examples"></a>Examples
+## <a name="interfaces"></a> Interfaces
+`perimeterx-java-sdk` can be tuned and set a different type of interface in order to make the module more flexible
+ Below you can find a list of available interfaces and their setter
+ 
+|Interface Name| Description | Default Interface | method |
+|--------------|-------------|-------------------|--------|
+| ActivityHandler |Handler for all asynchronous activities from type enforcer_telemetry, page_requested and block|BufferedActivityHandler|setActivityHandler|
+| BlockHandler |Blocking handle will be called when pxVerify will return that user is not verified|DefaultBlockHandler| setBlockHandler|
+| IPProvider |Handles IP address extraction from request|CombinedIPProvider| setIpProvider|
+| HostnameProvider |Handles hostname extraction from request|DefaultHostnameProvider| setHostnameProvider|
+| VerificationHandler |handling verification after PerimeterX service finished analyzing the request|DefaultVerificationHandler|setVerificationHandler|
+
+The interfaces should be set after PerimeterX instance has been initialized
+```java
+        PXConfiguration pxConf = new PXConfiguration.Builder()
+                .build();
+
+        this.enforcer = PerimeterX.getInstance(pxConf);
+        // This will set the blocking handler from the default one to the our custom block handler
+        // note that when we enable captcha logic we must use a blocking handler that display the appropriate html page with captcha
+        // for instance CaptchaBlockHandler that is included in the SDK
+        this.enforcer.setBlockHandler(new NewBlockHandler());
+        this.enforcer.setActivityHandler(new BlockingActivityHandler());
+```
+
+## <a name="examples"></a>Configurations Example
 
 ##### Basic Active And Blocking Configuration
  ```java

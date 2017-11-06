@@ -29,10 +29,7 @@ import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
-import com.perimeterx.api.providers.DefaultHostnameProvider;
-import com.perimeterx.api.providers.HostnameProvider;
-import com.perimeterx.api.providers.IPProvider;
-import com.perimeterx.api.providers.RemoteAddressIPProvider;
+import com.perimeterx.api.providers.*;
 import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigManager;
 import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
 import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
@@ -80,8 +77,8 @@ public class PerimeterX {
     private PXCookieValidator cookieValidator;
     private ActivityHandler activityHandler;
     private PXCaptchaValidator captchaValidator;
-    private IPProvider ipProvider = new RemoteAddressIPProvider();
-    private HostnameProvider hostnameProvider = new DefaultHostnameProvider();
+    private IPProvider ipProvider;
+    private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
 
     private CloseableHttpClient getHttpClient() {
@@ -102,6 +99,8 @@ public class PerimeterX {
 
     private void init(PXConfiguration configuration) throws PXException {
         this.configuration = configuration;
+        hostnameProvider = new DefaultHostnameProvider();
+        ipProvider = new CombinedIPProvider(configuration);
         PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient());
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
 
