@@ -137,16 +137,7 @@ public class PXContext {
         this.pxCookies = extractPXCookies(cookie);
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
-            // Expecting captcha cookie in the form of: token:vid:uuid, vid and uuid may be empty to result in "token::"
-            final String[] s = pxCaptchaCookie.split(":", 3);
-            if (s.length == 3) {
-                this.pxCaptcha = s[0];
-                this.vid = s[1];
-                this.uuid = s[2];
-            } else if (s.length == 1) {
-                // To support cookie from an invalid format of "token"
-                this.pxCaptcha = s[0];
-            }
+            this.pxCaptcha = pxCaptchaCookie;
         }
 
         this.userAgent = request.getHeader("user-agent");

@@ -57,7 +57,7 @@ public class PXClientMock implements PXClient {
     }
 
     @Override
-    public CaptchaResponse sendCaptchaRequest(CaptchaRequest captchaRequest) throws PXException, IOException {
+    public CaptchaResponse sendCaptchaRequest(ResetCaptchaRequest resetCaptchaRequest) throws PXException, IOException {
         return new CaptchaResponse(captchaReturnStatus, "1", "vid", "cid");
     }
 
