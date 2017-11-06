@@ -50,7 +50,7 @@ public class PXS2SValidator {
             pxContext.setUuid(response.getUuid());
             pxContext.setBlockAction(response.getAction());
 
-            if (pxContext.getRiskScore() >= pxConfiguration.getBlockingScore()) {
+            if (pxContext.getRiskScore() < pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);
                 return true;
             }else if (response.getAction().equals(Constants.BLOCK_ACTION_CHALLENGE) && response.getActionData() != null && response.getActionData().getBody() != null) {
