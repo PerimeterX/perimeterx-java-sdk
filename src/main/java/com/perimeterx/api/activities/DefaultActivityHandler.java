@@ -2,8 +2,7 @@ package com.perimeterx.api.activities;
 
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
-import com.perimeterx.models.activities.Activity;
-import com.perimeterx.models.activities.ActivityFactory;
+import com.perimeterx.models.activities.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
@@ -44,4 +43,18 @@ public class DefaultActivityHandler implements ActivityHandler {
             throw new PXException(e);
         }
     }
+
+    @Override
+    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfiguration, UpdateReason updateReason) throws PXException {
+        try {
+            EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfiguration, updateReason);
+            EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry",pxConfiguration.getAppId(), details);
+            this.client.sendEnforcerTelemetry(enforcerTelemetry);
+        } catch (Exception e) {
+            throw new PXException(e);
+        }
+    }
+
+
+
 }

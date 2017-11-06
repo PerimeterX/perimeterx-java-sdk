@@ -43,6 +43,7 @@ import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
@@ -94,12 +95,15 @@ public class PerimeterX {
     }
 
     private CloseableHttpAsyncClient getAsyncHttpClient() {
-        return HttpAsyncClients.createDefault();
+        CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createDefault();
+        closeableHttpAsyncClient.start();
+        return closeableHttpAsyncClient;
     }
 
     private void init(PXConfiguration configuration) throws PXException {
         this.configuration = configuration;
         PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient());
+        this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
             RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(configuration, pxClient);
@@ -109,16 +113,17 @@ public class PerimeterX {
             } else {
                 remoteConfigManager.updateConfiguration(initialConfig);
             }
-            TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigManager, configuration);
+            TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigManager, configuration, activityHandler);
             timerConfigUpdater.schedule();
         }
 
         this.blockHandler = new DefaultBlockHandler();
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.captchaValidator = new PXCaptchaValidator(pxClient, configuration);
-        this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
+
+        this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
 
     }
 

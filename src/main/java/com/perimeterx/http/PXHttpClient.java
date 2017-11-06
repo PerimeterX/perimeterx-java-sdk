@@ -1,7 +1,9 @@
 package com.perimeterx.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
@@ -13,6 +15,7 @@ import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PXCommonUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -115,13 +118,13 @@ public class PXHttpClient implements PXClient {
     public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
         HttpAsyncRequestProducer producer = null;
         try {
-            asyncHttpClient.start();
-
             String requestBody = JsonUtils.writer.writeValueAsString(activities);
             logger.info("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
+            post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
         } catch (Exception e) {
@@ -182,6 +185,29 @@ public class PXHttpClient implements PXClient {
         } catch (Exception e) {
             logger.error("[getConfiguration] EXCEPTION {}", e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException{
+        HttpAsyncRequestProducer producer = null;
+        try {
+            String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
+            logger.info("Sending enforcer telemetry: {}", requestBody);
+            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY);
+            post.setEntity(new StringEntity(requestBody, UTF_8));
+            PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());
+            post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
+            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
+            producer = HttpAsyncMethods.create(post);
+            asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (producer != null) {
+                producer.close();
+            }
         }
     }
 }

@@ -1,11 +1,16 @@
 package com.perimeterx.api.remoteconfigurations;
 
+import com.perimeterx.api.activities.ActivityHandler;
+import com.perimeterx.http.PXClient;
+import com.perimeterx.models.activities.EnforcerTelemetry;
+import com.perimeterx.models.activities.EnforcerTelemetryActivityDetails;
+import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
+import com.perimeterx.models.exceptions.PXException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,11 +20,13 @@ public class TimerConfigUpdater extends TimerTask {
 
     private RemoteConfigurationManager configManager;
     private PXConfiguration pxConfiguration;
+    private ActivityHandler activityHandler;
 
-    public TimerConfigUpdater(RemoteConfigurationManager configManager, PXConfiguration pxConfiguration) {
+    public TimerConfigUpdater(RemoteConfigurationManager configManager, PXConfiguration pxConfiguration, ActivityHandler activityHandler) {
         logger.debug("TimerConfigUpdater[init]");
         this.configManager = configManager;
         this.pxConfiguration = pxConfiguration;
+        this.activityHandler = activityHandler;
     }
 
     @Override
@@ -28,6 +35,11 @@ public class TimerConfigUpdater extends TimerTask {
         PXDynamicConfiguration dynamicConfig = configManager.getConfiguration();
         if (dynamicConfig != null) {
             configManager.updateConfiguration(dynamicConfig);
+            try {
+                activityHandler.handleEnforcerTelemetryActivity(pxConfiguration, UpdateReason.REMOTE_CONFIG);
+            } catch (PXException e) {
+                logger.error("Failed to report telemetry, {}", e.getMessage());
+            }
         }
     }
 
