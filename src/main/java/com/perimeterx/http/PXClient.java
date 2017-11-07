@@ -1,8 +1,10 @@
 package com.perimeterx.http;
 
 import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.activities.EnforcerTelemetry;
+import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.CaptchaRequest;
+import com.perimeterx.models.httpmodels.ResetCaptchaRequest;
 import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
@@ -48,10 +50,25 @@ public interface PXClient {
     /**
      * Calling PX Server to validate user captcha
      *
-     * @param captchaRequest - captcha request
+     * @param resetCaptchaRequest - captcha request
      * @return response from server as object {@link CaptchaResponse}
      * @throws PXException
      * @throws IOException
      */
-    CaptchaResponse sendCaptchaRequest(CaptchaRequest captchaRequest) throws PXException, IOException;
+    CaptchaResponse sendCaptchaRequest(ResetCaptchaRequest resetCaptchaRequest) throws PXException, IOException;
+
+    /**
+     * Calling remote configuration server and fetching the latest configuration values
+     *
+     * @return PXDynamicConfiguration
+     * @throws IOException when trying to close the connection
+     */
+    PXDynamicConfiguration getConfigurationFromServer();
+
+    /**
+     * Calling PX Servers and reporting enforcer telemetry asynchronously
+     * @param enforcerTelemetry
+     */
+    void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException;
+
 }

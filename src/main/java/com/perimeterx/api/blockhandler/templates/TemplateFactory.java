@@ -3,8 +3,8 @@ package com.perimeterx.api.blockhandler.templates;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
-import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import org.apache.commons.io.IOUtils;
 
@@ -18,15 +18,19 @@ import java.util.Map;
 /**
  * This class is a helper class, in order to get a template the factory receives a name of a template and returns
  * the template compiled
- *
+ * <p>
  * Created by nitzangoldfeder on 02/03/2017.
  */
 public abstract class TemplateFactory {
 
     public static String getTemplate(PXContext pxContext, PXConfiguration pxConfig, String template) throws PXException {
         try {
-            Map<String, String> props = getProps(pxContext, pxConfig);
+            // In case of challenge
+            if (pxContext.getBlockAction().equals("challenge") && pxContext.getBlockActionData() != null) {
+                return pxContext.getBlockActionData();
+            }
 
+            Map<String, String> props = getProps(pxContext, pxConfig);
             MustacheFactory mf = new DefaultMustacheFactory();
             Mustache m = mf.compile((getTemplate(template)), (getTemplate(template)).toString());
             StringWriter sw = new StringWriter();

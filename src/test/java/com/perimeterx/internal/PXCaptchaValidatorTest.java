@@ -1,6 +1,5 @@
 package com.perimeterx.internal;
 
-import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -8,6 +7,7 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
@@ -26,6 +26,7 @@ public class PXCaptchaValidatorTest {
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private PXConfiguration pxConfig;
+
     @BeforeClass
     public void setUp() throws Exception {
         pxConfig = new PXConfiguration.Builder()
@@ -35,8 +36,8 @@ public class PXCaptchaValidatorTest {
                 .build();
         PXClient client = TestObjectUtils.verifiedCaptchaClient();
         PXClient noVerificationClient = TestObjectUtils.notVerifiedCaptchaClient();
-        this.captchaValidator = new PXCaptchaValidator(client);
-        this.noValidateCaptchaValidator = new PXCaptchaValidator(noVerificationClient);
+        this.captchaValidator = new PXCaptchaValidator(client, pxConfig);
+        this.noValidateCaptchaValidator = new PXCaptchaValidator(noVerificationClient, pxConfig);
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
     }

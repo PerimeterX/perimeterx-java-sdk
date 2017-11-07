@@ -1,12 +1,13 @@
 package com.perimeterx.models;
 
-import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
-import com.perimeterx.internals.cookie.PXCookie;
+import com.perimeterx.internals.cookie.AbstractPXCookie;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
+import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
@@ -64,10 +65,12 @@ public class PXContext {
     // PerimeterX computed data on the request
     private String riskCookie;
     private final String appId;
+
+
     private String cookieHmac;
 
     /**
-     * Score for the current request - if riskScore is above configured {@link com.perimeterx.api.PXConfiguration#blockingScore} on
+     * Score for the current request - if riskScore is above configured {@link com.perimeterx.models.configuration.PXConfiguration#blockingScore} on
      * PXConfiguration then the {@link com.perimeterx.models.PXContext#verified} is set to false
      */
     private int riskScore;
@@ -79,10 +82,11 @@ public class PXContext {
      */
     private S2SCallReason s2sCallReason;
 
+    private boolean madeS2SApiCall;
     /**
      * Which action to take after being blocked
      */
-    private String blockAction;
+    private BlockAction blockAction;
 
     /**
      * if true - calling risk_api to verified request even if cookie data is valid
@@ -109,6 +113,7 @@ public class PXContext {
      * Reason for why request should be blocked - relevant when request is not verified, meaning - verified {@link com.perimeterx.models.PXContext#verified} is false
      */
     private BlockReason blockReason;
+    private String blockActionData;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
                      final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
@@ -132,23 +137,16 @@ public class PXContext {
         this.pxCookies = extractPXCookies(cookie);
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
-            // Expecting captcha cookie in the form of: token:vid:uuid, vid and uuid may be empty to result in "token::"
-            final String[] s = pxCaptchaCookie.split(":", 3);
-            if (s.length == 3) {
-                this.pxCaptcha = s[0];
-                this.vid = s[1];
-                this.uuid = s[2];
-            } else if (s.length == 1) {
-                // To support cookie from an invalid format of "token"
-                this.pxCaptcha = s[0];
-            }
+            this.pxCaptcha = pxCaptchaCookie;
         }
 
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
         this.s2sCallReason = S2SCallReason.NONE;
+        this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
+        this.madeS2SApiCall = false;
         this.riskRtt = 0;
 
         this.httpMethod = request.getMethod();
@@ -177,13 +175,13 @@ public class PXContext {
         return cookieValue;
     }
 
-  private Map<String,String> extractPXCookies(String cookie) {
-        Map<String,String> cookieValue = new HashMap<>();
+    private Map<String, String> extractPXCookies(String cookie) {
+        Map<String, String> cookieValue = new HashMap<>();
         if (cookie != null) {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
                 String[] splicedCookie = c.split("=", 2);
-                switch (splicedCookie[0]){
+                switch (splicedCookie[0]) {
                     case Constants.COOKIE_V1_KEY:
                         cookieValue.put(Constants.COOKIE_V1_KEY, splicedCookie[1]);
                         break;
@@ -197,13 +195,13 @@ public class PXContext {
     }
 
     public String getPxCookie() {
-        if (pxCookies.isEmpty()){
+        if (pxCookies.isEmpty()) {
             return null;
         }
         return pxCookies.containsKey(Constants.COOKIE_V3_KEY) ? pxCookies.get(Constants.COOKIE_V3_KEY) : pxCookies.get(Constants.COOKIE_V1_KEY);
     }
 
-    public Map<String,String> getPxCookies() {
+    public Map<String, String> getPxCookies() {
         return pxCookies;
     }
 
@@ -283,7 +281,7 @@ public class PXContext {
         return this.riskScore;
     }
 
-    public void setRiskCookie(PXCookie riskCookie) {
+    public void setRiskCookie(AbstractPXCookie riskCookie) {
         this.riskCookie = riskCookie.getDecodedCookie().toString();
     }
 
@@ -303,11 +301,11 @@ public class PXContext {
         return pxCookieOrig;
     }
 
-    public PassReason getPassReason(){
+    public PassReason getPassReason() {
         return this.passReason;
     }
 
-    public void setPassReason(PassReason passReason){
+    public void setPassReason(PassReason passReason) {
         this.passReason = passReason;
     }
 
@@ -316,32 +314,44 @@ public class PXContext {
     }
 
     public void setBlockAction(String blockAction) {
-        switch (blockAction){
+        switch (blockAction) {
             case Constants.CAPTCHA_ACTION_CAPTCHA:
-                this.blockAction = "captcha";
+                this.blockAction = BlockAction.CAPTCHA;
                 break;
             case Constants.BLOCK_ACTION_CAPTCHA:
-                this.blockAction = "block";
+                this.blockAction = BlockAction.BLOCK;
+                break;
+            case Constants.BLOCK_ACTION_CHALLENGE:
+                this.blockAction = BlockAction.CHALLENGE;
                 break;
             default:
-                this.blockAction = "captcha";
+                this.blockAction = BlockAction.CAPTCHA;
                 break;
         }
+    }
+
+    public BlockAction getBlockAction() {
+        return this.blockAction;
     }
 
     public void setCookieHmac(String cookieHmac) {
         this.cookieHmac = cookieHmac;
     }
 
+
+    public String getCookieHmac() {
+        return this.cookieHmac;
+    }
+
     public boolean isSensitiveRoute(){
         return this.sensitiveRoute;
     }
 
-    public long getRiskRtt(){
+    public long getRiskRtt() {
         return this.riskRtt;
     }
 
-    public void setRiskRtt(long riskRtt){
+    public void setRiskRtt(long riskRtt) {
         this.riskRtt = riskRtt;
     }
 
@@ -365,5 +375,21 @@ public class PXContext {
             }
         }
         return false;
+    }
+
+    public void setMadeS2SApiCall(boolean flag) {
+        this.madeS2SApiCall = flag;
+    }
+
+    public boolean isMadeS2SApiCall(){
+        return this.madeS2SApiCall;
+    }
+
+    public String getBlockActionData() {
+        return blockActionData;
+    }
+
+    public void setBlockActionData(String blockActionData) {
+        this.blockActionData = blockActionData;
     }
 }

@@ -28,7 +28,6 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     private String clientUuid;
 
 
-
     public PageRequestedActivityDetails(PXContext context) {
         this.httpMethod = context.getHttpMethod();
         this.httpVersion = context.getHttpVersion();
@@ -51,9 +50,11 @@ public class PageRequestedActivityDetails implements ActivityDetails {
         return riskCookie;
     }
 
-    public PassReason getPassReason() { return passReason; }
+    public PassReason getPassReason() {
+        return passReason;
+    }
 
-    public long getRiskRtt(){
+    public long getRiskRtt() {
         return riskRtt;
     }
 

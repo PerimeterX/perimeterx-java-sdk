@@ -1,73 +1,70 @@
 package com.perimeterx.http;
 
-import com.perimeterx.api.PXConfiguration;
-import com.perimeterx.api.activities.BufferedActivityHandler;
-import com.perimeterx.api.providers.DefaultHostnameProvider;
-import com.perimeterx.api.providers.HostnameProvider;
-import com.perimeterx.api.providers.IPProvider;
-import com.perimeterx.api.providers.RemoteAddressIPProvider;
-import com.perimeterx.models.PXContext;
-import com.perimeterx.models.exceptions.PXException;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
+import com.perimeterx.models.configuration.ModuleMode;
+import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.configuration.PXDynamicConfiguration;
+import junit.framework.Assert;
+import org.apache.http.HttpEntity;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import testutils.TestObjectUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 
 import static org.mockito.Mockito.*;
 
-/**
- * Created by nitzangoldfeder on 23/02/2017.
- */
-@org.testng.annotations.Test
+@Test
 public class PXHttpClientTest {
 
-    private BufferedActivityHandler bufferedActivityHandler;
-    private PXHttpClient pxClient;
-    private PXConfiguration configuration;
-    private HttpServletRequest request;
-    private IPProvider ipProvider;
-    private HostnameProvider hostnameProvider;
-    private PXContext context;
-    private PXConfiguration config;
-
+    PXClient pxClient;
+    CloseableHttpClient httpClient;
+    CloseableHttpAsyncClient asyncClient;
+    PXConfiguration pxConfig;
 
     @BeforeMethod
-    public void setUp() {
-        config = new PXConfiguration.Builder()
-                .appId("APP_ID")
-                .authToken("AUTH_123")
-                .cookieKey("COOKIE_123")
-                .build();
-        this.pxClient = mock(PXHttpClient.class);
-        this.configuration = TestObjectUtils.generateConfiguration();
-        this.bufferedActivityHandler = new BufferedActivityHandler(pxClient, configuration);
-
-        this.request = new MockHttpServletRequest();
-        this.ipProvider = new RemoteAddressIPProvider();
-        this.hostnameProvider = new DefaultHostnameProvider();
-        this.context = new PXContext(request, this.ipProvider, this.hostnameProvider, config);
-
+    public void setup() {
+        pxConfig = TestObjectUtils.generateConfiguration();
+        httpClient = mock(CloseableHttpClient.class);
+        asyncClient = mock(CloseableHttpAsyncClient.class);
     }
 
     @Test
-    public void testSendActivityOnMaxBuffer() throws IOException, PXException {
-        for (int i = 0; i <= this.configuration.getMaxBufferLen(); i++) {
-            bufferedActivityHandler.handleBlockActivity(context);
-        }
-
-        verify(pxClient, atLeastOnce()).sendBatchActivities(any(List.class));
+    public void testGetRemoteConfigurations() throws IOException{
+        mockValidRequest();
+        pxClient = PXHttpClient.getInstance(pxConfig, asyncClient, httpClient);
+        PXDynamicConfiguration config = pxClient.getConfigurationFromServer();
+        Assert.assertTrue(config.getAppId().equals("a_app_id"));
+        Assert.assertTrue(config.getChecksum().equals("a_check_sum"));
+        Assert.assertTrue(config.getCookieSecret().equals("a_cookie_key"));
+        Assert.assertTrue(config.getBlockingScore() == 1000);
+        Assert.assertTrue(config.getApiConnectTimeout() == 3000);
+        Assert.assertTrue(config.getS2sTimeout() == 3000);
+        Assert.assertTrue(config.getSensitiveHeaders().equals(new HashSet<String>()));
+        Assert.assertTrue(config.isModuleEnabled() == false);
+        Assert.assertTrue(config.getModuleMode().equals(ModuleMode.BLOCKING));
     }
 
-    @Test
-    public void testDontSendActivityBelowMaxBuffer() throws IOException, PXException {
-        for (int i = 0; i < this.configuration.getMaxBufferLen() - 1; i++) {
-            bufferedActivityHandler.handleBlockActivity(context);
+    private void mockValidRequest() {
+        try {
+            String json = "{\"moduleEnabled\":false,\"cookieKey\":\"a_cookie_key\",\"blockingScore\":1000,\"appId\":\"a_app_id\",\"moduleMode\":\"blocking\",\"sensitiveHeaders\":[],\"connectTimeout\":3000,\"riskTimeout\":3000,\"debugMode\":false,\"checksum\":\"a_check_sum\"}";
+            HttpEntity entity = mock(HttpEntity.class);
+            CloseableHttpResponse response = mock(CloseableHttpResponse.class);
+            StatusLine statusLine = mock(StatusLine.class);
+            when(statusLine.getStatusCode()).thenReturn(200);
+            when(entity.getContent()).thenReturn(new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8)));
+            when(response.getEntity()).thenReturn(entity);
+            when(httpClient.execute(isA(HttpUriRequest.class))).thenReturn(response);
+            when(response.getStatusLine()).thenReturn(statusLine);
+        } catch (Exception e) {
+            Assert.assertTrue(false);
         }
-        verify(pxClient, never()).sendBatchActivities(any(List.class));
-
     }
 }

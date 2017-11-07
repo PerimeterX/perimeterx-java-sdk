@@ -6,9 +6,12 @@ import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import javax.swing.text.html.HTMLDocument;
 
 import static org.junit.Assert.assertTrue;
 
@@ -24,6 +27,7 @@ public class TemplatesTest {
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private PXConfiguration config;
+
     @BeforeClass
     public void setUp() throws Exception {
         appId = "PX_APPID";
@@ -45,11 +49,11 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(true)
                 .blockingScore(70)
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
+        pxContext.setBlockAction("c");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
 
@@ -59,10 +63,10 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
+        pxContext.setBlockAction("b");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
@@ -74,11 +78,11 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(true)
                 .blockingScore(70)
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
+        pxContext.setBlockAction("c");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
     }
 
@@ -88,10 +92,10 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
+        pxContext.setBlockAction("b");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
     }
@@ -102,10 +106,10 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .cssRef("http://www.google.com/script.js")
                 .build();
+        pxContext.setBlockAction("b");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/script.js") );
     }
@@ -116,11 +120,11 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(true)
                 .blockingScore(70)
                 .cssRef("http://www.google.com/script.js")
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
+        pxContext.setBlockAction("c");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/script.js") );
     }
 
@@ -130,10 +134,10 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(true)
                 .blockingScore(70)
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
+        pxContext.setBlockAction("c");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
 
@@ -143,9 +147,9 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .build();
+        pxContext.setBlockAction("b");
         String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block.mustache");
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
@@ -156,10 +160,10 @@ public class TemplatesTest {
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
-                .captchaEnabled(false)
                 .blockingScore(70)
                 .build();
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
+        pxContext.setBlockAction("c");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
         assertTrue( actualHTML.contains( pxContext.getVid() ) );
     }
 

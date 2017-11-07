@@ -1,5 +1,22 @@
 # Change Log
 
+## [v3.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-30-07)
+- Remote Configuration support (by default is off)
+- Fixed `risk_rtt` for `s2s` on exception
+- Support `js challenge`
+- Sending `enforcer_telemetry` activities on init and remote config updates, telemetry includes px_config as json, os name and machine name
+- Supporting `funCaptcha`
+- New captcha flow
+- Fixed bug in S2S `pass_reason`
+- New documentation
+- Support for `monitor mode` (default set to `true`)
+- Support for ipHeaders (using new class `CombinedIPProvider`)
+
+**This version includes breaking changes in the following configurations:**
+- Monitor mode is now on by default, for blocking mode it should be set to ACTIVE
+- BlockingScore was changed from 70 -> 100
+- Using ipHeaders from configuration use default interfac eof IPProvider (`CombinedIPProvider` instead of `RemoteAddressIPProvider`
+
 ## [v2.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-30-07)
  - Renamed expired_cookie call reason to cookie_expired
  - Custom verification handler is now supported
@@ -10,11 +27,11 @@
 
 ## [v2.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-25-04)
 
-- Support cookie v3 
+- Support cookie v3
 - Support risk API v2
 - Support custom css/javascript/logo on block page
 - Send px_cookie_orig when cookie decryption fails
-- Invalid cookie format handling 
+- Invalid cookie format handling
 - Buffered activities handling (async send)
 - Updated server URL
 - Redesign block/captcha page
