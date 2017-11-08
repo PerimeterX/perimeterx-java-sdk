@@ -1,6 +1,6 @@
 # Change Log
 
-## [v3.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-30-07)
+## [v3.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-11-07)
 - Remote Configuration support (by default is off)
 - Fixed `risk_rtt` for `s2s` on exception
 - Support `js challenge`
