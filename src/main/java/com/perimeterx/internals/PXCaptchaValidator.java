@@ -42,21 +42,22 @@ public class PXCaptchaValidator {
         long startRiskRtt = System.currentTimeMillis();
         try {
             ResetCaptchaRequest resetCaptchaRequest = ResetCaptchaRequest.fromContext(context, pxConfiguration);
-            CaptchaResponse r = this.pxClient.sendCaptchaRequest(resetCaptchaRequest);
+            CaptchaResponse response = this.pxClient.sendCaptchaRequest(resetCaptchaRequest);
             context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
-            if (r != null && r.getStatus() == Constants.CAPTCHA_SUCCESS_CODE) {
-                context.setVid(r.getVid());
+            if (response != null && response.getStatus() == Constants.CAPTCHA_SUCCESS_CODE) {
+                logger.info(PXLogger.LogReasson.INFO_CAPTCHA_RESPONSE_SUCCESS);
+                context.setVid(response.getVid());
                 context.setPassReason(PassReason.CAPTCHA);
                 return true;
             }
             context.setBlockReason(BlockReason.SERVER);
             return false;
         } catch (ConnectTimeoutException e) {
-            // Timeout handling - report pass reason and proceed with request
+            logger.info(PXLogger.LogReasson.INFO_CAPTCHA_RESPONSE_TIMEOUT);
             context.setPassReason(PassReason.CAPTCHA_TIMEOUT);
             return true;
         } catch (Exception e) {
-            logger.error(PXLogger.LogReasson.ERROR_CAPTCHA_EVALUATION_EXCEPTION, e);
+            logger.error(PXLogger.LogReasson.INFO_CAPTCHA_RESPONSE_FAILED);
             context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
             throw new PXException(e);
         }

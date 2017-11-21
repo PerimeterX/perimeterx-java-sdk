@@ -170,7 +170,7 @@ public class PerimeterX {
                 context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
                 return context;
             }
-            logger.info(PXLogger.LogReasson.INFO_NO_CAPTCHA_COOKIE);
+            logger.info(PXLogger.LogReasson.INFO_CAPTCHA_NO_COOKIE);
 
             boolean cookieVerified = cookieValidator.verify(this.configuration, context);
             logger.info(PXLogger.LogReasson.INFO_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
