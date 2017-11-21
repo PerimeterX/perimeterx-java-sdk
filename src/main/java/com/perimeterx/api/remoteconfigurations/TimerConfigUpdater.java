@@ -1,22 +1,18 @@
 package com.perimeterx.api.remoteconfigurations;
 
 import com.perimeterx.api.activities.ActivityHandler;
-import com.perimeterx.http.PXClient;
-import com.perimeterx.models.activities.EnforcerTelemetry;
-import com.perimeterx.models.activities.EnforcerTelemetryActivityDetails;
 import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.perimeterx.utils.PXLogger;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class TimerConfigUpdater extends TimerTask {
 
-    private static final Logger logger = LoggerFactory.getLogger(TimerConfigUpdater.class);
+    private static final PXLogger logger = PXLogger.getLogger(TimerConfigUpdater.class);
 
     private RemoteConfigurationManager configManager;
     private PXConfiguration pxConfiguration;
@@ -43,7 +39,6 @@ public class TimerConfigUpdater extends TimerTask {
         }
     }
 
-
     /**
      * Sets a new timer object and runs its execution method
      */
@@ -51,6 +46,4 @@ public class TimerConfigUpdater extends TimerTask {
         Timer timer = new Timer();
         timer.schedule(this,pxConfiguration.getRemoteConfigurationDelay(),  pxConfiguration.getRemoteConfigurationInterval());
     }
-
-
 }

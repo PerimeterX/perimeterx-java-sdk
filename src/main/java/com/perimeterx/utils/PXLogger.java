@@ -78,4 +78,16 @@ public class PXLogger {
     public void error(String msg, Object... args) {
         logger.error(ERROR_PREFIX + msg, args);
     }
+
+    public void debug(String mas) {
+        logger.error(DEBUG_PREFIX + mas);
+    }
+
+    public void debug(String msg, Object... args) {
+        logger.info(DEBUG_PREFIX + msg, args);
+    }
+
+    public void warn (String msg) {
+        logger.warn(DEBUG_PREFIX + msg);
+    }
 }
