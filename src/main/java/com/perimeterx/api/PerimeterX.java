@@ -47,20 +47,17 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
+import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -69,7 +66,7 @@ import java.io.IOException;
  */
 public class PerimeterX {
 
-    private static final Logger logger = LoggerFactory.getLogger(PerimeterX.class);
+    private static final PXLogger logger = PXLogger.getLogger(PerimeterX.class);
 
     private PXConfiguration configuration;
     private BlockHandler blockHandler;
@@ -121,9 +118,7 @@ public class PerimeterX {
         this.captchaValidator = new PXCaptchaValidator(pxClient, configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
-
         this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
-
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
@@ -156,9 +151,11 @@ public class PerimeterX {
      */
     public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
+        logger.info(PXLogger.LogReasson.INFO_STARTING_REQUEST_VERIFICTION);
+
         try {
             if (!moduleEnabled()) {
-                logger.info("PerimeterX verification SDK is disabled");
+                logger.info(PXLogger.LogReasson.INFO_MODULE_DISABLED);
                 return null;
             }
             // Remove captcha cookie to prevent re-use
@@ -167,24 +164,29 @@ public class PerimeterX {
             responseWrapper.addCookie(cookie);
 
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+
             if (captchaValidator.verify(context)) {
+                logger.info(PXLogger.LogReasson.INFO_CAPTCHA_COOKIE_FOUND);
                 context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
                 return context;
             }
+            logger.info(PXLogger.LogReasson.INFO_NO_CAPTCHA_COOKIE);
 
             boolean cookieVerified = cookieValidator.verify(this.configuration, context);
+            logger.info(PXLogger.LogReasson.INFO_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
-                logger.info("No risk API Call is needed, using cookie");
+                logger.info(PXLogger.LogReasson.INFO_COOKIE_VERSION_FOUND,  context.getCookieVersion());
                 context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
                 return context;
             }
 
             // Calls risk_api and populate the data retrieved to the context
+            logger.info(PXLogger.LogReasson.INFO_COOKIE_MISSING);
             serverValidator.verify(context);
             context.setVerified(verificationHandler.handleVerification(context,responseWrapper));
         } catch (Exception e) {
-            logger.error("Unexpected error: {} - request passed", e.getMessage());
+            logger.error(PXLogger.LogReasson.ERROR_COOKIE_EVALUATION_EXCEPTION,  e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
                 context.setPassReason(PassReason.ERROR);

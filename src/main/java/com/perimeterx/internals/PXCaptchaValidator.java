@@ -9,6 +9,7 @@ import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
 
 /**
@@ -18,6 +19,7 @@ import org.apache.http.conn.ConnectTimeoutException;
  */
 public class PXCaptchaValidator {
 
+    private static final PXLogger logger = PXLogger.getLogger(PXCaptchaValidator.class);
     private PXClient pxClient;
     private PXConfiguration pxConfiguration;
 
@@ -54,6 +56,7 @@ public class PXCaptchaValidator {
             context.setPassReason(PassReason.CAPTCHA_TIMEOUT);
             return true;
         } catch (Exception e) {
+            logger.error(PXLogger.LogReasson.ERROR_CAPTCHA_EVALUATION_EXCEPTION, e);
             context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
             throw new PXException(e);
         }

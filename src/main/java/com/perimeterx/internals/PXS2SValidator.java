@@ -9,6 +9,7 @@ import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
 
 /**
@@ -17,6 +18,8 @@ import org.apache.http.conn.ConnectTimeoutException;
  * Created by shikloshi on 04/07/2016.
  */
 public class PXS2SValidator {
+
+    private static final PXLogger logger = PXLogger.getLogger(PXS2SValidator.class);
 
     private PXClient pxClient;
     private PXConfiguration pxConfiguration;
@@ -34,15 +37,21 @@ public class PXS2SValidator {
      * @throws PXException
      */
     public boolean verify(PXContext pxContext) throws PXException {
+        logger.info(PXLogger.LogReasson.INFO_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
         RiskResponse response;
         long startRiskRtt = System.currentTimeMillis();
+        long rtt;
+
         try {
             RiskRequest request = RiskRequest.fromContext(pxContext);
             response = pxClient.riskApiCall(request);
+            rtt = System.currentTimeMillis() - startRiskRtt;
+            logger.info(PXLogger.LogReasson.INFO_S2S_RISK_API_RESPONSE, (response == null)? "": response.getScore(), rtt);
+
             pxContext.setMadeS2SApiCall(true);
             if (response == null) {
                 // Error from PX service
-                pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
+                pxContext.setRiskRtt(rtt);
                 pxContext.setPassReason(PassReason.ERROR);
                 return true;
             }
@@ -59,6 +68,7 @@ public class PXS2SValidator {
             } else {
                 pxContext.setBlockReason(BlockReason.SERVER);
             }
+            logger.info(PXLogger.LogReasson.INFO_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
             return false;
         } catch (ConnectTimeoutException e) {
             // Timeout handling - report pass reason and proceed with request

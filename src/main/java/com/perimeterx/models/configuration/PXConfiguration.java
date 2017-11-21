@@ -1,6 +1,7 @@
 package com.perimeterx.models.configuration;
 
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +14,7 @@ import java.util.*;
  * Created by shikloshi on 03/07/2016.
  */
 public class PXConfiguration {
-    private static final Logger logger = LoggerFactory.getLogger(PXConfiguration.class);
+    private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
 
     private String appId;
     private String cookieKey;
@@ -70,7 +71,6 @@ public class PXConfiguration {
         remoteConfigurationUrl = builder.remoteConfigurationUrl;
         captchaProvider = builder.captchaProvider;
         ipHeaders = builder.ipHeaders;
-
     }
 
     public String getRemoteConfigurationUrl(){
@@ -186,17 +186,17 @@ public class PXConfiguration {
     }
 
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
-            logger.info("Updating PXConfiguration file");
-            this.appId = pxDynamicConfiguration.getAppId();
-            this.checksum = pxDynamicConfiguration.getChecksum();
-            this.cookieKey = pxDynamicConfiguration.getCookieSecret();
-            this.blockingScore = pxDynamicConfiguration.getBlockingScore();
-            this.apiTimeout = pxDynamicConfiguration.getApiConnectTimeout();
-            this.connectionTimeout = pxDynamicConfiguration.getApiConnectTimeout();
-            this.sensitiveHeaders = pxDynamicConfiguration.getSensitiveHeaders();
-            this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
-            this.moduleMode = pxDynamicConfiguration.getModuleMode();
-            this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
+        logger.info("Updating PXConfiguration file");
+        this.appId = pxDynamicConfiguration.getAppId();
+        this.checksum = pxDynamicConfiguration.getChecksum();
+        this.cookieKey = pxDynamicConfiguration.getCookieSecret();
+        this.blockingScore = pxDynamicConfiguration.getBlockingScore();
+        this.apiTimeout = pxDynamicConfiguration.getApiConnectTimeout();
+        this.connectionTimeout = pxDynamicConfiguration.getApiConnectTimeout();
+        this.sensitiveHeaders = pxDynamicConfiguration.getSensitiveHeaders();
+        this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
+        this.moduleMode = pxDynamicConfiguration.getModuleMode();
+        this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
     }
 
     public static final class Builder {
@@ -371,11 +371,18 @@ public class PXConfiguration {
 
         public PXConfiguration build() {
             if (!this.remoteConfigurationEnabled) {
-                Validate.notEmpty(this.appId, "Application ID (appId) must be set");
-                Validate.notEmpty(this.cookieKey, "Cookie Key (cookieKey) must be set");
+                notEmpty(this.appId, "appId");
+                notEmpty(this.cookieKey, "cookieKey");
             }
-            Validate.notEmpty(this.authToken, "Authentication Token (authToken) must be set");
+            notEmpty(this.authToken, "authToken");
             return new PXConfiguration(this);
+        }
+
+        private void notEmpty(String configValue, String configName) {
+            if (configValue == null || configValue.isEmpty()) {
+                logger.error(PXLogger.LogReasson.ERROR_CONFIGURATION_MISSING_MANDATORY_CONFIGURATION, configName);
+                throw new IllegalArgumentException(String.format("missing mandatory configuration. %s", configName));
+            }
         }
     }
 }
