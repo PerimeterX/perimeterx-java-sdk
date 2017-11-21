@@ -376,7 +376,7 @@ public class PXConfiguration {
 
         private void notEmpty(String configValue, String configName) {
             if (configValue == null || configValue.isEmpty()) {
-                logger.error(PXLogger.LogReasson.ERROR_CONFIGURATION_MISSING_MANDATORY_CONFIGURATION, configName);
+                logger.error(PXLogger.LogReason.ERROR_CONFIGURATION_MISSING_MANDATORY_CONFIGURATION, configName);
                 throw new IllegalArgumentException(String.format("missing mandatory configuration. %s", configName));
             }
         }

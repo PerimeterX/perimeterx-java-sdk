@@ -10,7 +10,7 @@ public class PXLogger {
     private final String DEBUG_PREFIX = "[PerimeterX - DEBUG] ";
     private final String ERROR_PREFIX = "[PerimeterX - ERROR] ";
 
-    public enum LogReasson {
+    public enum LogReason {
 
         INFO_MODULE_DISABLED("Request will not be verified, module is disabled"),
         INFO_STARTING_REQUEST_VERIFICTION("Starting request verification"),
@@ -46,7 +46,7 @@ public class PXLogger {
 
         String reason;
 
-        LogReasson(String reason) {
+        LogReason(String reason) {
             this.reason = reason;
         }
 
@@ -63,24 +63,16 @@ public class PXLogger {
         logger = LoggerFactory.getLogger(clazz);
     }
 
-    public void info(LogReasson reasson, Object... args) {
-        logger.info(DEBUG_PREFIX + reasson, args);
+    public void info(LogReason reason, Object... args) {
+        logger.info(DEBUG_PREFIX + reason, args);
     }
 
     public void info(String msg, Object... args) {
         logger.info(DEBUG_PREFIX + msg, args);
     }
 
-    public void error(LogReasson reasson, Object... args) {
-        logger.error(ERROR_PREFIX + reasson, args);
-    }
-
-    public void error(String msg, Object... args) {
-        logger.error(ERROR_PREFIX + msg, args);
-    }
-
-    public void debug(String mas) {
-        logger.error(DEBUG_PREFIX + mas);
+    public void debug(String msg) {
+        logger.error(DEBUG_PREFIX + msg);
     }
 
     public void debug(String msg, Object... args) {
@@ -89,5 +81,13 @@ public class PXLogger {
 
     public void warn (String msg) {
         logger.warn(DEBUG_PREFIX + msg);
+    }
+
+    public void error(LogReason reason, Object... args) {
+        logger.error(ERROR_PREFIX + reason, args);
+    }
+
+    public void error(String msg, Object... args) {
+        logger.error(ERROR_PREFIX + msg, args);
     }
 }

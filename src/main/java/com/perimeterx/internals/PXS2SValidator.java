@@ -37,7 +37,7 @@ public class PXS2SValidator {
      * @throws PXException
      */
     public boolean verify(PXContext pxContext) throws PXException {
-        logger.info(PXLogger.LogReasson.INFO_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
+        logger.info(PXLogger.LogReason.INFO_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
         RiskResponse response;
         long startRiskRtt = System.currentTimeMillis();
         long rtt;
@@ -46,7 +46,7 @@ public class PXS2SValidator {
             RiskRequest request = RiskRequest.fromContext(pxContext);
             response = pxClient.riskApiCall(request);
             rtt = System.currentTimeMillis() - startRiskRtt;
-            logger.info(PXLogger.LogReasson.INFO_S2S_RISK_API_RESPONSE, (response == null)? "": response.getScore(), rtt);
+            logger.info(PXLogger.LogReason.INFO_S2S_RISK_API_RESPONSE, (response == null)? "": response.getScore(), rtt);
 
             pxContext.setMadeS2SApiCall(true);
             if (response == null) {
@@ -68,7 +68,7 @@ public class PXS2SValidator {
             } else {
                 pxContext.setBlockReason(BlockReason.SERVER);
             }
-            logger.info(PXLogger.LogReasson.INFO_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
+            logger.info(PXLogger.LogReason.INFO_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
             return false;
         } catch (ConnectTimeoutException e) {
             // Timeout handling - report pass reason and proceed with request

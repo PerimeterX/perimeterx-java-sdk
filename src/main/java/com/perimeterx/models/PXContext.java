@@ -118,7 +118,7 @@ public class PXContext {
     private String blockActionData;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
-        logger.info(PXLogger.LogReasson.INFO_REQUEST_CONTEXT_CREATED);
+        logger.info(PXLogger.LogReason.INFO_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);

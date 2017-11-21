@@ -150,7 +150,7 @@ public abstract class AbstractPXCookie implements PXCookie {
             throw new PXException("Failed to validate HMAC => ".concat(e.getMessage()));
         } finally {
             if (!isValid) {
-                logger.info(PXLogger.LogReasson.INFO_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, pxContext.getUserAgent());
+                logger.info(PXLogger.LogReason.INFO_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, pxContext.getUserAgent());
             }
         }
         return isValid;

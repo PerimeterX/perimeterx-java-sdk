@@ -9,8 +9,8 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import static com.perimeterx.utils.PXLogger.LogReasson.INFO_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
-import static com.perimeterx.utils.PXLogger.LogReasson.INFO_S2S_SCORE_IS_LOWER_THAN_BLOCK;
+import static com.perimeterx.utils.PXLogger.LogReason.INFO_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
+import static com.perimeterx.utils.PXLogger.LogReason.INFO_S2S_SCORE_IS_LOWER_THAN_BLOCK;
 
 /**
  * Created by nitzangoldfeder on 28/05/2017.
