@@ -17,6 +17,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static com.perimeterx.utils.Constants.COOKIE_ORIGIN_COOKIE;
+import static com.perimeterx.utils.Constants.COOKIE_ORIGIN_HEADER;
+import static com.perimeterx.utils.Constants.MOBILE_SDK_HEADER;
+
 /**
  * PXContext - Populate relevant data from HttpRequest
  * <p>
@@ -114,9 +118,9 @@ public class PXContext {
      */
     private BlockReason blockReason;
     private String blockActionData;
+    private boolean isMobileToken;
 
-    public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
-                     final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
+    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.appId = pxConfiguration.getAppId();
         initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);
@@ -148,7 +152,6 @@ public class PXContext {
         this.passReason = PassReason.NONE;
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
-
         this.httpMethod = request.getMethod();
         String protocolDetails[] = request.getProtocol().split("/");
         if (protocolDetails.length > 1) {
@@ -158,6 +161,14 @@ public class PXContext {
         }
 
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
+
+        if (headers.containsKey(MOBILE_SDK_HEADER)) {
+            this.pxCookieOrig = COOKIE_ORIGIN_HEADER;
+            this.isMobileToken = true;
+        } else {
+            this.pxCookieOrig = COOKIE_ORIGIN_COOKIE;
+            this.isMobileToken = false;
+        }
     }
 
     private String extractCookieByKey(String cookie, String key) {
@@ -391,5 +402,9 @@ public class PXContext {
 
     public void setBlockActionData(String blockActionData) {
         this.blockActionData = blockActionData;
+    }
+
+    public boolean isMobileToken() {
+        return isMobileToken;
     }
 }

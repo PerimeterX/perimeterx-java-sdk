@@ -11,6 +11,7 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.perimeterx.utils.Constants.*;
 
 /**
  * PXCookieValidator
@@ -42,6 +43,23 @@ public class PXCookieValidator {
             if (pxCookie == null) {
                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
                 return false;
+            }
+
+            if (context.isMobileToken()) {
+                switch (pxCookie.getPxCookie()) {
+                    case MOBILE_ERROR_NO_COOKIE: {
+                        context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                        return false;
+                    }
+                    case MOBILE_ERROR_NO_CONNECTION: {
+                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
+                        return false;
+                    }
+                    case MOBILE_ERROR_PINNING_PROBLEM: {
+                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
+                        return false;
+                    }
+                }
             }
 
             // In case pxCookie will be modified from the outside extracting the cookie on the constructor

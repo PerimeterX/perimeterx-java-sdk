@@ -51,11 +51,11 @@ public class PXCookieV1 extends AbstractPXCookie {
         String hmacWithIp = new StringBuilder()
                 .append(baseHmacStr.toString())
                 .append(this.pxContext.getIp())
-                .append(this.pxContext.getUserAgent())
+                .append(isMobileToken ? "" : this.pxContext.getUserAgent())
                 .toString();
         String hmacWithoutIp = new StringBuilder()
                 .append(baseHmacStr)
-                .append(this.pxContext.getUserAgent())
+                .append(isMobileToken? "" : this.pxContext.getUserAgent())
                 .toString();
 
         return this.isHmacValid(hmacWithIp, this.getHmac()) || this.isHmacValid(hmacWithoutIp, this.getHmac());

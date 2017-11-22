@@ -51,4 +51,13 @@ public final class Constants {
     public static final String CAPTCHA_ACTION_CAPTCHA = "c";
     public static final String BLOCK_ACTION_CAPTCHA = "b";
     public static final String BLOCK_ACTION_CHALLENGE = "j";
+
+    public static final String COOKIE_ORIGIN_HEADER = "header";
+    public static final String COOKIE_ORIGIN_COOKIE = "cookie";
+
+    //mobile
+    public static final String MOBILE_SDK_HEADER = "X-PX-AUTHORIZATION";
+    public static final String MOBILE_ERROR_NO_COOKIE = "1";
+    public static final String MOBILE_ERROR_NO_CONNECTION = "2";
+    public static final String MOBILE_ERROR_PINNING_PROBLEM = "3";
 }
