@@ -31,7 +31,6 @@ public abstract class AbstractPXCookie implements PXCookie {
     protected String pxCookie;
     protected JsonNode decodedCookie;
     protected String cookieKey;
-    protected boolean isMobileToken;
 
     public AbstractPXCookie(PXConfiguration pxConfiguration, PXContext pxContext) {
         this.mapper = new ObjectMapper();
@@ -39,7 +38,6 @@ public abstract class AbstractPXCookie implements PXCookie {
         this.pxContext = pxContext;
         this.pxCookie = pxContext.getPxCookie();
         this.cookieKey = pxConfiguration.getCookieKey();
-        this.isMobileToken = pxContext.isMobileToken();
     }
 
     public String getPxCookie() {

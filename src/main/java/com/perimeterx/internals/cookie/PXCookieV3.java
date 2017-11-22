@@ -49,7 +49,7 @@ public class PXCookieV3 extends AbstractPXCookie {
     public boolean isSecured() throws PXException {
         String hmacString = new StringBuilder()
                 .append(this.getPxCookie())
-                .append(isMobileToken ? "" : this.pxContext.getUserAgent())
+                .append(pxContext.isMobileToken() ? "" : this.pxContext.getUserAgent())
                 .toString();
         return this.isHmacValid(hmacString, this.getHmac());
     }
