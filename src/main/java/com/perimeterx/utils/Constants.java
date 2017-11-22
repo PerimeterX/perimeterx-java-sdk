@@ -60,4 +60,9 @@ public final class Constants {
     public static final String MOBILE_ERROR_NO_COOKIE = "1";
     public static final String MOBILE_ERROR_NO_CONNECTION = "2";
     public static final String MOBILE_ERROR_PINNING_PROBLEM = "3";
+
+    //Content type
+    public static final String CONTENT_TYPE_TEXT_HTML = "text/html";
+    public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+
 }
