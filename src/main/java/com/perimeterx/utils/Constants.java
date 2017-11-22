@@ -48,9 +48,9 @@ public final class Constants {
     public static final int CAPTCHA_SUCCESS_CODE = 0;
     public static final int CAPTCHA_FAILED_CODE = -1;
 
-    public static final String CAPTCHA_ACTION_CAPTCHA = "c";
-    public static final String BLOCK_ACTION_CAPTCHA = "b";
-    public static final String BLOCK_ACTION_CHALLENGE = "j";
+    public static final String ACTION_CAPTCHA = "c";
+    public static final String ACTION_BLOCK = "b";
+    public static final String ACTION_CHALLENGE = "j";
 
     public static final String COOKIE_ORIGIN_HEADER = "header";
     public static final String COOKIE_ORIGIN_COOKIE = "cookie";
@@ -60,6 +60,9 @@ public final class Constants {
     public static final String MOBILE_ERROR_NO_COOKIE = "1";
     public static final String MOBILE_ERROR_NO_CONNECTION = "2";
     public static final String MOBILE_ERROR_PINNING_PROBLEM = "3";
+
+    public static final String BLOCK_FILE_NAME = "block.mustache";
+    public static final String BLOCK_FILE_EXTENSION = ".mustache";
 
     //Content type
     public static final String CONTENT_TYPE_TEXT_HTML = "text/html";

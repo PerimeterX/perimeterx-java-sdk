@@ -53,7 +53,7 @@ public class PXS2SValidator {
             if (pxContext.getRiskScore() < pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);
                 return true;
-            } else if (response.getAction().equals(Constants.BLOCK_ACTION_CHALLENGE) && response.getActionData() != null && response.getActionData().getBody() != null) {
+            } else if (response.getAction().equals(Constants.ACTION_CHALLENGE) && response.getActionData() != null && response.getActionData().getBody() != null) {
                 pxContext.setBlockActionData(response.getActionData().getBody());
                 pxContext.setBlockReason(BlockReason.CHALLENGE);
             } else {

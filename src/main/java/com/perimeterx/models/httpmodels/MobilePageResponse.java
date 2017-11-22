@@ -1,4 +1,4 @@
-package com.perimeterx.api.blockhandler;
+package com.perimeterx.models.httpmodels;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -6,6 +6,7 @@ import com.perimeterx.api.blockhandler.templates.TemplateFactory;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.models.httpmodels.MobilePageResponse;
 import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.BlockAction;
 
@@ -23,12 +24,15 @@ import static com.perimeterx.utils.Constants.*;
 public class DefaultBlockHandler implements BlockHandler {
 
     public void handleBlocking(PXContext context, PXConfiguration pxConfig, HttpServletResponseWrapper responseWrapper) throws PXException {
-        String response = getPage(context, pxConfig);
+        boolean isCaptchaBlock = context.getBlockAction().equals(BlockAction.CAPTCHA);
+        String response = getPage(context, pxConfig, isCaptchaBlock);
+        String action;
 
         if (context.isMobileToken()) {
-            MobilePageResponse blockResponse = new MobilePageResponse(BLOCK_ACTION_CAPTCHA, context.getUuid(), context.getAppId(), Base64.decode(response).toString());
+            action = (isCaptchaBlock) ? ACTION_CAPTCHA : ACTION_BLOCK;
+            String base64Page = Base64.decode(response).toString();
             try {
-                response = new ObjectMapper().writeValueAsString(blockResponse);
+                response = new ObjectMapper().writeValueAsString(new MobilePageResponse(action, context.getUuid(), context.getAppId(), base64Page));
             } catch (JsonProcessingException e) {
                 throw new PXException(e);
             }
@@ -44,12 +48,11 @@ public class DefaultBlockHandler implements BlockHandler {
         }
     }
 
-    private String getPage(PXContext context, PXConfiguration pxConfig) throws PXException {
-        String pageTemplate = "block.mustache";
-        if (context.getBlockAction().equals(BlockAction.CAPTCHA)) {
+    private String getPage(PXContext context, PXConfiguration pxConfig, boolean isCaptchaBlock) throws PXException {
+        String pageTemplate = BLOCK_FILE_NAME;
+        if (isCaptchaBlock) {
             String fileName = pxConfig.getCaptchaProvider().name().toLowerCase();
-            String ext = ".mustache";
-            pageTemplate = fileName + ext;
+            pageTemplate = fileName + BLOCK_FILE_EXTENSION;
         }
         return TemplateFactory.getTemplate(context, pxConfig, pageTemplate);
     }
