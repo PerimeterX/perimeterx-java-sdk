@@ -18,7 +18,6 @@ public class PXLogger {
 
         INFO_CAPTCHA_NO_COOKIE("No Captcha cookie present on the request"),
         INFO_CAPTCHA_COOKIE_FOUND("Captcha cookie found, evaluating"),
-        INFO_CAPTCHA_RESPONSE_FAILED("Captcha API response validation status: failed"),
         INFO_CAPTCHA_RESPONSE_SUCCESS("Captcha API response validation status: passed"),
         INFO_CAPTCHA_RESPONSE_TIMEOUT("Captcha response timeout - passing request."),
 
@@ -40,6 +39,7 @@ public class PXLogger {
 
         ERROR_CONFIGURATION_MISSING_MANDATORY_CONFIGURATION("Unable to initialize module, missing mandatory configuration. {}"), //config name
         ERROR_COOKIE_EVALUATION_EXCEPTION("Unexpected exception while evaluating Risk cookie. {}"),//error
+        ERROR_CAPTCHA_RESPONSE_FAILED("Captcha API response validation status: failed"),
         ERROR_CONFIGURATION_INVALID_CONFIGURATION("Unable to initialize module, invalid configuration. {}: {}"),//config-name, config value
         ERROR_CONFIGURATION_PARSING_EXCEPTION("Unexpected exception while parsing configurations. {}"), //error
         ERROR_CAPTCHA_EVALUATION_EXCEPTION("Unexpected exception while evaluating Captcha cookie. {}");//error
@@ -64,23 +64,19 @@ public class PXLogger {
     }
 
     public void info(LogReason reason, Object... args) {
-        logger.info(DEBUG_PREFIX + reason, args);
+        logger.debug(DEBUG_PREFIX + reason, args);
     }
 
     public void info(String msg, Object... args) {
-        logger.info(DEBUG_PREFIX + msg, args);
+        logger.debug(DEBUG_PREFIX + msg, args);
     }
 
     public void debug(String msg) {
-        logger.error(DEBUG_PREFIX + msg);
+        logger.debug(DEBUG_PREFIX + msg);
     }
 
     public void debug(String msg, Object... args) {
-        logger.info(DEBUG_PREFIX + msg, args);
-    }
-
-    public void warn (String msg) {
-        logger.warn(DEBUG_PREFIX + msg);
+        logger.debug(DEBUG_PREFIX + msg, args);
     }
 
     public void error(LogReason reason, Object... args) {

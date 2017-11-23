@@ -57,7 +57,7 @@ public class PXCaptchaValidator {
             context.setPassReason(PassReason.CAPTCHA_TIMEOUT);
             return true;
         } catch (Exception e) {
-            logger.error(PXLogger.LogReason.INFO_CAPTCHA_RESPONSE_FAILED);
+            logger.error(PXLogger.LogReason.ERROR_CAPTCHA_RESPONSE_FAILED);
             context.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
             throw new PXException(e);
         }
