@@ -1,6 +1,5 @@
 package com.perimeterx.http;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
@@ -14,6 +13,7 @@ import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PXCommonUtils;
+import com.perimeterx.utils.PXLogger;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
@@ -27,9 +27,6 @@ import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -41,7 +38,7 @@ import java.util.List;
  */
 public class PXHttpClient implements PXClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
+    private static final PXLogger logger = PXLogger.getLogger(PXHttpClient.class);
 
     private static PXHttpClient instance;
     private static final Charset UTF_8 = Charset.forName("utf-8");
