@@ -326,13 +326,13 @@ public class PXContext {
 
     public void setBlockAction(String blockAction) {
         switch (blockAction) {
-            case Constants.CAPTCHA_ACTION_CAPTCHA:
+            case Constants.ACTION_CAPTCHA:
                 this.blockAction = BlockAction.CAPTCHA;
                 break;
-            case Constants.BLOCK_ACTION_CAPTCHA:
+            case Constants.ACTION_BLOCK:
                 this.blockAction = BlockAction.BLOCK;
                 break;
-            case Constants.BLOCK_ACTION_CHALLENGE:
+            case Constants.ACTION_CHALLENGE:
                 this.blockAction = BlockAction.CHALLENGE;
                 break;
             default:
