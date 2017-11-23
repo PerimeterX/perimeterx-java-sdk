@@ -9,6 +9,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.PBKDF2Engine;
 import com.perimeterx.utils.PBKDF2Parameters;
+import com.perimeterx.utils.PXLogger;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -21,6 +22,8 @@ import java.util.Arrays;
  * Created by nitzangoldfeder on 13/04/2017.
  */
 public abstract class AbstractPXCookie implements PXCookie {
+
+    private static final PXLogger logger = PXLogger.getLogger(AbstractPXCookie.class);
 
     private static final int KEY_LEN = 32;
     private static final String HMAC_SHA_256 = "HmacSHA256";
@@ -134,17 +137,23 @@ public abstract class AbstractPXCookie implements PXCookie {
     }
 
     public boolean isHmacValid(String hmacStr, String cookieHmac) throws PXException {
+        boolean isValid = false;
+
         try {
             Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
             SecretKeySpec secret_key = new SecretKeySpec(this.cookieKey.getBytes(), "HmacSHA256");
             sha256_HMAC.init(secret_key);
             byte[] b_hmac = sha256_HMAC.doFinal(hmacStr.getBytes(StandardCharsets.UTF_8));
             byte[] b_cookieHmac = hexStringToByteArray(cookieHmac);
-
-            return Arrays.equals(b_hmac, b_cookieHmac);
+            isValid = Arrays.equals(b_hmac, b_cookieHmac);
         } catch (Exception e) {
             throw new PXException("Failed to validate HMAC => ".concat(e.getMessage()));
+        } finally {
+            if (!isValid) {
+                logger.info(PXLogger.LogReason.INFO_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, pxContext.getUserAgent());
+            }
         }
+        return isValid;
     }
 
     private static byte[] hexStringToByteArray(String s) {

@@ -9,6 +9,7 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,6 +28,8 @@ import static com.perimeterx.utils.Constants.MOBILE_SDK_HEADER;
  * Created by shikloshi on 03/07/2016.
  */
 public class PXContext {
+
+    private static final PXLogger logger = PXLogger.getLogger(PXContext.class);
 
     /**
      * Original HTTP request
@@ -69,7 +72,6 @@ public class PXContext {
     // PerimeterX computed data on the request
     private String riskCookie;
     private final String appId;
-
 
     private String cookieHmac;
 
@@ -121,6 +123,7 @@ public class PXContext {
     private boolean isMobileToken;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
+        logger.info(PXLogger.LogReason.INFO_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);
@@ -210,6 +213,10 @@ public class PXContext {
             return null;
         }
         return pxCookies.containsKey(Constants.COOKIE_V3_KEY) ? pxCookies.get(Constants.COOKIE_V3_KEY) : pxCookies.get(Constants.COOKIE_V1_KEY);
+    }
+
+    public String getCookieVersion() {
+        return pxCookies.isEmpty() ? null : (pxCookies.containsKey(Constants.COOKIE_V3_KEY)? Constants.COOKIE_V3_KEY: Constants.COOKIE_V1_KEY);
     }
 
     public Map<String, String> getPxCookies() {

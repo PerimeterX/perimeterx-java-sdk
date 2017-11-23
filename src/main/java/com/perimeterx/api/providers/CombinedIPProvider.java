@@ -16,8 +16,10 @@ public class CombinedIPProvider implements IPProvider{
 
     @Override
     public String getRequestIP(HttpServletRequest request) {
-        for (String ip: pxConfiguration.getIpHeaders()) {
-            String ipHeader = request.getHeader(ip);
+        String ipHeader;
+
+        for (String ip : pxConfiguration.getIpHeaders()) {
+            ipHeader = request.getHeader(ip);
             if (ipHeader != null) {
                 return ipHeader;
             }
