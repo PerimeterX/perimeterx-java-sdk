@@ -164,6 +164,7 @@ public class PerimeterX {
             responseWrapper.addCookie(cookie);
 
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+            logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
 
             if (captchaValidator.verify(context)) {
                 logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_COOKIE_FOUND);

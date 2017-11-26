@@ -121,7 +121,6 @@ public class PXContext {
     private boolean isMobileToken;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
-        logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);
