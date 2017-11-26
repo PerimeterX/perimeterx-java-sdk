@@ -23,10 +23,8 @@ public abstract class PXCookieFactory {
         String cookieType = cookieKeys.iterator().next();
         switch (cookieType) {
             case Constants.COOKIE_V1_KEY_PREFIX:
-            case Constants.COOKIE_V1_KEY_PREFIX_MOBILE:
                 return new PXCookieV1(pxConfiguration, pxContext);
             case Constants.COOKIE_V3_KEY_PREFIX:
-            case Constants.COOKIE_V3_KEY_PREFIX_MOBILE:
                 return new PXCookieV3(pxConfiguration, pxContext);
             default:
                 return null;

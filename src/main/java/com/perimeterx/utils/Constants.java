@@ -38,9 +38,9 @@ public final class Constants {
     public final static String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
 
     public final static String COOKIE_V1_KEY_PREFIX = "_px";
-    public final static String COOKIE_V1_KEY_PREFIX_MOBILE = "1";
+    public final static String COOKIE_V1_MOBILE_VALUE = "1";
     public final static String COOKIE_V3_KEY_PREFIX = "_px3";
-    public final static String COOKIE_V3_KEY_PREFIX_MOBILE = "3";
+    public final static String COOKIE_V3_MOBILE_VALUE = "3";
 
     public static final String API_RISK = "/api/v2/risk";
     public static final String API_ACTIVITIES = "/api/v1/collector/s2s";

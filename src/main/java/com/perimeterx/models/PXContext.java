@@ -198,7 +198,7 @@ public class PXContext {
     }
 
     private Map<String, String> extractPXCookies(String cookie) {
-        Map<String, String> cookieValue = new HashMap<>();
+        Map<String, String> cookieMap = new HashMap<>();
         String delimiter = isMobileToken ? COOKIE_EXTRACT_DELIMITER_MOBILE : COOKIE_EXTRACT_DELIMITER_WEB;
 
         if (cookie != null) {
@@ -207,15 +207,24 @@ public class PXContext {
                 String[] splicedCookie = c.split(delimiter, 2);
                 switch (splicedCookie[0]) {
                     case Constants.COOKIE_V1_KEY_PREFIX:
-                        cookieValue.put(Constants.COOKIE_V1_KEY_PREFIX, splicedCookie[1]);
+                        cookieMap.put(Constants.COOKIE_V1_KEY_PREFIX, splicedCookie[1]);
                         break;
                     case Constants.COOKIE_V3_KEY_PREFIX:
-                        cookieValue.put(Constants.COOKIE_V3_KEY_PREFIX, splicedCookie[1]);
+                        cookieMap.put(Constants.COOKIE_V3_KEY_PREFIX, splicedCookie[1]);
                         break;
                 }
             }
         }
-        return cookieValue;
+
+        if (isMobileToken && cookieMap.isEmpty() && StringUtils.isNumeric(cookie)) {
+            if (cookie.equals("1")) {
+                cookieMap.put(COOKIE_V1_KEY_PREFIX, COOKIE_V1_MOBILE_VALUE);
+            } else if (cookie.equals("3")) {
+                cookieMap.put(COOKIE_V3_KEY_PREFIX, COOKIE_V3_MOBILE_VALUE);
+            }
+        }
+
+        return cookieMap;
     }
 
     public String getPxCookie() {
