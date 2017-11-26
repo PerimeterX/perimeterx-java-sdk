@@ -121,7 +121,7 @@ public class PXContext {
     private boolean isMobileToken;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
-        logger.info(PXLogger.LogReason.INFO_REQUEST_CONTEXT_CREATED);
+        logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);
@@ -131,7 +131,12 @@ public class PXContext {
 
     private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
         this.headers = getHeadersFromRequest(request);
-        this.isMobileToken = headers.containsKey(MOBILE_SDK_HEADER);
+
+        if (headers.containsKey(MOBILE_SDK_HEADER)) {
+            logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
+            this.isMobileToken = true;
+        }
+
         this.pxCookieOrig = isMobileToken ? ORIGIN_HEADER : ORIGIN_COOKIE;
 
         //Get cookies
@@ -166,6 +171,12 @@ public class PXContext {
 
         while (headerNames.hasMoreElements()) {
             name = (String) headerNames.nextElement();
+
+            //Support case sensitive mobile header
+            if (name.toLowerCase().equals(MOBILE_SDK_HEADER.toLowerCase())) {
+                name = MOBILE_SDK_HEADER;
+            }
+
             headers.put(name, request.getHeader(name));
         }
         return headers;
