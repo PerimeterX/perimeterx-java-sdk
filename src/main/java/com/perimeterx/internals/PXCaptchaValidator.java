@@ -50,6 +50,7 @@ public class PXCaptchaValidator {
                 context.setPassReason(PassReason.CAPTCHA);
                 return true;
             }
+            logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_RESPONSE_FAILED);
             context.setBlockReason(BlockReason.SERVER);
             return false;
         } catch (ConnectTimeoutException e) {

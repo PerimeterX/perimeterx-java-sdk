@@ -19,6 +19,7 @@ public class PXLogger {
         DEBUG_CAPTCHA_NO_COOKIE("No Captcha cookie present on the request"),
         DEBUG_CAPTCHA_COOKIE_FOUND("Captcha cookie found, evaluating"),
         DEBUG_CAPTCHA_RESPONSE_SUCCESS("Captcha API response validation status: passed"),
+        DEBUG_CAPTCHA_RESPONSE_FAILED("Captcha API response validation status: failed"),
         DEBUG_CAPTCHA_RESPONSE_TIMEOUT("Captcha response timeout - passing request."),
 
         DEBUG_COOKIE_MISSING("Cookie is missing"),
