@@ -207,11 +207,11 @@ public class PXContext {
             for (String c : cookies) {
                 String[] splicedCookie = c.split(delimiter, 2);
                 switch (splicedCookie[0]) {
-                    case Constants.COOKIE_V1_KEY:
-                        cookieValue.put(Constants.COOKIE_V1_KEY, splicedCookie[1]);
+                    case Constants.COOKIE_V1_KEY_PREFIX:
+                        cookieValue.put(Constants.COOKIE_V1_KEY_PREFIX, splicedCookie[1]);
                         break;
-                    case Constants.COOKIE_V3_KEY:
-                        cookieValue.put(Constants.COOKIE_V3_KEY, splicedCookie[1]);
+                    case Constants.COOKIE_V3_KEY_PREFIX:
+                        cookieValue.put(Constants.COOKIE_V3_KEY_PREFIX, splicedCookie[1]);
                         break;
                 }
             }
@@ -223,11 +223,11 @@ public class PXContext {
         if (pxCookies.isEmpty()) {
             return null;
         }
-        return pxCookies.containsKey(Constants.COOKIE_V3_KEY) ? pxCookies.get(Constants.COOKIE_V3_KEY) : pxCookies.get(Constants.COOKIE_V1_KEY);
+        return pxCookies.containsKey(Constants.COOKIE_V3_KEY_PREFIX) ? pxCookies.get(Constants.COOKIE_V3_KEY_PREFIX) : pxCookies.get(Constants.COOKIE_V1_KEY_PREFIX);
     }
 
     public String getCookieVersion() {
-        return pxCookies.isEmpty() ? null : (pxCookies.containsKey(Constants.COOKIE_V3_KEY)? Constants.COOKIE_V3_KEY: Constants.COOKIE_V1_KEY);
+        return pxCookies.isEmpty() ? null : (pxCookies.containsKey(Constants.COOKIE_V3_KEY_PREFIX)? Constants.COOKIE_V3_KEY_PREFIX : Constants.COOKIE_V1_KEY_PREFIX);
     }
 
     public Map<String, String> getPxCookies() {
