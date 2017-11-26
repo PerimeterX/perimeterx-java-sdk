@@ -25,14 +25,14 @@ public class DefaultBlockHandler implements BlockHandler {
 
     public void handleBlocking(PXContext context, PXConfiguration pxConfig, HttpServletResponseWrapper responseWrapper) throws PXException {
         boolean isCaptchaBlock = context.getBlockAction().equals(BlockAction.CAPTCHA);
-        String response = getPage(context, pxConfig, isCaptchaBlock);
+        String blockPage = getPage(context, pxConfig, isCaptchaBlock);
         String action;
 
         if (context.isMobileToken()) {
             action = (isCaptchaBlock) ? ACTION_CAPTCHA : ACTION_BLOCK;
-            String base64Page = Base64.decode(response).toString();
+            String base64Page = Base64.encodeToString(blockPage.getBytes(), false);
             try {
-                response = new ObjectMapper().writeValueAsString(new MobilePageResponse(action, context.getUuid(), context.getAppId(), base64Page));
+                blockPage = new ObjectMapper().writeValueAsString(new MobilePageResponse(action, context.getUuid(), context.getAppId(), base64Page));
             } catch (JsonProcessingException e) {
                 throw new PXException(e);
             }
@@ -42,7 +42,7 @@ public class DefaultBlockHandler implements BlockHandler {
         responseWrapper.setContentType(context.isMobileToken() ? CONTENT_TYPE_APPLICATION_JSON : CONTENT_TYPE_TEXT_HTML);
 
         try {
-            responseWrapper.getWriter().print(response);
+            responseWrapper.getWriter().print(blockPage);
         } catch (IOException e) {
             throw new PXException(e);
         }
