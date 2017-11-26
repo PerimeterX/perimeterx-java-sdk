@@ -52,14 +52,17 @@ public final class Constants {
     public static final String ACTION_BLOCK = "b";
     public static final String ACTION_CHALLENGE = "j";
 
-    public static final String COOKIE_ORIGIN_HEADER = "header";
-    public static final String COOKIE_ORIGIN_COOKIE = "cookie";
+    public static final String ORIGIN_HEADER = "header";
+    public static final String ORIGIN_COOKIE = "cookie";
 
     //mobile
     public static final String MOBILE_SDK_HEADER = "X-PX-AUTHORIZATION";
     public static final String MOBILE_ERROR_NO_COOKIE = "1";
     public static final String MOBILE_ERROR_NO_CONNECTION = "2";
     public static final String MOBILE_ERROR_PINNING_PROBLEM = "3";
+
+    public static final String COOKIE_EXTRACT_DELIMITER_MOBILE = ":";
+    public static final String COOKIE_EXTRACT_DELIMITER_WEB = "=";
 
     public static final String BLOCK_FILE_NAME = "block.mustache";
     public static final String BLOCK_FILE_EXTENSION = ".mustache";

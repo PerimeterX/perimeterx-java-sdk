@@ -18,9 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static com.perimeterx.utils.Constants.COOKIE_ORIGIN_COOKIE;
-import static com.perimeterx.utils.Constants.COOKIE_ORIGIN_HEADER;
-import static com.perimeterx.utils.Constants.MOBILE_SDK_HEADER;
+import static com.perimeterx.utils.Constants.*;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -132,20 +130,14 @@ public class PXContext {
     }
 
     private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
-        this.headers = new HashMap<>();
-        final Enumeration headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            final String name = (String) headerNames.nextElement();
-            final String value = request.getHeader(name);
-            this.headers.put(name, value);
-        }
+        this.headers = getHeadersFromRequest(request);
+        this.isMobileToken = headers.containsKey(MOBILE_SDK_HEADER);
+        this.pxCookieOrig = isMobileToken ? ORIGIN_HEADER : ORIGIN_COOKIE;
 
-        final String cookie = request.getHeader("cookie");
+        //Get cookies
+        final String cookie = request.getHeader(isMobileToken ? MOBILE_SDK_HEADER : ORIGIN_COOKIE);
         this.pxCookies = extractPXCookies(cookie);
-        final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
-        if (pxCaptchaCookie != null) {
-            this.pxCaptcha = pxCaptchaCookie;
-        }
+        this.pxCaptcha = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
 
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
@@ -156,6 +148,7 @@ public class PXContext {
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
         this.httpMethod = request.getMethod();
+
         String protocolDetails[] = request.getProtocol().split("/");
         if (protocolDetails.length > 1) {
             this.httpVersion = protocolDetails[1];
@@ -164,18 +157,23 @@ public class PXContext {
         }
 
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
+    }
 
-        if (headers.containsKey(MOBILE_SDK_HEADER)) {
-            this.pxCookieOrig = COOKIE_ORIGIN_HEADER;
-            this.isMobileToken = true;
-        } else {
-            this.pxCookieOrig = COOKIE_ORIGIN_COOKIE;
-            this.isMobileToken = false;
+    private Map<String, String> getHeadersFromRequest(HttpServletRequest request) {
+        HashMap <String, String >headers = new HashMap<>();
+        String name;
+        Enumeration headerNames = request.getHeaderNames();
+
+        while (headerNames.hasMoreElements()) {
+            name = (String) headerNames.nextElement();
+            headers.put(name, request.getHeader(name));
         }
+        return headers;
     }
 
     private String extractCookieByKey(String cookie, String key) {
         String cookieValue = null;
+
         if (cookie != null) {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
@@ -191,10 +189,12 @@ public class PXContext {
 
     private Map<String, String> extractPXCookies(String cookie) {
         Map<String, String> cookieValue = new HashMap<>();
+        String delimiter = isMobileToken ? COOKIE_EXTRACT_DELIMITER_MOBILE : COOKIE_EXTRACT_DELIMITER_WEB;
+
         if (cookie != null) {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
-                String[] splicedCookie = c.split("=", 2);
+                String[] splicedCookie = c.split(delimiter, 2);
                 switch (splicedCookie[0]) {
                     case Constants.COOKIE_V1_KEY:
                         cookieValue.put(Constants.COOKIE_V1_KEY, splicedCookie[1]);
