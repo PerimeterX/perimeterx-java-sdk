@@ -38,6 +38,8 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
 
         try {
             PXConfiguration clonedConfiguration = (PXConfiguration) pxConfiguration.clone();
+            clonedConfiguration.resetAuthToken();
+            clonedConfiguration.resetCookieKey();
             this.enforcerConfigs = JsonUtils.writer.writeValueAsString(clonedConfiguration);
         } catch (JsonProcessingException | CloneNotSupportedException e) {
             this.enforcerConfigs = "Could not retrieve pxConfiguration";

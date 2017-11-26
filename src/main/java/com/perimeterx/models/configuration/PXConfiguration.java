@@ -200,6 +200,14 @@ public class PXConfiguration implements Cloneable{
         this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
     }
 
+    public void resetCookieKey(){
+        cookieKey = null;
+    }
+
+    public void resetAuthToken(){
+        authToken = null;
+    }
+
     public static final class Builder {
         private String appId;
         private String cookieKey;
@@ -343,7 +351,6 @@ public class PXConfiguration implements Cloneable{
             remoteConfigurationInterval = val;
             return this;
         }
-
 
         public Builder remoteConfigurationDelay(int val) {
             remoteConfigurationDelay = val;
