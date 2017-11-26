@@ -9,7 +9,7 @@ import java.util.*;
  * <p>
  * Created by shikloshi on 03/07/2016.
  */
-public class PXConfiguration {
+public class PXConfiguration implements Cloneable{
     private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
 
     private String appId;
@@ -67,6 +67,11 @@ public class PXConfiguration {
         remoteConfigurationUrl = builder.remoteConfigurationUrl;
         captchaProvider = builder.captchaProvider;
         ipHeaders = builder.ipHeaders;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
     public String getRemoteConfigurationUrl(){

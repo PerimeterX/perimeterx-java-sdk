@@ -37,8 +37,9 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
         }
 
         try {
-            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(pxConfiguration);
-        } catch (JsonProcessingException e) {
+            PXConfiguration clonedConfiguration = (PXConfiguration) pxConfiguration.clone();
+            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(clonedConfiguration);
+        } catch (JsonProcessingException | CloneNotSupportedException e) {
             this.enforcerConfigs = "Could not retrieve pxConfiguration";
         }
     }
