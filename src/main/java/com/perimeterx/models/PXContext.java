@@ -141,7 +141,7 @@ public class PXContext {
         //Get cookies
         final String cookie = request.getHeader(isMobileToken ? MOBILE_SDK_HEADER : ORIGIN_COOKIE);
         this.pxCookies = isMobileToken ? extractPXMobileCookie(cookie) : extractPXCookies(cookie);
-        //in mobile remove the cookie header - to not send it in request again
+        //in mobile remove the cookie header - do not send it in request
         if (isMobileToken) {
             headers.remove(ORIGIN_COOKIE);
         }
