@@ -6,10 +6,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.Base64;
-import com.perimeterx.utils.PBKDF2Engine;
-import com.perimeterx.utils.PBKDF2Parameters;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.*;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -17,6 +14,8 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+
+import static com.perimeterx.utils.Constants.*;
 
 /**
  * Created by nitzangoldfeder on 13/04/2017.
@@ -34,6 +33,8 @@ public abstract class AbstractPXCookie implements PXCookie {
     protected String pxCookie;
     protected JsonNode decodedCookie;
     protected String cookieKey;
+
+    public AbstractPXCookie(){}
 
     public AbstractPXCookie(PXConfiguration pxConfiguration, PXContext pxContext) {
         this.mapper = new ObjectMapper();
@@ -170,6 +171,10 @@ public abstract class AbstractPXCookie implements PXCookie {
         return this.deserialize() && !this.isExpired() && this.isSecured();
     }
 
+    public String getCookieError() {
+        return null;
+    }
+
     @Override
     public long getTimestamp() {
         return decodedCookie.get("t").asLong();
@@ -183,6 +188,21 @@ public abstract class AbstractPXCookie implements PXCookie {
     @Override
     public String getVID() {
         return decodedCookie.get("v").asText();
+    }
+
+    public static boolean isMobileErrorCode(String code) {
+        return Constants.MOBILE_ERROR_NO_COOKIE.equals(code) || Constants.MOBILE_ERROR_NO_CONNECTION.equals(code) || Constants.MOBILE_ERROR_PINNING_PROBLEM.equals(code);
+    }
+
+    public static String convertMobileCookieVersion(String cookiePrefix) {
+        String version = "";
+
+        if (COOKIE_V1_MOBILE_VALUE.equals(cookiePrefix)) {
+            version = COOKIE_V1_KEY_PREFIX;
+        } else if (COOKIE_V3_MOBILE_VALUE.equals(cookiePrefix)) {
+            version = COOKIE_V3_KEY_PREFIX;
+        }
+        return version;
     }
 
 }

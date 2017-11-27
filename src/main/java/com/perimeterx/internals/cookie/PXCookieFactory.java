@@ -26,6 +26,12 @@ public abstract class PXCookieFactory {
                 return new PXCookieV1(pxConfiguration, pxContext);
             case Constants.COOKIE_V3_KEY_PREFIX:
                 return new PXCookieV3(pxConfiguration, pxContext);
+            case Constants.MOBILE_ERROR_NO_COOKIE:
+                return new PXCookieError(Constants.MOBILE_ERROR_NO_COOKIE);
+            case Constants.MOBILE_ERROR_NO_CONNECTION:
+                return new PXCookieError(Constants.MOBILE_ERROR_NO_CONNECTION);
+            case Constants.MOBILE_ERROR_PINNING_PROBLEM:
+                return new PXCookieError(Constants.MOBILE_ERROR_PINNING_PROBLEM);
             default:
                 return null;
         }

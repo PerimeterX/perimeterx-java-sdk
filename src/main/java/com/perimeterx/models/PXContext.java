@@ -37,7 +37,7 @@ public class PXContext {
     /**
      * PerimeterX cookies - _px$cookie_version$, _pxCaptcha.
      */
-    private Map<String,String> pxCookies;
+    private Map<String, String> pxCookies;
 
     /**
      * Original _px cookie
@@ -140,9 +140,8 @@ public class PXContext {
 
         //Get cookies
         final String cookie = request.getHeader(isMobileToken ? MOBILE_SDK_HEADER : ORIGIN_COOKIE);
-        this.pxCookies = extractPXCookies(cookie);
+        this.pxCookies = isMobileToken ? extractPXMobileCookie(cookie) : extractPXCookies(cookie);
         this.pxCaptcha = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
-
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
@@ -164,7 +163,7 @@ public class PXContext {
     }
 
     private Map<String, String> getHeadersFromRequest(HttpServletRequest request) {
-        HashMap <String, String >headers = new HashMap<>();
+        HashMap<String, String> headers = new HashMap<>();
         String name;
         Enumeration headerNames = request.getHeaderNames();
 
@@ -197,34 +196,50 @@ public class PXContext {
         return cookieValue;
     }
 
-    private Map<String, String> extractPXCookies(String cookie) {
+    private Map<String, String> extractPXMobileCookie(String cookieString) {
         Map<String, String> cookieMap = new HashMap<>();
-        String delimiter = isMobileToken ? COOKIE_EXTRACT_DELIMITER_MOBILE : COOKIE_EXTRACT_DELIMITER_WEB;
+        String[] cookieParts;
+        String cookieFirstPart;
+        String cookieVersion;
+
+        if (cookieString != null && !cookieString.isEmpty()) {
+            cookieParts = cookieString.split(COOKIE_EXTRACT_DELIMITER_MOBILE, 2);
+            cookieFirstPart = cookieParts[0];
+
+            //Mobile Error
+            if (cookieParts.length == 1 && AbstractPXCookie.isMobileErrorCode(cookieFirstPart)) {
+                cookieMap.put(cookieFirstPart, cookieFirstPart);
+            }
+            //Mobile version & cookie
+            else if (cookieParts.length == 2) {
+                cookieVersion = AbstractPXCookie.convertMobileCookieVersion(cookieParts[0]);
+                if (!cookieVersion.isEmpty()) {
+                    cookieMap.put(cookieVersion, cookieParts[1]);
+                }
+            }
+        }
+        return cookieMap;
+    }
+
+    private Map<String, String> extractPXCookies(String cookie) {
+        Map<String, String> cookieValue = new HashMap<>();
 
         if (cookie != null) {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
-                String[] splicedCookie = c.split(delimiter, 2);
+                String[] splicedCookie = c.split(COOKIE_EXTRACT_DELIMITER_WEB, 2);
                 switch (splicedCookie[0]) {
                     case Constants.COOKIE_V1_KEY_PREFIX:
-                        cookieMap.put(Constants.COOKIE_V1_KEY_PREFIX, splicedCookie[1]);
+                        cookieValue.put(Constants.COOKIE_V1_KEY_PREFIX, splicedCookie[1]);
+
                         break;
                     case Constants.COOKIE_V3_KEY_PREFIX:
-                        cookieMap.put(Constants.COOKIE_V3_KEY_PREFIX, splicedCookie[1]);
+                        cookieValue.put(Constants.COOKIE_V3_KEY_PREFIX, splicedCookie[1]);
                         break;
                 }
             }
         }
-
-        if (isMobileToken && cookieMap.isEmpty() && StringUtils.isNumeric(cookie)) {
-            if (cookie.equals("1")) {
-                cookieMap.put(COOKIE_V1_KEY_PREFIX, COOKIE_V1_MOBILE_VALUE);
-            } else if (cookie.equals("3")) {
-                cookieMap.put(COOKIE_V3_KEY_PREFIX, COOKIE_V3_MOBILE_VALUE);
-            }
-        }
-
-        return cookieMap;
+        return cookieValue;
     }
 
     public String getPxCookie() {

@@ -38,6 +38,7 @@ public class PXCookieValidator {
      */
     public boolean verify(PXConfiguration pxConfiguration, PXContext context) {
         AbstractPXCookie pxCookie = null;
+        String cookieError;
 
         try {
             pxCookie = PXCookieFactory.create(pxConfiguration, context);
@@ -46,8 +47,9 @@ public class PXCookieValidator {
                 return false;
             }
 
-            if (context.isMobileToken()) {
-                switch (pxCookie.getPxCookie()) {
+            cookieError =  pxCookie.getCookieError();
+            if (cookieError != null && !cookieError.isEmpty()) {
+                switch (cookieError) {
                     case MOBILE_ERROR_NO_COOKIE: {
                         logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
                         context.setS2sCallReason(S2SCallReason.NO_COOKIE);
