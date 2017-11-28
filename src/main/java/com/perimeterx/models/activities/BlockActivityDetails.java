@@ -17,7 +17,7 @@ public class BlockActivityDetails implements ActivityDetails {
     @JsonProperty("block_score")
     private int blockScore;
     @JsonProperty("block_reason")
-    private String blockReason;
+    private BlockReason blockReason;
     @JsonProperty("block_uuid")
     private String blockUuid;
     @JsonProperty("http_method")
@@ -34,7 +34,7 @@ public class BlockActivityDetails implements ActivityDetails {
 
     public BlockActivityDetails(PXContext context) {
         this.blockScore = context.getRiskScore();
-        this.blockReason = context.getBlockReason().getValue();
+        this.blockReason = context.getBlockReason();
         this.blockUuid = context.getUuid();
         this.httpMethod = context.getHttpMethod();
         this.httpVersion = context.getHttpVersion();
@@ -47,7 +47,7 @@ public class BlockActivityDetails implements ActivityDetails {
         return blockScore;
     }
 
-    public String getBlockReason() {
+    public BlockReason getBlockReason() {
         return blockReason;
     }
 
