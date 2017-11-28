@@ -141,11 +141,6 @@ public class PXContext {
         //Get cookies
         final String cookie = request.getHeader(isMobileToken ? MOBILE_SDK_HEADER : ORIGIN_COOKIE);
         this.pxCookies = isMobileToken ? extractPXMobileCookie(cookie) : extractPXCookies(cookie);
-        //in mobile remove the cookie header - do not send it in request
-        if (isMobileToken) {
-            headers.remove(ORIGIN_COOKIE);
-        }
-
         this.pxCaptcha = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
@@ -174,13 +169,7 @@ public class PXContext {
 
         while (headerNames.hasMoreElements()) {
             name = (String) headerNames.nextElement();
-
-            //Support case sensitive mobile header
-            if (name.toLowerCase().equals(MOBILE_SDK_HEADER.toLowerCase())) {
-                name = MOBILE_SDK_HEADER;
-            }
-
-            headers.put(name, request.getHeader(name));
+            headers.put(name.toLowerCase(), request.getHeader(name));
         }
         return headers;
     }
