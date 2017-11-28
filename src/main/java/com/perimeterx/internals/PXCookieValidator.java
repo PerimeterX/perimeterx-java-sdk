@@ -65,6 +65,13 @@ public class PXCookieValidator {
                         context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
                         return false;
                     }
+                    default: {
+                        if (S2SCallReason.INVALID_DECRYPTION.getValue().equals(cookieError)) {
+                            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED);
+                            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+                            return false;
+                        }
+                    }
                 }
             }
 

@@ -3,6 +3,7 @@ package com.perimeterx.internals.cookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
 import java.util.Set;
@@ -16,7 +17,8 @@ public abstract class PXCookieFactory {
         // Return null if no cookies
         Set<String> cookieKeys = pxContext.getPxCookies().keySet();
         if (cookieKeys.isEmpty()) {
-            return null;
+            //If there is a mobile header and no cookie value return decryption error cookie
+            return pxContext.isMobileToken() ? new PXCookieError(S2SCallReason.INVALID_DECRYPTION.getValue()) : null;
         }
 
         // Will get the higher cookie because keys are sorted as a ordered set
