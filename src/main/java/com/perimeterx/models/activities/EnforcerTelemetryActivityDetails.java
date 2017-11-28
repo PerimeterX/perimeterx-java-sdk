@@ -6,7 +6,6 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 
-import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -27,6 +26,8 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
     private UpdateReason updateReason;
 
     public EnforcerTelemetryActivityDetails(PXConfiguration pxConfiguration, UpdateReason updateReason) {
+        PXConfiguration clonedConfig;
+
         this.moduleVersion = Constants.SDK_VERSION;
         this.osName = System.getProperty("os.name");
         this.updateReason = updateReason;
@@ -36,12 +37,13 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
             this.nodeName = "unknown";
         }
 
+        clonedConfig = pxConfiguration.clone();
+        clonedConfig.resetAuthToken();
+        clonedConfig.resetCookieKey();
+
         try {
-            PXConfiguration clonedConfiguration = (PXConfiguration) pxConfiguration.clone();
-            clonedConfiguration.resetAuthToken();
-            clonedConfiguration.resetCookieKey();
-            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(clonedConfiguration);
-        } catch (JsonProcessingException | CloneNotSupportedException e) {
+            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(clonedConfig);
+        } catch (JsonProcessingException e) {
             this.enforcerConfigs = "Could not retrieve pxConfiguration";
         }
     }

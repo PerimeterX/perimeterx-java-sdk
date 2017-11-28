@@ -9,7 +9,7 @@ import java.util.*;
  * <p>
  * Created by shikloshi on 03/07/2016.
  */
-public class PXConfiguration implements Cloneable{
+public class PXConfiguration {
     private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
 
     private String appId;
@@ -69,9 +69,40 @@ public class PXConfiguration implements Cloneable{
         ipHeaders = builder.ipHeaders;
     }
 
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled, int blockingScore, Set<String> sensitiveHeaders, int maxBufferLen, int apiTimeout, int connectionTimeout, boolean sendPageActivities, boolean signedWithIP, String serverURL, String customLogo, String cssRef, String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled, ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute, String remoteConfigurationUrl, CaptchaProvider captchaProvider) {
+        this.appId = appId;
+        this.cookieKey = cookieKey;
+        this.authToken = authToken;
+        this.moduleEnabled = moduleEnabled;
+        this.encryptionEnabled = encryptionEnabled;
+        this.blockingScore = blockingScore;
+        this.sensitiveHeaders = sensitiveHeaders;
+        this.maxBufferLen = maxBufferLen;
+        this.apiTimeout = apiTimeout;
+        this.connectionTimeout = connectionTimeout;
+        this.sendPageActivities = sendPageActivities;
+        this.signedWithIP = signedWithIP;
+        this.serverURL = serverURL;
+        this.customLogo = customLogo;
+        this.cssRef = cssRef;
+        this.jsRef = jsRef;
+        this.sensitiveRoutes = sensitiveRoutes;
+        this.ipHeaders = ipHeaders;
+        this.checksum = checksum;
+        this.remoteConfigurationEnabled = remoteConfigurationEnabled;
+        this.moduleMode = moduleMode;
+        this.remoteConfigurationInterval = remoteConfigurationInterval;
+        this.remoteConfigurationDelay = remoteConfigurationDelay;
+        this.maxConnections = maxConnections;
+        this.maxConnectionsPerRoute = maxConnectionsPerRoute;
+        this.remoteConfigurationUrl = remoteConfigurationUrl;
+        this.captchaProvider = captchaProvider;
+    }
+
+    public PXConfiguration clone() {
+        return new PXConfiguration(appId, cookieKey, authToken, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
+                connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
+                moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider);
     }
 
     public String getRemoteConfigurationUrl(){
