@@ -442,4 +442,8 @@ public class PXContext {
     public boolean isMobileToken() {
         return isMobileToken;
     }
+
+    public String getCollectorURL() {
+        return String.format("%s%s%s", Constants.API_COLLECTOR_PREFIX, appId, Constants.API_COLLECTOR_POSTFIX);
+    }
 }

@@ -32,7 +32,7 @@ public class DefaultBlockHandler implements BlockHandler {
             action = (isCaptchaBlock) ? ACTION_CAPTCHA : ACTION_BLOCK;
             String base64Page = Base64.encodeToString(blockPage.getBytes(), false);
             try {
-                blockPage = new ObjectMapper().writeValueAsString(new MobilePageResponse(action, context.getUuid(), context.getAppId(), base64Page));
+                blockPage = new ObjectMapper().writeValueAsString(new MobilePageResponse(action, context.getUuid(), context.getAppId(), base64Page, context.getCollectorURL()));
             } catch (JsonProcessingException e) {
                 throw new PXException(e);
             }

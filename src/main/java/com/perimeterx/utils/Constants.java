@@ -47,6 +47,8 @@ public final class Constants {
     public static final String API_ENFORCER_TELEMETRY = "/api/v2/risk/telemetry";
     public static final String API_CAPTCHA = "/api/v2/risk/captcha";
     public static final String API_REMOTE_CONFIGURATION = "/api/v1/enforcer/";
+    public static final String API_COLLECTOR_PREFIX = "https://collector-";
+    public static final String API_COLLECTOR_POSTFIX = ".perimeterx.net";
 
     public static final int CAPTCHA_SUCCESS_CODE = 0;
     public static final int CAPTCHA_FAILED_CODE = -1;
