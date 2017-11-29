@@ -9,6 +9,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
+import static com.perimeterx.utils.Constants.*;
 import com.perimeterx.utils.PXLogger;
 
 /**
@@ -37,12 +38,41 @@ public class PXCookieValidator {
      */
     public boolean verify(PXConfiguration pxConfiguration, PXContext context) {
         AbstractPXCookie pxCookie = null;
+        String cookieError;
 
         try {
             pxCookie = PXCookieFactory.create(pxConfiguration, context);
             if (pxCookie == null) {
                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
                 return false;
+            }
+
+            cookieError =  pxCookie.getCookieError();
+            if (cookieError != null && !cookieError.isEmpty()) {
+                switch (cookieError) {
+                    case MOBILE_ERROR_NO_COOKIE: {
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
+                        context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                        return false;
+                    }
+                    case MOBILE_ERROR_NO_CONNECTION: {
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_CONNECTION);
+                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
+                        return false;
+                    }
+                    case MOBILE_ERROR_PINNING_PROBLEM: {
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_PINNING_ISSUE);
+                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
+                        return false;
+                    }
+                    default: {
+                        if (S2SCallReason.INVALID_DECRYPTION.getValue().equals(cookieError)) {
+                            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED);
+                            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+                            return false;
+                        }
+                    }
+                }
             }
 
             // In case pxCookie will be modified from the outside extracting the cookie on the constructor
@@ -61,7 +91,7 @@ public class PXCookieValidator {
             context.setCookieHmac(pxCookie.getHmac());
 
             if (pxCookie.isExpired()) {
-                logger.info(PXLogger.LogReason.INFO_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
+                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
                 context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED);
                 return false;
             }
@@ -77,7 +107,7 @@ public class PXCookieValidator {
             }
 
             if (context.isSensitiveRoute()) {
-                logger.info(PXLogger.LogReason.INFO_S2S_RISK_API_SENSITIVE_ROUTE, context.getUri());
+                logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getUri());
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
                 return false;
             }
@@ -86,7 +116,7 @@ public class PXCookieValidator {
             return true;
 
         } catch (PXException | PXCookieDecryptionException e) {
-            logger.error(PXLogger.LogReason.INFO_COOKIE_DECRYPTION_FAILED, pxCookie);
+            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED, pxCookie);
             context.setPxCookieOrig(context.getPxCookie());
             context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
             return false;

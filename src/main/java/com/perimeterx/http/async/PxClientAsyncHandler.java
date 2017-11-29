@@ -13,7 +13,7 @@ public class PxClientAsyncHandler implements FutureCallback<HttpResponse> {
 
     @Override
     public void completed(HttpResponse httpResponse) {
-        logger.info("Response completed {}", httpResponse.getEntity());
+        logger.debug("Response completed {}", httpResponse.getEntity());
     }
 
     @Override
@@ -23,6 +23,6 @@ public class PxClientAsyncHandler implements FutureCallback<HttpResponse> {
 
     @Override
     public void cancelled() {
-        logger.info("Response was canceled");
+        logger.debug("Response was canceled");
     }
 }
