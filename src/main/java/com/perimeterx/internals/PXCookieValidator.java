@@ -9,8 +9,8 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXLogger;
 
 /**
  * PXCookieValidator
@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  */
 public class PXCookieValidator {
 
-    private static final Logger logger = LoggerFactory.getLogger(PXCookieValidator.class);
+    private static final PXLogger logger = PXLogger.getLogger(PXCookieValidator.class);
 
     public static PXCookieValidator getDecoder(String cookieKey) throws PXException {
         try {
@@ -37,8 +37,38 @@ public class PXCookieValidator {
      * @return S2S call reason according to the result of cookie verification
      */
     public boolean verify(PXConfiguration pxConfiguration, PXContext context) {
+        AbstractPXCookie pxCookie = null;
+
         try {
-            AbstractPXCookie pxCookie = PXCookieFactory.create(pxConfiguration, context);
+            if (context.isMobileToken()) {
+                String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
+                switch (authHeader) {
+                    case Constants.MOBILE_ERROR_NO_CONNECTION: {
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_CONNECTION);
+                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
+                        return false;
+                    }
+                    case Constants.MOBILE_ERROR_PINNING: {
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_PINNING);
+                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
+                        return false;
+                    }
+                    case Constants.MOBILE_ERROR_NO_COOKIE: {
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
+                        context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                        return false;
+                    }
+                    default: {
+                        if (authHeader.isEmpty()) {
+                            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED);
+                            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            pxCookie = PXCookieFactory.create(pxConfiguration, context);
             if (pxCookie == null) {
                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
                 return false;
@@ -47,7 +77,6 @@ public class PXCookieValidator {
             // In case pxCookie will be modified from the outside extracting the cookie on the constructor
             // will fail, we test for null for the cookie before, if its null then we want to set pxCookieOrig
             if (pxCookie.getPxCookie() == null || !pxCookie.deserialize()) {
-                context.setPxCookieOrig(context.getPxCookie());
                 context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
                 return false;
             }
@@ -60,6 +89,7 @@ public class PXCookieValidator {
             context.setCookieHmac(pxCookie.getHmac());
 
             if (pxCookie.isExpired()) {
+                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
                 context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED);
                 return false;
             }
@@ -75,6 +105,7 @@ public class PXCookieValidator {
             }
 
             if (context.isSensitiveRoute()) {
+                logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getUri());
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
                 return false;
             }
@@ -83,9 +114,7 @@ public class PXCookieValidator {
             return true;
 
         } catch (PXException | PXCookieDecryptionException e) {
-            logger.error(e.getMessage());
-
-            context.setPxCookieOrig(context.getPxCookie());
+            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED, pxCookie);
             context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
             return false;
         }

@@ -30,6 +30,8 @@ public class BlockActivityDetails implements ActivityDetails {
     private long riskRtt;
     @JsonProperty("module_version")
     private String moduleVersion;
+    @JsonProperty("cookie_origin")
+    private String cookieOrigin;
 
 
     public BlockActivityDetails(PXContext context) {
@@ -40,6 +42,7 @@ public class BlockActivityDetails implements ActivityDetails {
         this.httpVersion = context.getHttpVersion();
         this.pxCookie = context.getRiskCookie();
         this.riskRtt = context.getRiskRtt();
+        this.cookieOrigin = context.getCookieOrigin();
         this.moduleVersion = Constants.SDK_VERSION;
     }
 

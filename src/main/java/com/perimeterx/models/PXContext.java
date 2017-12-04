@@ -9,6 +9,7 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +24,8 @@ import java.util.Set;
  * Created by shikloshi on 03/07/2016.
  */
 public class PXContext {
+
+    private static final PXLogger logger = PXLogger.getLogger(PXContext.class);
 
     /**
      * Original HTTP request
@@ -65,7 +68,6 @@ public class PXContext {
     // PerimeterX computed data on the request
     private String riskCookie;
     private final String appId;
-
 
     private String cookieHmac;
 
@@ -114,9 +116,12 @@ public class PXContext {
      */
     private BlockReason blockReason;
     private String blockActionData;
+    private boolean isMobileToken;
 
-    public PXContext(final HttpServletRequest request, final IPProvider ipProvider,
-                     final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
+    private String cookieOrigin = Constants.COOKIE_ORIGIN;
+
+    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
+        logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);
@@ -125,16 +130,18 @@ public class PXContext {
     }
 
     private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
-        this.headers = new HashMap<>();
-        final Enumeration headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            final String name = (String) headerNames.nextElement();
-            final String value = request.getHeader(name);
-            this.headers.put(name, value);
+        this.headers = getHeadersFromRequest(request);
+
+        if (headers.containsKey(Constants.MOBILE_SDK_HEADER)) {
+            logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
+            this.isMobileToken = true;
+            this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
 
-        final String cookie = request.getHeader("cookie");
-        this.pxCookies = extractPXCookies(cookie);
+        final String cookie = isMobileToken? request.getHeader(Constants.MOBILE_SDK_HEADER) : request.getHeader(Constants.COOKIE_ORIGIN);
+        this.pxCookies = isMobileToken ? extractPXMobileCookie(cookie) : extractPXCookies(cookie);
+        this.pxCookieOrig = getPxCookie();
+
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
             this.pxCaptcha = pxCaptchaCookie;
@@ -158,6 +165,18 @@ public class PXContext {
         }
 
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
+    }
+
+    private Map<String, String> getHeadersFromRequest(HttpServletRequest request) {
+        HashMap<String, String> headers = new HashMap<>();
+        String name;
+        Enumeration headerNames = request.getHeaderNames();
+
+        while (headerNames.hasMoreElements()) {
+            name = (String) headerNames.nextElement();
+            headers.put(name.toLowerCase(), request.getHeader(name));
+        }
+        return headers;
     }
 
     private String extractCookieByKey(String cookie, String key) {
@@ -184,6 +203,7 @@ public class PXContext {
                 switch (splicedCookie[0]) {
                     case Constants.COOKIE_V1_KEY:
                         cookieValue.put(Constants.COOKIE_V1_KEY, splicedCookie[1]);
+
                         break;
                     case Constants.COOKIE_V3_KEY:
                         cookieValue.put(Constants.COOKIE_V3_KEY, splicedCookie[1]);
@@ -194,11 +214,36 @@ public class PXContext {
         return cookieValue;
     }
 
-    public String getPxCookie() {
-        if (pxCookies.isEmpty()) {
-            return null;
+    private Map<String, String> extractPXMobileCookie(String cookieString) {
+        Map<String, String> cookieMap = new HashMap<>();
+        String[] cookieParts;
+        String cookieFirstPart;
+        String cookieVersion;
+
+        if (cookieString != null && !cookieString.isEmpty()) {
+            cookieParts = cookieString.split(Constants.COOKIE_EXTRACT_DELIMITER_MOBILE, 2);
+            cookieFirstPart = cookieParts[0];
+
+            //Mobile Error
+            if (cookieParts.length == 1) {
+                cookieMap.put(Constants.COOKIE_V3_KEY, cookieFirstPart);
+            }
+            //Mobile cookie
+            else if (cookieParts.length == 2) {
+                cookieVersion = AbstractPXCookie.getMobileCookieVersion(cookieParts[0]);
+                cookieMap.put(cookieVersion, cookieParts[1]);
+            }
         }
+
+        return cookieMap;
+    }
+
+    public String getPxCookie() {
         return pxCookies.containsKey(Constants.COOKIE_V3_KEY) ? pxCookies.get(Constants.COOKIE_V3_KEY) : pxCookies.get(Constants.COOKIE_V1_KEY);
+    }
+
+    public String getCookieVersion() {
+        return pxCookies.isEmpty() ? null : (pxCookies.containsKey(Constants.COOKIE_V3_KEY)? Constants.COOKIE_V3_KEY: Constants.COOKIE_V1_KEY);
     }
 
     public Map<String, String> getPxCookies() {
@@ -338,7 +383,6 @@ public class PXContext {
         this.cookieHmac = cookieHmac;
     }
 
-
     public String getCookieHmac() {
         return this.cookieHmac;
     }
@@ -391,5 +435,17 @@ public class PXContext {
 
     public void setBlockActionData(String blockActionData) {
         this.blockActionData = blockActionData;
+    }
+
+    public String getCookieOrigin() {
+        return cookieOrigin;
+    }
+
+    public boolean isMobileToken() {
+        return isMobileToken;
+    }
+
+    public String getCollectorURL() {
+        return String.format("%s%s%s", Constants.API_COLLECTOR_PREFIX, appId, Constants.API_COLLECTOR_POSTFIX);
     }
 }
