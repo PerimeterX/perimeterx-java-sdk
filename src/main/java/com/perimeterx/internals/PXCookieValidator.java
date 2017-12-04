@@ -44,23 +44,23 @@ public class PXCookieValidator {
                 String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
                 switch (authHeader) {
                     case Constants.MOBILE_ERROR_NO_CONNECTION: {
-                        // TODO logger.error(PXLogger.LogReason.);
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_CONNECTION);
                         context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
                         return false;
                     }
                     case Constants.MOBILE_ERROR_PINNING: {
-                        // TODO logger.error(PXLogger.LogReason.);
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_PINNING);
                         context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
                         return false;
                     }
                     case Constants.MOBILE_ERROR_NO_COOKIE: {
-                        // TODO logger.error(PXLogger.LogReason.);
+                        logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
                         context.setS2sCallReason(S2SCallReason.NO_COOKIE);
                         return false;
                     }
                     default: {
                         if (authHeader.isEmpty()) {
-                            // TODO logger.error(PXLogger.LogReason.);
+                            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED);
                             context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
                             return false;
                         }
@@ -89,7 +89,7 @@ public class PXCookieValidator {
             context.setCookieHmac(pxCookie.getHmac());
 
             if (pxCookie.isExpired()) {
-                logger.info(PXLogger.LogReason.INFO_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
+                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
                 context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED);
                 return false;
             }
@@ -105,7 +105,7 @@ public class PXCookieValidator {
             }
 
             if (context.isSensitiveRoute()) {
-                logger.info(PXLogger.LogReason.INFO_S2S_RISK_API_SENSITIVE_ROUTE, context.getUri());
+                logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getUri());
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
                 return false;
             }
@@ -114,7 +114,7 @@ public class PXCookieValidator {
             return true;
 
         } catch (PXException | PXCookieDecryptionException e) {
-            logger.error(PXLogger.LogReason.INFO_COOKIE_DECRYPTION_FAILED, pxCookie);
+            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED, pxCookie);
             context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
             return false;
         }

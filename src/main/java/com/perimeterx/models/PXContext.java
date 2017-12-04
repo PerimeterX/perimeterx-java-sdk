@@ -121,7 +121,7 @@ public class PXContext {
     private String cookieOrigin = Constants.COOKIE_ORIGIN;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
-        logger.info(PXLogger.LogReason.INFO_REQUEST_CONTEXT_CREATED);
+        logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);
@@ -133,7 +133,7 @@ public class PXContext {
         this.headers = getHeadersFromRequest(request);
 
         if (headers.containsKey(Constants.MOBILE_SDK_HEADER)) {
-            //TODO logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
+            logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
             this.isMobileToken = true;
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
