@@ -37,6 +37,7 @@ public final class Constants {
     public static final String SERVER_URL = "https://sapi-%s.perimeterx.net";
     public final static String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
     public final static String COOKIE_V1_KEY = "_px";
+    public final static String COOKIE_V1_MOBILE_VALUE = "1";
     public final static String COOKIE_V3_KEY = "_px3";
 
     public static final String API_RISK = "/api/v2/risk";
@@ -51,4 +52,31 @@ public final class Constants {
     public static final String CAPTCHA_ACTION_CAPTCHA = "c";
     public static final String BLOCK_ACTION_CAPTCHA = "b";
     public static final String BLOCK_ACTION_CHALLENGE = "j";
+
+    public static final String MOBILE_SDK_HEADER = "x-px-authorization";
+    public static final String COOKIE_EXTRACT_DELIMITER_MOBILE = ":";
+
+    public static final String HEADER_ORIGIN = "header";
+    public static final String COOKIE_ORIGIN = "cookie";
+
+    public static final String MOBILE_ERROR_NO_COOKIE = "1";
+    public static final String MOBILE_ERROR_NO_CONNECTION = "2";
+    public static final String MOBILE_ERROR_PINNING = "3";
+
+    public static final String FILE_NAME_BLOCK = "block";
+    public static final String FILE_EXTENSION_MUSTACHE = ".mustache";
+    public static final String FILE_NAME_MOBILE = ".mobile";
+    public static final String FILE_NAME_CAPTCHA = "captcha";
+    public static final String FILE_NAME_FUN_CAPTCHA = "funcaptcha";
+
+    public static final String API_COLLECTOR_PREFIX = "https://collector-";
+    public static final String API_COLLECTOR_POSTFIX = ".perimeterx.net";
+
+    public static final String CONTENT_TYPE_TEXT_HTML = "text/html";
+    public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+
+    public static final String MOBILE_ACTION_CAPTCHA = "captcha";
+    public static final String MOBILE_ACTION_BLOCK = "block";
+
+
 }

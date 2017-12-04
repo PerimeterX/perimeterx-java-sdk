@@ -26,6 +26,8 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     private String moduleVersion;
     @JsonProperty("client_uuid")
     private String clientUuid;
+    @JsonProperty("cookie_origin")
+    private String cookieOrigin;
 
 
     public PageRequestedActivityDetails(PXContext context) {
@@ -36,6 +38,7 @@ public class PageRequestedActivityDetails implements ActivityDetails {
         this.riskRtt = context.getRiskRtt();
         this.moduleVersion = Constants.SDK_VERSION;
         this.clientUuid = context.getUuid();
+        this.cookieOrigin = context.getCookieOrigin();
     }
 
     public String getHttpMethod() {

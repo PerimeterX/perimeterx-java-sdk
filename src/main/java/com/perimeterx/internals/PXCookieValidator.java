@@ -9,6 +9,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
+import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
 
 /**
@@ -39,6 +40,34 @@ public class PXCookieValidator {
         AbstractPXCookie pxCookie = null;
 
         try {
+            if (context.isMobileToken()) {
+                String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
+                switch (authHeader) {
+                    case Constants.MOBILE_ERROR_NO_CONNECTION: {
+                        // TODO logger.error(PXLogger.LogReason.);
+                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
+                        return false;
+                    }
+                    case Constants.MOBILE_ERROR_PINNING: {
+                        // TODO logger.error(PXLogger.LogReason.);
+                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
+                        return false;
+                    }
+                    case Constants.MOBILE_ERROR_NO_COOKIE: {
+                        // TODO logger.error(PXLogger.LogReason.);
+                        context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                        return false;
+                    }
+                    default: {
+                        if (authHeader.isEmpty()) {
+                            // TODO logger.error(PXLogger.LogReason.);
+                            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+                            return false;
+                        }
+                    }
+                }
+            }
+
             pxCookie = PXCookieFactory.create(pxConfiguration, context);
             if (pxCookie == null) {
                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
@@ -48,7 +77,6 @@ public class PXCookieValidator {
             // In case pxCookie will be modified from the outside extracting the cookie on the constructor
             // will fail, we test for null for the cookie before, if its null then we want to set pxCookieOrig
             if (pxCookie.getPxCookie() == null || !pxCookie.deserialize()) {
-                context.setPxCookieOrig(context.getPxCookie());
                 context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
                 return false;
             }
@@ -87,7 +115,6 @@ public class PXCookieValidator {
 
         } catch (PXException | PXCookieDecryptionException e) {
             logger.error(PXLogger.LogReason.INFO_COOKIE_DECRYPTION_FAILED, pxCookie);
-            context.setPxCookieOrig(context.getPxCookie());
             context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
             return false;
         }

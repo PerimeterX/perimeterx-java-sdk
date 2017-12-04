@@ -21,8 +21,11 @@ public class Additional {
     public S2SCallReason CallReason;
     @JsonProperty("px_cookie_orig")
     public String pxCookieOrig;
+    @JsonProperty("cookie_origin")
+    public String pxCookieOrigin;
     @JsonProperty("module_version")
     public final String ModuleVersion = Constants.SDK_VERSION;
+
 
     @JsonProperty("custom_params")
 
@@ -33,6 +36,7 @@ public class Additional {
         additional.HttpVersion = ctx.getHttpVersion();
         additional.CallReason = ctx.getS2sCallReason();
         additional.pxCookieOrig = ctx.getPxCookieOrig();
+        additional.pxCookieOrigin = ctx.getCookieOrigin();
         return additional;
     }
 }

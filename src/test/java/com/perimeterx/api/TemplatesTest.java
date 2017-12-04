@@ -53,7 +53,7 @@ public class TemplatesTest {
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
 
@@ -82,7 +82,7 @@ public class TemplatesTest {
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
     }
 
@@ -124,7 +124,7 @@ public class TemplatesTest {
                 .cssRef("http://www.google.com/script.js")
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains("http://www.google.com/script.js") );
     }
 
@@ -137,7 +137,7 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
 
@@ -163,7 +163,7 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"recaptcha.mustache");
+        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"captcha.mustache");
         assertTrue( actualHTML.contains( pxContext.getVid() ) );
     }
 
