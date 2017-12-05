@@ -52,6 +52,9 @@ public abstract class TemplateFactory {
         props.put("customLogo", pxConfig.getCustomLogo());
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
+        //captcha.mobile.mustache prop
+        props.put("hostUrl", pxContext.getCollectorURL());
+
         props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
 
         return props;
