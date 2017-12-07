@@ -26,8 +26,6 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
     private UpdateReason updateReason;
 
     public EnforcerTelemetryActivityDetails(PXConfiguration pxConfiguration, UpdateReason updateReason) {
-        PXConfiguration clonedConfig;
-
         this.moduleVersion = Constants.SDK_VERSION;
         this.osName = System.getProperty("os.name");
         this.updateReason = updateReason;
@@ -37,12 +35,8 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
             this.nodeName = "unknown";
         }
 
-        clonedConfig = pxConfiguration.clone();
-        clonedConfig.resetAuthToken();
-        clonedConfig.resetCookieKey();
-
         try {
-            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(clonedConfig);
+            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(pxConfiguration.getTelemetryConfig());
         } catch (JsonProcessingException e) {
             this.enforcerConfigs = "Could not retrieve pxConfiguration";
         }
@@ -51,12 +45,15 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
     public String getModuleVersion() {
         return moduleVersion;
     }
+
     public String getEnforcerConfigs() {
         return enforcerConfigs;
     }
+
     public String getOsName() {
         return osName;
     }
+
     public String getNodeName() {
         return nodeName;
     }

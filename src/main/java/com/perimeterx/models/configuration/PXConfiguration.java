@@ -99,8 +99,11 @@ public class PXConfiguration {
         this.captchaProvider = captchaProvider;
     }
 
-    public PXConfiguration clone() {
-        return new PXConfiguration(appId, cookieKey, authToken, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
+    /*
+    * @return Configuration Object clone without cookieKey and authToken
+    * */
+    public PXConfiguration getTelemetryConfig() {
+        return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
                 moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider);
     }
@@ -229,14 +232,6 @@ public class PXConfiguration {
         this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
         this.moduleMode = pxDynamicConfiguration.getModuleMode();
         this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
-    }
-
-    public void resetCookieKey(){
-        cookieKey = null;
-    }
-
-    public void resetAuthToken(){
-        authToken = null;
     }
 
     public static final class Builder {
