@@ -6,10 +6,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.Base64;
-import com.perimeterx.utils.PBKDF2Engine;
-import com.perimeterx.utils.PBKDF2Parameters;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.*;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -150,7 +147,7 @@ public abstract class AbstractPXCookie implements PXCookie {
             throw new PXException("Failed to validate HMAC => ".concat(e.getMessage()));
         } finally {
             if (!isValid) {
-                logger.info(PXLogger.LogReason.INFO_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, pxContext.getUserAgent());
+                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, pxContext.getUserAgent());
             }
         }
         return isValid;
@@ -185,4 +182,7 @@ public abstract class AbstractPXCookie implements PXCookie {
         return decodedCookie.get("v").asText();
     }
 
+    public static String getMobileCookieVersion(String cookiePrefix) {
+        return Constants.COOKIE_V1_MOBILE_VALUE.equals(cookiePrefix) ?  Constants.COOKIE_V1_KEY :  Constants.COOKIE_V3_KEY;
+    }
 }

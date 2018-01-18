@@ -151,11 +151,11 @@ public class PerimeterX {
      */
     public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
-        logger.info(PXLogger.LogReason.INFO_STARTING_REQUEST_VERIFICTION);
+        logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICTION);
 
         try {
             if (!moduleEnabled()) {
-                logger.info(PXLogger.LogReason.INFO_MODULE_DISABLED);
+                logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
                 return null;
             }
             // Remove captcha cookie to prevent re-use
@@ -166,23 +166,23 @@ public class PerimeterX {
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
             if (captchaValidator.verify(context)) {
-                logger.info(PXLogger.LogReason.INFO_CAPTCHA_COOKIE_FOUND);
+                logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_COOKIE_FOUND);
                 context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
                 return context;
             }
-            logger.info(PXLogger.LogReason.INFO_CAPTCHA_NO_COOKIE);
+            logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_NO_COOKIE);
 
             boolean cookieVerified = cookieValidator.verify(this.configuration, context);
-            logger.info(PXLogger.LogReason.INFO_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
-                logger.info(PXLogger.LogReason.INFO_COOKIE_VERSION_FOUND,  context.getCookieVersion());
+                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND,  context.getCookieVersion());
                 context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
                 return context;
             }
 
             // Calls risk_api and populate the data retrieved to the context
-            logger.info(PXLogger.LogReason.INFO_COOKIE_MISSING);
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_MISSING);
             serverValidator.verify(context);
             context.setVerified(verificationHandler.handleVerification(context,responseWrapper));
         } catch (Exception e) {

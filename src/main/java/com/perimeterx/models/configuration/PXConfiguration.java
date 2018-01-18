@@ -182,7 +182,7 @@ public class PXConfiguration {
     }
 
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
-        logger.info("Updating PXConfiguration file");
+        logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
         this.checksum = pxDynamicConfiguration.getChecksum();
         this.cookieKey = pxDynamicConfiguration.getCookieSecret();
