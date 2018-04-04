@@ -1,10 +1,10 @@
 package com.perimeterx.models.configuration;
 
+import com.perimeterx.api.providers.CustomParametersProvider;
+import com.perimeterx.api.providers.DefaultCustomParametersProvider;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.perimeterx.utils.PXLogger;
 import java.util.*;
 
 /**
@@ -13,7 +13,7 @@ import java.util.*;
  * Created by shikloshi on 03/07/2016.
  */
 public class PXConfiguration {
-    private static final Logger logger = LoggerFactory.getLogger(PXConfiguration.class);
+    private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
 
     private String appId;
     private String cookieKey;
@@ -42,6 +42,7 @@ public class PXConfiguration {
     private int maxConnectionsPerRoute;
     private String remoteConfigurationUrl;
     private CaptchaProvider captchaProvider;
+    private CustomParametersProvider customParametersProvider;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -70,7 +71,46 @@ public class PXConfiguration {
         remoteConfigurationUrl = builder.remoteConfigurationUrl;
         captchaProvider = builder.captchaProvider;
         ipHeaders = builder.ipHeaders;
+        customParametersProvider = builder.customParametersProvider;
+    }
 
+    private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled, int blockingScore, Set<String> sensitiveHeaders, int maxBufferLen, int apiTimeout, int connectionTimeout, boolean sendPageActivities, boolean signedWithIP, String serverURL, String customLogo, String cssRef, String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled, ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute, String remoteConfigurationUrl, CaptchaProvider captchaProvider) {
+        this.appId = appId;
+        this.cookieKey = cookieKey;
+        this.authToken = authToken;
+        this.moduleEnabled = moduleEnabled;
+        this.encryptionEnabled = encryptionEnabled;
+        this.blockingScore = blockingScore;
+        this.sensitiveHeaders = sensitiveHeaders;
+        this.maxBufferLen = maxBufferLen;
+        this.apiTimeout = apiTimeout;
+        this.connectionTimeout = connectionTimeout;
+        this.sendPageActivities = sendPageActivities;
+        this.signedWithIP = signedWithIP;
+        this.serverURL = serverURL;
+        this.customLogo = customLogo;
+        this.cssRef = cssRef;
+        this.jsRef = jsRef;
+        this.sensitiveRoutes = sensitiveRoutes;
+        this.ipHeaders = ipHeaders;
+        this.checksum = checksum;
+        this.remoteConfigurationEnabled = remoteConfigurationEnabled;
+        this.moduleMode = moduleMode;
+        this.remoteConfigurationInterval = remoteConfigurationInterval;
+        this.remoteConfigurationDelay = remoteConfigurationDelay;
+        this.maxConnections = maxConnections;
+        this.maxConnectionsPerRoute = maxConnectionsPerRoute;
+        this.remoteConfigurationUrl = remoteConfigurationUrl;
+        this.captchaProvider = captchaProvider;
+    }
+
+    /*
+    * @return Configuration Object clone without cookieKey and authToken
+    * */
+    public PXConfiguration getTelemetryConfig() {
+        return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
+                connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
+                moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider);
     }
 
     public String getRemoteConfigurationUrl(){
@@ -185,18 +225,22 @@ public class PXConfiguration {
         return ipHeaders;
     }
 
+    public CustomParametersProvider getCustomParametersProvider() {
+        return customParametersProvider;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
-            logger.info("Updating PXConfiguration file");
-            this.appId = pxDynamicConfiguration.getAppId();
-            this.checksum = pxDynamicConfiguration.getChecksum();
-            this.cookieKey = pxDynamicConfiguration.getCookieSecret();
-            this.blockingScore = pxDynamicConfiguration.getBlockingScore();
-            this.apiTimeout = pxDynamicConfiguration.getApiConnectTimeout();
-            this.connectionTimeout = pxDynamicConfiguration.getApiConnectTimeout();
-            this.sensitiveHeaders = pxDynamicConfiguration.getSensitiveHeaders();
-            this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
-            this.moduleMode = pxDynamicConfiguration.getModuleMode();
-            this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
+        logger.debug("Updating PXConfiguration file");
+        this.appId = pxDynamicConfiguration.getAppId();
+        this.checksum = pxDynamicConfiguration.getChecksum();
+        this.cookieKey = pxDynamicConfiguration.getCookieSecret();
+        this.blockingScore = pxDynamicConfiguration.getBlockingScore();
+        this.apiTimeout = pxDynamicConfiguration.getApiConnectTimeout();
+        this.connectionTimeout = pxDynamicConfiguration.getApiConnectTimeout();
+        this.sensitiveHeaders = pxDynamicConfiguration.getSensitiveHeaders();
+        this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
+        this.moduleMode = pxDynamicConfiguration.getModuleMode();
+        this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
     }
 
     public static final class Builder {
@@ -226,6 +270,7 @@ public class PXConfiguration {
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
         private CaptchaProvider captchaProvider = CaptchaProvider.RECAPTCHA;
         private Set<String> ipHeaders = new HashSet<>();
+        private CustomParametersProvider customParametersProvider = new DefaultCustomParametersProvider();
 
         public Builder() {
         }
@@ -343,7 +388,6 @@ public class PXConfiguration {
             return this;
         }
 
-
         public Builder remoteConfigurationDelay(int val) {
             remoteConfigurationDelay = val;
             return this;
@@ -369,13 +413,25 @@ public class PXConfiguration {
             return this;
         }
 
+        public Builder customParametersProvider(CustomParametersProvider customParametersProvider) {
+            this.customParametersProvider = customParametersProvider;
+            return this;
+        }
+
         public PXConfiguration build() {
             if (!this.remoteConfigurationEnabled) {
-                Validate.notEmpty(this.appId, "Application ID (appId) must be set");
-                Validate.notEmpty(this.cookieKey, "Cookie Key (cookieKey) must be set");
+                notEmpty(this.appId, "appId");
+                notEmpty(this.cookieKey, "cookieKey");
             }
-            Validate.notEmpty(this.authToken, "Authentication Token (authToken) must be set");
+            notEmpty(this.authToken, "authToken");
             return new PXConfiguration(this);
+        }
+
+        private void notEmpty(String configValue, String configName) {
+            if (configValue == null || configValue.isEmpty()) {
+                logger.error(PXLogger.LogReason.ERROR_CONFIGURATION_MISSING_MANDATORY_CONFIGURATION, configName);
+                throw new IllegalArgumentException(String.format("missing mandatory configuration. %s", configName));
+            }
         }
     }
 }

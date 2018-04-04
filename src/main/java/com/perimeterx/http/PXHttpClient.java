@@ -1,19 +1,16 @@
 package com.perimeterx.http;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.ResetCaptchaRequest;
-import com.perimeterx.models.httpmodels.CaptchaResponse;
-import com.perimeterx.models.httpmodels.RiskRequest;
-import com.perimeterx.models.httpmodels.RiskResponse;
+import com.perimeterx.models.httpmodels.*;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PXCommonUtils;
+import com.perimeterx.utils.PXLogger;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
@@ -27,9 +24,6 @@ import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
@@ -41,7 +35,7 @@ import java.util.List;
  */
 public class PXHttpClient implements PXClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(PXHttpClient.class);
+    private static final PXLogger logger = PXLogger.getLogger(PXHttpClient.class);
 
     private static PXHttpClient instance;
     private static final Charset UTF_8 = Charset.forName("utf-8");
@@ -74,14 +68,14 @@ public class PXHttpClient implements PXClient {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
-            logger.info("Risk API Request: {}", requestBody);
+            logger.debug("Risk API Request: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
 
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
-            logger.info("Risk API Response: {}", s);
+            logger.debug("Risk API Response: {}", s);
             if (httpResponse.getStatusLine().getStatusCode() == 200) {
                 return JsonUtils.riskResponseReader.readValue(s);
             }
@@ -98,7 +92,7 @@ public class PXHttpClient implements PXClient {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
-            logger.info("Sending Activity: {}", requestBody);
+            logger.debug("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
@@ -119,7 +113,7 @@ public class PXHttpClient implements PXClient {
         HttpAsyncRequestProducer producer = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activities);
-            logger.info("Sending Activity: {}", requestBody);
+            logger.debug("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
@@ -140,14 +134,14 @@ public class PXHttpClient implements PXClient {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(resetCaptchaRequest);
-            logger.info("Sending captcha verification: {}", requestBody);
+            logger.debug("Sending captcha verification: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_CAPTCHA);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
 
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
-            logger.info("Captcha verification response: {}", s);
+            logger.debug("Captcha verification response: {}", s);
             if (httpResponse.getStatusLine().getStatusCode() == 200) {
                 return JsonUtils.captchaResponseReader.readValue(s);
             }
@@ -193,7 +187,7 @@ public class PXHttpClient implements PXClient {
         HttpAsyncRequestProducer producer = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
-            logger.info("Sending enforcer telemetry: {}", requestBody);
+            logger.debug("Sending enforcer telemetry: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());

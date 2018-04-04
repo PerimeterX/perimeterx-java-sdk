@@ -44,23 +44,21 @@ import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
+import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -69,7 +67,7 @@ import java.io.IOException;
  */
 public class PerimeterX {
 
-    private static final Logger logger = LoggerFactory.getLogger(PerimeterX.class);
+    private static final PXLogger logger = PXLogger.getLogger(PerimeterX.class);
 
     private PXConfiguration configuration;
     private BlockHandler blockHandler;
@@ -80,6 +78,7 @@ public class PerimeterX {
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
+    private CustomParametersProvider customParametersProvider;
 
     private CloseableHttpClient getHttpClient() {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
@@ -121,9 +120,7 @@ public class PerimeterX {
         this.captchaValidator = new PXCaptchaValidator(pxClient, configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
-
         this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
-
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
@@ -156,9 +153,11 @@ public class PerimeterX {
      */
     public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
+        logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICTION);
+
         try {
             if (!moduleEnabled()) {
-                logger.info("PerimeterX verification SDK is disabled");
+                logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
                 return null;
             }
             // Remove captcha cookie to prevent re-use
@@ -167,24 +166,29 @@ public class PerimeterX {
             responseWrapper.addCookie(cookie);
 
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+
             if (captchaValidator.verify(context)) {
+                logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_COOKIE_FOUND);
                 context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
                 return context;
             }
+            logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_NO_COOKIE);
 
             boolean cookieVerified = cookieValidator.verify(this.configuration, context);
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {
-                logger.info("No risk API Call is needed, using cookie");
+                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND,  context.getCookieVersion());
                 context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
                 return context;
             }
 
             // Calls risk_api and populate the data retrieved to the context
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_MISSING);
             serverValidator.verify(context);
             context.setVerified(verificationHandler.handleVerification(context,responseWrapper));
         } catch (Exception e) {
-            logger.error("Unexpected error: {} - request passed", e.getMessage());
+            logger.error(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION,  e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
                 context.setPassReason(PassReason.ERROR);
@@ -242,5 +246,9 @@ public class PerimeterX {
      */
     public void setVerificationHandler(VerificationHandler verificationHandler) {
         this.verificationHandler = verificationHandler;
+    }
+
+    public void setCustomParametersProvider(CustomParametersProvider customParametersProvider) {
+        this.customParametersProvider = customParametersProvider;
     }
 }

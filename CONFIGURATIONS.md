@@ -47,6 +47,7 @@ Directives
 | IPProvider |Handles IP address extraction from request|CombinedIPProvider| setIpProvider|
 | HostnameProvider |Handles hostname extraction from request|DefaultHostnameProvider| setHostnameProvider|
 | VerificationHandler |handling verification after PerimeterX service finished analyzing the request|DefaultVerificationHandler|setVerificationHandler|
+| CustomParametersProvider | Adds to the risk api additional custom parameters | CustomParametersProvider| customParametersProvider|
 
 The interfaces should be set after PerimeterX instance has been initialized
 ```java
@@ -126,10 +127,29 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ```
 
 <a name="captcha-provider"></a>
-##### Captcha Provider
+##### Custom Parameters Provider
+Risk api requests can be enriched with custom parameters by implementing CustomParametersProvider and adding logic to extract
+the custom parameters from the request
+Before implementing the interface, please make sure to configure custom parameters on the portal.  
+Make sure when the custom parameters are configured that they are NOT marked as query string  
+
 ```
+public class PerimeterxCustomParamsProvider implements CustomParametersProvider {
+        public CustomParameters buildCustomParameters(PXConfiguration pxConfiguration, PXContext pxContext) {
+            ... Some logic ...
+            String cp2 = "PerimeterX_Custom_param2";
+            String cp5 = "PerimeterX_Custom_param5";
+            customParameters.setCustomParam2(cp2);
+            customParameters.setCustomParam5(cp5);
+            ... Some logic ...
+            
+            return customParameters;
+        }
+    }
 PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
-    .captchaProvider(CaptchaProvider.FUNCAPTCHA)
+    .customParametersProvider(CaptchaProvider.FUNCAPTCHA)
 ...
 ```
+
+<a name="custom-params"></a>

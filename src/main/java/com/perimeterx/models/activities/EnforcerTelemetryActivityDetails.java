@@ -6,7 +6,6 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 
-import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -37,7 +36,7 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
         }
 
         try {
-            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(pxConfiguration);
+            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(pxConfiguration.getTelemetryConfig());
         } catch (JsonProcessingException e) {
             this.enforcerConfigs = "Could not retrieve pxConfiguration";
         }
@@ -46,12 +45,15 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
     public String getModuleVersion() {
         return moduleVersion;
     }
+
     public String getEnforcerConfigs() {
         return enforcerConfigs;
     }
+
     public String getOsName() {
         return osName;
     }
+
     public String getNodeName() {
         return nodeName;
     }

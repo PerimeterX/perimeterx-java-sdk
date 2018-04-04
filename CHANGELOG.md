@@ -1,5 +1,12 @@
 # Change Log
 
+## [v3.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-04-04)
+- Replaced footer on block pages
+- New logs format
+- Improved enforcer telemetry 
+- Mobile SDK support
+- Custom Params support
+
 ## [v3.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-11-07)
 - Remote Configuration support (by default is off)
 - Fixed `risk_rtt` for `s2s` on exception

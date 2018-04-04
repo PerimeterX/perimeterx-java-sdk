@@ -1,5 +1,6 @@
 package com.perimeterx.models.httpmodels;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * <p>
  * Created by shikloshi on 07/07/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CaptchaResponse {
 
     private int status;
