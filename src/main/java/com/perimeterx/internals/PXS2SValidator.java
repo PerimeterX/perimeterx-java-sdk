@@ -1,5 +1,6 @@
 package com.perimeterx.internals;
 
+import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -7,6 +8,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
@@ -43,6 +45,12 @@ public class PXS2SValidator {
         long rtt;
 
         try {
+            // Extract Custom Params only if we do risk  api
+            CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
+            CustomParameters customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, pxContext);
+            pxContext.setCustomParameters(customParameters);
+
+            // Build risk request
             RiskRequest request = RiskRequest.fromContext(pxContext);
             response = pxClient.riskApiCall(request);
             rtt = System.currentTimeMillis() - startRiskRtt;

@@ -1,5 +1,8 @@
 package com.perimeterx.models.configuration;
 
+import com.perimeterx.api.providers.CustomParametersProvider;
+import com.perimeterx.api.providers.DefaultCustomParametersProvider;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
 import java.util.*;
@@ -39,6 +42,7 @@ public class PXConfiguration {
     private int maxConnectionsPerRoute;
     private String remoteConfigurationUrl;
     private CaptchaProvider captchaProvider;
+    private CustomParametersProvider customParametersProvider;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -67,6 +71,7 @@ public class PXConfiguration {
         remoteConfigurationUrl = builder.remoteConfigurationUrl;
         captchaProvider = builder.captchaProvider;
         ipHeaders = builder.ipHeaders;
+        customParametersProvider = builder.customParametersProvider;
     }
 
     private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled, int blockingScore, Set<String> sensitiveHeaders, int maxBufferLen, int apiTimeout, int connectionTimeout, boolean sendPageActivities, boolean signedWithIP, String serverURL, String customLogo, String cssRef, String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled, ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute, String remoteConfigurationUrl, CaptchaProvider captchaProvider) {
@@ -220,6 +225,10 @@ public class PXConfiguration {
         return ipHeaders;
     }
 
+    public CustomParametersProvider getCustomParametersProvider() {
+        return customParametersProvider;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
@@ -261,6 +270,7 @@ public class PXConfiguration {
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
         private CaptchaProvider captchaProvider = CaptchaProvider.RECAPTCHA;
         private Set<String> ipHeaders = new HashSet<>();
+        private CustomParametersProvider customParametersProvider = new DefaultCustomParametersProvider();
 
         public Builder() {
         }
@@ -400,6 +410,11 @@ public class PXConfiguration {
 
         public Builder ipHeaders(Set<String> ipHeaders) {
             this.ipHeaders = ipHeaders;
+            return this;
+        }
+
+        public Builder customParametersProvider(CustomParametersProvider customParametersProvider) {
+            this.customParametersProvider = customParametersProvider;
             return this;
         }
 

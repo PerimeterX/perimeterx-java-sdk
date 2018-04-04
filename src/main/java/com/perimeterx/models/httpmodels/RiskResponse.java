@@ -1,5 +1,6 @@
 package com.perimeterx.models.httpmodels;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -7,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * <p>
  * Created by Shikloshi on 04/07/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RiskResponse {
 
     private String uuid;
