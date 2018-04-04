@@ -44,6 +44,7 @@ import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
@@ -77,6 +78,7 @@ public class PerimeterX {
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
+    private CustomParametersProvider customParametersProvider;
 
     private CloseableHttpClient getHttpClient() {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
@@ -244,5 +246,9 @@ public class PerimeterX {
      */
     public void setVerificationHandler(VerificationHandler verificationHandler) {
         this.verificationHandler = verificationHandler;
+    }
+
+    public void setCustomParametersProvider(CustomParametersProvider customParametersProvider) {
+        this.customParametersProvider = customParametersProvider;
     }
 }

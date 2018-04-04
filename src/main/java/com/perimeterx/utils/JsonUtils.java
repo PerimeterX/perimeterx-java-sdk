@@ -23,5 +23,4 @@ public final class JsonUtils {
 
     protected JsonUtils() {
     }
-
 }

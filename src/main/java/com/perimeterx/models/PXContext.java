@@ -5,6 +5,7 @@ import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.BlockAction;
@@ -115,10 +116,27 @@ public class PXContext {
      * Reason for why request should be blocked - relevant when request is not verified, meaning - verified {@link com.perimeterx.models.PXContext#verified} is false
      */
     private BlockReason blockReason;
+
+    /**
+     * Contains the data that would be rendered on the response when score exceeds the threshold
+     */
     private String blockActionData;
+
+    /**
+     * Marks is the origin of the request comes from mobile client
+     */
     private boolean isMobileToken;
 
+    /**
+     * Marks the origin of the pxCookie
+     */
     private String cookieOrigin = Constants.COOKIE_ORIGIN;
+
+    /**
+     * Custom parameters from the requests, cusotm parameters are set via {@link com.perimeterx.api.providers.CustomParametersProvider#buildCustomParameters(PXConfiguration, PXContext)}
+     * if exist, the custom parameters will be set when risk api is triggered
+     */
+    private CustomParameters customParameters;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
@@ -447,5 +465,13 @@ public class PXContext {
 
     public String getCollectorURL() {
         return String.format("%s%s%s", Constants.API_COLLECTOR_PREFIX, appId, Constants.API_COLLECTOR_POSTFIX);
+    }
+
+    public CustomParameters getCustomParameters() {
+        return customParameters;
+    }
+
+    public void setCustomParameters(CustomParameters customParameters) {
+        this.customParameters = customParameters;
     }
 }
