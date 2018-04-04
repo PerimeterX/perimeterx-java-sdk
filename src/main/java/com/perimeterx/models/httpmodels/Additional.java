@@ -25,7 +25,7 @@ public class Additional {
     public S2SCallReason callReason;
     @JsonProperty("px_cookie_orig")
     public String pxCookieOrig;
-    @JsonProperty("px_cookie_origin")
+    @JsonProperty("cookie_origin")
     public String pxCookieOrigin;
     @JsonProperty("module_version")
     public final String moduleVersion = Constants.SDK_VERSION;
