@@ -1,5 +1,7 @@
 package com.perimeterx.models.configuration;
 
+import com.perimeterx.api.blockhandler.BlockHandler;
+import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
 import com.perimeterx.models.risk.CustomParameters;
@@ -43,6 +45,7 @@ public class PXConfiguration {
     private String remoteConfigurationUrl;
     private CaptchaProvider captchaProvider;
     private CustomParametersProvider customParametersProvider;
+    private BlockHandler blockHandler;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -72,9 +75,16 @@ public class PXConfiguration {
         captchaProvider = builder.captchaProvider;
         ipHeaders = builder.ipHeaders;
         customParametersProvider = builder.customParametersProvider;
+        blockHandler = builder.blockHandler;
     }
 
-    private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled, int blockingScore, Set<String> sensitiveHeaders, int maxBufferLen, int apiTimeout, int connectionTimeout, boolean sendPageActivities, boolean signedWithIP, String serverURL, String customLogo, String cssRef, String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled, ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute, String remoteConfigurationUrl, CaptchaProvider captchaProvider) {
+    private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled,
+                            int blockingScore, Set<String> sensitiveHeaders, int maxBufferLen, int apiTimeout, int connectionTimeout,
+                            boolean sendPageActivities, boolean signedWithIP, String serverURL, String customLogo, String cssRef,
+                            String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled,
+                            ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute,
+                            String remoteConfigurationUrl, CaptchaProvider captchaProvider, CustomParametersProvider customParametersProvider,
+                            BlockHandler blockHandler) {
         this.appId = appId;
         this.cookieKey = cookieKey;
         this.authToken = authToken;
@@ -102,6 +112,8 @@ public class PXConfiguration {
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.remoteConfigurationUrl = remoteConfigurationUrl;
         this.captchaProvider = captchaProvider;
+        this.customParametersProvider = customParametersProvider;
+        this.blockHandler = blockHandler;
     }
 
     /*
@@ -110,7 +122,8 @@ public class PXConfiguration {
     public PXConfiguration getTelemetryConfig() {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
-                moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider);
+                moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider,
+                customParametersProvider, blockHandler);
     }
 
     public String getRemoteConfigurationUrl(){
@@ -229,6 +242,10 @@ public class PXConfiguration {
         return customParametersProvider;
     }
 
+    public BlockHandler getBlockHandler() {
+        return blockHandler;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
@@ -271,6 +288,7 @@ public class PXConfiguration {
         private CaptchaProvider captchaProvider = CaptchaProvider.RECAPTCHA;
         private Set<String> ipHeaders = new HashSet<>();
         private CustomParametersProvider customParametersProvider = new DefaultCustomParametersProvider();
+        private BlockHandler blockHandler = new DefaultBlockHandler();
 
         public Builder() {
         }
@@ -415,6 +433,11 @@ public class PXConfiguration {
 
         public Builder customParametersProvider(CustomParametersProvider customParametersProvider) {
             this.customParametersProvider = customParametersProvider;
+            return this;
+        }
+
+        public Builder blockHandler(BlockHandler blockHandler) {
+            this.blockHandler = blockHandler;
             return this;
         }
 
