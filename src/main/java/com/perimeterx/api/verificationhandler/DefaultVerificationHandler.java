@@ -23,10 +23,10 @@ public class DefaultVerificationHandler implements VerificationHandler {
     private ActivityHandler activityHandler;
     private BlockHandler blockHandler;
 
-    public DefaultVerificationHandler(PXConfiguration pxConfiguration, ActivityHandler activityHandler, BlockHandler blockHandler) {
+    public DefaultVerificationHandler(PXConfiguration pxConfiguration, ActivityHandler activityHandler) {
         this.pxConfiguration = pxConfiguration;
         this.activityHandler = activityHandler;
-        this.blockHandler = blockHandler;
+        this.blockHandler = pxConfiguration.getBlockHandler();
     }
 
     @Override

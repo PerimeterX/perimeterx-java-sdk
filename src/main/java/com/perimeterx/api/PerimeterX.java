@@ -70,7 +70,6 @@ public class PerimeterX {
     private static final PXLogger logger = PXLogger.getLogger(PerimeterX.class);
 
     private PXConfiguration configuration;
-    private BlockHandler blockHandler;
     private PXS2SValidator serverValidator;
     private PXCookieValidator cookieValidator;
     private ActivityHandler activityHandler;
@@ -115,11 +114,10 @@ public class PerimeterX {
             timerConfigUpdater.schedule();
         }
 
-        this.blockHandler = new DefaultBlockHandler();
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.captchaValidator = new PXCaptchaValidator(pxClient, configuration);
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
-        this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler, this.blockHandler);
+        this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler);
         this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
     }
 
@@ -210,15 +208,6 @@ public class PerimeterX {
      */
     public void setActivityHandler(ActivityHandler activityHandler) {
         this.activityHandler = activityHandler;
-    }
-
-    /**
-     * Set block handler
-     *
-     * @param blockHandler - new block handler to use
-     */
-    public void setBlockHandler(BlockHandler blockHandler) {
-        this.blockHandler = blockHandler;
     }
 
     /**
