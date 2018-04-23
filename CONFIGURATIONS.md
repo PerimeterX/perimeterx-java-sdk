@@ -53,13 +53,12 @@ The interfaces should be set after PerimeterX instance has been initialized
 ```java
         BlockHandler exampleBlockHandler = new ExampleBlockHandler();
         PXConfiguration pxConf = new PXConfiguration.Builder(exampleBlockHandler)
+                  // This will set the blocking handler from the default one to 
+                  // the our custom block handler
                 .blockHandler()
                 .build();
 
         this.enforcer = PerimeterX.getInstance(pxConf);
-        // This will set the blocking handler from the default one to the our custom block handler
-        // note that when we enable captcha logic we must use a blocking handler that display the appropriate html page with captcha
-        // for instance CaptchaBlockHandler that is included in the SDK
         this.enforcer.setActivityHandler(new BlockingActivityHandler());
 ```
 
