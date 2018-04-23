@@ -43,7 +43,7 @@ Directives
 |Interface Name| Description | Default Interface | method |
 |--------------|-------------|-------------------|--------|
 | ActivityHandler |Handler for all asynchronous activities from type enforcer_telemetry, page_requested and block|BufferedActivityHandler|setActivityHandler|
-| BlockHandler |Blocking handle will be called when pxVerify will return that user is not verified|DefaultBlockHandler| setBlockHandler|
+| BlockHandler |Blocking handle will be called when pxVerify will return that user is not verified|DefaultBlockHandler| blockHandler|
 | IPProvider |Handles IP address extraction from request|CombinedIPProvider| setIpProvider|
 | HostnameProvider |Handles hostname extraction from request|DefaultHostnameProvider| setHostnameProvider|
 | VerificationHandler |handling verification after PerimeterX service finished analyzing the request|DefaultVerificationHandler|setVerificationHandler|
@@ -51,14 +51,15 @@ Directives
 
 The interfaces should be set after PerimeterX instance has been initialized
 ```java
-        PXConfiguration pxConf = new PXConfiguration.Builder()
+        BlockHandler exampleBlockHandler = new ExampleBlockHandler();
+        PXConfiguration pxConf = new PXConfiguration.Builder(exampleBlockHandler)
+                .blockHandler()
                 .build();
 
         this.enforcer = PerimeterX.getInstance(pxConf);
         // This will set the blocking handler from the default one to the our custom block handler
         // note that when we enable captcha logic we must use a blocking handler that display the appropriate html page with captcha
         // for instance CaptchaBlockHandler that is included in the SDK
-        this.enforcer.setBlockHandler(new NewBlockHandler());
         this.enforcer.setActivityHandler(new BlockingActivityHandler());
 ```
 
