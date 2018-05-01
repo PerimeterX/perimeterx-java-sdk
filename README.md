@@ -91,8 +91,8 @@ Please continue reading about the various configurations available on the sdk in
 
 
 ### <a name="loggin-troubleshoot"></a> Logging and Troubleshooting
-`perimeterx-java-sdk` is using SLF4J for the logging facade, simply hook you Logging
-For further information please visit <a href="https://www.slf4j.org/manual.html">SLF4J</a> for more information
+`perimeterx-java-sdk` is using SLF4J for logs.  
+For further information please visit [SLF4J](https://www.slf4j.org/manual.html)
 
 ### <a name="contribute"></a> Logging and Contributing
 The following steps are welcome when contributing to our project.
