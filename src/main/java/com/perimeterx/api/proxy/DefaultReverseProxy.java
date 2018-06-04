@@ -4,22 +4,15 @@ import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
 import com.perimeterx.utils.PXLogger;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import javax.servlet.http.HttpServletResponse;
+import java.io.Closeable;
+import java.io.IOException;
 
 /**
  * Created by nitzangoldfeder on 14/05/2018.
@@ -69,7 +62,7 @@ public class DefaultReverseProxy implements ReverseProxy {
     }
 
 
-    public boolean reversePxClient(HttpServletRequest req, HttpServletResponseWrapper res) throws Exception {
+    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws Exception {
         if (!req.getRequestURI().startsWith(clientReversePrefix)) {
             return false;
         }
@@ -81,13 +74,13 @@ public class DefaultReverseProxy implements ReverseProxy {
             return true;
         }
 
-        RemoteServer remoteServer = new RemoteServer(pxConfiguration.getClientHost(), clientPath, req, res, ipProvider, proxyClient, null, null);
+        RemoteServer remoteServer = new RemoteServer(pxConfiguration.getClientHost(), clientPath, req, res, ipProvider, proxyClient, null, null, pxConfiguration);
         HttpRequest proxyRequest = remoteServer.prepareProxyRequest();
         remoteServer.handleResponse(proxyRequest, false);
         return true;
     }
 
-    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponseWrapper res) throws Exception {
+    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws Exception {
         if (!req.getRequestURI().startsWith(xhrReversePrefix)) {
             return false;
         }
@@ -111,7 +104,7 @@ public class DefaultReverseProxy implements ReverseProxy {
 
         String originalUrl = req.getRequestURI().substring(xhrReversePrefix.length());
 
-        RemoteServer remoteServer = new RemoteServer(collectorUrl, originalUrl, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper);
+        RemoteServer remoteServer = new RemoteServer(collectorUrl, originalUrl, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
         HttpRequest proxyRequest = remoteServer.prepareProxyRequest();
         remoteServer.handleResponse(proxyRequest, true);
 
@@ -124,6 +117,10 @@ public class DefaultReverseProxy implements ReverseProxy {
 
     public void setPredefinedResponseHelper(PredefinedResponseHelper predefinedResponseHelper) {
         this.predefinedResponseHelper = predefinedResponseHelper;
+    }
+
+    public void setProxyClient(CloseableHttpClient proxyClient) {
+        this.proxyClient = proxyClient;
     }
 
     public void destroy() {

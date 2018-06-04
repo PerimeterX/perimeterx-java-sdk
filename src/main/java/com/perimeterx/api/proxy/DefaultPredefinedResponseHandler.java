@@ -15,7 +15,6 @@ public class DefaultPredefinedResponseHandler implements PredefinedResponseHelpe
     public void handlePredefinedResponse(HttpServletResponse res, PredefinedResponse predefinedResponse) {
         try {
             res.setHeader(HttpHeaders.CONTENT_TYPE, predefinedResponse.getContentType());
-            res.setHeader("X-PX-RESPONSE", "PREDEFINED");
             res.setStatus(HttpStatus.SC_OK);
             res.getWriter().print(predefinedResponse.getContent());
         } catch (IOException e) {

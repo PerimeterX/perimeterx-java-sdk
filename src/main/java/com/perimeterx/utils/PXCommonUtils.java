@@ -1,7 +1,5 @@
 package com.perimeterx.utils;
 
-import com.google.common.collect.Lists;
-import com.google.common.net.MediaType;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.config.RequestConfig;

@@ -27,8 +27,6 @@ package com.perimeterx.api;
 
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
-import com.perimeterx.api.blockhandler.BlockHandler;
-import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.*;
 import com.perimeterx.api.proxy.DefaultReverseProxy;
 import com.perimeterx.api.proxy.ReverseProxy;
@@ -46,7 +44,6 @@ import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
@@ -208,9 +205,11 @@ public class PerimeterX {
     }
 
     private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws Exception {
-        if (reverseProxy.reversePxClient(req, res)){
+        if (reverseProxy.reversePxClient(req, res)) {
             return true;
-        } else if (reverseProxy.reversePxXhr(req, res)) {
+        }
+
+        if (reverseProxy.reversePxXhr(req, res)) {
             return true;
         }
 

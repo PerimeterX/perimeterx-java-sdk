@@ -1,6 +1,7 @@
 package com.perimeterx.api.proxy;
 
 import com.perimeterx.api.providers.IPProvider;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.*;
@@ -15,7 +16,6 @@ import org.apache.http.message.HeaderGroup;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpCookie;
@@ -34,21 +34,39 @@ public class RemoteServer {
     private final PXLogger logger = PXLogger.getLogger(RemoteServer.class);
     private final String CONTENT_LENGTH_HEADER = "Content-Length";
 
-    private HttpServletResponseWrapper res;
+    private HttpServletResponse res;
     private HttpServletRequest req;
     private HttpClient proxyClient;
     private IPProvider ipProvider;
     private int maxUrlLength = 1000;
     private PredefinedResponse predefinedResponse;
     private PredefinedResponseHelper predefinedResponseHelper;
+    private PXConfiguration pxConfiguration;
 
     protected String targetUri;
     protected URI targetUriObj;
     protected HttpHost targetHost;
 
-    public RemoteServer(String serverUrl, String uri, HttpServletRequest req, HttpServletResponseWrapper res,
+    /** These are the "hop-by-hop" headers that should not be copied.
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
+     * I use an HttpClient HeaderGroup class instead of Set&lt;String&gt; because this
+     * approach does case insensitive lookup faster.
+     */
+    protected static final HeaderGroup hopByHopHeaders;
+
+    static {
+        hopByHopHeaders = new HeaderGroup();
+        String[] headers = new String[] {
+                "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
+                "TE", "Trailers", "Transfer-Encoding", "Upgrade" };
+        for (String header : headers) {
+            hopByHopHeaders.addHeader(new BasicHeader(header, null));
+        }
+    }
+
+    public RemoteServer(String serverUrl, String uri, HttpServletRequest req, HttpServletResponse res,
                         IPProvider ipProvider, HttpClient httpClient, PredefinedResponse predefinedResponse,
-                        PredefinedResponseHelper predefinedResponseHelper) throws URISyntaxException {
+                        PredefinedResponseHelper predefinedResponseHelper, PXConfiguration pxConfiguration) throws URISyntaxException {
         this.req = req;
         this.res = res;
         this.targetUri = serverUrl.concat(uri);
@@ -58,6 +76,7 @@ public class RemoteServer {
         this.ipProvider = ipProvider;
         this.predefinedResponse = predefinedResponse;
         this.predefinedResponseHelper = predefinedResponseHelper;
+        this.pxConfiguration = pxConfiguration;
     }
 
 
@@ -90,14 +109,7 @@ public class RemoteServer {
         try {
             // Execute the request
             proxyResponse = doExecute(proxyRequest);
-
-            // Process the response:
-
-            // Pass the response code. This method with the "reason phrase" is deprecated but it's the
-            //   only way to pass the reason along too.
             int statusCode = proxyResponse.getStatusLine().getStatusCode();
-            //noinspection deprecation
-
 
             // In failure we can check if we enable predefined request or proxy the original response
             if (allowPredefinedHandler && statusCode >= HttpStatus.SC_BAD_REQUEST) {
@@ -267,21 +279,6 @@ public class RemoteServer {
         proxyRequest.setHeader(protoHeaderName, protoHeader);
     }
 
-    /** These are the "hop-by-hop" headers that should not be copied.
-     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
-     * I use an HttpClient HeaderGroup class instead of Set&lt;String&gt; because this
-     * approach does case insensitive lookup faster.
-     */
-    protected static final HeaderGroup hopByHopHeaders;
-    static {
-        hopByHopHeaders = new HeaderGroup();
-        String[] headers = new String[] {
-                "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-                "TE", "Trailers", "Transfer-Encoding", "Upgrade" };
-        for (String header : headers) {
-            hopByHopHeaders.addHeader(new BasicHeader(header, null));
-        }
-    }
 
     /**
      * Copy a request header from the servlet client to the proxy request.
@@ -295,6 +292,10 @@ public class RemoteServer {
         }
 
         if (hopByHopHeaders.containsHeader(headerName)){
+            return;
+        }
+
+        if (pxConfiguration.getIpHeaders().contains(headerName)) {
             return;
         }
 
@@ -312,7 +313,6 @@ public class RemoteServer {
             proxyRequest.addHeader(headerName, headerValue);
         }
     }
-
 
     protected HttpRequest newProxyRequestWithEntity(String method, String proxyRequestUri, HttpServletRequest servletRequest) throws IOException {
         HttpEntityEnclosingRequest eProxyRequest = new BasicHttpEntityEnclosingRequest(method, proxyRequestUri);

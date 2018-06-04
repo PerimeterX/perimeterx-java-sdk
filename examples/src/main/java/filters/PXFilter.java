@@ -2,11 +2,10 @@ package filters;
 
 import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
-import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.configuration.ModuleMode;
+import com.perimeterx.models.exceptions.PXException;
 import org.springframework.stereotype.Component;
 import px.CustomBlockHandler;
-
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

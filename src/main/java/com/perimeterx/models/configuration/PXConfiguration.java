@@ -7,7 +7,9 @@ import com.perimeterx.api.providers.DefaultCustomParametersProvider;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * PX configuration object
