@@ -58,7 +58,7 @@ public class PXS2SValidator {
 
             pxContext.setMadeS2SApiCall(true);
             if (response == null) {
-                // Error from PX service
+                // Error from PX prepareProxyRequest
                 pxContext.setRiskRtt(rtt);
                 pxContext.setPassReason(PassReason.ERROR);
                 return true;

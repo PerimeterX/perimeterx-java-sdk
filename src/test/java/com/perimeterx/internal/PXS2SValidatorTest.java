@@ -16,7 +16,6 @@ import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
@@ -28,9 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.calls;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.validateMockitoUsage;
 
 /**
  * Test {@link PXS2SValidator}

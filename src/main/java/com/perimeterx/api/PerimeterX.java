@@ -27,9 +27,9 @@ package com.perimeterx.api;
 
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
-import com.perimeterx.api.blockhandler.BlockHandler;
-import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.*;
+import com.perimeterx.api.proxy.DefaultReverseProxy;
+import com.perimeterx.api.proxy.ReverseProxy;
 import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigManager;
 import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
 import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
@@ -44,7 +44,6 @@ import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
@@ -78,6 +77,7 @@ public class PerimeterX {
     private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
     private CustomParametersProvider customParametersProvider;
+    private ReverseProxy reverseProxy;
 
     private CloseableHttpClient getHttpClient() {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
@@ -119,6 +119,7 @@ public class PerimeterX {
         this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler);
         this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
+        this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
@@ -158,12 +159,18 @@ public class PerimeterX {
                 logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
                 return null;
             }
+
+            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+
+            if (shouldReverseRequest(req, responseWrapper)) {
+                context.setFirstPartyRequest(true);
+                return context;
+            }
+
             // Remove captcha cookie to prevent re-use
             Cookie cookie = new Cookie(Constants.COOKIE_CAPTCHA_KEY, StringUtils.EMPTY);
             cookie.setMaxAge(0);
             responseWrapper.addCookie(cookie);
-
-            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
             if (captchaValidator.verify(context)) {
                 logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_COOKIE_FOUND);
@@ -195,6 +202,18 @@ public class PerimeterX {
             }
         }
         return context;
+    }
+
+    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws Exception {
+        if (reverseProxy.reversePxClient(req, res)) {
+            return true;
+        }
+
+        if (reverseProxy.reversePxXhr(req, res)) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean moduleEnabled() {

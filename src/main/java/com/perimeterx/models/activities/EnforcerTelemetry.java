@@ -1,9 +1,6 @@
 package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.models.PXContext;
-
-import java.util.Map;
 
 /**
  * Created by nitzangoldfeder on 29/10/2017.
