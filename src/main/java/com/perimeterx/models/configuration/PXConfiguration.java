@@ -4,9 +4,9 @@ import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
-import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
+
 import java.util.*;
 
 /**
@@ -46,6 +46,10 @@ public class PXConfiguration {
     private CaptchaProvider captchaProvider;
     private CustomParametersProvider customParametersProvider;
     private BlockHandler blockHandler;
+    private String collectorUrl;
+    private String clientHost;
+    private boolean firstPartyEnabled;
+    private boolean xhrFirstPartyEnabled;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -76,6 +80,11 @@ public class PXConfiguration {
         ipHeaders = builder.ipHeaders;
         customParametersProvider = builder.customParametersProvider;
         blockHandler = builder.blockHandler;
+        collectorUrl = builder.collectorUrl;
+        firstPartyEnabled = builder.firstPartyEnabled;
+        xhrFirstPartyEnabled = builder.xhrFirstPartyEnabled;
+        clientHost = builder.clientHost;
+
     }
 
     private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled,
@@ -84,7 +93,8 @@ public class PXConfiguration {
                             String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled,
                             ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute,
                             String remoteConfigurationUrl, CaptchaProvider captchaProvider, CustomParametersProvider customParametersProvider,
-                            BlockHandler blockHandler) {
+                            BlockHandler blockHandler, String collectorUrl, boolean firstPartyEnabled, boolean xhrFirstPartyEnable,
+                            String clientHost) {
         this.appId = appId;
         this.cookieKey = cookieKey;
         this.authToken = authToken;
@@ -114,6 +124,10 @@ public class PXConfiguration {
         this.captchaProvider = captchaProvider;
         this.customParametersProvider = customParametersProvider;
         this.blockHandler = blockHandler;
+        this.collectorUrl = collectorUrl;
+        this.firstPartyEnabled = firstPartyEnabled;
+        this.xhrFirstPartyEnabled = xhrFirstPartyEnabled;
+        this.clientHost = clientHost;
     }
 
     /*
@@ -123,7 +137,7 @@ public class PXConfiguration {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
                 moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider,
-                customParametersProvider, blockHandler);
+                customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost);
     }
 
     public String getRemoteConfigurationUrl(){
@@ -246,6 +260,22 @@ public class PXConfiguration {
         return blockHandler;
     }
 
+    public String getCollectorUrl() {
+        return collectorUrl;
+    }
+
+    public boolean isFirstPartyEnabled() {
+        return firstPartyEnabled;
+    }
+
+    public boolean isXhrFirstPartyEnabled() {
+        return xhrFirstPartyEnabled;
+    }
+
+    public String getClientHost() {
+        return clientHost;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
@@ -289,6 +319,10 @@ public class PXConfiguration {
         private Set<String> ipHeaders = new HashSet<>();
         private CustomParametersProvider customParametersProvider = new DefaultCustomParametersProvider();
         private BlockHandler blockHandler = new DefaultBlockHandler();
+        private String collectorUrl;
+        private boolean xhrFirstPartyEnabled = true;
+        private boolean firstPartyEnabled = true;
+        private String clientHost = Constants.CLIENT_HOST;
 
         public Builder() {
         }
@@ -300,9 +334,15 @@ public class PXConfiguration {
 
         public Builder appId(String val) {
             appId = val;
+
             if (serverURL == null) {
                 serverURL = String.format(Constants.SERVER_URL, appId.toLowerCase());
             }
+
+            if (collectorUrl == null) {
+                collectorUrl = String.format(Constants.COLLECTOR_URL, appId.toLowerCase());
+            }
+
             return this;
         }
 
@@ -421,23 +461,43 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder captchaProvider(CaptchaProvider captchaProvider) {
-            this.captchaProvider = captchaProvider;
+        public Builder captchaProvider(CaptchaProvider val) {
+            this.captchaProvider = val;
             return this;
         }
 
-        public Builder ipHeaders(Set<String> ipHeaders) {
-            this.ipHeaders = ipHeaders;
+        public Builder ipHeaders(Set<String> val) {
+            this.ipHeaders = val;
             return this;
         }
 
-        public Builder customParametersProvider(CustomParametersProvider customParametersProvider) {
-            this.customParametersProvider = customParametersProvider;
+        public Builder customParametersProvider(CustomParametersProvider val) {
+            this.customParametersProvider = val;
             return this;
         }
 
-        public Builder blockHandler(BlockHandler blockHandler) {
-            this.blockHandler = blockHandler;
+        public Builder blockHandler(BlockHandler val) {
+            this.blockHandler = val;
+            return this;
+        }
+
+        public Builder collectorUrl(String val) {
+            this.collectorUrl = val;
+            return this;
+        }
+
+        public Builder xhrFirstPartyEnabled(boolean val) {
+            this.xhrFirstPartyEnabled = val;
+            return this;
+        }
+
+        public Builder firstPartyEnabled(boolean val) {
+            this.firstPartyEnabled = val;
+            return this;
+        }
+
+        public Builder clientHost(String val) {
+            this.clientHost = val;
             return this;
         }
 

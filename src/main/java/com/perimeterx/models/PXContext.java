@@ -10,6 +10,7 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
@@ -138,6 +139,12 @@ public class PXContext {
      */
     private CustomParameters customParameters;
 
+    /**
+     * Simmilar to {@link com.perimeterx.models.PXContext#verified}, flags if to continue the filter chain or return
+     * This will be set to true when the module will handle the request though proxy mode
+     */
+    private boolean firstPartyRequest;
+
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
@@ -148,7 +155,7 @@ public class PXContext {
     }
 
     private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
-        this.headers = getHeadersFromRequest(request);
+        this.headers = PXCommonUtils.getHeadersFromRequest(request);
 
         if (headers.containsKey(Constants.MOBILE_SDK_HEADER)) {
             logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
@@ -165,6 +172,7 @@ public class PXContext {
             this.pxCaptcha = pxCaptchaCookie;
         }
 
+        this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
@@ -183,18 +191,6 @@ public class PXContext {
         }
 
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
-    }
-
-    private Map<String, String> getHeadersFromRequest(HttpServletRequest request) {
-        HashMap<String, String> headers = new HashMap<>();
-        String name;
-        Enumeration headerNames = request.getHeaderNames();
-
-        while (headerNames.hasMoreElements()) {
-            name = (String) headerNames.nextElement();
-            headers.put(name.toLowerCase(), request.getHeader(name));
-        }
-        return headers;
     }
 
     private String extractCookieByKey(String cookie, String key) {
@@ -419,11 +415,37 @@ public class PXContext {
 
     /**
      * Check if request is verified or not
+     * @deprecated - Use {@link PXContext#isHandledResponse}
+     * @return true if request is valid, false otherwise
+     */
+    @Deprecated
+    public boolean isVerified() {
+        return verified;
+    }
+
+    /**
+     * Check if request is verified or not, this method should not be used as a condition if to pass the request to
+     * the application, instead use {@link PXContext#isHandledResponse} for the reason that its not
+     * handling a case where we already responded if this is a first party request
+     *
+     * The {@link PXContext#isRequestLowScore} only indicates if the request was verified and should
+     * called only if more details about the request is needed (like knowing the reason why shouldn't be passed)
      *
      * @return true if request is valid, false otherwise
      */
-    public boolean isVerified() {
+    public boolean isRequestLowScore() {
         return verified;
+    }
+
+    /**
+     * Check if PerimeterX already handled the response thus the request should not be passed to the application
+     * In case true, you can check if {@link PXContext#isRequestLowScore()} or {@link PXContext#isFirstPartyRequest()}
+     * for more information if the response was handled by first party or score was lower than the configured threshold
+     *
+     * @return true if response was handled
+     */
+    public boolean isHandledResponse() {
+        return !verified || firstPartyRequest;
     }
 
     public void setVerified(boolean verified) {
@@ -473,5 +495,17 @@ public class PXContext {
 
     public void setCustomParameters(CustomParameters customParameters) {
         this.customParameters = customParameters;
+    }
+
+    /**
+     * Check if PerimeterX treated the request as first partyta,
+     * @return true if response was hadled by PerimeterX module
+     */
+    public boolean isFirstPartyRequest() {
+        return firstPartyRequest;
+    }
+
+    public void setFirstPartyRequest(boolean firstPartyRequest) {
+        this.firstPartyRequest = firstPartyRequest;
     }
 }
