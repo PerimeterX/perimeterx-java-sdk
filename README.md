@@ -103,7 +103,7 @@ Following the instructions above, the filter should be changed according the the
  filterChain.doFilter(servletRequest, servletResponse);
 ```
 
-### []() Basic Usage Example
+### <a name="basic-usage"></a> Basic Usage Example
 
 ```java
 // Create configuration object
@@ -130,13 +130,11 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 }
 ```
 
-Please continue reading about the various configurations available on the sdk in the configurations [page](CONFIGURATIONS.md)
+Please continue reading about the various configurations available on the sdk in the configurations [page](CONFIGURATIONS.md) . 
 
-### []() Logging and Troubleshooting
-
-`perimeterx-java-sdk` is using SLF4J for the logging facade, simply hook you Logging For further information please visit [SLF4J](https://www.slf4j.org/manual.html) for more information
-
-### []() Logging and Contributing
+### <a name="loggin-troubleshoot"></a> Logging and Troubleshooting
+`perimeterx-java-sdk` is using SLF4J for logs.  
+For further information please visit [SLF4J](https://www.slf4j.org/manual.html)
 
 The following steps are welcome when contributing to our project.
 

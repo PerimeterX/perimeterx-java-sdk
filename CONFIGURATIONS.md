@@ -149,8 +149,9 @@ public class PerimeterxCustomParamsProvider implements CustomParametersProvider 
         }
     }
 PXConfiguration pxConf = new PXConfiguration.Builder()
+PerimeterxCustomParamsProvider perimeterxCustomParamsProvider = new PerimeterxCustomParamsProvider();
 ...
-    .customParametersProvider(CaptchaProvider.FUNCAPTCHA)
+    .customParametersProvider(PerimeterxCustomParamsProvider)
 ...
 ```
 
