@@ -1,9 +1,14 @@
 # Change Log
 
+## [v4.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-06-06)
+- Fixed CustomBlockHandler implementations
+- Added support for First Party
+- Deprecated PXContext's method `isVerified()`, instead use `isHandledResponse()`, read more about it on at the Upgrading section
+
 ## [v3.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-04-04)
 - Replaced footer on block pages
 - New logs format
-- Improved enforcer telemetry 
+- Improved enforcer telemetry
 - Mobile SDK support
 - Custom Params support
 
@@ -22,7 +27,7 @@
 **This version includes breaking changes in the following configurations:**
 - Monitor mode is now on by default, for blocking mode it should be set to ACTIVE
 - BlockingScore was changed from 70 -> 100
-- Using ipHeaders from configuration use default interfac eof IPProvider (`CombinedIPProvider` instead of `RemoteAddressIPProvider`
+- Using ipHeaders from configuration - use default interface of IPProvider (`CombinedIPProvider` instead of `RemoteAddressIPProvider`)
 
 ## [v2.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2017-30-07)
  - Renamed expired_cookie call reason to cookie_expired
