@@ -34,12 +34,14 @@ Directives
 |remoteConfigurationUrl|Set the url for PerimeterX configuration service||String| |
 |captchaProvider|Set the captcha provider on the default block page|CaptchaProvider.RECAPTCHA|CaptchaProvider.RECAPTCHA / CaptchaProvider.FUNCAPTCHA|enum|
 |ipHeaders|List of headers to extract the user ip from, if not set, it will be taken from default|Empty List|Set<String>|Use with `CombinedIPProvider`|
+|firstPartyEnabled|Toggle first party requests enabled|true|boolean|Read more details about first pary integration [here](#first-party-integration)|
+|xhrFirstPartyEnabled|Toggle first party XHR requests will be forwarded to PerimeterX servers|true|boolean| |
 
 
 ## <a name="interfaces"></a> Interfaces
 `perimeterx-java-sdk` can be tuned and set a different type of interface in order to make the module more flexible
  Below you can find a list of available interfaces and their setter
- 
+
 |Interface Name| Description | Default Interface | method |
 |--------------|-------------|-------------------|--------|
 | ActivityHandler |Handler for all asynchronous activities from type enforcer_telemetry, page_requested and block|BufferedActivityHandler|setActivityHandler|
@@ -53,7 +55,7 @@ The interfaces should be set after PerimeterX instance has been initialized
 ```java
         BlockHandler exampleBlockHandler = new ExampleBlockHandler();
         PXConfiguration pxConf = new PXConfiguration.Builder(exampleBlockHandler)
-                  // This will set the blocking handler from the default one to 
+                  // This will set the blocking handler from the default one to
                   // the our custom block handler
                 .blockHandler()
                 .build();
@@ -142,7 +144,7 @@ public class PerimeterxCustomParamsProvider implements CustomParametersProvider 
             customParameters.setCustomParam2(cp2);
             customParameters.setCustomParam5(cp5);
             ... Some logic ...
-            
+
             return customParameters;
         }
     }
@@ -152,4 +154,75 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-<a name="custom-params"></a>
+## <a name="first-party-integration"></a> First Party Integration
+First-Party will allow the sensor to be served from your domain. Using the First-Party mode is recommended.
+By enabling first party mode on the java SDK you will achieve:  
+
+Improved performance - Serving the sensor as part of the standard site content removes the need to open a new connection to PerimeterX servers when a page is loaded.
+Improved detection - Third party content may be blocked by certain browser plugins and privacy addons. The First-Party sensor leads directly to improved detection, as seen with customers who previously moved from Third Party sensor to First-Party sensor.
+
+
+#### Integration:
+```java
+public class PXFilter implements Filter {
+
+    private PerimeterX enforcer;
+
+    public void init(FilterConfig filterConfig) throws ServletException {
+        try {
+            PXConfiguration config = new PXConfiguration.Builder()
+                    .appId("PXaBcDeFgH")
+                    .cookieKey("COOKIE_KEY")
+                    .authToken("AUTH_TOKEN")
+                    .build();
+            this.enforcer = new PerimeterX(config);
+        } catch (PXException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        try {
+            PXContext pxContext = this.enforcer.pxVerify((HttpServletRequest) servletRequest, new HttpServletResponseWrapper((HttpServletResponse) servletResponse));
+
+            boolean isHandledResponse = pxContext.isHandledResponse();
+            if (isHandledResponse) {
+                return;
+            }
+
+            filterChain.doFilter(servletRequest, servletResponse);
+        } catch (Exception e) {
+            // Fail open in case of Exception
+            filterChain.doFilter(servletRequest, servletResponse);
+        }
+    }
+
+    public void destroy() {
+
+    }
+}
+```
+
+```xml
+<web-app>
+  <filter>
+     <filter-name>PXFilter</filter-name>
+     <display-name>PXFilter</display-name>
+     <filter-class>com.webapp.filters.PXFilter</filter-class>
+  </filter>
+
+  <!-- Either apply PXFilter on all traffic -->
+  <filter-mapping>
+     <filter-name>PXFilter</filter-name>
+     <url-pattern>/</url-pattern>
+  </filter-mapping>
+
+  <!-- OR apply PXFilter on first party routes only, also remember to apply a filter on the rest of the traffic -->
+  <filter-mapping>
+     <filter-name>PXFilter</filter-name>
+     <!-- Use the app id from the configurations with PX prefix -->
+     <url-pattern>/aBcDeFgH</url-pattern>
+  </filter-mapping>
+</web-app>
+```
