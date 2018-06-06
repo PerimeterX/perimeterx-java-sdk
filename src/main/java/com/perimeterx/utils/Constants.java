@@ -35,10 +35,15 @@ public final class Constants {
     public static final String REMOTE_CONFIGURATION_SERVER_URL = "https://px-conf.perimeterx.net";
 
     public static final String SERVER_URL = "https://sapi-%s.perimeterx.net";
-    public final static String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
-    public final static String COOKIE_V1_KEY = "_px";
-    public final static String COOKIE_V1_MOBILE_VALUE = "1";
-    public final static String COOKIE_V3_KEY = "_px3";
+    public static final String COLLECTOR_URL = "https://collector-%s.perimeterx.net";
+    public static final String CLIENT_HOST = "https://client.perimeterx.net";
+    public static final String COOKIE_CAPTCHA_KEY = "_pxCaptcha";
+    public static final String COOKIE_V1_KEY = "_px";
+    public static final String COOKIE_V1_MOBILE_VALUE = "1";
+    public static final String COOKIE_V3_KEY = "_px3";
+    public static final String FIRST_PARTY_HEADER = "x-px-first-party";
+    public static final String ENFORCER_TRUE_IP_HEADER = "x-px-enforcer-true-ip";
+    public static final String FIRST_PARTY_VALUE = "1";
 
     public static final String API_RISK = "/api/v2/risk";
     public static final String API_ACTIVITIES = "/api/v1/collector/s2s";

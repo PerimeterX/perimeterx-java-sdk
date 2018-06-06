@@ -2,8 +2,6 @@ package com.perimeterx.api.remoteconfigurations;
 
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 
-import java.io.IOException;
-
 /**
  * This interface will be used to retrieve new values for the PXConfiguration
  */

@@ -1,14 +1,12 @@
 package com.perimeterx.utils;
 
-import com.google.common.collect.Lists;
-import com.google.common.net.MediaType;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.message.BasicHeader;
 
-import java.util.Arrays;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 /**
  * Created by nitzangoldfeder on 16/07/2017.
@@ -27,5 +25,17 @@ public class PXCommonUtils {
                     .setConnectionRequestTimeout(apiTimeout)
                     .build();
 
+    }
+
+    public static Map<String, String> getHeadersFromRequest(HttpServletRequest request) {
+        HashMap<String, String> headers = new HashMap<>();
+        String name;
+        Enumeration headerNames = request.getHeaderNames();
+
+        while (headerNames.hasMoreElements()) {
+            name = (String) headerNames.nextElement();
+            headers.put(name.toLowerCase(), request.getHeader(name));
+        }
+        return headers;
     }
 }
