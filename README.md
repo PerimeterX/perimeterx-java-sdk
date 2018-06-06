@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v3.1.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C3.1.0%7Cjar)
+> Latest stable version: [v4.0.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C3.1.0%7Cjar)
 
 ## Table of Contents
 
@@ -130,7 +130,7 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 }
 ```
 
-Please continue reading about the various configurations available on the sdk in the configurations [page](CONFIGURATIONS.md) . 
+Please continue reading about the various configurations available on the sdk in the configurations [page](CONFIGURATIONS.md) .
 
 ### <a name="loggin-troubleshoot"></a> Logging and Troubleshooting
 `perimeterx-java-sdk` is using SLF4J for logs.  
