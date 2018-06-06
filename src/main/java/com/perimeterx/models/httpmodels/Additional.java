@@ -7,8 +7,6 @@ import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
-import java.io.IOException;
-
 
 /**
  * Created by shikloshi on 06/08/2016.

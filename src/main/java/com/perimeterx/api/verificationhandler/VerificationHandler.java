@@ -5,7 +5,7 @@ import com.perimeterx.models.PXContext;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- * Interface for handling verification after PerimeterX service finished analyzing the request.
+ * Interface for handling verification after PerimeterX prepareProxyRequest finished analyzing the request.
  * Created by nitzangoldfeder on 28/05/2017.
  */
 public interface VerificationHandler {

@@ -11,8 +11,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import javax.swing.text.html.HTMLDocument;
-
 import static org.junit.Assert.assertTrue;
 
 /**

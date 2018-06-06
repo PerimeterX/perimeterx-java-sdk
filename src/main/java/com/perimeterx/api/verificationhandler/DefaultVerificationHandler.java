@@ -7,6 +7,7 @@ import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
+
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
@@ -23,10 +24,10 @@ public class DefaultVerificationHandler implements VerificationHandler {
     private ActivityHandler activityHandler;
     private BlockHandler blockHandler;
 
-    public DefaultVerificationHandler(PXConfiguration pxConfiguration, ActivityHandler activityHandler, BlockHandler blockHandler) {
+    public DefaultVerificationHandler(PXConfiguration pxConfiguration, ActivityHandler activityHandler) {
         this.pxConfiguration = pxConfiguration;
         this.activityHandler = activityHandler;
-        this.blockHandler = blockHandler;
+        this.blockHandler = pxConfiguration.getBlockHandler();
     }
 
     @Override
