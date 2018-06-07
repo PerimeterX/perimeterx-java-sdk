@@ -17,12 +17,15 @@ public class RiskRequest {
     public String Vid;
     @JsonProperty("additional")
     public Additional Additional;
+    @JsonProperty("firstParty")
+    public boolean firstParty;
 
     public static RiskRequest fromContext(PXContext context) {
         RiskRequest riskRequest = new RiskRequest();
         riskRequest.Request = com.perimeterx.models.risk.Request.fromContext(context);
         riskRequest.Vid = context.getVid();
         riskRequest.Additional = com.perimeterx.models.httpmodels.Additional.fromContext(context);
+        riskRequest.firstParty = context.getPxConfiguration().isFirstPartyEnabled();
         return riskRequest;
     }
 }
