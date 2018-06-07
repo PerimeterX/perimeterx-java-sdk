@@ -4,6 +4,7 @@
 - Fixed CustomBlockHandler implementations
 - Added support for First Party
 - Deprecated PXContext's method `isVerified()`, instead use `isHandledResponse()`, read more about it on at the Upgrading section
+- Update jackson packages
 
 ## [v3.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-04-04)
 - Replaced footer on block pages
