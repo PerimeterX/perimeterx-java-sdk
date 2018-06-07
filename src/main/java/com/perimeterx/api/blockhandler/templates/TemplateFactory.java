@@ -6,6 +6,7 @@ import com.github.mustachejava.MustacheFactory;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.utils.Constants;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -54,7 +55,8 @@ public abstract class TemplateFactory {
         props.put("jsRef", pxConfig.getJsRef());
         //captcha.mobile.mustache prop
         props.put("hostUrl", pxContext.getCollectorURL());
-
+        props.put("jsClientSrc", pxConfig.isFirstPartyEnabled() ? String.format("/%s/init.js", pxConfig.getAppId().substring(2)) : String.format("%s/%s/main.min.js", Constants.CLIENT_HOST, pxConfig.getAppId()));
+        props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : null);
         props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
 
         return props;

@@ -55,6 +55,8 @@ public class PXContext {
      */
     private String ip;
 
+    private PXConfiguration pxConfiguration;
+
     // Additional fields extracted from the original HTTP request
     private String vid;
     private String uuid;
@@ -145,6 +147,7 @@ public class PXContext {
     private boolean firstPartyRequest;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
+        this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         initContext(request, pxConfiguration);
@@ -506,5 +509,9 @@ public class PXContext {
 
     public void setFirstPartyRequest(boolean firstPartyRequest) {
         this.firstPartyRequest = firstPartyRequest;
+    }
+
+    public PXConfiguration getPxConfiguration() {
+        return pxConfiguration;
     }
 }

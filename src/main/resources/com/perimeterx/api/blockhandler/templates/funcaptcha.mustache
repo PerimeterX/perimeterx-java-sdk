@@ -152,8 +152,15 @@
                 var p = document.getElementsByTagName("script")[0], s = document.createElement("script");
 
                 s.async = 1;
-                s.src = '//client.perimeterx.net/{{appId}}/main.min.js';
+                s.src = '{{{jsClientSrc}}}';
                 p.parentNode.insertBefore(s, p);
+                {{#firstPartyEnabled}}
+                    s.onerror = function() {
+                        s = document.createElement('script');
+                        s.src = '//client.perimeterx.net/{{appId}}/main.min.js';
+                        p.parentNode.insertBefore(s,p);
+                    };
+                {{/firstPartyEnabled}}
             }()
     );
 </script>
