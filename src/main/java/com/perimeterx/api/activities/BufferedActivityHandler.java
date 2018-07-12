@@ -22,6 +22,7 @@ public class BufferedActivityHandler implements ActivityHandler {
     private List<Activity> bufferedActivities;
     private PXConfiguration configuration;
     private PXClient client;
+    private Object lock = new Object();
 
     public BufferedActivityHandler(PXClient client, PXConfiguration configuration) {
         this.configuration = configuration;
@@ -55,10 +56,12 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     private void handleSendActivities(Activity activity) throws PXException {
-        bufferedActivities.add(activity);
-        if (bufferedActivities.size() >= maxBufferLength) {
-            flush();
-            bufferedActivities.clear();
+        synchronized (lock) {
+            bufferedActivities.add(activity);
+            if (bufferedActivities.size() >= maxBufferLength) {
+                flush();
+                bufferedActivities.clear();
+            }
         }
     }
 
@@ -69,10 +72,12 @@ public class BufferedActivityHandler implements ActivityHandler {
      * @throws PXException - when transport layer fails to report activities
      */
     public void flush() throws PXException {
-        try {
-            client.sendBatchActivities(bufferedActivities);
-        } catch (Exception e) {
-            throw new PXException(e);
+        synchronized (lock) {
+            try {
+                client.sendBatchActivities(bufferedActivities);
+            } catch (Exception e) {
+                throw new PXException(e);
+            }
         }
     }
 }
