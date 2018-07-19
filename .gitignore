@@ -8,3 +8,5 @@ examples/examples.iml
 .settings/
 *.iml
 .DS_Store
+.classpath
+.project
