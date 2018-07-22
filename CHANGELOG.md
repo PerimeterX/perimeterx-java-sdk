@@ -1,5 +1,11 @@
 # Change Log
 
+## [v4.1.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-07-22)
+- Fixed logging level for unexpected risk result
+
+## [v4.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-07-20)
+- Fixed index out of bound error
+
 ## [v4.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-06-06)
 - Fixed CustomBlockHandler implementations
 - Added support for First Party
