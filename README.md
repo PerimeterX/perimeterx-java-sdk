@@ -130,7 +130,7 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 }
 ```
 
-Please continue reading about the various configurations available on the sdk in the configurations [page](CONFIGURATIONS.md) . 
+Please continue reading about the various configurations available on the sdk in the configurations [page](CONFIGURATIONS.md) .
 
 ### <a name="loggin-troubleshoot"></a> Logging and Troubleshooting
 `perimeterx-java-sdk` is using SLF4J for logs.  
