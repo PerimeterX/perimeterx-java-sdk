@@ -193,7 +193,7 @@ public class PerimeterX {
             serverValidator.verify(context);
             context.setVerified(verificationHandler.handleVerification(context,responseWrapper));
         } catch (Exception e) {
-            logger.error(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION,  e.getMessage());
+            logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION,  e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
                 context.setPassReason(PassReason.ERROR);
