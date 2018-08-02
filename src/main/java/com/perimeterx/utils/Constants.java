@@ -59,6 +59,8 @@ public final class Constants {
     public static final String BLOCK_ACTION_CHALLENGE = "j";
 
     public static final String MOBILE_SDK_HEADER = "x-px-authorization";
+    public static final String MOBILE_SDK_ORIGINAL_TOKEN_HEADER = "x-px-original-token";
+
     public static final String COOKIE_EXTRACT_DELIMITER_MOBILE = ":";
 
     public static final String HEADER_ORIGIN = "header";
