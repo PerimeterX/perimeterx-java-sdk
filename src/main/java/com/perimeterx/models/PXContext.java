@@ -14,6 +14,9 @@ import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -216,13 +219,18 @@ public class PXContext {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
                 String[] splicedCookie = c.split("=", 2);
+                String cookiePayload;
+                try {
+                	cookiePayload = URLDecoder.decode(splicedCookie[1], "UTF-8").replaceAll(" ", "+");
+                } catch (UnsupportedEncodingException e) {
+                	cookiePayload = splicedCookie[1];
+                }
                 switch (splicedCookie[0]) {
                     case Constants.COOKIE_V1_KEY:
-                        cookieValue.put(Constants.COOKIE_V1_KEY, splicedCookie[1]);
-
+                        cookieValue.put(Constants.COOKIE_V1_KEY, cookiePayload);
                         break;
                     case Constants.COOKIE_V3_KEY:
-                        cookieValue.put(Constants.COOKIE_V3_KEY, splicedCookie[1]);
+                        cookieValue.put(Constants.COOKIE_V3_KEY, cookiePayload);
                         break;
                 }
             }
