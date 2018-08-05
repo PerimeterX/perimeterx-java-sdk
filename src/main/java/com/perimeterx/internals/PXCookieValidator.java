@@ -43,7 +43,7 @@ public class PXCookieValidator {
             boolean isErrorCookie = false;
             if (context.isMobileToken()) {
                 String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
-                isErrorCookie = trySetAsErrorCookie(context, authHeader);
+                isErrorCookie = isErrorMobileHeader(context, authHeader);
                 if(context.getOriginalToken() != null){
                     context.setDeserializeFromOriginalToken(true);
                     new PXCookieOriginalTokenValidator().verify(pxConfiguration, context);
@@ -104,8 +104,13 @@ public class PXCookieValidator {
         }
     }
 
-    private boolean trySetAsErrorCookie(PXContext context, String authHeader) {
+    private boolean isErrorMobileHeader(PXContext context, String authHeader) {
         switch (authHeader) {
+            case Constants.MOBILE_ERROR_NO_COOKIE: {
+                logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
+                context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                return true;
+            }
             case Constants.MOBILE_ERROR_NO_CONNECTION: {
                 logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_CONNECTION);
                 context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
@@ -116,7 +121,7 @@ public class PXCookieValidator {
                 context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
                 return true;
             }
-            case Constants.MOBILE_ERROR_NO_COOKIE: {
+            case Constants.MOBILE_ERROR_BYPASS: {
                 logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
                 return true;

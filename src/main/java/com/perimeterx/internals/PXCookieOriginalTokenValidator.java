@@ -23,7 +23,13 @@ public class PXCookieOriginalTokenValidator {
             AbstractPXCookie originalCookie = PXCookieFactory.create(pxConfiguration, context);
             logger.debug("Original token found, Evaluating");
 
-            if (originalCookie == null || !originalCookie.deserialize()) {
+            if (originalCookie == null ){
+                logger.debug("Original token is null");
+                context.setOriginalTokenError("original_token_missing");
+                return;
+            }
+
+            if (!originalCookie.deserialize()) {
                 logger.debug("Original token decryption failed, value: " + context.getOriginalToken());
                 context.setOriginalTokenError("decryption_failed");
                 return;

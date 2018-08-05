@@ -228,7 +228,7 @@ public class PXContext {
                 this.originalTokenCookies = extractPXMobileCookie(this.originalToken);
             }
         }
-        else{
+        else {
             this.pxCookies = extractPXCookies(cookie);
         }
     }

@@ -69,6 +69,7 @@ public final class Constants {
     public static final String MOBILE_ERROR_NO_COOKIE = "1";
     public static final String MOBILE_ERROR_NO_CONNECTION = "2";
     public static final String MOBILE_ERROR_PINNING = "3";
+    public static final String MOBILE_ERROR_BYPASS = "4";
 
     public static final String FILE_NAME_BLOCK = "block";
     public static final String FILE_EXTENSION_MUSTACHE = ".mustache";

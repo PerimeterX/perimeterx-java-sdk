@@ -11,13 +11,14 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum S2SCallReason {
 
     NONE("none"),
-    NO_COOKIE("no_cookie"),
+    NO_COOKIE("mobile_error_1"),
     COOKIE_EXPIRED("cookie_expired"),
     INVALID_DECRYPTION("cookie_decryption_failed"),
     INVALID_VERIFICATION("cookie_validation_failed"),
     SENSITIVE_ROUTE("sensitive_route"),
-    MOBILE_SDK_CONNECTION("mobile_sdk_connection_error"),
-    MOBILE_SDK_PINNING("mobile_sdk_pinning_error");
+    MOBILE_SDK_CONNECTION("mobile_error_2"),
+    MOBILE_SDK_PINNING("mobile_error_3"),
+    MOBILE_ERROR_BYPASS("mobile_error_4");
 
     private String value;
 
