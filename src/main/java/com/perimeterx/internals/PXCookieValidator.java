@@ -123,7 +123,7 @@ public class PXCookieValidator {
             }
             case Constants.MOBILE_ERROR_BYPASS: {
                 logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
-                context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                context.setS2sCallReason(S2SCallReason.MOBILE_ERROR_BYPASS);
                 return true;
             }
             default: {
