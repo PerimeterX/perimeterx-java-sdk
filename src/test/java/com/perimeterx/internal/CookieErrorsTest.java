@@ -52,7 +52,7 @@ public class CookieErrorsTest {
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
         assertEquals(false, verify);
-        assertEquals(S2SCallReason.NO_COOKIE, context.getS2sCallReason());
+        assertEquals(S2SCallReason.MOBILE_NO_COOKIE, context.getS2sCallReason());
     }
 
     @Test
