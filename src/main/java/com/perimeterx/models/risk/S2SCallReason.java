@@ -11,7 +11,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum S2SCallReason {
 
     NONE("none"),
-    NO_COOKIE("mobile_error_1"),
+    NO_COOKIE("no_cookie"),
+    MOBILE_NO_COOKIE("mobile_error_1"),
     COOKIE_EXPIRED("cookie_expired"),
     INVALID_DECRYPTION("cookie_decryption_failed"),
     INVALID_VERIFICATION("cookie_validation_failed"),

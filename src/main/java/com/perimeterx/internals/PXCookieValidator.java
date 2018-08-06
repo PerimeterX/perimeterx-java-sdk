@@ -108,7 +108,7 @@ public class PXCookieValidator {
         switch (authHeader) {
             case Constants.MOBILE_ERROR_NO_COOKIE: {
                 logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
-                context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                context.setS2sCallReason(S2SCallReason.MOBILE_NO_COOKIE);
                 return true;
             }
             case Constants.MOBILE_ERROR_NO_CONNECTION: {
