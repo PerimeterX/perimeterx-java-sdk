@@ -14,7 +14,7 @@ public abstract class PXCookieFactory {
 
     public static AbstractPXCookie create(PXConfiguration pxConfiguration, PXContext pxContext) throws PXException {
         // Return null if no cookies
-        Set<String> cookieKeys = pxContext.getPxCookies().keySet();
+        Set<String> cookieKeys = pxContext.shouldDeserializeFromOriginalToken() ? pxContext.getOriginalTokenCookies().keySet() : pxContext.getPxCookies().keySet();
         if (cookieKeys.isEmpty()) {
             return null;
         }

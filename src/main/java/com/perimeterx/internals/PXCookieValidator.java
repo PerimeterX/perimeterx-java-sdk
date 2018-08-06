@@ -36,38 +36,22 @@ public class PXCookieValidator {
      * @param context - request context, data from cookie will be populated
      * @return S2S call reason according to the result of cookie verification
      */
-    public boolean verify(PXConfiguration pxConfiguration, PXContext context) {
+    public boolean verify(final PXConfiguration pxConfiguration, final PXContext context) {
         AbstractPXCookie pxCookie = null;
 
         try {
+            boolean isErrorCookie = false;
             if (context.isMobileToken()) {
                 String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
-                switch (authHeader) {
-                    case Constants.MOBILE_ERROR_NO_CONNECTION: {
-                        logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_CONNECTION);
-                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
-                        return false;
-                    }
-                    case Constants.MOBILE_ERROR_PINNING: {
-                        logger.error(PXLogger.LogReason.ERROR_MOBILE_PINNING);
-                        context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
-                        return false;
-                    }
-                    case Constants.MOBILE_ERROR_NO_COOKIE: {
-                        logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
-                        context.setS2sCallReason(S2SCallReason.NO_COOKIE);
-                        return false;
-                    }
-                    default: {
-                        if (authHeader.isEmpty()) {
-                            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED);
-                            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
-                            return false;
-                        }
-                    }
+                isErrorCookie = isErrorMobileHeader(context, authHeader);
+                if(context.getOriginalToken() != null){
+                    context.setDeserializeFromOriginalToken(true);
+                    new PXCookieOriginalTokenValidator().verify(pxConfiguration, context);
                 }
             }
-
+            if (isErrorCookie){
+                return false;
+            }
             pxCookie = PXCookieFactory.create(pxConfiguration, context);
             if (pxCookie == null) {
                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
@@ -118,5 +102,38 @@ public class PXCookieValidator {
             context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
             return false;
         }
+    }
+
+    private boolean isErrorMobileHeader(PXContext context, String authHeader) {
+        switch (authHeader) {
+            case Constants.MOBILE_ERROR_NO_COOKIE: {
+                logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
+                context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                return true;
+            }
+            case Constants.MOBILE_ERROR_NO_CONNECTION: {
+                logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_CONNECTION);
+                context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
+                return true;
+            }
+            case Constants.MOBILE_ERROR_PINNING: {
+                logger.error(PXLogger.LogReason.ERROR_MOBILE_PINNING);
+                context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
+                return true;
+            }
+            case Constants.MOBILE_ERROR_BYPASS: {
+                logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
+                context.setS2sCallReason(S2SCallReason.MOBILE_ERROR_BYPASS);
+                return true;
+            }
+            default: {
+                if (authHeader.isEmpty()) {
+                    logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED);
+                    context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

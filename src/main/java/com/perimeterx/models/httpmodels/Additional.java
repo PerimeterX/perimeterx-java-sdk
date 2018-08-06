@@ -27,8 +27,17 @@ public class Additional {
     public String pxCookieOrigin;
     @JsonProperty("module_version")
     public final String moduleVersion = Constants.SDK_VERSION;
+    @JsonProperty("original_uuid")
+    public String originalUuid;
+    @JsonProperty("original_token_error")
+    public String originalTokenError;
+    @JsonProperty("original_token")
+    public String originalToken;
+    @JsonProperty("decoded_original_token")
+    public String decodedOriginalToken;
     @JsonUnwrapped
     public CustomParameters customParameters;
+
 
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
@@ -39,7 +48,10 @@ public class Additional {
         additional.pxCookieOrig = ctx.getPxCookieOrig();
         additional.pxCookieOrigin = ctx.getCookieOrigin();
         additional.customParameters = ctx.getCustomParameters();
-
+        additional.originalUuid = ctx.getOriginalUuid();
+        additional.originalTokenError = ctx.getOriginalTokenError();
+        additional.originalToken = ctx.getPxOriginalTokenCookie();
+        additional.decodedOriginalToken = ctx.getDecodedOriginalToken();
         return additional;
     }
 }
