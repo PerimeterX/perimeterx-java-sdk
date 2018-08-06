@@ -23,7 +23,7 @@ public class PXCookieOriginalTokenValidator {
             AbstractPXCookie originalCookie = PXCookieFactory.create(pxConfiguration, context);
             logger.debug("Original token found, Evaluating");
 
-            if (originalCookie == null ){
+            if (originalCookie == null ) {
                 logger.debug("Original token is null");
                 context.setOriginalTokenError("original_token_missing");
                 return;
@@ -37,16 +37,16 @@ public class PXCookieOriginalTokenValidator {
 
             String decodedOriginalCookie = originalCookie.getDecodedCookie().toString();
             context.setDecodedOriginalToken(decodedOriginalCookie);
-            if (context.getVid() == null){
+            if (context.getVid() == null) {
                 context.setVid(originalCookie.getVID());
             }
             context.setOriginalUuid(originalCookie.getUUID());
 
-            if (!originalCookie.isSecured()){
+            if (!originalCookie.isSecured()) {
                 logger.debug("Original token HMAC validation failed, value: " + decodedOriginalCookie  + " user-agent: " + context.getUserAgent());
                 context.setOriginalTokenError("validation_failed");
             }
-        } catch (PXException  | PXCookieDecryptionException e) {
+        } catch (PXException | PXCookieDecryptionException e) {
             logger.debug("Received an error while decrypting perimeterx original token:" + e.getMessage());
             context.setOriginalTokenError("decryption_failed");
         }
