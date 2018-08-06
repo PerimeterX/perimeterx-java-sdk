@@ -1,5 +1,9 @@
 # Change Log
 
+## [v4.2.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-08-06)
+- Additional mobile handling
+- Better cookie decryption
+
 ## [v4.1.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-07-22)
 - Fixed logging level for unexpected risk result
 
