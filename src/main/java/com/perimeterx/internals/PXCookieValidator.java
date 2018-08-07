@@ -11,6 +11,7 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * PXCookieValidator
@@ -44,7 +45,8 @@ public class PXCookieValidator {
             if (context.isMobileToken()) {
                 String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
                 isErrorCookie = isErrorMobileHeader(context, authHeader);
-                if(context.getOriginalToken() != null){
+                String originalToken = context.getOriginalToken();
+                if(!StringUtils.isEmpty(originalToken)){
                     context.setDeserializeFromOriginalToken(true);
                     new PXCookieOriginalTokenValidator().verify(pxConfiguration, context);
                 }
