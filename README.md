@@ -162,7 +162,7 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 
 ### <a name="first-party-integration"></a> First-Party Configuration
 
-####<a name="first-party_mode"></a> First-Party Mode
+#### <a name="first-party_mode"></a> First-Party Mode
 First-Party will allow the sensor to be served from your domain. Using the First-Party mode is recommended.
 By enabling First Party Mode on the java SDK you will achieve:  
 
@@ -255,7 +255,7 @@ const pxConfig = {
 };
 ```
 
-###<a name="moduleEnabled"></a>moduleEnabled
+### <a name="moduleEnabled"></a>moduleEnabled
 A boolean flag to enable/disable the PerimeterX worker.                                                                                             
 
 **Default:** True       
@@ -278,7 +278,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
    .blockingScore(95)
 ```   
 
-###<a name="sensitiveHeaders"></a>sensitiveHeaders
+### <a name="sensitiveHeaders"></a>sensitiveHeaders
 An list of headers that are not sent to PerimeterX servers on API calls.
 
 **Default:** [cookie, cookies] 
@@ -302,7 +302,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="connectionTimeout"></a>connectionTimeout
+### <a name="connectionTimeout"></a>connectionTimeout
 The connection timeout in milliseconds.                                                                                                               
 
 **Default** 1000
@@ -314,7 +314,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="customLogo"></a>customLogo
+### <a name="customLogo"></a>customLogo
 The logo is displayed at the top of the the block page. Max-height = 150px, Width = auto.
 
 **Default:** null
@@ -326,7 +326,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```                               
 
-###<a name="cssRef"></a>cssRef
+### <a name="cssRef"></a>cssRef
 Modifies a custom CSS by adding the CSSRef directive and providing a valid URL to the CSS.
 
 **Default:** null
@@ -338,7 +338,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="jsRef"></a>jsRef
+### <a name="jsRef"></a>jsRef
 Adds a custom JS file by adding JSRef directive and providing the JS file that is loaded with the block page. 
 
 **Default:** null
@@ -362,7 +362,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="remoteConfigurationEnabled"></a>remoteConfigurationEnabled
+### <a name="remoteConfigurationEnabled"></a>remoteConfigurationEnabled
 A boolean flag to enable/disable remote configurations. When enabled, the initial configurations are set through the constructor and are set in the portal.
 
 **Default:** false
@@ -374,7 +374,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="captcha"></a>captchaProvider
+### <a name="captcha"></a>captchaProvider
 An enum that sets the CAPTCHA provider that is displayed on the PerimeterX default CAPTCHA page.                                                                                               
 
 Possible values:
@@ -391,7 +391,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="ipHeaders"></a>ipHeaders
+### <a name="ipHeaders"></a>ipHeaders
 An list of trusted headers that specify an IP to be extracted. If the list is empty, the default IP header `cf-connecting-ip` is used.                                                           
 
 `ipHeaders` is used with `CombinedIPProvider`
@@ -405,7 +405,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="customParametersProvider"></a>Custom Parameters Provider
+### <a name="customParametersProvider"></a>Custom Parameters Provider
 Risk API requests can be enriched with custom parameters by implementing `CustomParametersProvider` and adding logic to extract the custom parameters from the request. Before implementing the interface, make sure that the custom parameters on the portal are configured.
 The custom parameters must not be marked as query string.
 
