@@ -269,7 +269,7 @@ public class PXContext {
 
     private Map<String, String> extractPXCookies(String cookie) {
         Map<String, String> cookieValue = new HashMap<>();
-        if (cookie != null) {
+        if (cookie != null && cookie != "") {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
                 String[] splicedCookie = c.split("=", 2);
