@@ -6,23 +6,42 @@
 
 > Latest stable version: [v4.1.1](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C4.1.1%7Cjar)
 
-##[Introduction](#introduction)
+## [Introduction](#introduction)
 - [Prerequisites](#prerequisites)
 
-##[Upgrading](#upgrading)
+## [Upgrading](#upgrading)
 
-##[Installation](#installation)
+## [Installation](#installation)
 - [Installing with Maven](#maven)
 - [Installing with Gradel](#gradel)
 
-##[Configuration](#configuration)
+## [Configuration](#configuration)
 - [Required Configuration](#required_config)
-- [Optional Configuration](#optional_config)
+- [First-Party Configuration](#first-party-integration)
+ -[First Party Mode](#first-party_mode)
+- [Optional Configuration](#optional_config) 
+ - [moduleMode](#moduleMode)
+ - [moduleEnabled](#moduleEnabled)
+ - [blockingScore](#blockingScore)
+ - [sensitiveHeaders](#sensitiveHeaders)
+ - [apiTimeout](#apiTimeout)
+ - [connectionTimeout](#connectionTimeout)
+ - [customLogo](#customLogo)
+ - [cssRef](#cssRef)
+ - [jsRef](#jsRef)
+ - [sensitiveRoutes](#sensitiveRoutes)
+ - [remoteConfigurationEnabled](#remoteConfigurationEnabled)
+ - [captchaProvider](#captchaProvider)
+ - [ipHeaders](#ipHeaders)
+- [Custom Parameters Provider](#customParametersProvider) 
+- [Interfaces](#interfaces)
+
+## [Appendix](#appendix)
 - [Logging and Troubleshooting](#loggin-troubleshoot)
 - [Contributing](#contribute)
 
 
-###<a name="prerequisites"></a> Prerequisites
+### <a name="prerequisites"></a> Prerequisites
 
 #### JDK:
 
@@ -439,7 +458,6 @@ The following interfaces are available:
 > Note: When CAPTCHA logic is enabled, a blocking handler that displays the appropriate html page with CAPTCHA must be used. For example,  CaptchaBlockHandler that is included in the SDK.
 
 
-
 ### <a name="basic-usage"></a> Basic Usage Example
 
 ```java
@@ -466,6 +484,8 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 ...
 }
 ```
+
+## <a name="appendix"></a> Appendix
 
 ### <a name="loggin-troubleshoot"></a> Logging and Troubleshooting
 `perimeterx-java-sdk` is using SLF4J for logs.  
