@@ -57,8 +57,7 @@ If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors
 2. Replace `local_policy.jar` and `US_export_policy.jar` in your `$JAVA_HOME/jre/lib/security/` with those you have downloaded.
 3. Run your project again. The `Unlimited Strength Jurisdiction Policy` error should no appear.
 
-
-##<a name="upgrading"></a> Upgrading
+## <a name="upgrading"></a> Upgrading
 
 #### SDK < v4.x
 The PXContext on SDK v4.x has changed, following these changes, the implementation of PerimeterX SDK on the java filter must be changed accordingly.
