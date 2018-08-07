@@ -133,7 +133,7 @@ compile group: 'com.perimeterx', name: 'perimeterx-sdk', version: '${VERSION}'
 	 .cookieKey(COOKIE_KEY)
 	 .authToken(AUTH_TOKEN)
 	 .appId(APP_ID)
-	 ```
+```
    
  - The PerimeterX **Application ID / AppId** and PerimeterX **Token / Auth Token** can be found in the Portal, in <a href="https://console.perimeterx.com/#/app/applicationsmgmt" onclick="window.open(this.href); return false;">**Applications**</a>.
 
@@ -238,7 +238,7 @@ public class PXFilter implements Filter {
 </web-app>
 ```
 
-### <a name="optional_config"></a> Optional Configuration
+## <a name="optional_config"></a> Optional Configuration
 
 ### <a name="moduleMode"></a>moduleMode
 An enum that sets the working mode of the module. `ModuleMode.BLOCKING` sets the module to active blocking. `ModuleMode.MONITOR` inspects the request but does not block it.
@@ -261,7 +261,6 @@ const pxConfig = {
 
 ### <a name="moduleEnabled"></a>moduleEnabled
 A boolean flag to enable/disable the PerimeterX worker.                                                                                             
-
 **Default:** True       
 
 ```java
@@ -294,7 +293,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="apiTimeout"></a>apiTimeout
+### <a name="apiTimeout"></a>apiTimeout
 The REST API timeout in milliseconds.
 
 **Default:** 1000
