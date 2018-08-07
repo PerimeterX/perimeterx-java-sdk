@@ -41,6 +41,10 @@
 - [Contributing](#contribute)
 
 
+## <a name="introduction"></a> Introduction
+
+The PerimeterX Java SDK module enforces whether or not a request is allowed to continue being processed. When the PerimeterX Enforcer determines that a request is coming from a non-human source the request is blocked.
+
 ### <a name="prerequisites"></a> Prerequisites
 
 #### JDK:
