@@ -14,10 +14,9 @@ import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -227,7 +226,7 @@ public class PXContext {
         if (isMobileToken){
             this.pxCookies = extractPXMobileCookie(cookie);
             this.originalToken = extractOriginalToken(request);
-            if (this.originalToken != null){
+            if (!StringUtils.isEmpty(originalToken)){
                 this.originalTokenCookies = extractPXMobileCookie(this.originalToken);
             }
         }
@@ -269,7 +268,7 @@ public class PXContext {
 
     private Map<String, String> extractPXCookies(String cookie) {
         Map<String, String> cookieValue = new HashMap<>();
-        if (cookie != null && cookie != "") {
+        if (!StringUtils.isEmpty(cookie)) {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
                 String[] splicedCookie = c.split("=", 2);
