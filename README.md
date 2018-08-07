@@ -18,8 +18,7 @@
 ## [Configuration](#configuration)
 - [Required Configuration](#required_config)
 - [First-Party Configuration](#first-party-integration)
-
-  -[First Party Mode](#first-party_mode)
+  - [First Party Mode](#first-party_mode)
 - [Optional Configuration](#optional_config) 
   - [moduleMode](#moduleMode)
   - [moduleEnabled](#moduleEnabled)
