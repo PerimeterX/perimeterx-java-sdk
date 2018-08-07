@@ -38,7 +38,7 @@ public abstract class AbstractPXCookie implements PXCookie {
         this.mapper = new ObjectMapper();
         this.pxConfiguration = pxConfiguration;
         this.pxContext = pxContext;
-        this.pxCookie = pxContext.getPxCookie();
+        this.pxCookie = pxContext.shouldDeserializeFromOriginalToken() ? pxContext.getPxOriginalTokenCookie() : pxContext.getPxCookie();
         this.cookieKey = pxConfiguration.getCookieKey();
     }
 

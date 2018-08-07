@@ -14,6 +14,9 @@ import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +35,11 @@ public class PXContext {
      * Original HTTP request
      */
     private final HttpServletRequest request;
+
+    /**
+     * Indicates to the pxCookieFactory which cookie to create, the current or the original
+     * */
+    private boolean deserializeFromOriginalToken = false;
 
     /**
      * PerimeterX cookies - _px$cookie_version$, _pxCaptcha.
@@ -146,6 +154,28 @@ public class PXContext {
      */
     private boolean firstPartyRequest;
 
+
+    /**
+     * The original uuid of the request.
+     * */
+    private String originalUuid;
+    /**
+     * The original token decoded.
+     * */
+    private String decodedOriginalToken;
+    /**
+     * Errors encountered during the creation process of the cookie
+     * */
+    private String originalTokenError;
+    /**
+     * The original token cookies.
+     * */
+    private Map<String, String> originalTokenCookies;
+    /**
+     * The original token sent from the mobile sdk, prior to the last request received.
+     * */
+    private String originalToken;
+
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
@@ -164,11 +194,9 @@ public class PXContext {
             this.isMobileToken = true;
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
-
-        final String cookie = isMobileToken? request.getHeader(Constants.MOBILE_SDK_HEADER) : request.getHeader(Constants.COOKIE_ORIGIN);
-        this.pxCookies = isMobileToken ? extractPXMobileCookie(cookie) : extractPXCookies(cookie);
+        String cookie = isMobileToken ? request.getHeader(Constants.MOBILE_SDK_HEADER) : request.getHeader(Constants.COOKIE_ORIGIN);
+        extractCookies(request, cookie);
         this.pxCookieOrig = getPxCookie();
-
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
             this.pxCaptcha = pxCaptchaCookie;
@@ -195,6 +223,35 @@ public class PXContext {
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
     }
 
+    private void extractCookies(HttpServletRequest request, String cookie) {
+        if (isMobileToken){
+            this.pxCookies = extractPXMobileCookie(cookie);
+            this.originalToken = extractOriginalToken(request);
+            if (this.originalToken != null){
+                this.originalTokenCookies = extractPXMobileCookie(this.originalToken);
+            }
+        }
+        else {
+            this.pxCookies = extractPXCookies(cookie);
+        }
+    }
+
+    private String extractOriginalToken(HttpServletRequest request) {
+        String originalCookie = null;
+        if (headers.containsKey(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER)){
+            originalCookie = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
+        }
+        return originalCookie;
+    }
+
+    public String getPxOriginalTokenCookie() {
+        String pxOriginalTokenCookie = null;
+        if (originalTokenCookies != null) {
+            pxOriginalTokenCookie = originalTokenCookies.containsKey(Constants.COOKIE_V3_KEY) ? originalTokenCookies.get(Constants.COOKIE_V3_KEY) : originalTokenCookies.get(Constants.COOKIE_V1_KEY);
+        }
+        return pxOriginalTokenCookie;
+    }
+
     private String extractCookieByKey(String cookie, String key) {
         String cookieValue = null;
         if (cookie != null) {
@@ -212,17 +269,22 @@ public class PXContext {
 
     private Map<String, String> extractPXCookies(String cookie) {
         Map<String, String> cookieValue = new HashMap<>();
-        if (cookie != null) {
+        if (cookie != null && cookie != "") {
             String[] cookies = cookie.split(";\\s?");
             for (String c : cookies) {
                 String[] splicedCookie = c.split("=", 2);
+                String cookiePayload;
+                try {
+                	cookiePayload = URLDecoder.decode(splicedCookie[1], "UTF-8").replaceAll(" ", "+");
+                } catch (UnsupportedEncodingException e) {
+                	cookiePayload = splicedCookie[1];
+                }
                 switch (splicedCookie[0]) {
                     case Constants.COOKIE_V1_KEY:
-                        cookieValue.put(Constants.COOKIE_V1_KEY, splicedCookie[1]);
-
+                        cookieValue.put(Constants.COOKIE_V1_KEY, cookiePayload);
                         break;
                     case Constants.COOKIE_V3_KEY:
-                        cookieValue.put(Constants.COOKIE_V3_KEY, splicedCookie[1]);
+                        cookieValue.put(Constants.COOKIE_V3_KEY, cookiePayload);
                         break;
                 }
             }
@@ -513,5 +575,47 @@ public class PXContext {
 
     public PXConfiguration getPxConfiguration() {
         return pxConfiguration;
+    }
+
+
+    public void setOriginalTokenError(String originalTokenError){
+        this.originalTokenError = originalTokenError;
+    }
+
+    public void setDeserializeFromOriginalToken(boolean deserializeFromOriginalToken){
+        this.deserializeFromOriginalToken = deserializeFromOriginalToken;
+    }
+
+    public boolean shouldDeserializeFromOriginalToken() {
+        return deserializeFromOriginalToken;
+    }
+
+
+    public void setDecodedOriginalToken(String decodedOriginalToken) {
+        this.decodedOriginalToken = decodedOriginalToken;
+    }
+
+    public void setOriginalUuid(String originalUuid) {
+        this.originalUuid = originalUuid;
+    }
+
+    public Map<String, String> getOriginalTokenCookies() {
+        return originalTokenCookies;
+    }
+
+    public String getOriginalUuid() {
+        return originalUuid;
+    }
+
+    public String getOriginalTokenError() {
+        return originalTokenError;
+    }
+
+    public String getDecodedOriginalToken() {
+        return decodedOriginalToken;
+    }
+
+    public String getOriginalToken() {
+        return originalToken;
     }
 }

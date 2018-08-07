@@ -51,8 +51,8 @@ public class CookieErrorsTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(verify, false);
-        assertEquals(context.getS2sCallReason(), S2SCallReason.NO_COOKIE);
+        assertEquals(false, verify);
+        assertEquals(S2SCallReason.MOBILE_NO_COOKIE, context.getS2sCallReason());
     }
 
     @Test
@@ -62,8 +62,8 @@ public class CookieErrorsTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(verify, false);
-        assertEquals(context.getS2sCallReason(), S2SCallReason.MOBILE_SDK_CONNECTION);
+        assertEquals(false, verify );
+        assertEquals(S2SCallReason.MOBILE_SDK_CONNECTION, context.getS2sCallReason());
     }
 
     @Test
@@ -73,7 +73,7 @@ public class CookieErrorsTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(verify, false);
-        assertEquals(context.getS2sCallReason(), S2SCallReason.MOBILE_SDK_PINNING);
+        assertEquals(false, verify);
+        assertEquals(S2SCallReason.MOBILE_SDK_PINNING, context.getS2sCallReason());
     }
 }

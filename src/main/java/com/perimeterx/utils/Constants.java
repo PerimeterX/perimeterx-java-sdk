@@ -59,6 +59,8 @@ public final class Constants {
     public static final String BLOCK_ACTION_CHALLENGE = "j";
 
     public static final String MOBILE_SDK_HEADER = "x-px-authorization";
+    public static final String MOBILE_SDK_ORIGINAL_TOKEN_HEADER = "x-px-original-token";
+
     public static final String COOKIE_EXTRACT_DELIMITER_MOBILE = ":";
 
     public static final String HEADER_ORIGIN = "header";
@@ -67,6 +69,7 @@ public final class Constants {
     public static final String MOBILE_ERROR_NO_COOKIE = "1";
     public static final String MOBILE_ERROR_NO_CONNECTION = "2";
     public static final String MOBILE_ERROR_PINNING = "3";
+    public static final String MOBILE_ERROR_BYPASS = "4";
 
     public static final String FILE_NAME_BLOCK = "block";
     public static final String FILE_EXTENSION_MUSTACHE = ".mustache";
