@@ -96,7 +96,7 @@ Following the instructions above, the filter should be changed according the the
  filterChain.doFilter(servletRequest, servletResponse);
 ```
 
-##<a name="installation"></a> Installation
+## <a name="installation"></a> Installation
 
 ### <a name="maven"></a> Installing with Maven:
 
