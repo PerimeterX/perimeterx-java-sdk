@@ -267,7 +267,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="blockingScore"></a>blockingScore
+### <a name="blockingScore"></a>blockingScore
 Sets the minimum blocking score of a request. When the score is equal to or higher than the blockingScore the request is blocked.                                                                         
 
 **Default:** 100
