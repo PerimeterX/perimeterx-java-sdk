@@ -8,6 +8,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
+import org.apache.commons.lang3.StringUtils;
 
 
 public class PXCookieOriginalTokenValidator {
@@ -58,5 +59,9 @@ public class PXCookieOriginalTokenValidator {
             context.setOriginalTokenError("decryption_failed");
         }
 
+    }
+
+    public boolean isErrorMobileHeader(String authHeader) {
+        return StringUtils.isNumeric(authHeader) && authHeader.length() == 1;
     }
 }

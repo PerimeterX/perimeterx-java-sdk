@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by saar shtalryd on 11/01/2018.
@@ -77,10 +77,10 @@ public class CookieV1MobileTest {
         ((MockHttpServletRequest) request).setRequestURI("/login/user");
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, configuration);
-        assertEquals(true, this.context.isSensitiveRoute());
+        assertTrue(this.context.isSensitiveRoute());
         boolean verify = cookieValidator.verify(pxConfiguration, context);
-        assertEquals(false, verify);
-        assertEquals(S2SCallReason.SENSITIVE_ROUTE, context.getS2sCallReason());
+        assertFalse(verify);
+        assertEquals(S2SCallReason.SENSITIVE_ROUTE.name(), context.getS2sCallReason());
     }
 
     @Test
@@ -95,8 +95,8 @@ public class CookieV1MobileTest {
 
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
-        assertEquals(false, verify);
-        assertEquals(S2SCallReason.INVALID_DECRYPTION, context.getS2sCallReason());
+        assertFalse(verify);
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
     }
 
     @Test
@@ -106,8 +106,8 @@ public class CookieV1MobileTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(false, verify);
-        assertEquals(S2SCallReason.INVALID_DECRYPTION, context.getS2sCallReason());
+        assertFalse(verify);
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
     }
 
     @Test
@@ -117,8 +117,8 @@ public class CookieV1MobileTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(false, verify);
-        assertEquals(S2SCallReason.COOKIE_EXPIRED, context.getS2sCallReason());
+        assertFalse(verify);
+        assertEquals(S2SCallReason.COOKIE_EXPIRED.name(), context.getS2sCallReason());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class CookieV1MobileTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(true, verify);
+        assertTrue(verify);
         assertEquals(BlockReason.COOKIE, context.getBlockReason());
     }
 
@@ -139,8 +139,8 @@ public class CookieV1MobileTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(verify, true);
+        assertTrue(verify);
         assertEquals(context.getBlockReason(), BlockReason.NONE);
-        assertEquals(context.getS2sCallReason(), S2SCallReason.NONE);
+        assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.name());
     }
 }

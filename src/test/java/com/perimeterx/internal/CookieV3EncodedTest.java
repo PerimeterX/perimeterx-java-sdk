@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by johnnytordgeman on 05/07/2018.
@@ -48,8 +48,8 @@ public class CookieV3EncodedTest {
     @Test
     public void testCookieV3EncodedFailOnNoCookie() {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
-        assertEquals(S2SCallReason.NO_COOKIE, context.getS2sCallReason());
+        cookieValidator.verify(pxConfiguration, context);
+        assertEquals(S2SCallReason.NO_COOKIE.name(), context.getS2sCallReason());
     }
     
     @Test
@@ -59,7 +59,7 @@ public class CookieV3EncodedTest {
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
-        assertEquals(true, verify);
+        assertTrue(verify);
     }
     
 
@@ -76,10 +76,10 @@ public class CookieV3EncodedTest {
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, configuration);
-        assertEquals(true, this.context.isSensitiveRoute());
+        assertTrue(this.context.isSensitiveRoute());
         boolean verify = cookieValidator.verify(pxConfiguration, context);
-        assertEquals(false, verify);
-        assertEquals(S2SCallReason.SENSITIVE_ROUTE, context.getS2sCallReason());
+        assertFalse(verify);
+        assertEquals(S2SCallReason.SENSITIVE_ROUTE.name(), context.getS2sCallReason());
     }
 
     @Test
@@ -94,8 +94,8 @@ public class CookieV3EncodedTest {
 
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
-        assertEquals(false, verify);
-        assertEquals(S2SCallReason.INVALID_DECRYPTION, context.getS2sCallReason());
+        assertFalse(verify);
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
     }
 
     @Test
@@ -106,8 +106,8 @@ public class CookieV3EncodedTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(false, verify);
-        assertEquals(S2SCallReason.INVALID_DECRYPTION, context.getS2sCallReason());
+        assertFalse(verify);
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
     }
 
     @Test
@@ -118,8 +118,8 @@ public class CookieV3EncodedTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(false, verify);
-        assertEquals(S2SCallReason.COOKIE_EXPIRED, context.getS2sCallReason());
+        assertFalse(verify);
+        assertEquals(S2SCallReason.COOKIE_EXPIRED.name(), context.getS2sCallReason());
     }
 
     @Test
@@ -130,7 +130,7 @@ public class CookieV3EncodedTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(true, verify);
+        assertTrue(verify);
         assertEquals(BlockReason.COOKIE, context.getBlockReason());
     }
 
@@ -142,9 +142,9 @@ public class CookieV3EncodedTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
-        assertEquals(verify, true);
+        assertTrue(verify);
         assertEquals(context.getBlockReason(), BlockReason.NONE);
-        assertEquals(context.getS2sCallReason(), S2SCallReason.NONE);
+        assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.name());
     }
 
 

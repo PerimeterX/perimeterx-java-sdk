@@ -43,16 +43,18 @@ public class PXCookieValidator {
 
         try {
             boolean isErrorCookie = false;
+            String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
             if (context.isMobileToken()) {
-                String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
-                isErrorCookie = isErrorMobileHeader(context, authHeader);
+                PXCookieOriginalTokenValidator mobileValidator = new PXCookieOriginalTokenValidator();
+                isErrorCookie = mobileValidator.isErrorMobileHeader(authHeader);
                 String originalToken = context.getOriginalToken();
                 if(!StringUtils.isEmpty(originalToken)){
                     context.setDeserializeFromOriginalToken(true);
-                    new PXCookieOriginalTokenValidator().verify(pxConfiguration, context);
+                    mobileValidator.verify(pxConfiguration, context);
                 }
             }
             if (isErrorCookie){
+                context.setS2sCallReason("mobile_error_" + authHeader);
                 return false;
             }
             CookieData cookieData = CookieData.builder().ip(context.getIp())
@@ -64,14 +66,14 @@ public class PXCookieValidator {
 
             pxCookie = PXCookieFactory.create(pxConfiguration, cookieData);
             if (pxCookie == null) {
-                context.setS2sCallReason(S2SCallReason.NO_COOKIE);
+                context.setS2sCallReason(S2SCallReason.NO_COOKIE.name());
                 return false;
             }
 
             // In case pxCookie will be modified from the outside extracting the cookie on the constructor
             // will fail, we test for null for the cookie before, if its null then we want to set pxCookieOrig
             if (pxCookie.getPxCookie() == null || !pxCookie.deserialize()) {
-                context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+                context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION.name());
                 return false;
             }
 
@@ -84,7 +86,7 @@ public class PXCookieValidator {
 
             if (pxCookie.isExpired()) {
                 logger.debug(PXLogger.LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
-                context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED);
+                context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED.name());
                 return false;
             }
 
@@ -94,56 +96,25 @@ public class PXCookieValidator {
             }
 
             if (!pxCookie.isSecured()) {
-                context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION);
+                context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.name());
                 return false;
             }
 
             if (context.isSensitiveRoute()) {
                 logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getUri());
-                context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
+                context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.name());
                 return false;
             }
             context.setPassReason(PassReason.COOKIE);
-            context.setS2sCallReason(S2SCallReason.NONE);
+            context.setS2sCallReason(S2SCallReason.NONE.name());
             return true;
 
         } catch (PXException | PXCookieDecryptionException e) {
             logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED, pxCookie);
-            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
+            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION.name());
             return false;
         }
     }
 
-    private boolean isErrorMobileHeader(PXContext context, String authHeader) {
-        switch (authHeader) {
-            case Constants.MOBILE_ERROR_NO_COOKIE: {
-                logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
-                context.setS2sCallReason(S2SCallReason.MOBILE_NO_COOKIE);
-                return true;
-            }
-            case Constants.MOBILE_ERROR_NO_CONNECTION: {
-                logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_CONNECTION);
-                context.setS2sCallReason(S2SCallReason.MOBILE_SDK_CONNECTION);
-                return true;
-            }
-            case Constants.MOBILE_ERROR_PINNING: {
-                logger.error(PXLogger.LogReason.ERROR_MOBILE_PINNING);
-                context.setS2sCallReason(S2SCallReason.MOBILE_SDK_PINNING);
-                return true;
-            }
-            case Constants.MOBILE_ERROR_BYPASS: {
-                logger.error(PXLogger.LogReason.ERROR_MOBILE_NO_TOKEN);
-                context.setS2sCallReason(S2SCallReason.MOBILE_ERROR_BYPASS);
-                return true;
-            }
-            default: {
-                if (authHeader.isEmpty()) {
-                    logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED);
-                    context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 }

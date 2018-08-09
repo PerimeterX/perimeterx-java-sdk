@@ -8,7 +8,6 @@ import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.risk.S2SCallReason;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -52,7 +51,7 @@ public class CookieErrorsTest {
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
         assertEquals(false, verify);
-        assertEquals(S2SCallReason.MOBILE_NO_COOKIE, context.getS2sCallReason());
+        assertEquals("mobile_error_1", context.getS2sCallReason());
     }
 
     @Test
@@ -63,7 +62,7 @@ public class CookieErrorsTest {
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
         assertEquals(false, verify );
-        assertEquals(S2SCallReason.MOBILE_SDK_CONNECTION, context.getS2sCallReason());
+        assertEquals("mobile_error_2", context.getS2sCallReason());
     }
 
     @Test
@@ -74,6 +73,6 @@ public class CookieErrorsTest {
         boolean verify = cookieValidator.verify(pxConfiguration, context);
 
         assertEquals(false, verify);
-        assertEquals(S2SCallReason.MOBILE_SDK_PINNING, context.getS2sCallReason());
+        assertEquals("mobile_error_3", context.getS2sCallReason());
     }
 }

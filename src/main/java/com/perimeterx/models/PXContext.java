@@ -92,7 +92,7 @@ public class PXContext {
      *
      * @see com.perimeterx.models.risk.S2SCallReason
      */
-    private S2SCallReason s2sCallReason;
+    private String s2sCallReason;
 
     private boolean madeS2SApiCall;
     /**
@@ -205,7 +205,7 @@ public class PXContext {
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
-        this.s2sCallReason = S2SCallReason.NONE;
+        this.s2sCallReason = S2SCallReason.NONE.name();
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
         this.madeS2SApiCall = false;
@@ -359,11 +359,11 @@ public class PXContext {
         return fullUrl;
     }
 
-    public S2SCallReason getS2sCallReason() {
+    public String getS2sCallReason() {
         return s2sCallReason;
     }
 
-    public void setS2sCallReason(S2SCallReason callReason) {
+    public void setS2sCallReason(String callReason) {
         this.s2sCallReason = callReason;
     }
 

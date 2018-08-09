@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.CustomParameters;
-import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
 
@@ -20,7 +19,7 @@ public class Additional {
     @JsonProperty("http_version")
     public String httpVersion;
     @JsonProperty("s2s_call_reason")
-    public S2SCallReason callReason;
+    public String callReason;
     @JsonProperty("px_cookie_orig")
     public String pxCookieOrig;
     @JsonProperty("cookie_origin")
