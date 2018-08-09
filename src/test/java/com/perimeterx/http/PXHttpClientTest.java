@@ -48,7 +48,7 @@ public class PXHttpClientTest {
         Assert.assertTrue(config.getApiConnectTimeout() == 3000);
         Assert.assertTrue(config.getS2sTimeout() == 3000);
         Assert.assertTrue(config.getSensitiveHeaders().equals(new HashSet<String>()));
-        Assert.assertTrue(config.isModuleEnabled() == false);
+        Assert.assertFalse(config.isModuleEnabled());
         Assert.assertTrue(config.getModuleMode().equals(ModuleMode.BLOCKING));
     }
 
