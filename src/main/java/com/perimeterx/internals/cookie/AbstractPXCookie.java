@@ -2,7 +2,6 @@ package com.perimeterx.internals.cookie;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
@@ -26,19 +25,22 @@ public abstract class AbstractPXCookie implements PXCookie {
 
     private static final int KEY_LEN = 32;
     private static final String HMAC_SHA_256 = "HmacSHA256";
+    protected String ip;
+
+    protected String userAgent;
 
     protected ObjectMapper mapper;
     protected PXConfiguration pxConfiguration;
-    protected PXContext pxContext;
     protected String pxCookie;
     protected JsonNode decodedCookie;
     protected String cookieKey;
 
-    public AbstractPXCookie(PXConfiguration pxConfiguration, PXContext pxContext) {
+    public AbstractPXCookie(PXConfiguration pxConfiguration, CookieData cookieData) {
         this.mapper = new ObjectMapper();
         this.pxConfiguration = pxConfiguration;
-        this.pxContext = pxContext;
-        this.pxCookie = pxContext.shouldDeserializeFromOriginalToken() ? pxContext.getPxOriginalTokenCookie() : pxContext.getPxCookie();
+        this.pxCookie = cookieData.getCookie();
+        this.userAgent = cookieData.isMobileToken() ? "" : cookieData.getUserAgent();
+        this.ip = cookieData.getIp();
         this.cookieKey = pxConfiguration.getCookieKey();
     }
 
@@ -64,7 +66,7 @@ public abstract class AbstractPXCookie implements PXCookie {
             return true;
         }
 
-        JsonNode decodedCookie = null;
+        JsonNode decodedCookie;
         if (this.pxConfiguration.isEncryptionEnabled()) {
             decodedCookie = this.decrypt();
         } else {
@@ -149,7 +151,7 @@ public abstract class AbstractPXCookie implements PXCookie {
             throw new PXException("Failed to validate HMAC => ".concat(e.getMessage()));
         } finally {
             if (!isValid) {
-                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, pxContext.getUserAgent());
+                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, this.userAgent);
             }
         }
         return isValid;

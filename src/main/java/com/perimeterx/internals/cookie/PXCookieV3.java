@@ -1,7 +1,6 @@
 package com.perimeterx.internals.cookie;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 
@@ -12,8 +11,8 @@ public class PXCookieV3 extends AbstractPXCookie {
 
     private String hmac;
 
-    public PXCookieV3(PXConfiguration pxConfiguration, PXContext pxContext) {
-        super(pxConfiguration, pxContext);
+    public PXCookieV3(PXConfiguration pxConfiguration, CookieData cookieData) {
+        super(pxConfiguration, cookieData);
         String[] splicedCookie = getPxCookie().split(":", 2);
         if (splicedCookie.length > 1) {
             this.pxCookie = splicedCookie[1];
@@ -49,7 +48,7 @@ public class PXCookieV3 extends AbstractPXCookie {
     public boolean isSecured() throws PXException {
         String hmacString = new StringBuilder()
                 .append(this.getPxCookie())
-                .append(pxContext.isMobileToken() ? "" : this.pxContext.getUserAgent())
+                .append(userAgent)
                 .toString();
         return this.isHmacValid(hmacString, this.getHmac());
     }

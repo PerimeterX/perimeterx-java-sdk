@@ -195,7 +195,7 @@ public class PXContext {
         }
         String cookie = isMobileToken ? request.getHeader(Constants.MOBILE_SDK_HEADER) : request.getHeader(Constants.COOKIE_ORIGIN);
         extractCookies(request, cookie);
-        this.pxCookieOrig = getPxCookie();
+        this.pxCookieOrig = getRawCookie();
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
             this.pxCaptcha = pxCaptchaCookie;
@@ -315,7 +315,7 @@ public class PXContext {
         return cookieMap;
     }
 
-    public String getPxCookie() {
+    public String getRawCookie() {
         return pxCookies.containsKey(Constants.COOKIE_V3_KEY) ? pxCookies.get(Constants.COOKIE_V3_KEY) : pxCookies.get(Constants.COOKIE_V1_KEY);
     }
 

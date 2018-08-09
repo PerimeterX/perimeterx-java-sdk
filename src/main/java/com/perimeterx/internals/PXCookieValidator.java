@@ -1,6 +1,7 @@
 package com.perimeterx.internals;
 
 import com.perimeterx.internals.cookie.AbstractPXCookie;
+import com.perimeterx.internals.cookie.CookieData;
 import com.perimeterx.internals.cookie.PXCookieFactory;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -54,7 +55,14 @@ public class PXCookieValidator {
             if (isErrorCookie){
                 return false;
             }
-            pxCookie = PXCookieFactory.create(pxConfiguration, context);
+            CookieData cookieData = CookieData.builder().ip(context.getIp())
+                    .mobileToken(context.isMobileToken())
+                    .pxCookies(context.getPxCookies())
+                    .userAgent(context.getUserAgent())
+                    .cookie(context.getRawCookie())
+                    .build();
+
+            pxCookie = PXCookieFactory.create(pxConfiguration, cookieData);
             if (pxCookie == null) {
                 context.setS2sCallReason(S2SCallReason.NO_COOKIE);
                 return false;
