@@ -31,7 +31,7 @@
   - [jsRef](#jsRef)
   - [sensitiveRoutes](#sensitiveRoutes)
   - [remoteConfigurationEnabled](#remoteConfigurationEnabled)
-  - [captchaProvider](#captchaProvider)
+  - [captcha](#captchaProvider)
   - [ipHeaders](#ipHeaders)
 - [Custom Parameters Provider](#customParametersProvider) 
 - [Interfaces](#interfaces)
@@ -353,7 +353,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-###<a name="sensitiveRoutes"></a>sensitiveRoutes
+### <a name="sensitiveRoutes"></a>sensitiveRoutes
 An list of route prefixes that trigger a server call to PerimeterX servers every time the page is viewed, regardless of viewing history.                       
 
 **Default:** Empty list
