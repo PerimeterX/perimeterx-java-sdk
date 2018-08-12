@@ -168,12 +168,11 @@ public class PerimeterX {
                 context.setFirstPartyRequest(true);
                 return context;
             }
-
-            // Remove captcha cookie to prevent re-use
             Cookie cookie = new Cookie(Constants.COOKIE_CAPTCHA_KEY, StringUtils.EMPTY);
             cookie.setMaxAge(0);
             responseWrapper.addCookie(cookie);
-            verifyCookie(responseWrapper, context);
+            verifyCookie(context);
+            context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
             logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION,  e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
@@ -186,10 +185,9 @@ public class PerimeterX {
         return context;
     }
 
-    private void verifyCookie(HttpServletResponseWrapper responseWrapper, PXContext context) throws Exception {
+    private void verifyCookie(PXContext context) throws Exception {
         if (captchaValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_COOKIE_FOUND);
-            context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
             return;
         }
         logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_NO_COOKIE);
@@ -197,18 +195,13 @@ public class PerimeterX {
         logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
         // Cookie is valid (exists and not expired) so we can block according to it's score
         if (cookieValidator.verify(context)) {
-            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND,  context.getCookieVersion());
-            context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
             return;
         }
-
         logger.debug(PXLogger.LogReason.DEBUG_COOKIE_MISSING);
         if (serverValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND,  context.getCookieVersion());
-            context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
             return;
         }
-        context.setVerified(verificationHandler.handleVerification(context,responseWrapper));
     }
 
     private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws Exception {
