@@ -46,8 +46,8 @@ public class RiskCookieDecoderTest {
 
     @Test
     public void testOrigPXCookieSentOnCookieDecryptFails() {
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
-        assertEquals(context.getS2sCallReason(), S2SCallReason.INVALID_DECRYPTION);
+        cookieValidator.verify( context);
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
         assertEquals(context.getPxCookieOrig(), pxCookie);
     }
 }

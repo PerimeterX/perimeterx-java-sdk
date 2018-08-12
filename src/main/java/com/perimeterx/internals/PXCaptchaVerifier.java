@@ -13,17 +13,17 @@ import com.perimeterx.utils.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
 
 /**
- * PXCaptchaValidator - Validate captcha token from request using PX Server
+ * PXCaptchaVerifier - Validate captcha token from request using PX Server
  * <p>
  * Created by shikloshi on 07/07/2016.
  */
-public class PXCaptchaValidator {
+public class PXCaptchaVerifier  implements PXVerifier{
 
-    private static final PXLogger logger = PXLogger.getLogger(PXCaptchaValidator.class);
+    private static final PXLogger logger = PXLogger.getLogger(PXCaptchaVerifier.class);
     private PXClient pxClient;
     private PXConfiguration pxConfiguration;
 
-    public PXCaptchaValidator(PXClient pxClient, PXConfiguration pxConfiguration) {
+    public PXCaptchaVerifier(PXClient pxClient, PXConfiguration pxConfiguration) {
         this.pxClient = pxClient;
         this.pxConfiguration = pxConfiguration;
     }

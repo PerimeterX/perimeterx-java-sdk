@@ -4,7 +4,7 @@ import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.http.PXClient;
-import com.perimeterx.internals.PXCaptchaValidator;
+import com.perimeterx.internals.PXCaptchaVerifier;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -51,7 +51,7 @@ public class TestObjectUtils {
     public static PerimeterX testablePerimeterXObject(PXConfiguration configuration, PXClient client) throws Exception {
         PerimeterX instance = new PerimeterX(configuration);
         PXS2SValidator validator = new PXS2SValidator(client, configuration);
-        PXCaptchaValidator captchaValidator = new PXCaptchaValidator(client, configuration);
+        PXCaptchaVerifier captchaValidator = new PXCaptchaVerifier(client, configuration);
         ActivityHandler activityHandler = new DefaultActivityHandler(client, configuration);
         Field validatorField = PerimeterX.class.getDeclaredField("serverValidator");
         validatorField.setAccessible(true);

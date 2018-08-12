@@ -5,7 +5,7 @@ import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.http.PXClient;
-import com.perimeterx.internals.PXCaptchaValidator;
+import com.perimeterx.internals.PXCaptchaVerifier;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
@@ -19,10 +19,10 @@ import testutils.TestObjectUtils;
  * Created by shikloshi on 16/07/2016.
  */
 @Test
-public class PXCaptchaValidatorTest {
+public class PXCaptchaVerifierTest {
 
-    private PXCaptchaValidator captchaValidator;
-    private PXCaptchaValidator noValidateCaptchaValidator;
+    private PXCaptchaVerifier captchaValidator;
+    private PXCaptchaVerifier noValidateCaptchaValidator;
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private PXConfiguration pxConfig;
@@ -36,8 +36,8 @@ public class PXCaptchaValidatorTest {
                 .build();
         PXClient client = TestObjectUtils.verifiedCaptchaClient();
         PXClient noVerificationClient = TestObjectUtils.notVerifiedCaptchaClient();
-        this.captchaValidator = new PXCaptchaValidator(client, pxConfig);
-        this.noValidateCaptchaValidator = new PXCaptchaValidator(noVerificationClient, pxConfig);
+        this.captchaValidator = new PXCaptchaVerifier(client, pxConfig);
+        this.noValidateCaptchaValidator = new PXCaptchaVerifier(noVerificationClient, pxConfig);
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
     }

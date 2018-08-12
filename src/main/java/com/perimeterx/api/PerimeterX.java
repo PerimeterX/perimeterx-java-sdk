@@ -36,7 +36,7 @@ import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
 import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
-import com.perimeterx.internals.PXCaptchaValidator;
+import com.perimeterx.internals.PXCaptchaVerifier;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
@@ -72,7 +72,7 @@ public class PerimeterX {
     private PXS2SValidator serverValidator;
     private PXCookieValidator cookieValidator;
     private ActivityHandler activityHandler;
-    private PXCaptchaValidator captchaValidator;
+    private PXCaptchaVerifier captchaValidator;
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
@@ -115,8 +115,8 @@ public class PerimeterX {
         }
 
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
-        this.captchaValidator = new PXCaptchaValidator(pxClient, configuration);
-        this.cookieValidator = PXCookieValidator.getDecoder(this.configuration.getCookieKey());
+        this.captchaValidator = new PXCaptchaVerifier(pxClient, configuration);
+        this.cookieValidator = new PXCookieValidator(this.configuration);
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler);
         this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
         this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
