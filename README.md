@@ -31,7 +31,7 @@
   - [JS Ref](#jsRef)
   - [Sensitive Routes](#sensitiveRoutes)
   - [Remote Configuration Enabled](#remoteConfigurationEnabled)
-  - [Captcha Provider](#captcha)
+  - [Captcha Provider](#captchaProvider)
   - [IP Headers](#ipHeaders)
 - [Custom Parameters Provider](#customParametersProvider) 
 - [Interfaces](#interfaces)
