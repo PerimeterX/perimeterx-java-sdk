@@ -20,19 +20,19 @@
 - [First-Party Configuration](#first-party-integration)
   - [First Party Mode](#first-party_mode)
 - [Optional Configuration](#optional_config) 
-  - [moduleMode](#moduleMode)
-  - [moduleEnabled](#moduleEnabled)
-  - [blockingScore](#blockingScore)
-  - [sensitiveHeaders](#sensitiveHeaders)
-  - [apiTimeout](#apiTimeout)
-  - [connectionTimeout](#connectionTimeout)
-  - [customLogo](#customLogo)
-  - [cssRef](#cssRef)
-  - [jsRef](#jsRef)
-  - [sensitiveRoutes](#sensitiveRoutes)
-  - [remoteConfigurationEnabled](#remoteConfigurationEnabled)
-  - [captcha](#captchaProvider)
-  - [ipHeaders](#ipHeaders)
+  - [Module Mode](#moduleMode)
+  - [Module Enabled](#moduleEnabled)
+  - [Blocking Score](#blockingScore)
+  - [Sensitive Headers](#sensitiveHeaders)
+  - [API Timeout](#apiTimeout)
+  - [Connection Timeout](#connectionTimeout)
+  - [Custom Logo](#customLogo)
+  - [CSS Ref](#cssRef)
+  - [JS Ref](#jsRef)
+  - [Sensitive Routes](#sensitiveRoutes)
+  - [Remote Configuration Enabled](#remoteConfigurationEnabled)
+  - [Captcha Provider](#captcha)
+  - [IP Headers](#ipHeaders)
 - [Custom Parameters Provider](#customParametersProvider) 
 - [Interfaces](#interfaces)
 
@@ -240,7 +240,7 @@ public class PXFilter implements Filter {
 
 ## <a name="optional_config"></a> Optional Configuration
 
-### <a name="moduleMode"></a>moduleMode
+### <a name="moduleMode"></a>Module Mode
 An enum that sets the working mode of the module. `ModuleMode.BLOCKING` sets the module to active blocking. `ModuleMode.MONITOR` inspects the request but does not block it.
 Mandatory for active blocking.
 
@@ -259,7 +259,7 @@ const pxConfig = {
 };
 ```
 
-### <a name="moduleEnabled"></a>moduleEnabled
+### <a name="moduleEnabled"></a>Module Enabled
 A boolean flag to enable/disable the PerimeterX worker.                                                                                             
 **Default:** True       
 
@@ -270,7 +270,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="blockingScore"></a>blockingScore
+### <a name="blockingScore"></a>Blocking Score
 Sets the minimum blocking score of a request. When the score is equal to or higher than the blockingScore the request is blocked.                                                                         
 
 **Default:** 100
@@ -281,7 +281,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
    .blockingScore(95)
 ```   
 
-### <a name="sensitiveHeaders"></a>sensitiveHeaders
+### <a name="sensitiveHeaders"></a>Sensitive Headers
 An list of headers that are not sent to PerimeterX servers on API calls.
 
 **Default:** [cookie, cookies] 
@@ -293,7 +293,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="apiTimeout"></a>apiTimeout
+### <a name="apiTimeout"></a>API Timeout
 The REST API timeout in milliseconds.
 
 **Default:** 1000
@@ -305,7 +305,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="connectionTimeout"></a>connectionTimeout
+### <a name="connectionTimeout"></a>Connection Timeout
 The connection timeout in milliseconds.                                                                                                               
 
 **Default** 1000
@@ -317,7 +317,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="customLogo"></a>customLogo
+### <a name="customLogo"></a>Custom Logo
 The logo is displayed at the top of the the block page. Max-height = 150px, Width = auto.
 
 **Default:** null
@@ -329,7 +329,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```                               
 
-### <a name="cssRef"></a>cssRef
+### <a name="cssRef"></a>CSS Ref
 Modifies a custom CSS by adding the CSSRef directive and providing a valid URL to the CSS.
 
 **Default:** null
@@ -341,7 +341,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="jsRef"></a>jsRef
+### <a name="jsRef"></a>JS Ref
 Adds a custom JS file by adding JSRef directive and providing the JS file that is loaded with the block page. 
 
 **Default:** null
@@ -353,7 +353,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="sensitiveRoutes"></a>sensitiveRoutes
+### <a name="sensitiveRoutes"></a>Sensitive Routes
 An list of route prefixes that trigger a server call to PerimeterX servers every time the page is viewed, regardless of viewing history.                       
 
 **Default:** Empty list
@@ -365,7 +365,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="remoteConfigurationEnabled"></a>remoteConfigurationEnabled
+### <a name="remoteConfigurationEnabled"></a>Remote Configuration Enabled
 A boolean flag to enable/disable remote configurations. When enabled, the initial configurations are set through the constructor and are set in the portal.
 
 **Default:** false
@@ -377,7 +377,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="captcha"></a>captchaProvider
+### <a name="captchaProvider"></a>Captcha Provider
 An enum that sets the CAPTCHA provider that is displayed on the PerimeterX default CAPTCHA page.                                                                                               
 
 Possible values:
@@ -394,7 +394,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-### <a name="ipHeaders"></a>ipHeaders
+### <a name="ipHeaders"></a>IP Headers
 An list of trusted headers that specify an IP to be extracted. If the list is empty, the default IP header `cf-connecting-ip` is used.                                                           
 
 `ipHeaders` is used with `CombinedIPProvider`
@@ -459,33 +459,6 @@ The following interfaces are available:
 
 > Note: When CAPTCHA logic is enabled, a blocking handler that displays the appropriate html page with CAPTCHA must be used. For example,  CaptchaBlockHandler that is included in the SDK.
 
-
-### <a name="basic-usage"></a> Basic Usage Example
-
-```java
-// Create configuration object
-PXConfiguration pxConfiguration = new PXConfiguration.Builder()
-     .cookieKey(COOKIE_KEY)
-     .authToken(AUTH_TOKEN)
-     .appId(APP_ID)
-     .blockingScore(SCORE)
-     .moduleMode(ModuleMode.BLOCKING)
-     .build();
-
-// Get instance
-PerimeterX enforcer = new PerimeterX(pxConfiguration);
-
-// Inside the request / Filter
-@Override
-protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws ServletException, IOExcption {
-...
-    PXContext ctx = enforcer.pxVerify(req, new HttpServletResponseWrapper(resp);
-    if (!ctx.isHandledResponse()) {
-       // request should be blocked and BlockHandler was triggered on HttpServerResponseWrapper
-    }
-...
-}
-```
 
 ## <a name="appendix"></a> Appendix
 
