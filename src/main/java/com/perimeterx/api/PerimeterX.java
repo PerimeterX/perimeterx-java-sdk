@@ -179,7 +179,7 @@ public class PerimeterX {
             }
             logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_NO_COOKIE);
 
-            boolean cookieVerified = cookieValidator.verify(this.configuration, context);
+            boolean cookieVerified = cookieValidator.verify(context);
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
             if (cookieVerified) {

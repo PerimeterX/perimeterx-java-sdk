@@ -33,7 +33,7 @@ public class CookieErrorsTest {
         request = new MockHttpServletRequest();
         ipProvider = new RemoteAddressIPProvider();
         hostnameProvider = new DefaultHostnameProvider();
-        this.cookieValidator = PXCookieValidator.getDecoder("cookie_token");
+        this.cookieValidator = new PXCookieValidator(pxConfiguration);
         this.pxConfiguration = new PXConfiguration.Builder()
                 .cookieKey("COOKIE_KEY_STRING_MOBILE")
                 .appId("APP_ID")
@@ -48,7 +48,7 @@ public class CookieErrorsTest {
         String pxCookie = "1";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
 
         assertEquals(false, verify);
         assertEquals("mobile_error_1", context.getS2sCallReason());
@@ -59,7 +59,7 @@ public class CookieErrorsTest {
         String pxCookie = "2";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify( context);
 
         assertEquals(false, verify );
         assertEquals("mobile_error_2", context.getS2sCallReason());
@@ -70,7 +70,7 @@ public class CookieErrorsTest {
         String pxCookie = "3";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
 
         assertEquals(false, verify);
         assertEquals("mobile_error_3", context.getS2sCallReason());

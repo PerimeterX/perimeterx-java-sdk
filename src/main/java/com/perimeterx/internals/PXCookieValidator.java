@@ -19,17 +19,16 @@ import org.apache.commons.lang3.StringUtils;
  * <p>
  * Created by shikloshi on 07/07/2016.
  */
-public class PXCookieValidator {
+public class PXCookieValidator implements PXVerifier{
 
     private static final PXLogger logger = PXLogger.getLogger(PXCookieValidator.class);
 
-    public static PXCookieValidator getDecoder(String cookieKey) throws PXException {
-        try {
-            PXCookieValidator cookieValidator = new PXCookieValidator();
-            return cookieValidator;
-        } catch (Exception e) {
-            throw new PXException(e);
-        }
+    private PXConfiguration pxConfiguration;
+
+
+
+    public PXCookieValidator (PXConfiguration pxConfiguration) {
+        this.pxConfiguration = pxConfiguration;
     }
 
     /**
@@ -38,19 +37,19 @@ public class PXCookieValidator {
      * @param context - request context, data from cookie will be populated
      * @return S2S call reason according to the result of cookie verification
      */
-    public boolean verify(final PXConfiguration pxConfiguration, final PXContext context) {
+    public boolean verify( PXContext context) {
         AbstractPXCookie pxCookie = null;
 
         try {
             boolean isErrorCookie = false;
             String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
             if (context.isMobileToken()) {
-                PXCookieOriginalTokenValidator mobileValidator = new PXCookieOriginalTokenValidator();
+                PXCookieOriginalTokenValidator mobileValidator = new PXCookieOriginalTokenValidator(pxConfiguration);
                 isErrorCookie = mobileValidator.isErrorMobileHeader(authHeader);
                 String originalToken = context.getOriginalToken();
                 if(!StringUtils.isEmpty(originalToken)){
                     context.setDeserializeFromOriginalToken(true);
-                    mobileValidator.verify(pxConfiguration, context);
+                    mobileValidator.verify(context);
                 }
             }
             if (isErrorCookie){

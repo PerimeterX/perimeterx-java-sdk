@@ -37,8 +37,8 @@ public abstract class AbstractPXCookie implements PXCookie {
 
     public AbstractPXCookie(PXConfiguration pxConfiguration, CookieData cookieData) {
         this.mapper = new ObjectMapper();
-        this.pxConfiguration = pxConfiguration;
         this.pxCookie = cookieData.getCookie();
+        this.pxConfiguration = pxConfiguration;
         this.userAgent = cookieData.isMobileToken() ? "" : cookieData.getUserAgent();
         this.ip = cookieData.getIp();
         this.cookieKey = pxConfiguration.getCookieKey();

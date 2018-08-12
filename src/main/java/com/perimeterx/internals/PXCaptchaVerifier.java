@@ -35,7 +35,7 @@ public class PXCaptchaVerifier  implements PXVerifier{
      * @return true if captcha is valid, false if not
      * @throws PXException
      */
-    public boolean verify(PXContext context) throws PXException {
+    public boolean verify( PXContext context) throws PXException {
         if (captchaCookieIsEmpty(context.getPxCaptcha())) {
             return false;
         }

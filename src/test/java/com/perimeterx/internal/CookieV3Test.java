@@ -37,7 +37,7 @@ public class CookieV3Test {
         request = new MockHttpServletRequest();
         ipProvider = new RemoteAddressIPProvider();
         hostnameProvider = new DefaultHostnameProvider();
-        this.cookieValidator = PXCookieValidator.getDecoder("cookie_token");
+        this.cookieValidator = new PXCookieValidator(pxConfiguration);
         this.pxConfiguration = new PXConfiguration.Builder()
                 .cookieKey("COOKIE_KEY_STRING")
                 .appId("APP_ID")
@@ -48,7 +48,7 @@ public class CookieV3Test {
     @Test
     public void testCookieV3FailOnNoCookie() {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        cookieValidator.verify(pxConfiguration, context);
+        cookieValidator.verify(context);
         assertEquals(S2SCallReason.NO_COOKIE.name(), context.getS2sCallReason());
     }
 
@@ -58,7 +58,7 @@ public class CookieV3Test {
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
         assertTrue(verify);
     }
 
@@ -76,7 +76,7 @@ public class CookieV3Test {
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, configuration);
         assertTrue(this.context.isSensitiveRoute());
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
         assertFalse(verify);
         assertEquals(S2SCallReason.SENSITIVE_ROUTE.name(), context.getS2sCallReason());
     }
@@ -92,7 +92,7 @@ public class CookieV3Test {
                 .build();
 
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
         assertFalse(verify);
         assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
     }
@@ -103,7 +103,7 @@ public class CookieV3Test {
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
 
         assertFalse(verify);
         assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
@@ -115,7 +115,7 @@ public class CookieV3Test {
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
 
         assertFalse(verify);
         assertEquals(S2SCallReason.COOKIE_EXPIRED.name(), context.getS2sCallReason());
@@ -127,7 +127,7 @@ public class CookieV3Test {
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
 
         assertTrue(verify);
         assertEquals(BlockReason.COOKIE, context.getBlockReason());
@@ -139,7 +139,7 @@ public class CookieV3Test {
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify(pxConfiguration, context);
+        boolean verify = cookieValidator.verify(context);
 
         assertTrue(verify);
         assertEquals(context.getBlockReason(), BlockReason.NONE);
