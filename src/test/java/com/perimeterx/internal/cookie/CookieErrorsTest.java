@@ -1,4 +1,4 @@
-package com.perimeterx.internal;
+package com.perimeterx.internal.cookie;
 
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
