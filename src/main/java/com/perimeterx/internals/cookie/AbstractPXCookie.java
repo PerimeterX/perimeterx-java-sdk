@@ -25,6 +25,8 @@ public abstract class AbstractPXCookie implements PXCookie {
 
     private static final int KEY_LEN = 32;
     private static final String HMAC_SHA_256 = "HmacSHA256";
+
+    private String cookieVersion;
     protected String ip;
 
     protected String userAgent;
@@ -34,23 +36,31 @@ public abstract class AbstractPXCookie implements PXCookie {
     protected String pxCookie;
     protected JsonNode decodedCookie;
     protected String cookieKey;
+    protected String cookieOrig;
 
     public AbstractPXCookie(PXConfiguration pxConfiguration, CookieData cookieData) {
         this.mapper = new ObjectMapper();
-        this.pxCookie = cookieData.getCookie();
+        this.pxCookie = cookieData.getPxCookie();
+        this.cookieOrig = cookieData.getCookieOrig();
         this.pxConfiguration = pxConfiguration;
         this.userAgent = cookieData.isMobileToken() ? "" : cookieData.getUserAgent();
         this.ip = cookieData.getIp();
         this.cookieKey = pxConfiguration.getCookieKey();
+        this.cookieVersion = cookieData.getCookieVersion();
     }
 
     public String getPxCookie() {
         return pxCookie;
     }
 
-    public void setPxCookie(String pxCookie) {
-        this.pxCookie = pxCookie;
+    public String getCookieOrig() {
+        return cookieOrig;
     }
+
+    public String getCookieVersion() {
+        return cookieVersion;
+    }
+
 
     public JsonNode getDecodedCookie() {
         return decodedCookie;

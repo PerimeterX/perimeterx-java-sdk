@@ -46,10 +46,9 @@ public class PXCookieOriginalTokenValidatorTest {
     @Test
     public void testPxCookieOriginalTokenValidatorWithOriginalToken(){
         MockHttpServletRequest request = new MockHttpServletRequest();
-        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_HEADER, Constants.MOBILE_ERROR_NO_CONNECTION);
+        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, Constants.MOBILE_ERROR_NO_CONNECTION);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, encodedPayload);
         PXContext pxContext = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        pxContext.setDeserializeFromOriginalToken(true);
         this.pxCookieOriginalTokenValidator.verify( pxContext);
         Assert.assertEquals(pxContext.getOriginalToken(), encodedPayload);
         Assert.assertEquals(pxContext.getVid(),"84f7db40-9592-11e8-a7b3-5319fb36a9bf");
@@ -60,13 +59,12 @@ public class PXCookieOriginalTokenValidatorTest {
     @Test
     public void testPxCookieOriginalTokenValidatorBadOriginalToken(){
         MockHttpServletRequest request = new MockHttpServletRequest();
-        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_HEADER, Constants.MOBILE_ERROR_NO_CONNECTION);
+        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, Constants.MOBILE_ERROR_NO_CONNECTION);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, badXAuthorizationToken);
         PXContext pxContext = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        pxContext.setDeserializeFromOriginalToken(true);
         this.pxCookieOriginalTokenValidator = new PXCookieOriginalTokenValidator(pxConfiguration);
         pxCookieOriginalTokenValidator.verify( pxContext);
-        Assert.assertEquals(pxContext.getOriginalToken(), badXAuthorizationToken);
+        Assert.assertEquals(badXAuthorizationToken, pxContext.getOriginalToken());
         Assert.assertNull(pxContext.getVid());
         Assert.assertNull(pxContext.getOriginalUuid());
         Assert.assertNull(pxContext.getDecodedOriginalToken());

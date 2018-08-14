@@ -1,8 +1,7 @@
 package com.perimeterx.internals;
 
 import com.perimeterx.internals.cookie.AbstractPXCookie;
-import com.perimeterx.internals.cookie.CookieData;
-import com.perimeterx.internals.cookie.PXCookieFactory;
+import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
@@ -22,33 +21,17 @@ public class PXCookieOriginalTokenValidator implements PXVerifier{
     }
 
     /**
-     * Verify original cookie and set vid, uuid, score on context
+     * Verify original cookieOrig and set vid, uuid, score on context
      *
-     * @param context - request context, data from cookie will be populated
+     * @param context - request context, data from cookieOrig will be populated
      */
     public boolean verify(PXContext context) {
         try {
-            CookieData cookieData = CookieData.builder().ip(context.getIp())
-                    .mobileToken(context.isMobileToken())
-                    .pxCookies(context.getPxCookies())
-                    .userAgent(context.getUserAgent())
-                    .cookie(context.getPxOriginalTokenCookie())
-                    .build();
-            AbstractPXCookie originalCookie = PXCookieFactory.create(pxConfiguration, cookieData);
-            logger.debug("Original token found, Evaluating");
 
-            if (originalCookie == null ) {
-                logger.debug("Original token is null");
-                context.setOriginalTokenError("original_token_missing");
+            AbstractPXCookie originalCookie  = CookieSelector.selectOriginalTokens(context, pxConfiguration);
+            if (!StringUtils.isEmpty(context.getOriginalTokenError()) || originalCookie == null){
                 return false;
             }
-
-            if (!originalCookie.deserialize()) {
-                logger.debug("Original token decryption failed, value: " + context.getOriginalToken());
-                context.setOriginalTokenError("decryption_failed");
-                return false;
-            }
-
             String decodedOriginalCookie = originalCookie.getDecodedCookie().toString();
             context.setDecodedOriginalToken(decodedOriginalCookie);
             if (context.getVid() == null) {
@@ -67,10 +50,22 @@ public class PXCookieOriginalTokenValidator implements PXVerifier{
             return false;
         }
         return true;
-
     }
 
-    public boolean isErrorMobileHeader(String authHeader) {
+    private boolean isErrorMobileHeader(String authHeader) {
         return StringUtils.isNumeric(authHeader) && authHeader.length() == 1;
+    }
+
+    public String getMobileError(PXContext context) {
+        String mobileError = "";
+        RawCookieData tokensCookie = context.getTokensCookie();
+        RawCookieData authCookie = context.getAuthCookie();
+        if (tokensCookie != null && isErrorMobileHeader(tokensCookie.getSelectedCookie())){
+            mobileError = tokensCookie.getSelectedCookie();
+        }
+        else if (authCookie != null && isErrorMobileHeader(authCookie.getSelectedCookie())){
+            mobileError = authCookie.getSelectedCookie();
+        }
+        return mobileError;
     }
 }

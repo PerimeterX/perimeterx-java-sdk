@@ -3,6 +3,10 @@ package com.perimeterx.models;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
+import com.perimeterx.internals.cookie.RawCookieData;
+import com.perimeterx.internals.cookie.cookieparsers.CookieHeaderParser;
+import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
+import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.CustomParameters;
@@ -12,12 +16,12 @@ import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +30,7 @@ import java.util.Set;
  * <p>
  * Created by shikloshi on 03/07/2016.
  */
+@Data
 public class PXContext {
 
     private static final PXLogger logger = PXLogger.getLogger(PXContext.class);
@@ -35,19 +40,6 @@ public class PXContext {
      */
     private final HttpServletRequest request;
 
-    /**
-     * Indicates to the pxCookieFactory which cookie to create, the current or the original
-     * */
-    private boolean deserializeFromOriginalToken = false;
-
-    /**
-     * PerimeterX cookies - _px$cookie_version$, _pxCaptcha.
-     */
-    private Map<String,String> pxCookies;
-
-    /**
-     * Original _px cookie
-     */
     private String pxCookieOrig;
 
     /**
@@ -174,6 +166,12 @@ public class PXContext {
      * The original token sent from the mobile sdk, prior to the last request received.
      * */
     private String originalToken;
+    private RawCookieData authCookie;
+    private RawCookieData originalTokenCookie;
+    private RawCookieData tokensCookie;
+    private RawCookieData originalTokensCookie;
+    private RawCookieData headerCookie;
+    private String cookieVersion;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -188,14 +186,13 @@ public class PXContext {
     private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
         this.headers = PXCommonUtils.getHeadersFromRequest(request);
 
-        if (headers.containsKey(Constants.MOBILE_SDK_HEADER)) {
+        if (headers.containsKey(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) || headers.containsKey(Constants.MOBILE_SDK_TOKENS_HEADER)) {
             logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
             this.isMobileToken = true;
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
-        String cookie = isMobileToken ? request.getHeader(Constants.MOBILE_SDK_HEADER) : request.getHeader(Constants.COOKIE_ORIGIN);
-        extractCookies(request, cookie);
-        this.pxCookieOrig = getRawCookie();
+        parseCookies(request, isMobileToken);
+        String cookie = isMobileToken ? request.getHeader(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) : request.getHeader(Constants.COOKIE_ORIGIN);
         final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
         if (pxCaptchaCookie != null) {
             this.pxCaptcha = pxCaptchaCookie;
@@ -222,25 +219,55 @@ public class PXContext {
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
     }
 
-    private void extractCookies(HttpServletRequest request, String cookie) {
+
+    private void parseCookies(HttpServletRequest request, boolean isMobileToken) {
+        HeaderParser headerParser = new CookieHeaderParser();
         if (isMobileToken){
-            this.pxCookies = extractPXMobileCookie(cookie);
-            this.originalToken = extractOriginalToken(request);
-            if (!StringUtils.isEmpty(originalToken)){
-                this.originalTokenCookies = extractPXMobileCookie(this.originalToken);
+            headerParser = new MobileCookieHeaderParser();
+            String authCookieHeader = request.getHeader(Constants.MOBILE_SDK_AUTHORIZATION_HEADER);
+            if (!StringUtils.isEmpty(authCookieHeader)){
+                this.authCookie = headerParser.createRawCookieData(authCookieHeader);
             }
+            String originalTokenHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
+            if (!StringUtils.isEmpty(originalTokenHeader)){
+                this.originalTokenCookie = headerParser.createRawCookieData(originalTokenHeader);
+            }
+            String tokensHeader = request.getHeader(Constants.MOBILE_SDK_TOKENS_HEADER);
+            if (!StringUtils.isEmpty(tokensHeader)){
+                this.tokensCookie = headerParser.createRawCookieData(tokensHeader);
+            }
+            String originalTokensHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER);
+            if (!StringUtils.isEmpty(originalTokensHeader)){
+                this.originalTokensCookie = headerParser.createRawCookieData(originalTokensHeader);
+            }
+            handleMobileErrorHeader();
         }
         else {
-            this.pxCookies = extractPXCookies(cookie);
+            String originalTokensHeader = request.getHeader(Constants.COOKIE_ORIGIN);
+            if (!StringUtils.isEmpty(originalTokensHeader)){
+                this.headerCookie = headerParser.createRawCookieData(originalTokensHeader);
+            }
         }
     }
 
-    private String extractOriginalToken(HttpServletRequest request) {
-        String originalCookie = null;
-        if (headers.containsKey(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER)){
-            originalCookie = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
+    private void handleMobileErrorHeader() {
+        setVersionForMobileErrorMesage(authCookie, originalTokenCookie);
+        setVersionForMobileErrorMesage(tokensCookie, originalTokensCookie);
+    }
+
+    private void setVersionForMobileErrorMesage(RawCookieData tokenCookie, RawCookieData originalTokenCookie) {
+        if( tokenCookie != null && originalTokenCookie != null && isErrorMobileHeader(tokenCookie.getSelectedCookie())){
+            Map<String, String> cookieMap = new HashMap<>();
+            Iterator<String> keyIter = originalTokenCookie.getCookieMap().keySet().iterator();
+            if (keyIter.hasNext()){
+                cookieMap.put(keyIter.next(), tokenCookie.getSelectedCookie());
+                tokenCookie.setCookieMap(cookieMap);
+            }
         }
-        return originalCookie;
+    }
+
+    private boolean isErrorMobileHeader(String authHeader) {
+        return StringUtils.isNumeric(authHeader) && authHeader.length() == 1;
     }
 
     public String getPxOriginalTokenCookie() {
@@ -266,174 +293,11 @@ public class PXContext {
         return cookieValue;
     }
 
-    private Map<String, String> extractPXCookies(String cookie) {
-        Map<String, String> cookieValue = new HashMap<>();
-        if (!StringUtils.isEmpty(cookie)) {
-            String[] cookies = cookie.split(";\\s?");
-            for (String c : cookies) {
-                String[] splicedCookie = c.split("=", 2);
-                String cookiePayload;
-                try {
-                	cookiePayload = URLDecoder.decode(splicedCookie[1], "UTF-8").replaceAll(" ", "+");
-                } catch (UnsupportedEncodingException e) {
-                	cookiePayload = splicedCookie[1];
-                }
-                switch (splicedCookie[0]) {
-                    case Constants.COOKIE_V1_KEY:
-                        cookieValue.put(Constants.COOKIE_V1_KEY, cookiePayload);
-                        break;
-                    case Constants.COOKIE_V3_KEY:
-                        cookieValue.put(Constants.COOKIE_V3_KEY, cookiePayload);
-                        break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    private Map<String, String> extractPXMobileCookie(String cookieString) {
-        Map<String, String> cookieMap = new HashMap<>();
-        String[] cookieParts;
-        String cookieFirstPart;
-        String cookieVersion;
-
-        if (cookieString != null && !cookieString.isEmpty()) {
-            cookieParts = cookieString.split(Constants.COOKIE_EXTRACT_DELIMITER_MOBILE, 2);
-            cookieFirstPart = cookieParts[0];
-
-            //Mobile Error
-            if (cookieParts.length == 1) {
-                cookieMap.put(Constants.COOKIE_V3_KEY, cookieFirstPart);
-            }
-            //Mobile cookie
-            else if (cookieParts.length == 2) {
-                cookieVersion = AbstractPXCookie.getMobileCookieVersion(cookieParts[0]);
-                cookieMap.put(cookieVersion, cookieParts[1]);
-            }
-        }
-
-        return cookieMap;
-    }
-
-    public String getRawCookie() {
-        return pxCookies.containsKey(Constants.COOKIE_V3_KEY) ? pxCookies.get(Constants.COOKIE_V3_KEY) : pxCookies.get(Constants.COOKIE_V1_KEY);
-    }
-
-    public String getCookieVersion() {
-        return pxCookies.isEmpty() ? null : (pxCookies.containsKey(Constants.COOKIE_V3_KEY)? Constants.COOKIE_V3_KEY: Constants.COOKIE_V1_KEY);
-    }
-
-    public Map<String, String> getPxCookies() {
-        return pxCookies;
-    }
-
-    public String getPxCaptcha() {
-        return pxCaptcha;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public String getVid() {
-        return vid;
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public String getFullUrl() {
-        return fullUrl;
-    }
-
-    public String getS2sCallReason() {
-        return s2sCallReason;
-    }
-
-    public void setS2sCallReason(String callReason) {
-        this.s2sCallReason = callReason;
-    }
-
-    public BlockReason getBlockReason() {
-        return blockReason;
-    }
-
-    public void setBlockReason(BlockReason blockReason) {
-        this.blockReason = blockReason;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public String getHttpMethod() {
-        return httpMethod;
-    }
-
-    public String getHttpVersion() {
-        return httpVersion;
-    }
-
-    public void setRiskScore(int riskScore) {
-        this.riskScore = riskScore;
-    }
-
-    public void setVid(String vid) {
-        this.vid = vid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public int getRiskScore() {
-        return this.riskScore;
-    }
 
     public void setRiskCookie(AbstractPXCookie riskCookie) {
         this.riskCookie = riskCookie.getDecodedCookie().toString();
     }
 
-    public String getRiskCookie() {
-        return riskCookie;
-    }
-
-    public HttpServletRequest getRequest() {
-        return request;
-    }
-
-    public String getAppId() {
-        return appId;
-    }
-
-    public String getPxCookieOrig() {
-        return pxCookieOrig;
-    }
-
-    public PassReason getPassReason() {
-        return this.passReason;
-    }
-
-    public void setPassReason(PassReason passReason) {
-        this.passReason = passReason;
-    }
-
-    public void setPxCookieOrig(String pxCookieOrig) {
-        this.pxCookieOrig = pxCookieOrig;
-    }
 
     public void setBlockAction(String blockAction) {
         switch (blockAction) {
@@ -452,29 +316,6 @@ public class PXContext {
         }
     }
 
-    public BlockAction getBlockAction() {
-        return this.blockAction;
-    }
-
-    public void setCookieHmac(String cookieHmac) {
-        this.cookieHmac = cookieHmac;
-    }
-
-    public String getCookieHmac() {
-        return this.cookieHmac;
-    }
-
-    public boolean isSensitiveRoute(){
-        return this.sensitiveRoute;
-    }
-
-    public long getRiskRtt() {
-        return this.riskRtt;
-    }
-
-    public void setRiskRtt(long riskRtt) {
-        this.riskRtt = riskRtt;
-    }
 
     /**
      * Check if request is verified or not
@@ -511,10 +352,6 @@ public class PXContext {
         return !verified || firstPartyRequest;
     }
 
-    public void setVerified(boolean verified) {
-        this.verified = verified;
-    }
-
     private boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri) {
         for (String sensitiveRoutePrefix : sensitiveRoutes) {
             if (uri.startsWith(sensitiveRoutePrefix)) {
@@ -524,97 +361,12 @@ public class PXContext {
         return false;
     }
 
-    public void setMadeS2SApiCall(boolean flag) {
-        this.madeS2SApiCall = flag;
-    }
-
-    public boolean isMadeS2SApiCall(){
-        return this.madeS2SApiCall;
-    }
-
-    public String getBlockActionData() {
-        return blockActionData;
-    }
-
-    public void setBlockActionData(String blockActionData) {
-        this.blockActionData = blockActionData;
-    }
-
-    public String getCookieOrigin() {
-        return cookieOrigin;
-    }
-
-    public boolean isMobileToken() {
-        return isMobileToken;
-    }
-
     public String getCollectorURL() {
         return String.format("%s%s%s", Constants.API_COLLECTOR_PREFIX, appId, Constants.API_COLLECTOR_POSTFIX);
     }
 
-    public CustomParameters getCustomParameters() {
-        return customParameters;
-    }
 
-    public void setCustomParameters(CustomParameters customParameters) {
-        this.customParameters = customParameters;
-    }
-
-    /**
-     * Check if PerimeterX treated the request as first partyta,
-     * @return true if response was hadled by PerimeterX module
-     */
-    public boolean isFirstPartyRequest() {
-        return firstPartyRequest;
-    }
-
-    public void setFirstPartyRequest(boolean firstPartyRequest) {
-        this.firstPartyRequest = firstPartyRequest;
-    }
-
-    public PXConfiguration getPxConfiguration() {
-        return pxConfiguration;
-    }
-
-
-    public void setOriginalTokenError(String originalTokenError){
-        this.originalTokenError = originalTokenError;
-    }
-
-    public void setDeserializeFromOriginalToken(boolean deserializeFromOriginalToken){
-        this.deserializeFromOriginalToken = deserializeFromOriginalToken;
-    }
-
-    public boolean shouldDeserializeFromOriginalToken() {
-        return deserializeFromOriginalToken;
-    }
-
-
-    public void setDecodedOriginalToken(String decodedOriginalToken) {
-        this.decodedOriginalToken = decodedOriginalToken;
-    }
-
-    public void setOriginalUuid(String originalUuid) {
-        this.originalUuid = originalUuid;
-    }
-
-    public Map<String, String> getOriginalTokenCookies() {
-        return originalTokenCookies;
-    }
-
-    public String getOriginalUuid() {
-        return originalUuid;
-    }
-
-    public String getOriginalTokenError() {
-        return originalTokenError;
-    }
-
-    public String getDecodedOriginalToken() {
-        return decodedOriginalToken;
-    }
-
-    public String getOriginalToken() {
-        return originalToken;
+    public void setCookieVersion(String cookieVersion) {
+        this.cookieVersion = cookieVersion;
     }
 }

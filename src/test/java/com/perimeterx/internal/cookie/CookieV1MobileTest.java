@@ -52,7 +52,7 @@ public class CookieV1MobileTest {
         String pxCookie = "1:eGPYisZ+3qU=:1000:645M2JJ5rYzdSh0T3S6fgtBcHATlIx+A021RUKQpMdr/csetstQJ0/LmAv7HU+gi2Jzd9L47sGGnaCzzcBxbgVd3bwE1dOpKraxwW7iOJ9MGVtlndG8TY5Yvx5mOJFF6Z7Kif1XoicYwNFdPht+KuOoQY8LO51TR4r7b2+OycfvlIKQSVgh41p4SARDbKbFtUM+3VLCoLrYKJT+qq/8a993aZnXlfSc9kqKj89EqS9mz4b7CRhoeVGpMfvDxTFcMicV3AEPlQCdFGUkZonr+yQ==";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        assertEquals(true, this.context.isMobileToken());
+        assertTrue(this.context.isMobileToken());
     }
 
 
@@ -62,7 +62,7 @@ public class CookieV1MobileTest {
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(context);
-        assertEquals(true, verify);
+        assertTrue(verify);
     }
 
     @Test

@@ -1,8 +1,6 @@
 package com.perimeterx.internals;
 
 import com.perimeterx.internals.cookie.AbstractPXCookie;
-import com.perimeterx.internals.cookie.CookieData;
-import com.perimeterx.internals.cookie.PXCookieFactory;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
@@ -10,7 +8,6 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
-import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,50 +29,34 @@ public class PXCookieValidator implements PXVerifier{
     }
 
     /**
-     * Verify cookie and set vid, uuid, score on context
+     * Verify cookieOrig and set vid, uuid, score on context
      *
-     * @param context - request context, data from cookie will be populated
-     * @return S2S call reason according to the result of cookie verification
+     * @param context - request context, data from cookieOrig will be populated
+     * @return S2S call reason according to the result of cookieOrig verification
      */
     public boolean verify( PXContext context) {
         AbstractPXCookie pxCookie = null;
 
         try {
-            boolean isErrorCookie = false;
-            String authHeader = context.getHeaders().get(Constants.MOBILE_SDK_HEADER);
+            String mobileError;
             if (context.isMobileToken()) {
-                PXCookieOriginalTokenValidator mobileValidator = new PXCookieOriginalTokenValidator(pxConfiguration);
-                isErrorCookie = mobileValidator.isErrorMobileHeader(authHeader);
-                String originalToken = context.getOriginalToken();
-                if(!StringUtils.isEmpty(originalToken)){
-                    context.setDeserializeFromOriginalToken(true);
-                    mobileValidator.verify(context);
+                PXCookieOriginalTokenValidator mobileVerifier = new PXCookieOriginalTokenValidator(pxConfiguration);
+                mobileError = mobileVerifier.getMobileError(context);
+                mobileVerifier.verify(context);
+                if (!StringUtils.isEmpty(mobileError)){
+                    context.setS2sCallReason("mobile_error_" + mobileError);
+                    return false;
                 }
+                pxCookie = CookieSelector.selectFromTokens(context, pxConfiguration);
             }
-            if (isErrorCookie){
-                context.setS2sCallReason("mobile_error_" + authHeader);
+            else{
+                pxCookie = CookieSelector.selectFromHeader(context, pxConfiguration);
+            }
+            if (ifLegitPxCookie(context) || pxCookie == null){
                 return false;
             }
-            CookieData cookieData = CookieData.builder().ip(context.getIp())
-                    .mobileToken(context.isMobileToken())
-                    .pxCookies(context.getPxCookies())
-                    .userAgent(context.getUserAgent())
-                    .cookie(context.getRawCookie())
-                    .build();
-
-            pxCookie = PXCookieFactory.create(pxConfiguration, cookieData);
-            if (pxCookie == null) {
-                context.setS2sCallReason(S2SCallReason.NO_COOKIE.name());
-                return false;
-            }
-
-            // In case pxCookie will be modified from the outside extracting the cookie on the constructor
-            // will fail, we test for null for the cookie before, if its null then we want to set pxCookieOrig
-            if (pxCookie.getPxCookie() == null || !pxCookie.deserialize()) {
-                context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION.name());
-                return false;
-            }
-
+            context.setPxCookieOrig(pxCookie.getCookieOrig());
+            context.setCookieVersion(pxCookie.getCookieVersion());
             context.setRiskCookie(pxCookie);
             context.setVid(pxCookie.getVID());
             context.setUuid(pxCookie.getUUID());
@@ -113,6 +94,10 @@ public class PXCookieValidator implements PXVerifier{
             context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION.name());
             return false;
         }
+    }
+
+    private boolean ifLegitPxCookie(PXContext context) {
+        return S2SCallReason.INVALID_DECRYPTION.name().equals(context.getS2sCallReason()) || S2SCallReason.NO_COOKIE.name().equals(context.getS2sCallReason());
     }
 
 

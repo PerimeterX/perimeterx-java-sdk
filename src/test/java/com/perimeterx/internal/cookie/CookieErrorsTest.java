@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Created by saar shtalryd on 11/01/2018.
@@ -50,7 +51,7 @@ public class CookieErrorsTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(context);
 
-        assertEquals(false, verify);
+        assertFalse(verify);
         assertEquals("mobile_error_1", context.getS2sCallReason());
     }
 
@@ -61,7 +62,7 @@ public class CookieErrorsTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify( context);
 
-        assertEquals(false, verify );
+        assertFalse(verify);
         assertEquals("mobile_error_2", context.getS2sCallReason());
     }
 
@@ -72,7 +73,7 @@ public class CookieErrorsTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         boolean verify = cookieValidator.verify(context);
 
-        assertEquals(false, verify);
+        assertFalse(verify);
         assertEquals("mobile_error_3", context.getS2sCallReason());
     }
 }
