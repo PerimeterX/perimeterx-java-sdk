@@ -21,7 +21,9 @@ public class CookieSelector {
 
     private static final PXLogger logger = PXLogger.getLogger(CookieSelector.class);
 
-
+    /**
+     * @param context - This context should contain the authorization header cookie and/or tokens header
+     * */
     public static AbstractPXCookie selectFromTokens(PXContext context, PXConfiguration pxConfiguration) throws PXException, PXCookieDecryptionException {
         AbstractPXCookie result = null;
         S2SCallReason s2SCallReason = null;
@@ -55,6 +57,9 @@ public class CookieSelector {
         return result;
     }
 
+    /**
+     * @param context - This context should contain the cookie header
+     * */
     public static AbstractPXCookie selectFromHeader(PXContext context, PXConfiguration pxConfiguration) throws PXCookieDecryptionException, PXException {
         RawCookieData cookierHeader = context.getHeaderCookie();
         AbstractPXCookie selectedCookie = null;

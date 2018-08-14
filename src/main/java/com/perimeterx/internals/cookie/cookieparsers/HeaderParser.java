@@ -14,7 +14,9 @@ public abstract class HeaderParser {
 
     protected abstract void addCookie(String cookie, Map<String, String> cookieMap);
 
-
+    /**
+     * @param cookieHeader Should contain the cookie that needs to be parsed into RawCookieData
+     * */
     public RawCookieData createRawCookieData(String cookieHeader){
         RawCookieData rawCookieData = new RawCookieData();
         rawCookieData.setSelectedCookie(cookieHeader);
