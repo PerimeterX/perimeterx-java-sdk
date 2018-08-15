@@ -171,7 +171,7 @@ public class PerimeterX {
             Cookie cookie = new Cookie(Constants.COOKIE_CAPTCHA_KEY, StringUtils.EMPTY);
             cookie.setMaxAge(0);
             responseWrapper.addCookie(cookie);
-            verifyCookie(context);
+            handleCookies(context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
             logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION,  e.getMessage());
@@ -185,7 +185,7 @@ public class PerimeterX {
         return context;
     }
 
-    private void verifyCookie(PXContext context) throws Exception {
+    private void handleCookies(PXContext context) throws Exception {
         if (captchaValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_COOKIE_FOUND);
             return;

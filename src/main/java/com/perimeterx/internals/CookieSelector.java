@@ -23,6 +23,7 @@ public class CookieSelector {
 
     /**
      * @param context - This context should contain the authorization header cookie and/or tokens header
+     * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with
      * */
     public static AbstractPXCookie selectFromTokens(PXContext context, PXConfiguration pxConfiguration) throws PXException, PXCookieDecryptionException {
         AbstractPXCookie result = null;
@@ -37,13 +38,13 @@ public class CookieSelector {
             if (context.getPxCookieOrig() == null){
                 context.setPxCookieOrig(tokenCookie.getSelectedCookie());
             }
-            Set<String> cookieKeys = tokenCookie.getCookieMap().keySet();
-            Iterator<String> versionsIter = cookieKeys.iterator();
-            if(versionsIter.hasNext()){
+            Set <String> cookieKeys = tokenCookie.getCookieMap().keySet();
+            Iterator <String> versionsIter = cookieKeys.iterator();
+            if (versionsIter.hasNext()){
                 String cookieVersion = versionsIter.next();
                 AbstractPXCookie selectedCookie = parseCookieFromCookieMap(context,pxConfiguration,tokenCookie.getCookieMap(),cookieVersion);
                 s2SCallReason = evaluateCookie(selectedCookie);
-                if(s2SCallReason == null){
+                if (s2SCallReason == null){
                     result = selectedCookie;
                 }
             }
@@ -59,6 +60,7 @@ public class CookieSelector {
 
     /**
      * @param context - This context should contain the cookie header
+     * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with
      * */
     public static AbstractPXCookie selectFromHeader(PXContext context, PXConfiguration pxConfiguration) throws PXCookieDecryptionException, PXException {
         RawCookieData cookierHeader = context.getHeaderCookie();
@@ -77,6 +79,10 @@ public class CookieSelector {
         return selectedCookie;
     }
 
+    /**
+     * @param context - This context should contain the cookie header
+     * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with
+     * */
     public static AbstractPXCookie selectOriginalTokens(PXContext context, PXConfiguration pxConfiguration) throws PXCookieDecryptionException, PXException {
         AbstractPXCookie result = null;
         String errorMessage = null;
