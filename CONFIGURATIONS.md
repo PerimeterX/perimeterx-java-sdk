@@ -36,9 +36,7 @@ Directives
 |ipHeaders|List of headers to extract the user ip from, if not set, it will be taken from default|Empty List|Set<String>|Use with `CombinedIPProvider`|
 |firstPartyEnabled|Toggle first party requests enabled|true|boolean|Read more details about first pary integration [here](#first-party-integration)|
 |xhrFirstPartyEnabled|Toggle first party XHR requests will be forwarded to PerimeterX servers|true|boolean| |
-|useProxy|The http client shall use a proxy for message forwarding|boolean| |
-|proxyHost|The proxy's host name|String|
-|proxyPort|The proxy's port|int|
+
 
 ## <a name="interfaces"></a> Interfaces
 `perimeterx-java-sdk` can be tuned and set a different type of interface in order to make the module more flexible
