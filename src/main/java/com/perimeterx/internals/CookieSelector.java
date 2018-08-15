@@ -25,7 +25,7 @@ public class CookieSelector {
      * @param context - This context should contain the authorization header cookie and/or tokens header
      * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with
      * */
-    public static AbstractPXCookie selectFromTokens(PXContext context, PXConfiguration pxConfiguration) throws PXException, PXCookieDecryptionException {
+    public static AbstractPXCookie selectFromTokens(PXContext context, PXConfiguration pxConfiguration) throws PXException {
         AbstractPXCookie result = null;
         S2SCallReason s2SCallReason = null;
         RawCookieData tokenCookie = context.getAuthCookie();
@@ -121,17 +121,22 @@ public class CookieSelector {
         return result;
     }
 
-    private static AbstractPXCookie parseCookieFromCookieMap(PXContext context, PXConfiguration pxConfiguration, Map<String, String> cookieMap, String cookieOrig) throws PXCookieDecryptionException, PXException {
+    private static AbstractPXCookie parseCookieFromCookieMap(PXContext context, PXConfiguration pxConfiguration, Map<String, String> cookieMap, String cookieOrig) throws  PXException {
         Set<String> cookieKeys = cookieMap.keySet();
         AbstractPXCookie selectedCookie = null;
         for(String cookieKey : cookieKeys){
-            String cookie = cookieMap.get(cookieKey);
-            selectedCookie = buildPxCookie(context, pxConfiguration, cookie, cookieOrig, cookieKey);
-            S2SCallReason s2SCallReason = evaluateCookie(selectedCookie);
-
-            if(s2SCallReason == null){
-                return selectedCookie;
+            try{
+                String cookie = cookieMap.get(cookieKey);
+                selectedCookie = buildPxCookie(context, pxConfiguration, cookie, cookieOrig, cookieKey);
+                S2SCallReason s2SCallReason = evaluateCookie(selectedCookie);
+                if(s2SCallReason == null){
+                    return selectedCookie;
+                }
             }
+            catch (PXCookieDecryptionException e ){
+
+            }
+
         }
         return selectedCookie;
     }
