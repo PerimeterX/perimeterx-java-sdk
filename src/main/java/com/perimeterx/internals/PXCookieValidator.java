@@ -16,7 +16,7 @@ import org.apache.commons.lang3.StringUtils;
  * <p>
  * Created by shikloshi on 07/07/2016.
  */
-public class PXCookieValidator implements PXVerifier{
+public class PXCookieValidator implements PXValidator {
 
     private static final PXLogger logger = PXLogger.getLogger(PXCookieValidator.class);
 

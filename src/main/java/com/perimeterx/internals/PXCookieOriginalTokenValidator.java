@@ -10,7 +10,7 @@ import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 
-public class PXCookieOriginalTokenValidator implements PXVerifier{
+public class PXCookieOriginalTokenValidator implements PXValidator {
 
     private static final PXLogger logger = PXLogger.getLogger(PXCookieOriginalTokenValidator.class);
 

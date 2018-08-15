@@ -19,7 +19,7 @@ import org.apache.http.conn.ConnectTimeoutException;
  * <p>
  * Created by shikloshi on 04/07/2016.
  */
-public class PXS2SValidator implements PXVerifier{
+public class PXS2SValidator implements PXValidator {
 
     private static final PXLogger logger = PXLogger.getLogger(PXS2SValidator.class);
 
