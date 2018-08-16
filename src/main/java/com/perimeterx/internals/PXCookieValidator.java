@@ -3,7 +3,6 @@ package com.perimeterx.internals;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
@@ -47,11 +46,8 @@ public class PXCookieValidator implements PXValidator {
                     context.setS2sCallReason("mobile_error_" + mobileError);
                     return false;
                 }
-                pxCookie = CookieSelector.selectFromTokens(context, pxConfiguration);
             }
-            else{
-                pxCookie = CookieSelector.selectFromHeader(context, pxConfiguration);
-            }
+            pxCookie = CookieSelector.selectFromTokens(context, pxConfiguration);
             if (ifLegitPxCookie(context) || pxCookie == null){
                 return false;
             }
@@ -89,14 +85,17 @@ public class PXCookieValidator implements PXValidator {
             context.setS2sCallReason(S2SCallReason.NONE.name());
             return true;
 
-        } catch (PXException | PXCookieDecryptionException e) {
-            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_FAILED, pxCookie);
-            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION.name());
+        } catch (PXException e) {
+            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
+            context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.name());
             return false;
         }
     }
 
     private boolean ifLegitPxCookie(PXContext context) {
+        if (StringUtils.isEmpty(context.getS2sCallReason())){
+            context.setS2sCallReason(S2SCallReason.NO_COOKIE.name());
+        }
         return S2SCallReason.INVALID_DECRYPTION.name().equals(context.getS2sCallReason()) || S2SCallReason.NO_COOKIE.name().equals(context.getS2sCallReason());
     }
 

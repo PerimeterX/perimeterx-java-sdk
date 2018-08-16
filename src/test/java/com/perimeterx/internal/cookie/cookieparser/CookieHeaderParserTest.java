@@ -5,8 +5,8 @@ import com.perimeterx.internals.cookie.cookieparsers.CookieHeaderParser;
 import com.perimeterx.utils.Constants;
 import org.testng.annotations.Test;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -22,25 +22,23 @@ public class CookieHeaderParserTest {
     @Test
     public void testCreateRawCookieDataFromCookieHeader(){
         String cookie = "_px3=" + singleCookieV3 + ";" + "_px=" + singleCookieV1;
-        Map<String, String> cookieMap = new LinkedHashMap<>();
-        cookieMap.put(Constants.COOKIE_V3_KEY,singleCookieV3);
-        cookieMap.put(Constants.COOKIE_V1_KEY, singleCookieV1);
+        List <RawCookieData> cookieList = new ArrayList<>();
+        cookieList.add(new RawCookieData(Constants.COOKIE_V3_KEY,singleCookieV3));
+        cookieList.add(new RawCookieData(Constants.COOKIE_V1_KEY, singleCookieV1));
 
-        RawCookieData rawcookiedata = cookieHeaderParser.createRawCookieData(cookie);
-        assertEquals(rawcookiedata.getSelectedCookie(), cookie);
-        assertEquals(rawcookiedata.getCookieMap(), cookieMap);
+        List<RawCookieData> rawCookieDataList = cookieHeaderParser.createRawCookieDataList(cookie);
+        assertEquals(cookieList, rawCookieDataList);
     }
 
     @Test
     public void testCreateRawCookieDataFromCookieHeaderAndFail(){
         String cookie = "_px3=" + singleCookieV3 + ";" + "px=" + singleCookieV1;
-        Map<String, String> cookieMap = new LinkedHashMap<>();
-        cookieMap.put(Constants.COOKIE_V3_KEY,singleCookieV3);
-        cookieMap.put(Constants.COOKIE_V1_KEY, singleCookieV1);
+        List <RawCookieData> cookieList = new ArrayList<>();
+        cookieList.add(new RawCookieData(Constants.COOKIE_V3_KEY,singleCookieV3));
+        cookieList.add(new RawCookieData(Constants.COOKIE_V1_KEY, singleCookieV1));
 
-        RawCookieData rawcookiedata = cookieHeaderParser.createRawCookieData(cookie);
-        assertEquals(rawcookiedata.getSelectedCookie(), cookie);
-        assertNotEquals(rawcookiedata.getCookieMap(), cookieMap);
+        List <RawCookieData> rawCookieDataList = cookieHeaderParser.createRawCookieDataList(cookie);
+        assertNotEquals(cookieList, rawCookieDataList);
     }
 
 }

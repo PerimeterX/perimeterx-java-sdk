@@ -20,8 +20,8 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -159,18 +159,14 @@ public class PXContext {
      * */
     private String originalTokenError;
     /**
-     * The original token cookies.
+     * The original token cookie.
      * */
-    private Map<String, String> originalTokenCookies;
-    /**
-     * The original token sent from the mobile sdk, prior to the last request received.
-     * */
-    private String originalToken;
-    private RawCookieData authCookie;
-    private RawCookieData originalTokenCookie;
-    private RawCookieData tokensCookie;
-    private RawCookieData originalTokensCookie;
-    private RawCookieData headerCookie;
+    private String originalTokenCookie;
+
+
+
+    private List <RawCookieData> tokens;
+    private List <RawCookieData> originalTokens;
     private String cookieVersion;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
@@ -222,60 +218,43 @@ public class PXContext {
 
     private void parseCookies(HttpServletRequest request, boolean isMobileToken) {
         HeaderParser headerParser = new CookieHeaderParser();
+        List <RawCookieData> tokens = new ArrayList<>();
+        List <RawCookieData> originalTokens = new ArrayList<>();
         if (isMobileToken){
             headerParser = new MobileCookieHeaderParser();
-            String authCookieHeader = request.getHeader(Constants.MOBILE_SDK_AUTHORIZATION_HEADER);
-            if (!StringUtils.isEmpty(authCookieHeader)){
-                this.authCookie = headerParser.createRawCookieData(authCookieHeader);
-            }
-            String originalTokenHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
-            if (!StringUtils.isEmpty(originalTokenHeader)){
-                this.originalTokenCookie = headerParser.createRawCookieData(originalTokenHeader);
-            }
+
             String tokensHeader = request.getHeader(Constants.MOBILE_SDK_TOKENS_HEADER);
-            if (!StringUtils.isEmpty(tokensHeader)){
-                this.tokensCookie = headerParser.createRawCookieData(tokensHeader);
-            }
+            tokens.addAll(headerParser.createRawCookieDataList(tokensHeader));
+
+            String authCookieHeader = request.getHeader(Constants.MOBILE_SDK_AUTHORIZATION_HEADER);
+            tokens.addAll(headerParser.createRawCookieDataList(authCookieHeader));
+
             String originalTokensHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER);
-            if (!StringUtils.isEmpty(originalTokensHeader)){
-                this.originalTokensCookie = headerParser.createRawCookieData(originalTokensHeader);
+            originalTokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
+
+            String originalTokenHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
+            originalTokens.addAll(headerParser.createRawCookieDataList(originalTokenHeader));
+
+
+            this.tokens  = tokens;
+            if (!originalTokens.isEmpty()){
+                this.originalTokens = originalTokens;
             }
-            handleMobileErrorHeader();
         }
         else {
             String originalTokensHeader = request.getHeader(Constants.COOKIE_ORIGIN);
-            if (!StringUtils.isEmpty(originalTokensHeader)){
-                this.headerCookie = headerParser.createRawCookieData(originalTokensHeader);
-            }
+            tokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
+            this.tokens = tokens;
         }
     }
 
-    private void handleMobileErrorHeader() {
-        setVersionForMobileErrorMesage(authCookie, originalTokenCookie);
-        setVersionForMobileErrorMesage(tokensCookie, originalTokensCookie);
-    }
-
-    private void setVersionForMobileErrorMesage(RawCookieData tokenCookie, RawCookieData originalTokenCookie) {
-        if( tokenCookie != null && originalTokenCookie != null && isErrorMobileHeader(tokenCookie.getSelectedCookie())){
-            Map<String, String> cookieMap = new HashMap<>();
-            Iterator<String> keyIter = originalTokenCookie.getCookieMap().keySet().iterator();
-            if (keyIter.hasNext()){
-                cookieMap.put(keyIter.next(), tokenCookie.getSelectedCookie());
-                tokenCookie.setCookieMap(cookieMap);
-            }
-        }
-    }
-
-    private boolean isErrorMobileHeader(String authHeader) {
-        return StringUtils.isNumeric(authHeader) && authHeader.length() == 1;
-    }
 
     public String getPxOriginalTokenCookie() {
-        String pxOriginalTokenCookie = null;
-        if (originalTokenCookies != null) {
-            pxOriginalTokenCookie = originalTokenCookies.containsKey(Constants.COOKIE_V3_KEY) ? originalTokenCookies.get(Constants.COOKIE_V3_KEY) : originalTokenCookies.get(Constants.COOKIE_V1_KEY);
-        }
-        return pxOriginalTokenCookie;
+        return originalTokenCookie;
+    }
+
+    public void setOriginalTokenCookie(String originalTokenCookie) {
+        this.originalTokenCookie = originalTokenCookie;
     }
 
     private String extractCookieByKey(String cookie, String key) {

@@ -1,13 +1,13 @@
 package com.perimeterx.internals.cookie;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Map;
-
 @Data
+@AllArgsConstructor
 public class RawCookieData {
 
-    Map<String, String> cookieMap;
+    String version;
 
     String selectedCookie;
 

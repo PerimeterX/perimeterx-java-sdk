@@ -1,9 +1,10 @@
 package com.perimeterx.internals.cookie.cookieparsers;
 
 
+import com.perimeterx.internals.cookie.RawCookieData;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.Map;
 
 public class CookieHeaderParser extends HeaderParser {
 
@@ -13,10 +14,10 @@ public class CookieHeaderParser extends HeaderParser {
         return header.split(";\\s?");
     }
 
-
     @Override
-    protected void addCookie(String cookie, Map<String, String> cookieMap) {
+    protected RawCookieData createCookie(String cookie) {
         String[] splitCookie = cookie.split("=\\s?",2);
+        RawCookieData rawCookieData = null;
         if (splitCookie.length == 2){
             String cookiePayload;
             String version = splitCookie[0];
@@ -25,7 +26,9 @@ public class CookieHeaderParser extends HeaderParser {
             } catch (UnsupportedEncodingException e) {
                 cookiePayload = splitCookie[1];
             }
-            putInCookieByVersionName(cookieMap, version, cookiePayload);
+            String standardVersion = putInCookieByVersionName(version);
+            rawCookieData = new RawCookieData(standardVersion, cookiePayload);
         }
+        return rawCookieData;
     }
 }

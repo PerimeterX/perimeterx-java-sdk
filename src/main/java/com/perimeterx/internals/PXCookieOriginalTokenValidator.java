@@ -9,6 +9,8 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 
 public class PXCookieOriginalTokenValidator implements PXValidator {
 
@@ -33,10 +35,13 @@ public class PXCookieOriginalTokenValidator implements PXValidator {
                 return false;
             }
             String decodedOriginalCookie = originalCookie.getDecodedCookie().toString();
+            context.setOriginalTokenCookie(originalCookie.getCookieOrig());
             context.setDecodedOriginalToken(decodedOriginalCookie);
             if (context.getVid() == null) {
                 context.setVid(originalCookie.getVID());
             }
+            context.setPxCookieOrig(originalCookie.getCookieOrig());
+            context.setCookieVersion(originalCookie.getCookieVersion());
             context.setOriginalUuid(originalCookie.getUUID());
 
             if (!originalCookie.isSecured()) {
@@ -58,13 +63,12 @@ public class PXCookieOriginalTokenValidator implements PXValidator {
 
     public String getMobileError(PXContext context) {
         String mobileError = "";
-        RawCookieData tokensCookie = context.getTokensCookie();
-        RawCookieData authCookie = context.getAuthCookie();
-        if (tokensCookie != null && isErrorMobileHeader(tokensCookie.getSelectedCookie())){
-            mobileError = tokensCookie.getSelectedCookie();
-        }
-        else if (authCookie != null && isErrorMobileHeader(authCookie.getSelectedCookie())){
-            mobileError = authCookie.getSelectedCookie();
+        List <RawCookieData> tokensCookie = context.getTokens();
+        if (!tokensCookie.isEmpty()){
+            RawCookieData firstCookie = tokensCookie.get(0);
+            if (isErrorMobileHeader(firstCookie.getSelectedCookie())){
+                mobileError = firstCookie.getSelectedCookie();
+            }
         }
         return mobileError;
     }

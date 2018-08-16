@@ -4,50 +4,45 @@ import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class HeaderParser {
 
 
     protected abstract String [] splitHeader(String header);
 
-    protected abstract void addCookie(String cookie, Map<String, String> cookieMap);
+    protected abstract RawCookieData createCookie(String cookie);
 
     /**
-     * @param cookieHeader Should contain the cookie that needs to be parsed into RawCookieData
+     * @param cookieHeader Should contain the cookie(or cookies) that needs to be parsed into RawCookieData, can be null or empty
      * */
-    public RawCookieData createRawCookieData(String cookieHeader){
-        RawCookieData rawCookieData = new RawCookieData();
-        rawCookieData.setSelectedCookie(cookieHeader);
-        Map<String, String> cookieMap = new LinkedHashMap<>();
+    public List<RawCookieData> createRawCookieDataList(String cookieHeader){
+        List <RawCookieData> cookieList= new ArrayList<>();
         if (!StringUtils.isEmpty(cookieHeader)) {
             String[] cookies = splitHeader(cookieHeader);
             for (String cookie : cookies) {
-                addCookie(cookie, cookieMap);
+                cookieList.add(createCookie(cookie));
             }
         }
-        rawCookieData.setCookieMap(cookieMap);
-        rawCookieData.setSelectedCookie(cookieHeader);
-        return rawCookieData;
+        return cookieList;
     }
 
 
 
-    protected static void putInCookieByVersionName(Map<String, String> cookieMap, String version, String cookiePayload) {
+    protected static String  putInCookieByVersionName(String version) {
         switch (version) {
             case "3":
-                cookieMap.put(Constants.COOKIE_V3_KEY, cookiePayload);
-                break;
+                return Constants.COOKIE_V3_KEY;
             case "1":
-                cookieMap.put(Constants.COOKIE_V1_KEY, cookiePayload);
-                break;
+                return Constants.COOKIE_V1_KEY;
             case Constants.COOKIE_V1_KEY:
-                cookieMap.put(Constants.COOKIE_V1_KEY, cookiePayload);
-                break;
+                return Constants.COOKIE_V1_KEY;
             case Constants.COOKIE_V3_KEY:
-                cookieMap.put(Constants.COOKIE_V3_KEY, cookiePayload);
-                break;
+                return Constants.COOKIE_V3_KEY;
+            default:
+                return "";
+
         }
     }
 }

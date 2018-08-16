@@ -12,9 +12,7 @@ import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
 
 public class CookieSelector {
@@ -25,59 +23,31 @@ public class CookieSelector {
      * @param context - This context should contain the authorization header cookie and/or tokens header
      * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with
      * */
-    public static AbstractPXCookie selectFromTokens(PXContext context, PXConfiguration pxConfiguration) throws PXException {
+    public static AbstractPXCookie selectFromTokens(PXContext context, PXConfiguration pxConfiguration) {
         AbstractPXCookie result = null;
-        S2SCallReason s2SCallReason = null;
-        RawCookieData tokenCookie = context.getAuthCookie();
-        RawCookieData multipleTokensCookie = context.getTokensCookie();
-        if (multipleTokensCookie != null){
-            context.setPxCookieOrig(multipleTokensCookie.getSelectedCookie());
-            result = parseCookieFromCookieMap(context, pxConfiguration, multipleTokensCookie.getCookieMap(), multipleTokensCookie.getSelectedCookie());
-        }
-        if (result == null && tokenCookie != null){
-            if (context.getPxCookieOrig() == null){
-                context.setPxCookieOrig(tokenCookie.getSelectedCookie());
-            }
-            Set <String> cookieKeys = tokenCookie.getCookieMap().keySet();
-            Iterator <String> versionsIter = cookieKeys.iterator();
-            if (versionsIter.hasNext()){
-                String cookieVersion = versionsIter.next();
-                AbstractPXCookie selectedCookie = parseCookieFromCookieMap(context,pxConfiguration,tokenCookie.getCookieMap(),cookieVersion);
+        S2SCallReason s2SCallReason = S2SCallReason.NO_COOKIE;
+        List <RawCookieData> tokens = context.getTokens();
+        String cookieOrig = null;
+        if (tokens != null){
+            for (RawCookieData token : tokens){
+                String cookie = token.getSelectedCookie();
+                String version = token.getVersion();
+                cookieOrig = cookie;
+                AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 s2SCallReason = evaluateCookie(selectedCookie);
-                if (s2SCallReason == null){
+                if (S2SCallReason.NONE == s2SCallReason){
                     result = selectedCookie;
+                    break;
                 }
             }
         }
-        else if (tokenCookie == null){
-            context.setS2sCallReason(S2SCallReason.NO_COOKIE.name());
+        if (result == null && context.getPxCookieOrig() == null){
+            context.setPxCookieOrig(cookieOrig);
         }
-        if (s2SCallReason != null){
-            context.setS2sCallReason(s2SCallReason.name());
-        }
+        context.setS2sCallReason(s2SCallReason.name());
         return result;
     }
 
-    /**
-     * @param context - This context should contain the cookie header
-     * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with
-     * */
-    public static AbstractPXCookie selectFromHeader(PXContext context, PXConfiguration pxConfiguration) throws PXCookieDecryptionException, PXException {
-        RawCookieData cookierHeader = context.getHeaderCookie();
-        AbstractPXCookie selectedCookie = null;
-        if (cookierHeader != null){
-            context.setPxCookieOrig(cookierHeader.getSelectedCookie());
-            selectedCookie = parseCookieFromCookieMap(context, pxConfiguration, context.getHeaderCookie().getCookieMap(), context.getHeaderCookie().getSelectedCookie());
-            S2SCallReason s2SCallReason = evaluateCookie(selectedCookie);
-            if (s2SCallReason != null){
-                context.setS2sCallReason(s2SCallReason.name());
-            }
-        }
-        else {
-            context.setS2sCallReason(S2SCallReason.NO_COOKIE.name());
-        }
-        return selectedCookie;
-    }
 
     /**
      * @param context - This context should contain the cookie header
@@ -86,16 +56,13 @@ public class CookieSelector {
     public static AbstractPXCookie selectOriginalTokens(PXContext context, PXConfiguration pxConfiguration) throws PXCookieDecryptionException, PXException {
         AbstractPXCookie result = null;
         String errorMessage = null;
-        RawCookieData originalTokenCookie = context.getOriginalTokenCookie();
-        RawCookieData multipleOriginalTokens = context.getOriginalTokensCookie();
-        if (multipleOriginalTokens != null){
-            context.setOriginalToken(multipleOriginalTokens.getSelectedCookie());
-            Map<String, String> cookieMap = multipleOriginalTokens.getCookieMap();
-            Set<String> cookieKeys = cookieMap.keySet();
-            AbstractPXCookie selectedCookie = null;
-            for(String cookieVersion : cookieKeys){
-                String cookie = cookieMap.get(cookieVersion);
-                selectedCookie = buildPxCookie(context, pxConfiguration, cookie, multipleOriginalTokens.getSelectedCookie(), cookieVersion);
+        List <RawCookieData> tokens = context.getOriginalTokens();
+        String cookieOrig = null;
+        if (tokens != null){
+            for (RawCookieData token : tokens){
+                String cookie = token.getSelectedCookie();
+                String version = token.getVersion();
+                AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 errorMessage = evaluateOriginalTokenCookie(selectedCookie);
                 if(StringUtils.isEmpty(errorMessage)){
                     result = selectedCookie;
@@ -103,61 +70,29 @@ public class CookieSelector {
                 }
             }
         }
-        if (result == null && originalTokenCookie != null){
-            context.setOriginalToken(originalTokenCookie.getSelectedCookie());
-            Set<String> cookieKeys = originalTokenCookie.getCookieMap().keySet();
-            Iterator<String> versionsIter = cookieKeys.iterator();
-            if(versionsIter.hasNext()){
-                String cookieVersion = cookieKeys.iterator().next();
-                String cookie = originalTokenCookie.getCookieMap().get(cookieVersion);
-                AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, originalTokenCookie.getSelectedCookie(), cookieVersion);
-                errorMessage = evaluateOriginalTokenCookie(selectedCookie);
-                if(StringUtils.isEmpty(errorMessage)){
-                    result = selectedCookie;
-                }
-            }
-        }
+        context.setPxCookieOrig(cookieOrig);
         context.setOriginalTokenError(errorMessage);
         return result;
     }
 
-    private static AbstractPXCookie parseCookieFromCookieMap(PXContext context, PXConfiguration pxConfiguration, Map<String, String> cookieMap, String cookieOrig) throws  PXException {
-        Set<String> cookieKeys = cookieMap.keySet();
-        AbstractPXCookie selectedCookie = null;
-        for(String cookieKey : cookieKeys){
-            try{
-                String cookie = cookieMap.get(cookieKey);
-                selectedCookie = buildPxCookie(context, pxConfiguration, cookie, cookieOrig, cookieKey);
-                S2SCallReason s2SCallReason = evaluateCookie(selectedCookie);
-                if(s2SCallReason == null){
-                    return selectedCookie;
-                }
-            }
-            catch (PXCookieDecryptionException e ){
-
-            }
-
-        }
-        return selectedCookie;
-    }
-
     private static S2SCallReason evaluateCookie(AbstractPXCookie selectedCookie) {
+        S2SCallReason s2SCallReason = S2SCallReason.NONE;
         if (selectedCookie == null) {
             logger.debug("Cookie is null");
-            return S2SCallReason.NO_COOKIE;
+            s2SCallReason = S2SCallReason.NO_COOKIE;
         }
         else {
             try {
                 if (!selectedCookie.deserialize()) {
                     logger.debug("Cookie decryption failed, value: " + selectedCookie.getPxCookie());
-                    return S2SCallReason.INVALID_DECRYPTION;
+                    s2SCallReason = S2SCallReason.INVALID_DECRYPTION;
                 }
             } catch (PXCookieDecryptionException e) {
                 logger.debug("Cookie decryption failed, value: " + selectedCookie.getPxCookie());
-                return S2SCallReason.INVALID_DECRYPTION;
+                s2SCallReason = S2SCallReason.INVALID_DECRYPTION;
             }
         }
-        return null;
+        return s2SCallReason;
     }
 
     private static String evaluateOriginalTokenCookie(AbstractPXCookie selectedCookie) throws PXCookieDecryptionException {
@@ -173,13 +108,13 @@ public class CookieSelector {
         return error;
     }
 
-    private static AbstractPXCookie buildPxCookie(PXContext context, PXConfiguration pxConfiguration, String cookie, String cookieOrig, String cookieVersion) throws PXException, PXCookieDecryptionException {
+    private static AbstractPXCookie buildPxCookie(PXContext context, PXConfiguration pxConfiguration, String cookie, String cookieVersion) {
 
         CookieData cookieData = CookieData.builder().ip(context.getIp())
                 .mobileToken(context.isMobileToken())
                 .pxCookie(cookie)
+                .cookieOrig(cookie)
                 .userAgent(context.getUserAgent())
-                .cookieOrig(cookieOrig)
                 .cookieVersion(cookieVersion)
                 .build();
         AbstractPXCookie selectedCookie = PXCookieFactory.create(pxConfiguration,cookieData);

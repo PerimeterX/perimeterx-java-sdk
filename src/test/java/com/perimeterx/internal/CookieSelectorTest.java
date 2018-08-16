@@ -95,6 +95,7 @@ public class CookieSelectorTest {
         PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectOriginalTokens(context, pxConfiguration);
         assertEquals(PAYLOAD_V1, cookie.getDecodedCookie().toString());
+        assertEquals(cookie.getCookieVersion(), Constants.COOKIE_V1_KEY);
         assertEquals(context.getOriginalTokenError(), "");
     }
 

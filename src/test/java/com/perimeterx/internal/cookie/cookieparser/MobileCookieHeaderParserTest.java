@@ -5,8 +5,8 @@ import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
 import com.perimeterx.utils.Constants;
 import org.testng.annotations.Test;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
@@ -22,25 +22,21 @@ public class MobileCookieHeaderParserTest {
     @Test
     public void testCreateRawCookieDataFromMobile(){
         String cookie = "3:" + singleCookieV3 + "," + "1:" + singleCookieV1;
-        Map<String, String> cookieMap = new LinkedHashMap<>();
-        cookieMap.put(Constants.COOKIE_V3_KEY,singleCookieV3);
-        cookieMap.put(Constants.COOKIE_V1_KEY, singleCookieV1);
-
-        RawCookieData rawcookiedata = mobileCookieHeaderParser.createRawCookieData(cookie);
-        assertEquals(rawcookiedata.getSelectedCookie(), cookie);
-        assertEquals(rawcookiedata.getCookieMap(), cookieMap);
+        List <RawCookieData> cookieList = new ArrayList<>();
+        cookieList.add(new RawCookieData(Constants.COOKIE_V3_KEY,singleCookieV3));
+        cookieList.add(new RawCookieData(Constants.COOKIE_V1_KEY, singleCookieV1));
+        List <RawCookieData> rawcookiedata = mobileCookieHeaderParser.createRawCookieDataList(cookie);
+        assertEquals(rawcookiedata, cookieList);
     }
 
     @Test
     public void testCreateRawCookieDataFromMobileAndFail(){
         String cookie = "3:" + singleCookieV3 + "," + "1=" + singleCookieV1;
-        Map<String, String> cookieMap = new LinkedHashMap<>();
-        cookieMap.put(Constants.COOKIE_V3_KEY,singleCookieV3);
-        cookieMap.put(Constants.COOKIE_V1_KEY, singleCookieV1);
-
-        RawCookieData rawcookiedata = mobileCookieHeaderParser.createRawCookieData(cookie);
-        assertEquals(rawcookiedata.getSelectedCookie(), cookie);
-        assertNotEquals(rawcookiedata.getCookieMap(), cookieMap);
+        List <RawCookieData> cookieList = new ArrayList<>();
+        cookieList.add(new RawCookieData(Constants.COOKIE_V3_KEY,singleCookieV3));
+        cookieList.add(new RawCookieData(Constants.COOKIE_V1_KEY, singleCookieV1));
+        List <RawCookieData> rawcookiedata = mobileCookieHeaderParser.createRawCookieDataList(cookie);
+        assertNotEquals(rawcookiedata, cookieList);
     }
 
 }

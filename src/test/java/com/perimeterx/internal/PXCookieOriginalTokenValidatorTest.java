@@ -50,7 +50,6 @@ public class PXCookieOriginalTokenValidatorTest {
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, encodedPayload);
         PXContext pxContext = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         this.pxCookieOriginalTokenValidator.verify( pxContext);
-        Assert.assertEquals(pxContext.getOriginalToken(), encodedPayload);
         Assert.assertEquals(pxContext.getVid(),"84f7db40-9592-11e8-a7b3-5319fb36a9bf");
         Assert.assertEquals(pxContext.getOriginalUuid(),"484070ee-6783-44c8-86d1-2d9ca4a8eeb8");
         Assert.assertEquals(pxContext.getDecodedOriginalToken(),PAYLOAD);
@@ -64,7 +63,6 @@ public class PXCookieOriginalTokenValidatorTest {
         PXContext pxContext = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         this.pxCookieOriginalTokenValidator = new PXCookieOriginalTokenValidator(pxConfiguration);
         pxCookieOriginalTokenValidator.verify( pxContext);
-        Assert.assertEquals(badXAuthorizationToken, pxContext.getOriginalToken());
         Assert.assertNull(pxContext.getVid());
         Assert.assertNull(pxContext.getOriginalUuid());
         Assert.assertNull(pxContext.getDecodedOriginalToken());

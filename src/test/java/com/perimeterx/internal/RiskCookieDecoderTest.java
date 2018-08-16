@@ -23,7 +23,9 @@ import static org.junit.Assert.assertEquals;
 
 @Test
 public class RiskCookieDecoderTest {
-    private final String pxCookie = "_px=BlehldpSBV8F5ZPRa4MTbYQKbkIaXLO2AETbUSiZUobT1mvohRff7C+5EoTuKr+F1pkntRC5FGla2PWGYZiJ8g==:1000:3AWMJr6ZBQ0S6d74mSsQQJR9cWZn7LJGaSLqhX3k430YeySP71Onzxla+Qvw0PiSp9N8nIyPvYychFiG0n6ebl7eBWyWb9eTQraBzFRjWjWyuZDMr1C5e1QZ8TrMy+bUeaIuvm3J3k9pmawdHdpkyyL2HSyr35vKX5kAA1I/eWFrAETsz8UZ3xZM8cqwnq1UDQpLLWNu4ZXpDi0OLbLr+lD+mpe82Xir6TGaLVegrBZJNzJzIOhNDfpD/GXYDYpNjOtngDHWs7Se+yErPwNfmg==";
+
+    private final String cookie = "BlehldpSBV8F5ZPRa4MTbYQKbkIaXLO2AETbUSiZUobT1mvohRff7C+5EoTuKr+F1pkntRC5FGla2PWGYZiJ8g==:1000:3AWMJr6ZBQ0S6d74mSsQQJR9cWZn7LJGaSLqhX3k430YeySP71Onzxla+Qvw0PiSp9N8nIyPvYychFiG0n6ebl7eBWyWb9eTQraBzFRjWjWyuZDMr1C5e1QZ8TrMy+bUeaIuvm3J3k9pmawdHdpkyyL2HSyr35vKX5kAA1I/eWFrAETsz8UZ3xZM8cqwnq1UDQpLLWNu4ZXpDi0OLbLr+lD+mpe82Xir6TGaLVegrBZJNzJzIOhNDfpD/GXYDYpNjOtngDHWs7Se+yErPwNfmg==";
+    private final String pxCookie = "_px=" + "BlehldpSBV8F5ZPRa4MTbYQKbkIaXLO2AETbUSiZUobT1mvohRff7C+5EoTuKr+F1pkntRC5FGla2PWGYZiJ8g==:1000:3AWMJr6ZBQ0S6d74mSsQQJR9cWZn7LJGaSLqhX3k430YeySP71Onzxla+Qvw0PiSp9N8nIyPvYychFiG0n6ebl7eBWyWb9eTQraBzFRjWjWyuZDMr1C5e1QZ8TrMy+bUeaIuvm3J3k9pmawdHdpkyyL2HSyr35vKX5kAA1I/eWFrAETsz8UZ3xZM8cqwnq1UDQpLLWNu4ZXpDi0OLbLr+lD+mpe82Xir6TGaLVegrBZJNzJzIOhNDfpD/GXYDYpNjOtngDHWs7Se+yErPwNfmg==";
 
     private PXConfiguration pxConfiguration;
     private PXContext context;
@@ -48,6 +50,6 @@ public class RiskCookieDecoderTest {
     public void testOrigPXCookieSentOnCookieDecryptFails() {
         cookieValidator.verify( context);
         assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
-        assertEquals(pxCookie, context.getPxCookieOrig());
+        assertEquals(cookie, context.getPxCookieOrig());
     }
 }
