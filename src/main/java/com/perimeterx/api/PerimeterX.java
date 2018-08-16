@@ -207,15 +207,7 @@ public class PerimeterX {
     }
 
     private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
-        if (reverseProxy.reversePxClient(req, res)) {
-            return true;
-        }
-
-        if (reverseProxy.reversePxXhr(req, res)) {
-            return true;
-        }
-
-        return false;
+        return reverseProxy.reversePxClient(req, res) || reverseProxy.reversePxXhr(req, res);
     }
 
     private boolean moduleEnabled() {

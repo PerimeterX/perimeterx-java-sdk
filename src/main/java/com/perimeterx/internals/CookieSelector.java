@@ -7,7 +7,6 @@ import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
-import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +56,7 @@ public class CookieSelector {
      * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with.
      * @return The first legit PX cookie.
      * */
-    public static AbstractPXCookie selectOriginalTokens(PXContext context, PXConfiguration pxConfiguration) throws PXCookieDecryptionException, PXException {
+    public static AbstractPXCookie selectOriginalTokens(PXContext context, PXConfiguration pxConfiguration) throws PXCookieDecryptionException {
         AbstractPXCookie result = null;
         String errorMessage = null;
         List <RawCookieData> tokens = context.getOriginalTokens();
