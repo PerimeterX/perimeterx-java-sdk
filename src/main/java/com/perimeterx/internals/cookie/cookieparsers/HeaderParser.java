@@ -15,7 +15,9 @@ public abstract class HeaderParser {
     protected abstract RawCookieData createCookie(String cookie);
 
     /**
+     * This function receives a cookie from the cookie http header, parses it and returns all the available px cookies in a linked list.
      * @param cookieHeader Should contain the cookie(or cookies) that needs to be parsed into RawCookieData, can be null or empty
+     * @return All px cookies available from the header.
      * */
     public List<RawCookieData> createRawCookieDataList(String cookieHeader){
         List <RawCookieData> cookieList= new ArrayList<>();

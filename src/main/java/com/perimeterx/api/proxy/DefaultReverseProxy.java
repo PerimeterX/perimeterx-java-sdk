@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Created by nitzangoldfeder on 14/05/2018.
@@ -62,7 +63,7 @@ public class DefaultReverseProxy implements ReverseProxy {
     }
 
 
-    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
         if (!req.getRequestURI().startsWith(clientReversePrefix)) {
             return false;
         }
@@ -80,7 +81,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         return true;
     }
 
-    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
         if (!req.getRequestURI().startsWith(xhrReversePrefix)) {
             return false;
         }

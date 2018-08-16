@@ -20,8 +20,10 @@ public class CookieSelector {
     private static final PXLogger logger = PXLogger.getLogger(CookieSelector.class);
 
     /**
-     * @param context - This context should contain the authorization header cookie and/or tokens header
-     * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with
+     * This function selects the first working pxCookie it can deserialize without any errors.
+     * @param context - This context should contain the authorization header cookie and/or tokens header.
+     * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with.
+     * @return The first legit PX cookie
      * */
     public static AbstractPXCookie selectFromTokens(PXContext context, PXConfiguration pxConfiguration) {
         AbstractPXCookie result = null;
@@ -50,8 +52,10 @@ public class CookieSelector {
 
 
     /**
-     * @param context - This context should contain the cookie header
-     * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with
+     * This function selects the first working pxCookie it can deserialize without any errors.
+     * @param context - This context should contain the cookie header.
+     * @param pxConfiguration - This context should contain the PxConfiguration class that the perimeterX object was initiated with.
+     * @return The first legit PX cookie.
      * */
     public static AbstractPXCookie selectOriginalTokens(PXContext context, PXConfiguration pxConfiguration) throws PXCookieDecryptionException, PXException {
         AbstractPXCookie result = null;

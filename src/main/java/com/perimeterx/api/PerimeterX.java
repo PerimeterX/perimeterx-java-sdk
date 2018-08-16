@@ -61,6 +61,8 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -185,7 +187,7 @@ public class PerimeterX {
         return context;
     }
 
-    private void handleCookies(PXContext context) throws Exception {
+    private void handleCookies(PXContext context) throws PXException {
         if (captchaValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_COOKIE_FOUND);
             return;
@@ -204,7 +206,7 @@ public class PerimeterX {
         }
     }
 
-    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws Exception {
+    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
         if (reverseProxy.reversePxClient(req, res)) {
             return true;
         }
