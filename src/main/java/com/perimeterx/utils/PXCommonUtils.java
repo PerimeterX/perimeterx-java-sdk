@@ -1,7 +1,9 @@
 package com.perimeterx.utils;
 
+import com.perimeterx.models.configuration.PXConfiguration;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.message.BasicHeader;
 
@@ -19,11 +21,15 @@ public class PXCommonUtils {
         return Arrays.asList(contentType, authorization);
     }
 
-    public static RequestConfig getRequestConfig(int connectionTimeout, int apiTimeout){
-        return RequestConfig.custom()
-                    .setConnectTimeout(connectionTimeout)
-                    .setConnectionRequestTimeout(apiTimeout)
-                    .build();
+    public static RequestConfig getRequestConfig(PXConfiguration pxConfiguration){
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
+                .setConnectTimeout(pxConfiguration.getConnectionTimeout())
+                .setConnectionRequestTimeout(pxConfiguration.getApiTimeout());
+        if (pxConfiguration.shouldUseProxy()){
+            HttpHost proxy = new HttpHost(pxConfiguration.getProxyHost(),pxConfiguration.getProxyPort());
+            requestConfigBuilder.setProxy(proxy);
+        }
+        return requestConfigBuilder.build();
 
     }
 

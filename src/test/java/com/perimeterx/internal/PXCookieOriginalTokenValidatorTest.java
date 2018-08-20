@@ -20,7 +20,7 @@ public class PXCookieOriginalTokenValidatorTest {
     private PXConfiguration pxConfiguration;
 
     private String badXAuthorizationToken = "3:f97f176939becfc600134d9571512f5b6c5fce184c937068253726764c19ae59:QjQVxKnoGLwumB3hN73HV0MeiA495ta6JspXUSomjKla+CGPjeeYsL0fZozAyjPli28c+X8y2dKN7ZdCsq/e1w==:1000:B3+Q1h6aeaxgSm+SWKMpwL5ZIw+Sp9pwhsBqafFjGElEYVQucZtsAkBl6JUqafpdbkB5Bs61NdYsm9BUkorF9VZwICYsvPyvCjqQodKN1vCHGtO27EpBwZFCVRCcKOxtj4sIO4fwzvDnX2lDf/nCul12Dk2mD+rislTndlPRZh6ahPpe5rzX2/DsRNyXPMTL";
-    private String encodedPayload =  "3:25676dd757cb796e1b4252a4d395e7dbdd7b36787ac9d5c884a52b8cc3d79cd5:ZzY2AgkAS3Dhu6BVQAyn5XxQXQIuYLmnklh0gzPTsif/ItN+kQq46jyq0YPXYahfstf/r4V+mkexvyPl4KKLeA==:1000:ZZht8m6lbnBHMeMtIvQKYSbbea6fiuIQyjxLZhgX9L5ODbE73qBBZ6FJSN5+NWCCzCNWnFAWItIA5e+4l3gi2B6ykh//KiDwqr5jw9XHACz4r/XEZvGtUoxUsPGC8sT9rjG1oWe/+omoWqSTAxJlXulcbtbhivy+Mlf+75Z7hT8gVsQr9aWXw1hsc2KlfifN";
+    private String encodedPayload =  "3:4899d1c9eead5afd7864c424da6ea340a214d5ed3792aee1b57ca815e1cbb46b:ZzY2AgkAS3Dhu6BVQAyn5XxQXQIuYLmnklh0gzPTsif/ItN+kQq46jyq0YPXYahfstf/r4V+mkexvyPl4KKLeA==:1000:ZZht8m6lbnBHMeMtIvQKYSbbea6fiuIQyjxLZhgX9L5ODbE73qBBZ6FJSN5+NWCCzCNWnFAWItIA5e+4l3gi2B6ykh//KiDwqr5jw9XHACz4r/XEZvGtUoxUsPGC8sT9rjG1oWe/+omoWqSTAxJlXulcbtbhivy+Mlf+75Z7hT8gVsQr9aWXw1hsc2KlfifN";
     private DefaultHostnameProvider hostnameProvider;
     private RemoteAddressIPProvider ipProvider;
 
@@ -51,6 +51,7 @@ public class PXCookieOriginalTokenValidatorTest {
         PXCookieOriginalTokenValidator pxCookieOriginalTokenValidator = new PXCookieOriginalTokenValidator();
         pxCookieOriginalTokenValidator.verify(pxConfiguration, pxContext);
         Assert.assertEquals(pxContext.getOriginalToken(), encodedPayload);
+        Assert.assertNull(pxContext.getOriginalTokenError());
         Assert.assertEquals(pxContext.getVid(),"84f7db40-9592-11e8-a7b3-5319fb36a9bf");
         Assert.assertEquals(pxContext.getOriginalUuid(),"484070ee-6783-44c8-86d1-2d9ca4a8eeb8");
         Assert.assertEquals(pxContext.getDecodedOriginalToken(),PAYLOAD);
