@@ -52,6 +52,10 @@ public class PXConfiguration {
     private String clientHost;
     private boolean firstPartyEnabled;
     private boolean xhrFirstPartyEnabled;
+    private boolean useProxy;
+    private String proxyHost;
+    private int proxyPort;
+
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -86,6 +90,9 @@ public class PXConfiguration {
         firstPartyEnabled = builder.firstPartyEnabled;
         xhrFirstPartyEnabled = builder.xhrFirstPartyEnabled;
         clientHost = builder.clientHost;
+        useProxy = builder.useProxy;
+        proxyHost = builder.proxyHost;
+        proxyPort = builder.proxyPort;
 
     }
 
@@ -96,7 +103,7 @@ public class PXConfiguration {
                             ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute,
                             String remoteConfigurationUrl, CaptchaProvider captchaProvider, CustomParametersProvider customParametersProvider,
                             BlockHandler blockHandler, String collectorUrl, boolean firstPartyEnabled, boolean xhrFirstPartyEnable,
-                            String clientHost) {
+                            String clientHost, boolean useProxy, String proxyHost, int proxyPort) {
         this.appId = appId;
         this.cookieKey = cookieKey;
         this.authToken = authToken;
@@ -130,6 +137,9 @@ public class PXConfiguration {
         this.firstPartyEnabled = firstPartyEnabled;
         this.xhrFirstPartyEnabled = xhrFirstPartyEnabled;
         this.clientHost = clientHost;
+        this.useProxy = useProxy;
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
     }
 
     /*
@@ -139,7 +149,7 @@ public class PXConfiguration {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
                 moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider,
-                customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost);
+                customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost, useProxy, proxyHost, proxyPort);
     }
 
     public String getRemoteConfigurationUrl(){
@@ -278,6 +288,18 @@ public class PXConfiguration {
         return clientHost;
     }
 
+    public boolean shouldUseProxy(){
+        return useProxy;
+    }
+
+    public String getProxyHost(){
+        return proxyHost;
+    }
+
+    public int getProxyPort(){
+        return proxyPort;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
@@ -325,6 +347,9 @@ public class PXConfiguration {
         private boolean xhrFirstPartyEnabled = true;
         private boolean firstPartyEnabled = true;
         private String clientHost = Constants.CLIENT_HOST;
+        private boolean useProxy;
+        private String proxyHost;
+        private int proxyPort;
 
         public Builder() {
         }
@@ -355,6 +380,21 @@ public class PXConfiguration {
 
         public Builder authToken(String val) {
             authToken = val;
+            return this;
+        }
+
+        public Builder useProxy(boolean val) {
+            useProxy = val;
+            return this;
+        }
+
+        public Builder proxyHost(String val) {
+            proxyHost = val;
+            return this;
+        }
+
+        public Builder proxyPort(int val) {
+            proxyPort = val;
             return this;
         }
 
