@@ -46,7 +46,7 @@ public class PXCookieOriginalTokenValidatorTest {
     @Test
     public void testPxCookieOriginalTokenValidatorWithOriginalToken(){
         MockHttpServletRequest request = new MockHttpServletRequest();
-        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, Constants.MOBILE_ERROR_NO_CONNECTION);
+        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, "2");
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, encodedPayload);
         PXContext pxContext = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         this.pxCookieOriginalTokenValidator.verify( pxContext);
@@ -58,7 +58,7 @@ public class PXCookieOriginalTokenValidatorTest {
     @Test
     public void testPxCookieOriginalTokenValidatorBadOriginalToken(){
         MockHttpServletRequest request = new MockHttpServletRequest();
-        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, Constants.MOBILE_ERROR_NO_CONNECTION);
+        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, "2");
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, badXAuthorizationToken);
         PXContext pxContext = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         this.pxCookieOriginalTokenValidator = new PXCookieOriginalTokenValidator(pxConfiguration);

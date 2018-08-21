@@ -45,7 +45,6 @@ public class PXConfiguration {
     private int maxConnections;
     private int maxConnectionsPerRoute;
     private String remoteConfigurationUrl;
-    private CaptchaProvider captchaProvider;
     private CustomParametersProvider customParametersProvider;
     private BlockHandler blockHandler;
     private String collectorUrl;
@@ -82,7 +81,6 @@ public class PXConfiguration {
         maxConnections = builder.maxConnections;
         maxConnectionsPerRoute = builder.maxConnectionsPerRoute;
         remoteConfigurationUrl = builder.remoteConfigurationUrl;
-        captchaProvider = builder.captchaProvider;
         ipHeaders = builder.ipHeaders;
         customParametersProvider = builder.customParametersProvider;
         blockHandler = builder.blockHandler;
@@ -101,7 +99,7 @@ public class PXConfiguration {
                             boolean sendPageActivities, boolean signedWithIP, String serverURL, String customLogo, String cssRef,
                             String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled,
                             ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute,
-                            String remoteConfigurationUrl, CaptchaProvider captchaProvider, CustomParametersProvider customParametersProvider,
+                            String remoteConfigurationUrl, CustomParametersProvider customParametersProvider,
                             BlockHandler blockHandler, String collectorUrl, boolean firstPartyEnabled, boolean xhrFirstPartyEnable,
                             String clientHost, boolean useProxy, String proxyHost, int proxyPort) {
         this.appId = appId;
@@ -130,7 +128,6 @@ public class PXConfiguration {
         this.maxConnections = maxConnections;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.remoteConfigurationUrl = remoteConfigurationUrl;
-        this.captchaProvider = captchaProvider;
         this.customParametersProvider = customParametersProvider;
         this.blockHandler = blockHandler;
         this.collectorUrl = collectorUrl;
@@ -148,7 +145,7 @@ public class PXConfiguration {
     public PXConfiguration getTelemetryConfig() {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
-                moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider,
+                moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl,
                 customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost, useProxy, proxyHost, proxyPort);
     }
 
@@ -256,9 +253,6 @@ public class PXConfiguration {
         return this.maxConnectionsPerRoute;
     }
 
-    public CaptchaProvider getCaptchaProvider() {
-        return captchaProvider;
-    }
 
     public Set<String> getIpHeaders() {
         return ipHeaders;
@@ -339,7 +333,6 @@ public class PXConfiguration {
         private int maxConnectionsPerRoute = 20;
         private int maxConnections = 200;
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
-        private CaptchaProvider captchaProvider = CaptchaProvider.RECAPTCHA;
         private Set<String> ipHeaders = new HashSet<>();
         private CustomParametersProvider customParametersProvider = new DefaultCustomParametersProvider();
         private BlockHandler blockHandler = new DefaultBlockHandler();
@@ -503,10 +496,6 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder captchaProvider(CaptchaProvider val) {
-            this.captchaProvider = val;
-            return this;
-        }
 
         public Builder ipHeaders(Set<String> val) {
             this.ipHeaders = val;

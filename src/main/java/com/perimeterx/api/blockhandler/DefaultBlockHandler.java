@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.api.blockhandler.templates.TemplateFactory;
 import com.perimeterx.models.PXContext;
-import com.perimeterx.models.configuration.CaptchaProvider;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.MobilePageResponse;
@@ -47,18 +46,18 @@ public class DefaultBlockHandler implements BlockHandler {
 
     private String getPage(PXContext context, PXConfiguration pxConfig) throws PXException {
         String filePrefix = Constants.FILE_NAME_BLOCK;
-        String filePostfix = "";
+        String fileSuffix = "";
         String template;
 
         if (context.getBlockAction().equals(BlockAction.CAPTCHA)) {
-            filePrefix = pxConfig.getCaptchaProvider().equals(CaptchaProvider.FUNCAPTCHA) ? Constants.FILE_NAME_FUN_CAPTCHA : Constants.FILE_NAME_CAPTCHA;
+            filePrefix = Constants.CAPTCHA_BLOCK;
         }
 
         if (context.isMobileToken()) {
-            filePostfix = Constants.FILE_NAME_MOBILE;
+            fileSuffix = Constants.FILE_NAME_MOBILE;
         }
 
-        template = filePrefix + filePostfix + Constants.FILE_EXTENSION_MUSTACHE;
+        template = filePrefix + fileSuffix + Constants.FILE_EXTENSION_MUSTACHE;
         return TemplateFactory.getTemplate(context, pxConfig, template);
     }
 }

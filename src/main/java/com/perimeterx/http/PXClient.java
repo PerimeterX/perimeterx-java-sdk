@@ -4,8 +4,6 @@ import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.CaptchaResponse;
-import com.perimeterx.models.httpmodels.ResetCaptchaRequest;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 
@@ -47,15 +45,6 @@ public interface PXClient {
      */
     void sendBatchActivities(List<Activity> activities) throws PXException, IOException;
 
-    /**
-     * Calling PX Server to validate user captcha
-     *
-     * @param resetCaptchaRequest - captcha request
-     * @return response from server as object {@link CaptchaResponse}
-     * @throws PXException
-     * @throws IOException
-     */
-    CaptchaResponse sendCaptchaRequest(ResetCaptchaRequest resetCaptchaRequest) throws PXException, IOException;
 
     /**
      * Calling remote configuration server and fetching the latest configuration values

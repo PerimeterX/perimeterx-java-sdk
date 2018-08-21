@@ -6,8 +6,6 @@ import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.CaptchaResponse;
-import com.perimeterx.models.httpmodels.ResetCaptchaRequest;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.Constants;
@@ -134,28 +132,6 @@ public class PXHttpClient implements PXClient {
         }
     }
 
-    public CaptchaResponse sendCaptchaRequest(ResetCaptchaRequest resetCaptchaRequest) throws PXException, IOException {
-        CloseableHttpResponse httpResponse = null;
-        try {
-            String requestBody = JsonUtils.writer.writeValueAsString(resetCaptchaRequest);
-            logger.debug("Sending captcha verification: {}", requestBody);
-            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_CAPTCHA);
-            post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
-
-            httpResponse = httpClient.execute(post);
-            String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
-            logger.debug("Captcha verification response: {}", s);
-            if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                return JsonUtils.captchaResponseReader.readValue(s);
-            }
-            return null;
-        } finally {
-            if (httpResponse != null) {
-                httpResponse.close();
-            }
-        }
-    }
 
     @Override
     public PXDynamicConfiguration getConfigurationFromServer() {

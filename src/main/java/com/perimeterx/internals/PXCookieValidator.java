@@ -88,6 +88,8 @@ public class PXCookieValidator implements PXValidator {
         } catch (PXException e) {
             logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
             context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.name());
+
+
             return false;
         }
     }

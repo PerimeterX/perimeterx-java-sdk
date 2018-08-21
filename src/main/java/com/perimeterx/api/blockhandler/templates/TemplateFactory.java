@@ -53,9 +53,23 @@ public abstract class TemplateFactory {
         props.put("customLogo", pxConfig.getCustomLogo());
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
-        //captcha.mobile.mustache prop
-        props.put("hostUrl", pxContext.getCollectorURL());
-        props.put("jsClientSrc", pxConfig.isFirstPartyEnabled() ? String.format("/%s/init.js", pxConfig.getAppId().substring(2)) : String.format("%s/%s/main.min.js", Constants.CLIENT_HOST, pxConfig.getAppId()));
+        String blockScript;
+        String jsClientSrc;
+        String hostUrl = pxContext.getCollectorURL();
+        String urlVid = pxContext.getVid() != null ? pxContext.getVid() : "";
+        if (pxConfig.isFirstPartyEnabled() && !pxContext.isMobileToken()){
+            String prefix = pxConfig.getAppId().substring(2);
+            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" :"0");
+            jsClientSrc = "/" + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
+            hostUrl = "/" + prefix + Constants.FIRST_PARTY_XHR_PATH;
+        }
+        else{
+            blockScript = "//" + Constants.CAPTCHA_HOST + "/" + pxConfig.getAppId() + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" :"0");
+            jsClientSrc = "//" + Constants.CLIENT_HOST + "/" + pxConfig.getAppId() + "/main.min.js";
+        }
+        props.put("hostUrl", hostUrl);
+        props.put("blockScript", blockScript);
+        props.put("jsClientSrc", jsClientSrc);
         props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : null);
         props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
 
