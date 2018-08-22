@@ -11,9 +11,10 @@ import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Default blocking implementation - Sends 403
@@ -23,41 +24,65 @@ import java.io.IOException;
 public class DefaultBlockHandler implements BlockHandler {
 
     public void handleBlocking(PXContext context, PXConfiguration pxConfig, HttpServletResponseWrapper responseWrapper) throws PXException {
-        String blockPage = getPage(context, pxConfig);
-        String action;
-
-        if (context.isMobileToken()) {
-            action = (context.getBlockAction().equals(BlockAction.CAPTCHA)) ? Constants.MOBILE_ACTION_CAPTCHA : Constants.MOBILE_ACTION_BLOCK;
-            String base64Page = Base64.encodeToString(blockPage.getBytes(), false);
-            try {
-                blockPage = new ObjectMapper().writeValueAsString(new MobilePageResponse(action, context.getUuid(), context.getAppId(), base64Page, context.getCollectorURL()));
-            } catch (JsonProcessingException e) {
-                throw new PXException(e);
-            }
+        Map<String, String> props = new HashMap<>();
+        String filePrefix = null;
+        String blockPageResponse = null;
+        if (context.getBlockAction().equals(BlockAction.CHALLENGE) && context.getBlockActionData() != null) {
+            blockPageResponse= context.getBlockActionData();
         }
-        responseWrapper.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        responseWrapper.setContentType(context.isMobileToken() ? Constants.CONTENT_TYPE_APPLICATION_JSON : Constants.CONTENT_TYPE_TEXT_HTML);
+        if (context.getBlockAction().equals(BlockAction.CAPTCHA)) {
+            filePrefix = Constants.CAPTCHA_BLOCK;
+            props = TemplateFactory.getProps(context,pxConfig);
+            blockPageResponse = getPage(props, filePrefix);
+        }
+        if(context.getBlockAction().equals(BlockAction.RATE)){
+            filePrefix = "ratelimit";
+            blockPageResponse = getPage(props, filePrefix);
+        }
         try {
-            responseWrapper.getWriter().print(blockPage);
+            sendMessage(blockPageResponse, responseWrapper,context);
         } catch (IOException e) {
             throw new PXException(e);
         }
     }
 
-    private String getPage(PXContext context, PXConfiguration pxConfig) throws PXException {
-        String filePrefix = Constants.FILE_NAME_BLOCK;
-        String fileSuffix = "";
-        String template;
-
-        if (context.getBlockAction().equals(BlockAction.CAPTCHA)) {
-            filePrefix = Constants.CAPTCHA_BLOCK;
+    private void sendMessage(String blockPageResponse, HttpServletResponseWrapper responseWrapper, PXContext context) throws PXException, IOException {
+        if (context.getBlockAction() == BlockAction.RATE){
+            responseWrapper.setStatus(429);
         }
-
+        else {
+            responseWrapper.setStatus(403);
+        }
         if (context.isMobileToken()) {
-            fileSuffix = Constants.FILE_NAME_MOBILE;
+            responseWrapper.setContentType("application/json");
+            String base64Page = Base64.encodeToString(blockPageResponse.getBytes(), false);
+            try {
+                blockPageResponse = new ObjectMapper().writeValueAsString(new MobilePageResponse(parseAction(context.getBlockAction().getCode()), context.getUuid(), context.getVid(), context.getAppId(), base64Page, context.getCollectorURL()));
+            } catch (JsonProcessingException e) {
+                throw new PXException(e);
+            }
         }
+        else {
+            responseWrapper.setContentType( "text/html");
+        }
+        responseWrapper.getWriter().print(blockPageResponse);
+    }
 
-        template = filePrefix + fileSuffix + Constants.FILE_EXTENSION_MUSTACHE;
-        return TemplateFactory.getTemplate(context, pxConfig, template);
+    private String parseAction(String code) {
+        switch (code) {
+            case "b":
+                return "block";
+            case "j":
+                return "challenge";
+            case "r":
+                return "ratelimit";
+            default:
+                return "captcha";
+        }    }
+
+    private String getPage(Map<String, String> props, String filePrefix) throws PXException {
+
+        String template = filePrefix + Constants.FILE_EXTENSION_MUSTACHE;
+        return TemplateFactory.getTemplate(template, props);
     }
 }

@@ -24,14 +24,8 @@ import java.util.Map;
  */
 public abstract class TemplateFactory {
 
-    public static String getTemplate(PXContext pxContext, PXConfiguration pxConfig, String template) throws PXException {
+    public static String getTemplate(String template, Map<String, String> props) throws PXException {
         try {
-            // In case of challenge
-            if (pxContext.getBlockAction().equals("challenge") && pxContext.getBlockActionData() != null) {
-                return pxContext.getBlockActionData();
-            }
-
-            Map<String, String> props = getProps(pxContext, pxConfig);
             MustacheFactory mf = new DefaultMustacheFactory();
             Mustache m = mf.compile((getTemplate(template)), (getTemplate(template)).toString());
             StringWriter sw = new StringWriter();
@@ -43,7 +37,7 @@ public abstract class TemplateFactory {
 
     }
 
-    private static Map<String, String> getProps(PXContext pxContext, PXConfiguration pxConfig) {
+    public static Map<String, String> getProps(PXContext pxContext, PXConfiguration pxConfig) {
         Map<String, String> props = new HashMap<>();
 
         props.put("appId", pxConfig.getAppId());
@@ -70,7 +64,7 @@ public abstract class TemplateFactory {
         props.put("hostUrl", hostUrl);
         props.put("blockScript", blockScript);
         props.put("jsClientSrc", jsClientSrc);
-        props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : null);
+        props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : "false");
         props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
 
         return props;

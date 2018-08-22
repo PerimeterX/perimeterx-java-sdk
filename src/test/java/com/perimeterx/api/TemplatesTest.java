@@ -11,6 +11,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -51,7 +53,8 @@ public class TemplatesTest {
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block_template.mustache");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
 
@@ -65,7 +68,8 @@ public class TemplatesTest {
                 .customLogo("http://www.google.com/logo.jpg")
                 .build();
         pxContext.setBlockAction("b");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block_template.mustache");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
 
@@ -82,7 +86,8 @@ public class TemplatesTest {
                 .cssRef("http://www.google.com/stylesheet.css")
                 .build();
         pxContext.setBlockAction("b");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block_template.mustache");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
         assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
     }
 
@@ -97,7 +102,8 @@ public class TemplatesTest {
                 .cssRef("http://www.google.com/script.js")
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block_template.mustache");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
         assertTrue( actualHTML.contains("http://www.google.com/script.js") );
     }
 
@@ -110,7 +116,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block_template.mustache");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
 
@@ -123,7 +130,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .build();
         pxContext.setBlockAction("b");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block_template.mustache");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
 
@@ -136,7 +144,8 @@ public class TemplatesTest {
                 .blockingScore(70)
                 .build();
         pxContext.setBlockAction("c");
-        String actualHTML = TemplateFactory.getTemplate(pxContext,pxConfig,"block_template.mustache");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
         assertTrue( actualHTML.contains( pxContext.getVid() ) );
     }
 

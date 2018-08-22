@@ -289,6 +289,9 @@ public class PXContext {
             case Constants.BLOCK_ACTION_CHALLENGE:
                 this.blockAction = BlockAction.CHALLENGE;
                 break;
+            case Constants.BLOCK_ACTION_RATE:
+                this.blockAction = BlockAction.RATE;
+                break;
             default:
                 this.blockAction = BlockAction.CAPTCHA;
                 break;

@@ -58,6 +58,9 @@ public final class Constants {
     public static final String CAPTCHA_ACTION_CAPTCHA = "c";
     public static final String BLOCK_ACTION_CAPTCHA = "b";
     public static final String BLOCK_ACTION_CHALLENGE = "j";
+    public static final String BLOCK_ACTION_RATE = "r";
+
+
 
     public static final String MOBILE_SDK_AUTHORIZATION_HEADER = "x-px-authorization";
     public static final String MOBILE_SDK_ORIGINAL_TOKEN_HEADER = "x-px-original-token";
