@@ -7,6 +7,7 @@ import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.internals.cookie.cookieparsers.CookieHeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
+import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.CustomParameters;
@@ -162,8 +163,10 @@ public class PXContext {
      * The original token cookie.
      * */
     private String originalTokenCookie;
-
-
+    /**
+     * The risk mode (monitor / active_blocking) of the request
+     * */
+    private String riskMode;
 
     private List <RawCookieData> tokens;
     private List <RawCookieData> originalTokens;
@@ -251,6 +254,10 @@ public class PXContext {
 
     public String getPxOriginalTokenCookie() {
         return originalTokenCookie;
+    }
+
+    public String getRiskMode() {
+        return pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) ? "active_blocking" : "monitor";
     }
 
     public void setOriginalTokenCookie(String originalTokenCookie) {
