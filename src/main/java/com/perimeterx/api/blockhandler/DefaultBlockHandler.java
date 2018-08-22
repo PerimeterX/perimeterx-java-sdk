@@ -25,25 +25,36 @@ public class DefaultBlockHandler implements BlockHandler {
 
     public void handleBlocking(PXContext context, PXConfiguration pxConfig, HttpServletResponseWrapper responseWrapper) throws PXException {
         Map<String, String> props = new HashMap<>();
-        String filePrefix = null;
-        String blockPageResponse = null;
-        if (context.getBlockAction().equals(BlockAction.CHALLENGE) && context.getBlockActionData() != null) {
-            blockPageResponse= context.getBlockActionData();
-        }
-        if (context.getBlockAction().equals(BlockAction.CAPTCHA)) {
-            filePrefix = Constants.CAPTCHA_BLOCK;
-            props = TemplateFactory.getProps(context,pxConfig);
-            blockPageResponse = getPage(props, filePrefix);
-        }
-        if(context.getBlockAction().equals(BlockAction.RATE)){
-            filePrefix = "ratelimit";
-            blockPageResponse = getPage(props, filePrefix);
+        String filePrefix;
+        String blockPageResponse;
+        switch (context.getBlockAction()) {
+            case RATE:
+                filePrefix = Constants.RATELIMIT_TEMPLATE;
+                blockPageResponse = getPage(props, filePrefix);
+                break;
+            case BLOCK:
+                props = TemplateFactory.getProps(context, pxConfig);
+                filePrefix = Constants.BLOCK_TEMPLATE;
+                blockPageResponse = getPage(props, filePrefix);
+                break;
+            case CHALLENGE:
+                String actionData = context.getBlockActionData();
+                if (actionData != null) {
+                    blockPageResponse = actionData;
+                    break;
+                }
+            default:
+                filePrefix = Constants.CAPTCHA_BLOCK_TEMPLATE;
+                props = TemplateFactory.getProps(context, pxConfig);
+                blockPageResponse = getPage(props, filePrefix);
         }
         try {
             sendMessage(blockPageResponse, responseWrapper,context);
         } catch (IOException e) {
             throw new PXException(e);
         }
+
+
     }
 
     private void sendMessage(String blockPageResponse, HttpServletResponseWrapper responseWrapper, PXContext context) throws PXException, IOException {
@@ -54,7 +65,7 @@ public class DefaultBlockHandler implements BlockHandler {
             responseWrapper.setStatus(403);
         }
         if (context.isMobileToken()) {
-            responseWrapper.setContentType("application/json");
+            responseWrapper.setContentType(Constants.CONTENT_TYPE_APPLICATION_JSON);
             String base64Page = Base64.encodeToString(blockPageResponse.getBytes(), false);
             try {
                 blockPageResponse = new ObjectMapper().writeValueAsString(new MobilePageResponse(parseAction(context.getBlockAction().getCode()), context.getUuid(), context.getVid(), context.getAppId(), base64Page, context.getCollectorURL()));
@@ -63,7 +74,7 @@ public class DefaultBlockHandler implements BlockHandler {
             }
         }
         else {
-            responseWrapper.setContentType( "text/html");
+            responseWrapper.setContentType( Constants.CONTENT_TYPE_TEXT_HTML);
         }
         responseWrapper.getWriter().print(blockPageResponse);
     }

@@ -84,7 +84,10 @@ public final class Constants {
 
     public static final String MOBILE_ACTION_CAPTCHA = "captcha";
     public static final String MOBILE_ACTION_BLOCK = "block";
-    public static final String CAPTCHA_BLOCK = "block_template";
+    public static final String CAPTCHA_BLOCK_TEMPLATE = "captcha_template";
+    public static final String BLOCK_TEMPLATE = "block_template";
+    public static final String RATELIMIT_TEMPLATE = "ratelimit";
+
 
 
 

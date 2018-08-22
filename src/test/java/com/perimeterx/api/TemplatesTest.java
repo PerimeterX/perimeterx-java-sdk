@@ -54,7 +54,7 @@ public class TemplatesTest {
                 .build();
         pxContext.setBlockAction("c");
         Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
+        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
 
@@ -69,7 +69,7 @@ public class TemplatesTest {
                 .build();
         pxContext.setBlockAction("b");
         Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
+        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
         assertTrue( actualHTML.contains("http://www.google.com/logo.jpg") );
     }
 
@@ -87,7 +87,7 @@ public class TemplatesTest {
                 .build();
         pxContext.setBlockAction("b");
         Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
+        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
         assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
     }
 
@@ -103,7 +103,7 @@ public class TemplatesTest {
                 .build();
         pxContext.setBlockAction("c");
         Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
+        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
         assertTrue( actualHTML.contains("http://www.google.com/script.js") );
     }
 
@@ -117,7 +117,7 @@ public class TemplatesTest {
                 .build();
         pxContext.setBlockAction("c");
         Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
+        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
 
@@ -131,7 +131,7 @@ public class TemplatesTest {
                 .build();
         pxContext.setBlockAction("b");
         Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
+        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
         assertTrue( actualHTML.contains( pxContext.getUuid()) );
     }
 
@@ -145,7 +145,7 @@ public class TemplatesTest {
                 .build();
         pxContext.setBlockAction("c");
         Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
+        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
         assertTrue( actualHTML.contains( pxContext.getVid() ) );
     }
 
