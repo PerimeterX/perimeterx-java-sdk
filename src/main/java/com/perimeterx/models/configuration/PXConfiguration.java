@@ -321,7 +321,7 @@ public class PXConfiguration {
         private boolean moduleEnabled = true;
         private boolean encryptionEnabled = true;
         private int blockingScore = 100;
-        private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookie", "cookies"));
+        private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookieOrig", "cookies"));
         private int maxBufferLen = 10;
         private int apiTimeout = 1000;
         private int connectionTimeout = 1000;

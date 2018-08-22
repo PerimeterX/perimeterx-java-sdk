@@ -41,15 +41,15 @@ public class PXHttpClientTest {
         mockValidRequest();
         pxClient = PXHttpClient.getInstance(pxConfig, asyncClient, httpClient);
         PXDynamicConfiguration config = pxClient.getConfigurationFromServer();
-        Assert.assertTrue(config.getAppId().equals("a_app_id"));
-        Assert.assertTrue(config.getChecksum().equals("a_check_sum"));
-        Assert.assertTrue(config.getCookieSecret().equals("a_cookie_key"));
-        Assert.assertTrue(config.getBlockingScore() == 1000);
-        Assert.assertTrue(config.getApiConnectTimeout() == 3000);
-        Assert.assertTrue(config.getS2sTimeout() == 3000);
-        Assert.assertTrue(config.getSensitiveHeaders().equals(new HashSet<String>()));
-        Assert.assertTrue(config.isModuleEnabled() == false);
-        Assert.assertTrue(config.getModuleMode().equals(ModuleMode.BLOCKING));
+        Assert.assertEquals("a_app_id", config.getAppId());
+        Assert.assertEquals("a_check_sum", config.getChecksum());
+        Assert.assertEquals("a_cookie_key", config.getCookieSecret());
+        Assert.assertEquals(1000, config.getBlockingScore());
+        Assert.assertEquals(3000, config.getApiConnectTimeout());
+        Assert.assertEquals(3000, config.getS2sTimeout());
+        Assert.assertEquals(config.getSensitiveHeaders(), new HashSet<String>());
+        Assert.assertFalse(config.isModuleEnabled());
+        Assert.assertEquals(config.getModuleMode(), ModuleMode.BLOCKING);
     }
 
     private void mockValidRequest() {
@@ -64,7 +64,7 @@ public class PXHttpClientTest {
             when(httpClient.execute(isA(HttpUriRequest.class))).thenReturn(response);
             when(response.getStatusLine()).thenReturn(statusLine);
         } catch (Exception e) {
-            Assert.assertTrue(false);
+            Assert.fail();
         }
     }
 }

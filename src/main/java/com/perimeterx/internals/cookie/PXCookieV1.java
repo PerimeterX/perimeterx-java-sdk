@@ -1,7 +1,6 @@
 package com.perimeterx.internals.cookie;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 
@@ -10,8 +9,8 @@ import com.perimeterx.models.exceptions.PXException;
  */
 public class PXCookieV1 extends AbstractPXCookie {
 
-    public PXCookieV1(PXConfiguration pxConfiguration, PXContext pxContext) {
-        super(pxConfiguration, pxContext);
+    public PXCookieV1(PXConfiguration pxConfiguration, CookieData cookieData) {
+        super(pxConfiguration, cookieData);
     }
 
     @Override
@@ -49,13 +48,13 @@ public class PXCookieV1 extends AbstractPXCookie {
                 .append(this.getVID())
                 .toString();
         String hmacWithIp = new StringBuilder()
-                .append(baseHmacStr.toString())
-                .append(this.pxContext.getIp())
-                .append(pxContext.isMobileToken() ? "" : this.pxContext.getUserAgent())
+                .append(baseHmacStr)
+                .append(ip)
+                .append(userAgent)
                 .toString();
         String hmacWithoutIp = new StringBuilder()
                 .append(baseHmacStr)
-                .append(pxContext.isMobileToken() ? "" : this.pxContext.getUserAgent())
+                .append(userAgent)
                 .toString();
 
         return this.isHmacValid(hmacWithIp, this.getHmac()) || this.isHmacValid(hmacWithoutIp, this.getHmac());

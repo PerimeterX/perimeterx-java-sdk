@@ -1,55 +1,75 @@
 package com.perimeterx.internals;
 
 import com.perimeterx.internals.cookie.AbstractPXCookie;
-import com.perimeterx.internals.cookie.PXCookieFactory;
+import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 
-public class PXCookieOriginalTokenValidator {
+public class PXCookieOriginalTokenValidator implements PXValidator {
 
     private static final PXLogger logger = PXLogger.getLogger(PXCookieOriginalTokenValidator.class);
 
+    private PXConfiguration pxConfiguration;
+
+    public PXCookieOriginalTokenValidator (PXConfiguration pxConfiguration){
+        this.pxConfiguration = pxConfiguration;
+    }
+
     /**
-     * Verify original cookie and set vid, uuid, score on context
+     * Verify original cookieOrig and set vid, uuid, score on context
      *
-     * @param context - request context, data from cookie will be populated
+     * @param context - request context, data from cookieOrig will be populated
      */
-    public void verify(PXConfiguration pxConfiguration, PXContext context) {
+    public boolean verify(PXContext context) {
         try {
-            AbstractPXCookie originalCookie = PXCookieFactory.create(pxConfiguration, context);
-            logger.debug("Original token found, Evaluating");
 
-            if (originalCookie == null ) {
-                logger.debug("Original token is null");
-                context.setOriginalTokenError("original_token_missing");
-                return;
+            AbstractPXCookie originalCookie  = CookieSelector.selectOriginalTokens(context, pxConfiguration);
+            if (!StringUtils.isEmpty(context.getOriginalTokenError()) || originalCookie == null){
+                return false;
             }
-
-            if (!originalCookie.deserialize()) {
-                logger.debug("Original token decryption failed, value: " + context.getOriginalToken());
-                context.setOriginalTokenError("decryption_failed");
-                return;
-            }
-
             String decodedOriginalCookie = originalCookie.getDecodedCookie().toString();
+            context.setOriginalTokenCookie(originalCookie.getCookieOrig());
             context.setDecodedOriginalToken(decodedOriginalCookie);
             if (context.getVid() == null) {
                 context.setVid(originalCookie.getVID());
             }
+            context.setPxCookieOrig(originalCookie.getCookieOrig());
+            context.setCookieVersion(originalCookie.getCookieVersion());
             context.setOriginalUuid(originalCookie.getUUID());
 
             if (!originalCookie.isSecured()) {
                 logger.debug("Original token HMAC validation failed, value: " + decodedOriginalCookie  + " user-agent: " + context.getUserAgent());
                 context.setOriginalTokenError("validation_failed");
+                return false;
             }
         } catch (PXException | PXCookieDecryptionException e) {
             logger.debug("Received an error while decrypting perimeterx original token:" + e.getMessage());
             context.setOriginalTokenError("decryption_failed");
+            return false;
         }
+        return true;
+    }
 
+    private boolean isErrorMobileHeader(String authHeader) {
+        return StringUtils.isNumeric(authHeader) && authHeader.length() == 1;
+    }
+
+    public String getMobileError(PXContext context) {
+        String mobileError = "";
+        List <RawCookieData> tokensCookie = context.getTokens();
+        if (!tokensCookie.isEmpty()){
+            RawCookieData firstCookie = tokensCookie.get(0);
+            if (isErrorMobileHeader(firstCookie.getSelectedCookie())){
+                mobileError = firstCookie.getSelectedCookie();
+            }
+        }
+        return mobileError;
     }
 }

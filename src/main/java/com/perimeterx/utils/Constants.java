@@ -11,6 +11,7 @@ import java.util.Properties;
  */
 public final class Constants {
 
+
     private static Properties prop;
 
     static {
@@ -58,8 +59,10 @@ public final class Constants {
     public static final String BLOCK_ACTION_CAPTCHA = "b";
     public static final String BLOCK_ACTION_CHALLENGE = "j";
 
-    public static final String MOBILE_SDK_HEADER = "x-px-authorization";
+    public static final String MOBILE_SDK_AUTHORIZATION_HEADER = "x-px-authorization";
     public static final String MOBILE_SDK_ORIGINAL_TOKEN_HEADER = "x-px-original-token";
+    public static final String MOBILE_SDK_TOKENS_HEADER = "x-px-tokens";
+    public static final String MOBILE_SDK_ORIGINAL_TOKENS_HEADER = "x-px-original-tokens";
 
     public static final String COOKIE_EXTRACT_DELIMITER_MOBILE = ":";
 

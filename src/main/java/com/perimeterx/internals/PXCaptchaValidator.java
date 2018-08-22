@@ -17,7 +17,7 @@ import org.apache.http.conn.ConnectTimeoutException;
  * <p>
  * Created by shikloshi on 07/07/2016.
  */
-public class PXCaptchaValidator {
+public class PXCaptchaValidator implements PXValidator {
 
     private static final PXLogger logger = PXLogger.getLogger(PXCaptchaValidator.class);
     private PXClient pxClient;
@@ -35,7 +35,7 @@ public class PXCaptchaValidator {
      * @return true if captcha is valid, false if not
      * @throws PXException
      */
-    public boolean verify(PXContext context) throws PXException {
+    public boolean verify( PXContext context) throws PXException {
         if (captchaCookieIsEmpty(context.getPxCaptcha())) {
             return false;
         }
