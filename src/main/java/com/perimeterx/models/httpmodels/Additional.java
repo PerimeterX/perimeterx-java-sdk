@@ -34,8 +34,11 @@ public class Additional {
     public String originalToken;
     @JsonProperty("decoded_original_token")
     public String decodedOriginalToken;
+    @JsonProperty("risk_mode")
+    public String riskMode;
     @JsonUnwrapped
     public CustomParameters customParameters;
+
 
 
     public static Additional fromContext(PXContext ctx) {
@@ -51,6 +54,7 @@ public class Additional {
         additional.originalTokenError = ctx.getOriginalTokenError();
         additional.originalToken = ctx.getPxOriginalTokenCookie();
         additional.decodedOriginalToken = ctx.getDecodedOriginalToken();
+        additional.riskMode = ctx.getRiskMode();
         return additional;
     }
 }
