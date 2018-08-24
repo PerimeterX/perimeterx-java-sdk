@@ -8,7 +8,6 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.risk.S2SCallReason;
-import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,7 +37,8 @@ public class CookieSelector {
                 AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 s2SCallReason = evaluateCookie(selectedCookie);
                 if (S2SCallReason.NONE == s2SCallReason){
-                    result = chooseHighestCookie(selectedCookie, result);
+                    result = selectedCookie;
+                    break;
                 }
             }
         }
@@ -46,13 +46,6 @@ public class CookieSelector {
             context.setPxCookieOrig(cookieOrig);
         }
         context.setS2sCallReason(s2SCallReason.name());
-        return result;
-    }
-
-    private static AbstractPXCookie chooseHighestCookie(AbstractPXCookie selectedCookie, AbstractPXCookie result) {
-        if (Constants.COOKIE_V3_KEY.equals(selectedCookie.getCookieVersion()) || result == null){
-            return selectedCookie;
-        }
         return result;
     }
 
@@ -75,7 +68,8 @@ public class CookieSelector {
                 AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 errorMessage = evaluateOriginalTokenCookie(selectedCookie);
                 if(StringUtils.isEmpty(errorMessage)){
-                    result = chooseHighestCookie(selectedCookie, result);
+                    result = selectedCookie;
+                    break;
                 }
             }
         }
