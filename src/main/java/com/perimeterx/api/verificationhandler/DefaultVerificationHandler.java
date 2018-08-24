@@ -42,10 +42,14 @@ public class DefaultVerificationHandler implements VerificationHandler {
         } else {
             logger.debug("Request invalid");
             this.activityHandler.handleBlockActivity(context);
+        }
+        
+        if (pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) && !verified) {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
+            return false;
         }
 
-        return verified;
+        return true;
     }
 
     private boolean shouldPassRequest(PXContext context){
@@ -56,6 +60,6 @@ public class DefaultVerificationHandler implements VerificationHandler {
         boolean verified = score < blockingScore;
         logger.debug(verified ? DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK : DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK, score, blockingScore);
 
-        return verified || pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR);
+        return verified;
     }
 }
