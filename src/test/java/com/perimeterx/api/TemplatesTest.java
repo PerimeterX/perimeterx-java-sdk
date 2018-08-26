@@ -74,7 +74,20 @@ public class TemplatesTest {
     }
 
 
-
+    @Test
+    public void testCaptchaPageContainsCSS() throws Exception {
+        PXConfiguration pxConfig = new PXConfiguration.Builder()
+                .appId(appId)
+                .authToken("AUTH_123")
+                .cookieKey("COOKIE_123")
+                .blockingScore(70)
+                .cssRef("http://www.google.com/stylesheet.css")
+                .build();
+        pxContext.setBlockAction("c");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
+        assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
+    }
 
     @Test
     public void testDefualtPageContainsCSS() throws Exception {
@@ -91,6 +104,20 @@ public class TemplatesTest {
         assertTrue( actualHTML.contains("http://www.google.com/stylesheet.css") );
     }
 
+    @Test
+    public void testDefualtPageContainsJS() throws Exception {
+        PXConfiguration pxConfig = new PXConfiguration.Builder()
+                .appId(appId)
+                .authToken("AUTH_123")
+                .cookieKey("COOKIE_123")
+                .blockingScore(70)
+                .cssRef("http://www.google.com/script.js")
+                .build();
+        pxContext.setBlockAction("b");
+        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
+        String actualHTML = TemplateFactory.getTemplate("block_template.mustache", props);
+        assertTrue( actualHTML.contains("http://www.google.com/script.js") );
+    }
 
     @Test
     public void testCaptchaPageContainsJS() throws Exception {
