@@ -26,7 +26,7 @@ public class CookieSelector {
      * */
     public static AbstractPXCookie selectFromTokens(PXContext context, PXConfiguration pxConfiguration) {
         AbstractPXCookie result = null;
-        S2SCallReason s2SCallReason = S2SCallReason.NO_COOKIE;
+        S2SCallReason s2SCallReason = S2SCallReason.NONE;
         List <RawCookieData> tokens = context.getTokens();
         String cookieOrig = null;
         if (tokens != null){
@@ -35,7 +35,7 @@ public class CookieSelector {
                 String version = token.getVersion();
                 cookieOrig = cookie;
                 AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
-                s2SCallReason = evaluateCookie(selectedCookie);
+                s2SCallReason = evaluateCookie(selectedCookie, cookie);
                 if (S2SCallReason.NONE == s2SCallReason){
                     result = selectedCookie;
                     break;
@@ -43,7 +43,9 @@ public class CookieSelector {
             }
         }
         context.setPxCookieOrig(cookieOrig);
-        context.setS2sCallReason(s2SCallReason.getValue());
+        if (!(s2SCallReason == S2SCallReason.NONE && result == null )){
+            context.setS2sCallReason(s2SCallReason.getValue());
+        }
         return result;
     }
 
@@ -59,7 +61,10 @@ public class CookieSelector {
         String errorMessage = null;
         List <RawCookieData> tokens = context.getOriginalTokens();
         String cookieOrig = null;
-        if (tokens != null){
+        if (tokens == null || tokens.isEmpty()) {
+            context.setS2sCallReason(S2SCallReason.INVALID_DECRYPTION.getValue());
+        }
+        else{
             for (RawCookieData token : tokens){
                 String cookie = token.getSelectedCookie();
                 String version = token.getVersion();
@@ -77,35 +82,42 @@ public class CookieSelector {
         return result;
     }
 
-    private static S2SCallReason evaluateCookie(AbstractPXCookie selectedCookie) {
+    private static S2SCallReason evaluateCookie(AbstractPXCookie selectedCookie, String cookie) {
         S2SCallReason s2SCallReason = S2SCallReason.NONE;
-        if (selectedCookie == null) {
+        if (selectedCookie == null && StringUtils.isEmpty(cookie)) {
             logger.debug("Cookie is null");
             s2SCallReason = S2SCallReason.NO_COOKIE;
         }
         else {
             try {
                 if (!selectedCookie.deserialize()) {
-                    logger.debug("Cookie decryption failed, value: " + selectedCookie.getPxCookie());
+                    logger.debug("Cookie decryption failed, value: " + cookie);
                     s2SCallReason = S2SCallReason.INVALID_DECRYPTION;
                 }
-            } catch (PXCookieDecryptionException e) {
-                logger.debug("Cookie decryption failed, value: " + selectedCookie.getPxCookie());
+            } catch (Exception e) {
+                logger.debug("Cookie decryption failed, value: " + cookie);
                 s2SCallReason = S2SCallReason.INVALID_DECRYPTION;
             }
         }
         return s2SCallReason;
     }
 
-    private static String evaluateOriginalTokenCookie(AbstractPXCookie selectedCookie) throws PXCookieDecryptionException {
+    private static String evaluateOriginalTokenCookie(AbstractPXCookie selectedCookie) {
         String error = "";
         if (selectedCookie == null ) {
             logger.debug("Original token is null");
             error =  "original_token_missing";
         }
-        else if (!selectedCookie.deserialize()) {
-            logger.debug("Original token decryption failed, value: " + selectedCookie.getPxCookie());
-            error =  "decryption_failed";
+        else {
+            try {
+                if (!selectedCookie.deserialize()) {
+                    logger.debug("Original token decryption failed, value: " + selectedCookie.getPxCookie());
+                    error =  "decryption_failed";
+                }
+            } catch (PXCookieDecryptionException e) {
+                logger.debug("Original token decryption failed, value: " + selectedCookie.getPxCookie());
+                error =  "decryption_failed";
+            }
         }
         return error;
     }

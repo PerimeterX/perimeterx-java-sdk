@@ -24,7 +24,10 @@ public abstract class HeaderParser {
         if (!StringUtils.isEmpty(cookieHeader)) {
             String[] cookies = splitHeader(cookieHeader);
             for (String cookie : cookies) {
-                cookieList.add(createCookie(cookie));
+                RawCookieData rawCookie = createCookie(cookie);
+                if (rawCookie != null){
+                    cookieList.add(rawCookie);
+                }
             }
         }
         return cookieList;
@@ -46,5 +49,10 @@ public abstract class HeaderParser {
                 return "";
 
         }
+    }
+
+    protected static boolean  isValidPxCookie(String version) {
+        return "3".equals(version) || "1".equals(version) || Constants.COOKIE_V3_KEY.equals(version) || Constants.COOKIE_V1_KEY.equals(version);
+
     }
 }

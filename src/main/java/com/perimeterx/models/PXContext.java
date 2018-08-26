@@ -12,7 +12,6 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
@@ -196,7 +195,6 @@ public class PXContext {
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
-        this.s2sCallReason = S2SCallReason.NONE.getValue();
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
         this.madeS2SApiCall = false;
@@ -234,7 +232,7 @@ public class PXContext {
             originalTokens.addAll(headerParser.createRawCookieDataList(originalTokenHeader));
 
 
-            this.tokens  = tokens;
+            this.tokens = tokens;
             if (!originalTokens.isEmpty()){
                 this.originalTokens = originalTokens;
             }

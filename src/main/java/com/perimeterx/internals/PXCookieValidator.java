@@ -48,7 +48,7 @@ public class PXCookieValidator implements PXValidator {
                 }
             }
             pxCookie = CookieSelector.selectFromTokens(context, pxConfiguration);
-            if (ifLegitPxCookie(context) || pxCookie == null){
+            if (ifLegitPxCookie(context, pxCookie) || pxCookie == null){
                 return false;
             }
             context.setPxCookieOrig(pxCookie.getCookieOrig());
@@ -94,8 +94,8 @@ public class PXCookieValidator implements PXValidator {
         }
     }
 
-    private boolean ifLegitPxCookie(PXContext context) {
-        if (StringUtils.isEmpty(context.getS2sCallReason())){
+    private boolean ifLegitPxCookie(PXContext context, AbstractPXCookie pxCookie) {
+        if (StringUtils.isEmpty(context.getS2sCallReason()) && pxCookie == null){
             context.setS2sCallReason(S2SCallReason.NO_COOKIE.getValue());
         }
         return S2SCallReason.INVALID_DECRYPTION.getValue().equals(context.getS2sCallReason()) || S2SCallReason.NO_COOKIE.getValue().equals(context.getS2sCallReason());
