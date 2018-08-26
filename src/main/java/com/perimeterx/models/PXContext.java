@@ -12,7 +12,6 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
@@ -163,6 +162,7 @@ public class PXContext {
      * The original token cookie.
      * */
     private String originalTokenCookie;
+
     /**
      * The risk mode (monitor / active_blocking) of the request
      * */
@@ -191,17 +191,10 @@ public class PXContext {
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
         parseCookies(request, isMobileToken);
-        String cookie = isMobileToken ? request.getHeader(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) : request.getHeader(Constants.COOKIE_ORIGIN);
-        final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
-        if (pxCaptchaCookie != null) {
-            this.pxCaptcha = pxCaptchaCookie;
-        }
-
         this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
-        this.s2sCallReason = S2SCallReason.NONE.name();
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
         this.madeS2SApiCall = false;
@@ -239,7 +232,7 @@ public class PXContext {
             originalTokens.addAll(headerParser.createRawCookieDataList(originalTokenHeader));
 
 
-            this.tokens  = tokens;
+            this.tokens = tokens;
             if (!originalTokens.isEmpty()){
                 this.originalTokens = originalTokens;
             }
@@ -264,21 +257,6 @@ public class PXContext {
         this.originalTokenCookie = originalTokenCookie;
     }
 
-    private String extractCookieByKey(String cookie, String key) {
-        String cookieValue = null;
-        if (cookie != null) {
-            String[] cookies = cookie.split(";\\s?");
-            for (String c : cookies) {
-                String[] splicedCookie = c.split("=", 2);
-                if (key.equals(splicedCookie[0])) {
-                    cookieValue = splicedCookie[1];
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
 
     public void setRiskCookie(AbstractPXCookie riskCookie) {
         this.riskCookie = riskCookie.getDecodedCookie().toString();
@@ -295,6 +273,9 @@ public class PXContext {
                 break;
             case Constants.BLOCK_ACTION_CHALLENGE:
                 this.blockAction = BlockAction.CHALLENGE;
+                break;
+            case Constants.BLOCK_ACTION_RATE:
+                this.blockAction = BlockAction.RATE;
                 break;
             default:
                 this.blockAction = BlockAction.CAPTCHA;

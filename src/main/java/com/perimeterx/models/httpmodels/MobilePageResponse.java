@@ -19,12 +19,16 @@ public class MobilePageResponse {
     @JsonProperty("collectorUrl")
     private String collectorUrl;
 
-    public MobilePageResponse(String action, String uuid, String appId, String page, String collectorUrl) {
+    @JsonProperty("vid")
+    private String vid;
+
+    public MobilePageResponse(String action, String uuid, String vid, String appId, String page, String collectorUrl) {
         this.action = action;
         this.uuid = uuid;
         this.appId = appId;
         this.page = page;
         this.collectorUrl = collectorUrl;
+        this.vid = vid;
     }
 
     public String getAction() {
@@ -45,5 +49,9 @@ public class MobilePageResponse {
 
     public String getCollectorUrl() {
         return collectorUrl;
+    }
+
+    public String getVid() {
+        return vid;
     }
 }

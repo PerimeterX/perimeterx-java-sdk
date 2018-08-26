@@ -39,7 +39,6 @@ import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
 import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
-import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
@@ -48,17 +47,14 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
@@ -77,7 +73,6 @@ public class PerimeterX {
     private PXS2SValidator serverValidator;
     private PXCookieValidator cookieValidator;
     private ActivityHandler activityHandler;
-    private PXCaptchaValidator captchaValidator;
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
@@ -119,7 +114,6 @@ public class PerimeterX {
         }
 
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
-        this.captchaValidator = new PXCaptchaValidator(pxClient, configuration);
         this.cookieValidator = new PXCookieValidator(this.configuration);
         this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler);
         this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
@@ -170,9 +164,6 @@ public class PerimeterX {
                 context.setFirstPartyRequest(true);
                 return context;
             }
-            Cookie cookie = new Cookie(Constants.COOKIE_CAPTCHA_KEY, StringUtils.EMPTY);
-            cookie.setMaxAge(0);
-            responseWrapper.addCookie(cookie);
             handleCookies(context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
@@ -188,15 +179,9 @@ public class PerimeterX {
     }
 
     private void handleCookies(PXContext context) throws PXException {
-        if (captchaValidator.verify(context)) {
-            logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_COOKIE_FOUND);
-            return;
-        }
-        logger.debug(PXLogger.LogReason.DEBUG_CAPTCHA_NO_COOKIE);
-
-        logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
-        // Cookie is valid (exists and not expired) so we can block according to it's score
         if (cookieValidator.verify(context)) {
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
+            // Cookie is valid (exists and not expired) so we can block according to it's score
             return;
         }
         logger.debug(PXLogger.LogReason.DEBUG_COOKIE_MISSING);
@@ -207,7 +192,7 @@ public class PerimeterX {
     }
 
     private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
-        return reverseProxy.reversePxClient(req, res) || reverseProxy.reversePxXhr(req, res);
+        return reverseProxy.reversePxClient(req, res) || reverseProxy.reversePxXhr(req, res) || reverseProxy.reverseCaptcha(req, res);
     }
 
     private boolean moduleEnabled() {

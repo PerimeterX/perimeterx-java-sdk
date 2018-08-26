@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
-import com.perimeterx.models.httpmodels.CaptchaResponse;
 import com.perimeterx.models.httpmodels.RiskResponse;
 
 /**
@@ -17,7 +16,6 @@ public final class JsonUtils {
     private final static ObjectMapper mapper = new ObjectMapper();
 
     public final static ObjectReader riskResponseReader = mapper.reader(RiskResponse.class);
-    public final static ObjectReader captchaResponseReader = mapper.reader(CaptchaResponse.class);
     public final static ObjectReader pxConfigurationStubReader = mapper.reader(PXDynamicConfiguration.class);
     public final static ObjectWriter writer = mapper.writer();
 

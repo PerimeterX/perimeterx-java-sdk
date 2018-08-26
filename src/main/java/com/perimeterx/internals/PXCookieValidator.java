@@ -48,7 +48,7 @@ public class PXCookieValidator implements PXValidator {
                 }
             }
             pxCookie = CookieSelector.selectFromTokens(context, pxConfiguration);
-            if (ifLegitPxCookie(context) || pxCookie == null){
+            if (ifLegitPxCookie(context, pxCookie) || pxCookie == null){
                 return false;
             }
             context.setPxCookieOrig(pxCookie.getCookieOrig());
@@ -62,7 +62,7 @@ public class PXCookieValidator implements PXValidator {
 
             if (pxCookie.isExpired()) {
                 logger.debug(PXLogger.LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
-                context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED.name());
+                context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED.getValue());
                 return false;
             }
 
@@ -72,31 +72,33 @@ public class PXCookieValidator implements PXValidator {
             }
 
             if (!pxCookie.isSecured()) {
-                context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.name());
+                context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.getValue());
                 return false;
             }
 
             if (context.isSensitiveRoute()) {
                 logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getUri());
-                context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.name());
+                context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.getValue());
                 return false;
             }
             context.setPassReason(PassReason.COOKIE);
-            context.setS2sCallReason(S2SCallReason.NONE.name());
+            context.setS2sCallReason(S2SCallReason.NONE.getValue());
             return true;
 
         } catch (PXException e) {
             logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
-            context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.name());
+            context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.getValue());
+
+
             return false;
         }
     }
 
-    private boolean ifLegitPxCookie(PXContext context) {
-        if (StringUtils.isEmpty(context.getS2sCallReason())){
-            context.setS2sCallReason(S2SCallReason.NO_COOKIE.name());
+    private boolean ifLegitPxCookie(PXContext context, AbstractPXCookie pxCookie) {
+        if (StringUtils.isEmpty(context.getS2sCallReason()) && pxCookie == null){
+            context.setS2sCallReason(S2SCallReason.NO_COOKIE.getValue());
         }
-        return S2SCallReason.INVALID_DECRYPTION.name().equals(context.getS2sCallReason()) || S2SCallReason.NO_COOKIE.name().equals(context.getS2sCallReason());
+        return S2SCallReason.INVALID_DECRYPTION.getValue().equals(context.getS2sCallReason()) || S2SCallReason.NO_COOKIE.getValue().equals(context.getS2sCallReason());
     }
 
 

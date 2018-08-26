@@ -40,6 +40,7 @@ public class Additional {
     public CustomParameters customParameters;
 
 
+
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
         additional.pxCookie = ctx.getRiskCookie();

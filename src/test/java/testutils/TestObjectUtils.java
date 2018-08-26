@@ -4,7 +4,6 @@ import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.DefaultActivityHandler;
 import com.perimeterx.http.PXClient;
-import com.perimeterx.internals.PXCaptchaValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -29,13 +28,6 @@ public class TestObjectUtils {
         return new PXClientMock(scoreToReturn, Constants.CAPTCHA_SUCCESS_CODE);
     }
 
-    public static PXClient verifiedCaptchaClient() {
-        return new PXClientMock(0, Constants.CAPTCHA_SUCCESS_CODE);
-    }
-
-    public static PXClient notVerifiedCaptchaClient() {
-        return new PXClientMock(0, Constants.CAPTCHA_FAILED_CODE);
-    }
 
     public static PXConfiguration generateConfiguration() {
         return new PXConfiguration.Builder()
@@ -51,17 +43,13 @@ public class TestObjectUtils {
     public static PerimeterX testablePerimeterXObject(PXConfiguration configuration, PXClient client) throws Exception {
         PerimeterX instance = new PerimeterX(configuration);
         PXS2SValidator validator = new PXS2SValidator(client, configuration);
-        PXCaptchaValidator captchaValidator = new PXCaptchaValidator(client, configuration);
         ActivityHandler activityHandler = new DefaultActivityHandler(client, configuration);
         Field validatorField = PerimeterX.class.getDeclaredField("serverValidator");
         validatorField.setAccessible(true);
         Field activityHandlerField = PerimeterX.class.getDeclaredField("activityHandler");
         activityHandlerField.setAccessible(true);
-        Field captchaValidatorField = PerimeterX.class.getDeclaredField("captchaValidator");
-        captchaValidatorField.setAccessible(true);
         validatorField.set(instance, validator);
         activityHandlerField.set(instance, activityHandler);
-        captchaValidatorField.set(instance, captchaValidator);
         return instance;
     }
 }

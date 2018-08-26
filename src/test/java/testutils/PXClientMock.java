@@ -6,7 +6,9 @@ import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.*;
+import com.perimeterx.models.httpmodels.RiskRequest;
+import com.perimeterx.models.httpmodels.RiskResponse;
+import com.perimeterx.models.httpmodels.RiskResponseBody;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -57,10 +59,6 @@ public class PXClientMock implements PXClient {
         // noop
     }
 
-    @Override
-    public CaptchaResponse sendCaptchaRequest(ResetCaptchaRequest resetCaptchaRequest) throws PXException, IOException {
-        return new CaptchaResponse(captchaReturnStatus, "1", "vid", "cid");
-    }
 
     @Override
     public PXDynamicConfiguration getConfigurationFromServer() {

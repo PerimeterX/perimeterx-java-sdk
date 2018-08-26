@@ -12,7 +12,7 @@ public class MobileCookieHeaderParser extends HeaderParser{
     protected RawCookieData createCookie(String cookie) {
         String [] splitCookie = cookie.split(":\\s?",2);
         RawCookieData rawCookieData = null;
-        if (splitCookie.length == 2){
+        if (splitCookie.length == 2 && isValidPxCookie(splitCookie[0])){
             String version = splitCookie[0];
             String standardVersion = putInCookieByVersionName(version);
             rawCookieData = new RawCookieData(standardVersion, splitCookie[1]);
