@@ -47,7 +47,7 @@ public class PxCookieValidatorTest {
         assertTrue(verified);
         assertEquals(pxContext.getCookieVersion(), Constants.COOKIE_V3_KEY);
         assertEquals(pxContext.getPxCookieOrig(), CookieV3);
-        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NONE.name());
+        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NONE.getValue());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class PxCookieValidatorTest {
         assertTrue(verified);
         assertEquals(pxContext.getCookieVersion(), Constants.COOKIE_V1_KEY);
         assertEquals(pxContext.getPxCookieOrig(), CookieV1);
-        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NONE.name());
+        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NONE.getValue());
     }
 
     @Test
@@ -77,7 +77,7 @@ public class PxCookieValidatorTest {
         assertTrue(verified);
         assertEquals(pxContext.getCookieVersion(), Constants.COOKIE_V3_KEY);
         assertEquals(pxContext.getPxCookieOrig(), CookieV3);
-        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NONE.name());
+        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NONE.getValue());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class PxCookieValidatorTest {
         assertFalse(verified);
         assertEquals(pxContext.getCookieVersion(), Constants.COOKIE_V3_KEY);
         assertEquals(pxContext.getPxCookieOrig(), CookieV3);
-        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.INVALID_DECRYPTION.name());
+        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.INVALID_DECRYPTION.getValue());
         assertEquals(pxContext.getDecodedOriginalToken(), PAYLOAD_V3);
         assertEquals(pxContext.getVid(), "84f7db40-9592-11e8-a7b3-5319fb36a9bf");
     }
@@ -110,7 +110,7 @@ public class PxCookieValidatorTest {
         assertFalse(verified);
         assertEquals(pxContext.getCookieVersion(), Constants.COOKIE_V3_KEY);
         assertEquals(pxContext.getPxCookieOrig(), CookieV3);
-        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NO_COOKIE.name());
+        assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NO_COOKIE.getValue());
         assertEquals(pxContext.getDecodedOriginalToken(), PAYLOAD_V3);
         assertEquals(pxContext.getVid(), "84f7db40-9592-11e8-a7b3-5319fb36a9bf");
     }

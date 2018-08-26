@@ -202,7 +202,7 @@ public class PXContext {
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
         this.fullUrl = request.getRequestURL().toString();
-        this.s2sCallReason = S2SCallReason.NONE.name();
+        this.s2sCallReason = S2SCallReason.NONE.getValue();
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
         this.madeS2SApiCall = false;

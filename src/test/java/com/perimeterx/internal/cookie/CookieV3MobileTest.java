@@ -79,7 +79,7 @@ public class CookieV3MobileTest {
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);
-        assertEquals(S2SCallReason.SENSITIVE_ROUTE.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.SENSITIVE_ROUTE.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CookieV3MobileTest {
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);
-        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class CookieV3MobileTest {
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);
-        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class CookieV3MobileTest {
         boolean verify = pxCookieValidator.verify(context);
 
         assertFalse(verify);
-        assertEquals(S2SCallReason.COOKIE_EXPIRED.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.COOKIE_EXPIRED.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -142,6 +142,6 @@ public class CookieV3MobileTest {
         boolean verify = pxCookieValidator.verify(context);
         assertTrue(verify);
         assertEquals(BlockReason.NONE, context.getBlockReason());
-        assertEquals(S2SCallReason.NONE.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.NONE.getValue(), context.getS2sCallReason());
     }
 }

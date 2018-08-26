@@ -59,7 +59,7 @@ public class CookieSelectorTest {
         PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectFromTokens(context, pxConfiguration);
         assertEquals(cookie.getDecodedCookie().toString(), PAYLOAD_V1);
-        assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.name());
+        assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.getValue());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class CookieSelectorTest {
         PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectFromTokens(context, pxConfiguration);
         assertEquals(PAYLOAD_V1, cookie.getDecodedCookie().toString());
-        assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.name());
+        assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.getValue());
     }
 
 

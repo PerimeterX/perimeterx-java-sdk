@@ -48,7 +48,7 @@ public class CookieV3Test {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         pxCookieValidator.verify(context);
-        assertEquals(S2SCallReason.NO_COOKIE.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.NO_COOKIE.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CookieV3Test {
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);
-        assertEquals(S2SCallReason.SENSITIVE_ROUTE.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.SENSITIVE_ROUTE.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class CookieV3Test {
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);
-        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -108,7 +108,7 @@ public class CookieV3Test {
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);
-        assertEquals(S2SCallReason.INVALID_DECRYPTION.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.INVALID_DECRYPTION.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class CookieV3Test {
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);
-        assertEquals(S2SCallReason.COOKIE_EXPIRED.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.COOKIE_EXPIRED.getValue(), context.getS2sCallReason());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class CookieV3Test {
         boolean verify = pxCookieValidator.verify(context);
         assertTrue(verify);
         assertEquals(context.getBlockReason(), BlockReason.NONE);
-        assertEquals(S2SCallReason.NONE.name(), context.getS2sCallReason());
+        assertEquals(S2SCallReason.NONE.getValue(), context.getS2sCallReason());
     }
 
 

@@ -42,10 +42,8 @@ public class CookieSelector {
                 }
             }
         }
-        if (result == null && context.getPxCookieOrig() == null){
-            context.setPxCookieOrig(cookieOrig);
-        }
-        context.setS2sCallReason(s2SCallReason.name());
+        context.setPxCookieOrig(cookieOrig);
+        context.setS2sCallReason(s2SCallReason.getValue());
         return result;
     }
 
@@ -65,6 +63,7 @@ public class CookieSelector {
             for (RawCookieData token : tokens){
                 String cookie = token.getSelectedCookie();
                 String version = token.getVersion();
+                cookieOrig = cookie;
                 AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 errorMessage = evaluateOriginalTokenCookie(selectedCookie);
                 if(StringUtils.isEmpty(errorMessage)){
