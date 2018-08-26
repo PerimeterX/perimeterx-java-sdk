@@ -39,7 +39,6 @@ public class DefaultBlockHandler implements BlockHandler {
                     blockPageResponse = actionData;
                     break;
                 }
-            case BLOCK:
             default:
                 filePrefix = Constants.CAPTCHA_BLOCK_TEMPLATE;
                 props = TemplateFactory.getProps(context, pxConfig);
