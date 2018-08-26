@@ -58,10 +58,6 @@ public abstract class TemplateFactory {
             jsClientSrc = "/" + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
             hostUrl = "/" + prefix + Constants.FIRST_PARTY_XHR_PATH;
         }
-        String blockAction = pxContext.getBlockAction().getCode();
-        if ("b".equals(blockAction)){
-            blockScript = "";
-        }
         props.put("hostUrl", hostUrl);
         props.put("blockScript", blockScript);
         props.put("jsClientSrc", jsClientSrc);

@@ -32,17 +32,14 @@ public class DefaultBlockHandler implements BlockHandler {
                 filePrefix = Constants.RATELIMIT_TEMPLATE;
                 blockPageResponse = getPage(props, filePrefix);
                 break;
-            case BLOCK:
-                props = TemplateFactory.getProps(context, pxConfig);
-                filePrefix = Constants.BLOCK_TEMPLATE;
-                blockPageResponse = getPage(props, filePrefix);
-                break;
+
             case CHALLENGE:
                 String actionData = context.getBlockActionData();
                 if (actionData != null) {
                     blockPageResponse = actionData;
                     break;
                 }
+            case BLOCK:
             default:
                 filePrefix = Constants.CAPTCHA_BLOCK_TEMPLATE;
                 props = TemplateFactory.getProps(context, pxConfig);
