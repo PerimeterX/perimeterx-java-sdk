@@ -192,12 +192,6 @@ public class PXContext {
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
         parseCookies(request, isMobileToken);
-        String cookie = isMobileToken ? request.getHeader(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) : request.getHeader(Constants.COOKIE_ORIGIN);
-        final String pxCaptchaCookie = extractCookieByKey(cookie, Constants.COOKIE_CAPTCHA_KEY);
-        if (pxCaptchaCookie != null) {
-            this.pxCaptcha = pxCaptchaCookie;
-        }
-
         this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
@@ -263,21 +257,6 @@ public class PXContext {
 
     public void setOriginalTokenCookie(String originalTokenCookie) {
         this.originalTokenCookie = originalTokenCookie;
-    }
-
-    private String extractCookieByKey(String cookie, String key) {
-        String cookieValue = null;
-        if (cookie != null) {
-            String[] cookies = cookie.split(";\\s?");
-            for (String c : cookies) {
-                String[] splicedCookie = c.split("=", 2);
-                if (key.equals(splicedCookie[0])) {
-                    cookieValue = splicedCookie[1];
-                    break;
-                }
-            }
-        }
-        return cookieValue;
     }
 
 

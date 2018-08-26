@@ -91,7 +91,7 @@ public class PxCookieValidatorTest {
         boolean verified = pxCookieValidator.verify(pxContext);
         assertFalse(verified);
         assertEquals(pxContext.getCookieVersion(), Constants.COOKIE_V3_KEY);
-        assertEquals(pxContext.getPxCookieOrig(), CookieV3);
+        assertEquals(pxContext.getPxCookieOrig(), "@%@%@#");
         assertEquals(pxContext.getS2sCallReason(), S2SCallReason.INVALID_DECRYPTION.getValue());
         assertEquals(pxContext.getDecodedOriginalToken(), PAYLOAD_V3);
         assertEquals(pxContext.getVid(), "84f7db40-9592-11e8-a7b3-5319fb36a9bf");
@@ -109,7 +109,7 @@ public class PxCookieValidatorTest {
         boolean verified = pxCookieValidator.verify(pxContext);
         assertFalse(verified);
         assertEquals(pxContext.getCookieVersion(), Constants.COOKIE_V3_KEY);
-        assertEquals(pxContext.getPxCookieOrig(), CookieV3);
+        assertEquals(pxContext.getPxCookieOrig(), null);
         assertEquals(pxContext.getS2sCallReason(), S2SCallReason.NO_COOKIE.getValue());
         assertEquals(pxContext.getDecodedOriginalToken(), PAYLOAD_V3);
         assertEquals(pxContext.getVid(), "84f7db40-9592-11e8-a7b3-5319fb36a9bf");
