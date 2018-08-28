@@ -3,6 +3,7 @@
 ## [v5.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-08-28)
 - Added handling of mobile tokens: x-px-tokens, x-px-original-tokens 
 - Now using CaptchaV2 instead of a third party captcha provider
+- Added proxy support
 
 
 ## [v4.2.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-08-06)
