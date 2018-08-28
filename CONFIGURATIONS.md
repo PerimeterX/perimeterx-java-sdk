@@ -227,3 +227,28 @@ public class PXFilter implements Filter {
   </filter-mapping>
 </web-app>
 ```
+
+## <a name="Proxy-integration"></a> Proxy Integration
+Providing a proxy allows the communication between the enforcer and our backend service via
+proxy. You can set the proxy as a hostname (with a domain name), or as an ip port combination.
+If you choose to use the proxy's domain, do not enter a port in the configuration.
+Make sure you have the proxy's certificate installed on the machine that is running the enforcer.
+```
+PXConfiguration config = new PXConfiguration.Builder()
+        .appId("PXaBcDeFgH")
+        .cookieKey("COOKIE_KEY")
+        .authToken("AUTH_TOKEN")
+        .useProxy(true)
+        .proxyHost(127.0.0.1)
+        .proxyPort(80)
+        .build();
+        
+PXConfiguration config = new PXConfiguration.Builder()
+        .appId("PXaBcDeFgH")
+        .cookieKey("COOKIE_KEY")
+        .authToken("AUTH_TOKEN")
+        .useProxy(true)
+        .proxyHost(yourdomain.com)
+        .build();
+```
+
