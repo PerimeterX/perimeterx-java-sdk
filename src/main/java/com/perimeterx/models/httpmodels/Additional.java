@@ -36,6 +36,8 @@ public class Additional {
     public String decodedOriginalToken;
     @JsonProperty("risk_mode")
     public String riskMode;
+    @JsonProperty("px_cookie_hmac")
+    public String pxCookieHmac;
     @JsonUnwrapped
     public CustomParameters customParameters;
 
@@ -55,6 +57,7 @@ public class Additional {
         additional.originalToken = ctx.getPxOriginalTokenCookie();
         additional.decodedOriginalToken = ctx.getDecodedOriginalToken();
         additional.riskMode = ctx.getRiskMode();
+        additional.pxCookieHmac = ctx.getCookieHmac();
         return additional;
     }
 }
