@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum ModuleMode {
 
-    MONITOR("monitor"), BLOCKING("active_blocking");
+    MONITOR("monitoring"), BLOCKING("blocking");
 
     private String value;
 
