@@ -32,7 +32,6 @@ Directives
 |remoteConfigurationInterval|Set the interval value for when to fetch configurations from PerimeterX configuration service|5000|Number|Milliseconds|
 |remoteConfigurationDelay|Set amount of time to delay the remote configuration thread before it starts|0|Number|Milliseconds|
 |remoteConfigurationUrl|Set the url for PerimeterX configuration service||String| |
-|captchaProvider|Set the captcha provider on the default block page|CaptchaProvider.RECAPTCHA|CaptchaProvider.RECAPTCHA / CaptchaProvider.FUNCAPTCHA|enum|
 |ipHeaders|List of headers to extract the user ip from, if not set, it will be taken from default|Empty List|Set<String>|Use with `CombinedIPProvider`|
 |firstPartyEnabled|Toggle first party requests enabled|true|boolean|Read more details about first pary integration [here](#first-party-integration)|
 |xhrFirstPartyEnabled|Toggle first party XHR requests will be forwarded to PerimeterX servers|true|boolean| |
@@ -130,7 +129,6 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
 ```
 
-<a name="captcha-provider"></a>
 ##### Custom Parameters Provider
 Risk api requests can be enriched with custom parameters by implementing CustomParametersProvider and adding logic to extract
 the custom parameters from the request
