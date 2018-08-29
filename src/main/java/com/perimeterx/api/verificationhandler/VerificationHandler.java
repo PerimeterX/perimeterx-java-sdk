@@ -1,8 +1,10 @@
 package com.perimeterx.api.verificationhandler;
 
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.exceptions.PXException;
 
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
 
 /**
  * Interface for handling verification after PerimeterX prepareProxyRequest finished analyzing the request.
@@ -17,5 +19,5 @@ public interface VerificationHandler {
      * @return
      * @throws Exception
      */
-    boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws Exception;
+    boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws PXException, IOException;
 }

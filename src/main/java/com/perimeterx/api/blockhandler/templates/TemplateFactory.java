@@ -24,14 +24,8 @@ import java.util.Map;
  */
 public abstract class TemplateFactory {
 
-    public static String getTemplate(PXContext pxContext, PXConfiguration pxConfig, String template) throws PXException {
+    public static String getTemplate(String template, Map<String, String> props) throws PXException {
         try {
-            // In case of challenge
-            if (pxContext.getBlockAction().equals("challenge") && pxContext.getBlockActionData() != null) {
-                return pxContext.getBlockActionData();
-            }
-
-            Map<String, String> props = getProps(pxContext, pxConfig);
             MustacheFactory mf = new DefaultMustacheFactory();
             Mustache m = mf.compile((getTemplate(template)), (getTemplate(template)).toString());
             StringWriter sw = new StringWriter();
@@ -43,7 +37,7 @@ public abstract class TemplateFactory {
 
     }
 
-    private static Map<String, String> getProps(PXContext pxContext, PXConfiguration pxConfig) {
+    public static Map<String, String> getProps(PXContext pxContext, PXConfiguration pxConfig) {
         Map<String, String> props = new HashMap<>();
 
         props.put("appId", pxConfig.getAppId());
@@ -53,10 +47,21 @@ public abstract class TemplateFactory {
         props.put("customLogo", pxConfig.getCustomLogo());
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
-        //captcha.mobile.mustache prop
-        props.put("hostUrl", pxContext.getCollectorURL());
-        props.put("jsClientSrc", pxConfig.isFirstPartyEnabled() ? String.format("/%s/init.js", pxConfig.getAppId().substring(2)) : String.format("%s/%s/main.min.js", Constants.CLIENT_HOST, pxConfig.getAppId()));
-        props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : null);
+        String urlVid = pxContext.getVid() != null ? pxContext.getVid() : "";
+
+        String blockScript = "//" + Constants.CAPTCHA_HOST + "/" + pxConfig.getAppId() + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" :"0");
+        String jsClientSrc = "//" + Constants.CLIENT_HOST + "/" + pxConfig.getAppId() + "/main.min.js";
+        String hostUrl = pxContext.getCollectorURL();
+        if (pxConfig.isFirstPartyEnabled() && !pxContext.isMobileToken()){
+            String prefix = pxConfig.getAppId().substring(2);
+            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" :"0");
+            jsClientSrc = "/" + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
+            hostUrl = "/" + prefix + Constants.FIRST_PARTY_XHR_PATH;
+        }
+        props.put("hostUrl", hostUrl);
+        props.put("blockScript", blockScript);
+        props.put("jsClientSrc", jsClientSrc);
+        props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : "false");
         props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
 
         return props;

@@ -6,8 +6,6 @@ import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.CaptchaResponse;
-import com.perimeterx.models.httpmodels.ResetCaptchaRequest;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.Constants;
@@ -75,7 +73,7 @@ public class PXHttpClient implements PXClient {
             logger.debug("Risk API Request: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
+            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
 
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
@@ -99,7 +97,7 @@ public class PXHttpClient implements PXClient {
             logger.debug("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
+            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
 
             httpResponse = httpClient.execute(post);
             EntityUtils.consume(httpResponse.getEntity());
@@ -120,7 +118,7 @@ public class PXHttpClient implements PXClient {
             logger.debug("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
+            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
             post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             producer = HttpAsyncMethods.create(post);
@@ -134,28 +132,6 @@ public class PXHttpClient implements PXClient {
         }
     }
 
-    public CaptchaResponse sendCaptchaRequest(ResetCaptchaRequest resetCaptchaRequest) throws PXException, IOException {
-        CloseableHttpResponse httpResponse = null;
-        try {
-            String requestBody = JsonUtils.writer.writeValueAsString(resetCaptchaRequest);
-            logger.debug("Sending captcha verification: {}", requestBody);
-            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_CAPTCHA);
-            post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
-
-            httpResponse = httpClient.execute(post);
-            String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
-            logger.debug("Captcha verification response: {}", s);
-            if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                return JsonUtils.captchaResponseReader.readValue(s);
-            }
-            return null;
-        } finally {
-            if (httpResponse != null) {
-                httpResponse.close();
-            }
-        }
-    }
 
     @Override
     public PXDynamicConfiguration getConfigurationFromServer() {
@@ -197,7 +173,7 @@ public class PXHttpClient implements PXClient {
             PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());
             post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration.getConnectionTimeout(),pxConfiguration.getApiTimeout()));
+            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
         } catch (Exception e) {

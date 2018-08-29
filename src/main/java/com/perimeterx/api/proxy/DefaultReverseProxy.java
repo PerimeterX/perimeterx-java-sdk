@@ -3,6 +3,7 @@ package com.perimeterx.api.proxy;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
+import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.HttpRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -11,8 +12,10 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Created by nitzangoldfeder on 14/05/2018.
@@ -32,11 +35,13 @@ public class DefaultReverseProxy implements ReverseProxy {
     private final String XHR_PATH = "xhr";
     private final String CLIENT_FP_PATH = "init.js";
     private final String CLIENT_TP_PATH = "main.min.js";
+    private final String CAPTACHA_PATH = "captcha";
 
     private IPProvider ipProvider;
     private String clientPath;
     private String clientReversePrefix;
     private String xhrReversePrefix;
+    private String captchaReversePrefix;
     private String collectorUrl;
     private CloseableHttpClient proxyClient;
     private PredefinedResponseHelper predefinedResponseHelper;
@@ -49,6 +54,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         String reverseAppId = pxConfiguration.getAppId().substring(2);
         this.clientReversePrefix = String.format("/%s/%s", reverseAppId, CLIENT_FP_PATH);
         this.xhrReversePrefix = String.format("/%s/%s", reverseAppId, XHR_PATH);
+        this.captchaReversePrefix  = "/" + reverseAppId + "/" + CAPTACHA_PATH;
         this.clientPath = String.format("/%s/%s", pxConfiguration.getAppId(), CLIENT_TP_PATH);
         this.collectorUrl = pxConfiguration.getCollectorUrl();
         this.ipProvider = ipProvider;
@@ -62,7 +68,7 @@ public class DefaultReverseProxy implements ReverseProxy {
     }
 
 
-    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
         if (!req.getRequestURI().startsWith(clientReversePrefix)) {
             return false;
         }
@@ -80,7 +86,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         return true;
     }
 
-    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws Exception {
+    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
         if (!req.getRequestURI().startsWith(xhrReversePrefix)) {
             return false;
         }
@@ -109,6 +115,29 @@ public class DefaultReverseProxy implements ReverseProxy {
         remoteServer.handleResponse(proxyRequest, true);
 
         return true;
+    }
+
+    @Override
+    public boolean reverseCaptcha(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
+        if (!req.getRequestURI().contains(captchaReversePrefix)){
+            return false;
+        }
+        if (!pxConfiguration.isFirstPartyEnabled()){
+            logger.debug("First party is disabled, rendering default response");
+            PredefinedResponse predefinedResponse = new PredefinedResponse(CONTENT_TYPE_JAVASCRIPT, DEFAULT_JAVASCRIPT_VALUE);
+            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
+            return false;
+        }
+        String query = req.getQueryString();
+        String originalRequest = pxConfiguration.getAppId() + "/captcha.js?" + query;
+        String url = "https://" + Constants.CAPTCHA_HOST  + "/" + originalRequest;
+        logger.debug("Forwarding request from " + captchaReversePrefix + "/" + originalRequest + "to xhr at " + url);
+
+        RemoteServer remoteServer = new RemoteServer("", url, req, res, ipProvider, proxyClient, null, predefinedResponseHelper, pxConfiguration);
+        HttpRequest proxyRequest = remoteServer.prepareProxyRequest();
+        remoteServer.handleResponse(proxyRequest, true);
+        return true;
+
     }
 
     public void setIpProvider(IPProvider ipProvider) {

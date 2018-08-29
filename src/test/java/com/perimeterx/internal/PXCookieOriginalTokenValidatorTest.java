@@ -23,6 +23,7 @@ public class PXCookieOriginalTokenValidatorTest {
     private String encodedPayload =  "3:25676dd757cb796e1b4252a4d395e7dbdd7b36787ac9d5c884a52b8cc3d79cd5:ZzY2AgkAS3Dhu6BVQAyn5XxQXQIuYLmnklh0gzPTsif/ItN+kQq46jyq0YPXYahfstf/r4V+mkexvyPl4KKLeA==:1000:ZZht8m6lbnBHMeMtIvQKYSbbea6fiuIQyjxLZhgX9L5ODbE73qBBZ6FJSN5+NWCCzCNWnFAWItIA5e+4l3gi2B6ykh//KiDwqr5jw9XHACz4r/XEZvGtUoxUsPGC8sT9rjG1oWe/+omoWqSTAxJlXulcbtbhivy+Mlf+75Z7hT8gVsQr9aWXw1hsc2KlfifN";
     private DefaultHostnameProvider hostnameProvider;
     private RemoteAddressIPProvider ipProvider;
+    private PXCookieOriginalTokenValidator pxCookieOriginalTokenValidator;
 
 
     @BeforeClass
@@ -34,6 +35,7 @@ public class PXCookieOriginalTokenValidatorTest {
                 .build();
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new RemoteAddressIPProvider();
+        this.pxCookieOriginalTokenValidator = new PXCookieOriginalTokenValidator(pxConfiguration);
     }
 
     private void enrichHttpRequestWithPxHeaders(MockHttpServletRequest request, String headerKey, String headerValue) {
@@ -44,28 +46,23 @@ public class PXCookieOriginalTokenValidatorTest {
     @Test
     public void testPxCookieOriginalTokenValidatorWithOriginalToken(){
         MockHttpServletRequest request = new MockHttpServletRequest();
-        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_HEADER, Constants.MOBILE_ERROR_NO_CONNECTION);
+        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, "2");
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, encodedPayload);
         PXContext pxContext = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        pxContext.setDeserializeFromOriginalToken(true);
-        PXCookieOriginalTokenValidator pxCookieOriginalTokenValidator = new PXCookieOriginalTokenValidator();
-        pxCookieOriginalTokenValidator.verify(pxConfiguration, pxContext);
-        Assert.assertEquals(pxContext.getOriginalToken(), encodedPayload);
-        Assert.assertEquals(pxContext.getVid(),"84f7db40-9592-11e8-a7b3-5319fb36a9bf");
-        Assert.assertEquals(pxContext.getOriginalUuid(),"484070ee-6783-44c8-86d1-2d9ca4a8eeb8");
+        this.pxCookieOriginalTokenValidator.verify( pxContext);
+        Assert.assertEquals("84f7db40-9592-11e8-a7b3-5319fb36a9bf", pxContext.getVid());
+        Assert.assertEquals("484070ee-6783-44c8-86d1-2d9ca4a8eeb8", pxContext.getOriginalUuid());
         Assert.assertEquals(pxContext.getDecodedOriginalToken(),PAYLOAD);
     }
 
     @Test
     public void testPxCookieOriginalTokenValidatorBadOriginalToken(){
         MockHttpServletRequest request = new MockHttpServletRequest();
-        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_HEADER, Constants.MOBILE_ERROR_NO_CONNECTION);
+        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, "2");
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, badXAuthorizationToken);
         PXContext pxContext = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        pxContext.setDeserializeFromOriginalToken(true);
-        PXCookieOriginalTokenValidator pxCookieOriginalTokenValidator = new PXCookieOriginalTokenValidator();
-        pxCookieOriginalTokenValidator.verify(pxConfiguration, pxContext);
-        Assert.assertEquals(pxContext.getOriginalToken(), badXAuthorizationToken);
+        this.pxCookieOriginalTokenValidator = new PXCookieOriginalTokenValidator(pxConfiguration);
+        pxCookieOriginalTokenValidator.verify( pxContext);
         Assert.assertNull(pxContext.getVid());
         Assert.assertNull(pxContext.getOriginalUuid());
         Assert.assertNull(pxContext.getDecodedOriginalToken());

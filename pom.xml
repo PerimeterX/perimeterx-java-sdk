@@ -7,7 +7,7 @@
     <name>PerimeterX JAVA SDK</name>
     <groupId>com.perimeterx</groupId>
     <artifactId>perimeterx-sdk</artifactId>
-    <version>4.2.0</version>
+    <version>5.0.0</version>
 
     <packaging>jar</packaging>
     <description>PerimeterX Java SDK</description>
@@ -205,6 +205,13 @@
             <artifactId>spring-web</artifactId>
             <version>4.3.1.RELEASE</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.16</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>

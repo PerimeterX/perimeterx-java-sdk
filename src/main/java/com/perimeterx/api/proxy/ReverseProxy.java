@@ -2,6 +2,9 @@ package com.perimeterx.api.proxy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 /**
  * Created by nitzangoldfeder on 14/05/2018.
@@ -14,9 +17,9 @@ public interface ReverseProxy {
      * @param req - Request object
      * @param res - Response object
      * @return true if response was handled, false otherwise
-     * @throws Exception
+     * @throws URISyntaxException, IOException
      */
-    boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws Exception;
+    boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException;
 
     /**
      * This method will reverse the request and send any XHR request back to PerimeterX backends
@@ -25,7 +28,9 @@ public interface ReverseProxy {
      * @param req - Request object
      * @param res - Response object
      * @return true if response was handled, false otherwise
-     * @throws Exception
+     * @throws URISyntaxException, IOException
      */
-    boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws Exception;
+    boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException;
+
+    boolean reverseCaptcha(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException;
 }

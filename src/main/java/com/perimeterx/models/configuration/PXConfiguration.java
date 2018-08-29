@@ -45,13 +45,16 @@ public class PXConfiguration {
     private int maxConnections;
     private int maxConnectionsPerRoute;
     private String remoteConfigurationUrl;
-    private CaptchaProvider captchaProvider;
     private CustomParametersProvider customParametersProvider;
     private BlockHandler blockHandler;
     private String collectorUrl;
     private String clientHost;
     private boolean firstPartyEnabled;
     private boolean xhrFirstPartyEnabled;
+    private boolean useProxy;
+    private String proxyHost;
+    private int proxyPort;
+
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -78,7 +81,6 @@ public class PXConfiguration {
         maxConnections = builder.maxConnections;
         maxConnectionsPerRoute = builder.maxConnectionsPerRoute;
         remoteConfigurationUrl = builder.remoteConfigurationUrl;
-        captchaProvider = builder.captchaProvider;
         ipHeaders = builder.ipHeaders;
         customParametersProvider = builder.customParametersProvider;
         blockHandler = builder.blockHandler;
@@ -86,6 +88,9 @@ public class PXConfiguration {
         firstPartyEnabled = builder.firstPartyEnabled;
         xhrFirstPartyEnabled = builder.xhrFirstPartyEnabled;
         clientHost = builder.clientHost;
+        useProxy = builder.useProxy;
+        proxyHost = builder.proxyHost;
+        proxyPort = builder.proxyPort;
 
     }
 
@@ -94,9 +99,9 @@ public class PXConfiguration {
                             boolean sendPageActivities, boolean signedWithIP, String serverURL, String customLogo, String cssRef,
                             String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled,
                             ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute,
-                            String remoteConfigurationUrl, CaptchaProvider captchaProvider, CustomParametersProvider customParametersProvider,
+                            String remoteConfigurationUrl, CustomParametersProvider customParametersProvider,
                             BlockHandler blockHandler, String collectorUrl, boolean firstPartyEnabled, boolean xhrFirstPartyEnable,
-                            String clientHost) {
+                            String clientHost, boolean useProxy, String proxyHost, int proxyPort) {
         this.appId = appId;
         this.cookieKey = cookieKey;
         this.authToken = authToken;
@@ -123,13 +128,15 @@ public class PXConfiguration {
         this.maxConnections = maxConnections;
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
         this.remoteConfigurationUrl = remoteConfigurationUrl;
-        this.captchaProvider = captchaProvider;
         this.customParametersProvider = customParametersProvider;
         this.blockHandler = blockHandler;
         this.collectorUrl = collectorUrl;
         this.firstPartyEnabled = firstPartyEnabled;
         this.xhrFirstPartyEnabled = xhrFirstPartyEnabled;
         this.clientHost = clientHost;
+        this.useProxy = useProxy;
+        this.proxyHost = proxyHost;
+        this.proxyPort = proxyPort;
     }
 
     /*
@@ -138,8 +145,8 @@ public class PXConfiguration {
     public PXConfiguration getTelemetryConfig() {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
-                moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, captchaProvider,
-                customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost);
+                moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl,
+                customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost, useProxy, proxyHost, proxyPort);
     }
 
     public String getRemoteConfigurationUrl(){
@@ -246,9 +253,6 @@ public class PXConfiguration {
         return this.maxConnectionsPerRoute;
     }
 
-    public CaptchaProvider getCaptchaProvider() {
-        return captchaProvider;
-    }
 
     public Set<String> getIpHeaders() {
         return ipHeaders;
@@ -278,6 +282,18 @@ public class PXConfiguration {
         return clientHost;
     }
 
+    public boolean shouldUseProxy(){
+        return useProxy;
+    }
+
+    public String getProxyHost(){
+        return proxyHost;
+    }
+
+    public int getProxyPort(){
+        return proxyPort;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
@@ -299,7 +315,7 @@ public class PXConfiguration {
         private boolean moduleEnabled = true;
         private boolean encryptionEnabled = true;
         private int blockingScore = 100;
-        private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookie", "cookies"));
+        private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookieOrig", "cookies"));
         private int maxBufferLen = 10;
         private int apiTimeout = 1000;
         private int connectionTimeout = 1000;
@@ -317,7 +333,6 @@ public class PXConfiguration {
         private int maxConnectionsPerRoute = 20;
         private int maxConnections = 200;
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
-        private CaptchaProvider captchaProvider = CaptchaProvider.RECAPTCHA;
         private Set<String> ipHeaders = new HashSet<>();
         private CustomParametersProvider customParametersProvider = new DefaultCustomParametersProvider();
         private BlockHandler blockHandler = new DefaultBlockHandler();
@@ -325,6 +340,9 @@ public class PXConfiguration {
         private boolean xhrFirstPartyEnabled = true;
         private boolean firstPartyEnabled = true;
         private String clientHost = Constants.CLIENT_HOST;
+        private boolean useProxy;
+        private String proxyHost;
+        private int proxyPort;
 
         public Builder() {
         }
@@ -355,6 +373,21 @@ public class PXConfiguration {
 
         public Builder authToken(String val) {
             authToken = val;
+            return this;
+        }
+
+        public Builder useProxy(boolean val) {
+            useProxy = val;
+            return this;
+        }
+
+        public Builder proxyHost(String val) {
+            proxyHost = val;
+            return this;
+        }
+
+        public Builder proxyPort(int val) {
+            proxyPort = val;
             return this;
         }
 
@@ -463,10 +496,6 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder captchaProvider(CaptchaProvider val) {
-            this.captchaProvider = val;
-            return this;
-        }
 
         public Builder ipHeaders(Set<String> val) {
             this.ipHeaders = val;

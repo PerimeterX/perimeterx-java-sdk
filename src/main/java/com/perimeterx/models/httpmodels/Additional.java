@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.CustomParameters;
-import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
 
@@ -20,7 +19,7 @@ public class Additional {
     @JsonProperty("http_version")
     public String httpVersion;
     @JsonProperty("s2s_call_reason")
-    public S2SCallReason callReason;
+    public String callReason;
     @JsonProperty("px_cookie_orig")
     public String pxCookieOrig;
     @JsonProperty("cookie_origin")
@@ -35,8 +34,13 @@ public class Additional {
     public String originalToken;
     @JsonProperty("decoded_original_token")
     public String decodedOriginalToken;
+    @JsonProperty("risk_mode")
+    public String riskMode;
+    @JsonProperty("px_cookie_hmac")
+    public String pxCookieHmac;
     @JsonUnwrapped
     public CustomParameters customParameters;
+
 
 
     public static Additional fromContext(PXContext ctx) {
@@ -52,6 +56,8 @@ public class Additional {
         additional.originalTokenError = ctx.getOriginalTokenError();
         additional.originalToken = ctx.getPxOriginalTokenCookie();
         additional.decodedOriginalToken = ctx.getDecodedOriginalToken();
+        additional.riskMode = ctx.getRiskMode();
+        additional.pxCookieHmac = ctx.getCookieHmac();
         return additional;
     }
 }

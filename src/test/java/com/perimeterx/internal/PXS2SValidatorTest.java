@@ -72,7 +72,7 @@ public class PXS2SValidatorTest {
     public void jsChallengeTest() throws PXException {
         this.client = new PXClientMock(100, Constants.CAPTCHA_SUCCESS_CODE, true);
         this.validator = new PXS2SValidator(this.client, this.pxConfig);
-        context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE);
+        context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.getValue());
         boolean verify = validator.verify(context);
         Assert.assertEquals(BlockAction.CHALLENGE,context.getBlockAction());
         Assert.assertEquals("<html><body></body></html>",context.getBlockActionData());

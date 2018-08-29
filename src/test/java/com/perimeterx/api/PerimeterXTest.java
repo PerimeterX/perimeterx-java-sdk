@@ -60,7 +60,6 @@ public class PerimeterXTest extends ConfiguredTest {
         Assert.assertEquals(clonedConfig.getMaxConnections(), configuration.getMaxConnections());
         Assert.assertEquals(clonedConfig.getMaxConnectionsPerRoute(), configuration.getMaxConnectionsPerRoute());
         Assert.assertEquals(clonedConfig.getRemoteConfigurationUrl(), configuration.getRemoteConfigurationUrl());
-        Assert.assertEquals(clonedConfig.getCaptchaProvider(), configuration.getCaptchaProvider());
     }
 
     private boolean compareCollections(Collection a, Collection b) {
