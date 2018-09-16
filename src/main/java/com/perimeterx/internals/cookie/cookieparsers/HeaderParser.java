@@ -5,6 +5,7 @@ import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class HeaderParser {
@@ -30,9 +31,34 @@ public abstract class HeaderParser {
                 }
             }
         }
+        cookieList = reorderCookies(cookieList);
         return cookieList;
     }
 
+    protected List<RawCookieData> reorderCookies(List<RawCookieData> cookieList){
+        List <RawCookieData> tempList = new ArrayList<>();
+        Iterator<RawCookieData> iter = cookieList.iterator();
+        RawCookieData currentCookie;
+        while (iter.hasNext()){
+            currentCookie = iter.next();
+            if (Constants.COOKIE_V3_KEY.equals(currentCookie.getVersion())){
+                tempList.add(currentCookie);
+                iter.remove();
+                break;
+            }
+        }
+        iter = cookieList.iterator();
+        while (iter.hasNext()){
+            currentCookie = iter.next();
+            if (Constants.COOKIE_V1_KEY.equals(currentCookie.getVersion())){
+                tempList.add(currentCookie);
+                iter.remove();
+                break;
+            }
+        }
+        tempList.addAll(cookieList);
+        return tempList;
+    }
 
 
     protected static String  putInCookieByVersionName(String version) {
