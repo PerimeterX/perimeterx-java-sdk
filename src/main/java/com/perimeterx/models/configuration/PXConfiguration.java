@@ -54,7 +54,7 @@ public class PXConfiguration {
     private boolean useProxy;
     private String proxyHost;
     private int proxyPort;
-
+    private boolean testingMode;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -91,7 +91,7 @@ public class PXConfiguration {
         useProxy = builder.useProxy;
         proxyHost = builder.proxyHost;
         proxyPort = builder.proxyPort;
-
+        testingMode = builder.testingMode;
     }
 
     private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled,
@@ -294,6 +294,10 @@ public class PXConfiguration {
         return proxyPort;
     }
 
+    public boolean isTestingMode(){
+        return testingMode;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
@@ -309,6 +313,7 @@ public class PXConfiguration {
     }
 
     public static final class Builder {
+        private boolean testingMode;
         private String appId;
         private String cookieKey;
         private String authToken;
@@ -529,6 +534,11 @@ public class PXConfiguration {
 
         public Builder clientHost(String val) {
             this.clientHost = val;
+            return this;
+        }
+
+        public Builder testingMode(boolean testingMode){
+            this.testingMode = testingMode;
             return this;
         }
 
