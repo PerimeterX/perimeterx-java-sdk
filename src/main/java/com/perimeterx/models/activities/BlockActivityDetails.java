@@ -32,6 +32,8 @@ public class BlockActivityDetails implements ActivityDetails {
     private String moduleVersion;
     @JsonProperty("cookie_origin")
     private String cookieOrigin;
+    @JsonProperty("simulated_block")
+    private String simulatedBlock;
 
 
     public BlockActivityDetails(PXContext context) {
@@ -44,6 +46,8 @@ public class BlockActivityDetails implements ActivityDetails {
         this.riskRtt = context.getRiskRtt();
         this.cookieOrigin = context.getCookieOrigin();
         this.moduleVersion = Constants.SDK_VERSION;
+        this.simulatedBlock = context.getRiskMode();
+
     }
 
     public int getBlockScore() {
