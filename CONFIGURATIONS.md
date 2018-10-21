@@ -38,6 +38,7 @@ Directives
 |useProxy|The http client shall use a proxy for message forwarding|boolean| |
 |proxyHost|The proxy's host name|String|
 |proxyPort|The proxy's port|int|
+|testingMode|Running the enforcer in dev environment for testing purposes, response returned as a JSON object|  |boolean
 
 ## <a name="interfaces"></a> Interfaces
 `perimeterx-java-sdk` can be tuned and set a different type of interface in order to make the module more flexible
