@@ -32,7 +32,7 @@ public class CookieSelector {
         if (tokens != null){
             for (RawCookieData token : tokens){
                 String cookie = token.getSelectedCookie();
-                String version = token.getVersion();
+                String version = token.getCookieVersion().getVersionName();
                 cookieOrig = cookie;
                 AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 s2SCallReason = evaluateCookie(selectedCookie, cookie);
@@ -67,7 +67,7 @@ public class CookieSelector {
         else{
             for (RawCookieData token : tokens){
                 String cookie = token.getSelectedCookie();
-                String version = token.getVersion();
+                String version = token.getCookieVersion().getVersionName();
                 cookieOrig = cookie;
                 AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 errorMessage = evaluateOriginalTokenCookie(selectedCookie);
