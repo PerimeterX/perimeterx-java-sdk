@@ -1,9 +1,11 @@
 package com.perimeterx.internals.cookie.cookieparsers;
 
+import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.Cookie;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +33,9 @@ public abstract class HeaderParser {
                 }
             }
         }
-        cookieList = reorderCookies(cookieList);
+        cookieList.sort(new CookieComparator());
+
+        //cookieList = reorderCookies(cookieList);
         return cookieList;
     }
 
@@ -41,7 +45,7 @@ public abstract class HeaderParser {
         RawCookieData currentCookie;
         while (iter.hasNext()){
             currentCookie = iter.next();
-            if (Constants.COOKIE_V3_KEY.equals(currentCookie.getVersion())){
+            if (Constants.COOKIE_V3_KEY.equals(currentCookie.getCookieVersion().getVersionName())){
                 tempList.add(currentCookie);
                 iter.remove();
                 break;
@@ -50,7 +54,7 @@ public abstract class HeaderParser {
         iter = cookieList.iterator();
         while (iter.hasNext()){
             currentCookie = iter.next();
-            if (Constants.COOKIE_V1_KEY.equals(currentCookie.getVersion())){
+            if (Constants.COOKIE_V1_KEY.equals(currentCookie.getCookieVersion().getVersionName())){
                 tempList.add(currentCookie);
                 iter.remove();
                 break;
@@ -61,18 +65,18 @@ public abstract class HeaderParser {
     }
 
 
-    protected static String  putInCookieByVersionName(String version) {
+    protected static CookieVersion getCookieVersion(String version) {
         switch (version) {
             case "3":
-                return Constants.COOKIE_V3_KEY;
+                return CookieVersion._V3;
             case "1":
-                return Constants.COOKIE_V1_KEY;
+                return CookieVersion._V1;
             case Constants.COOKIE_V1_KEY:
-                return Constants.COOKIE_V1_KEY;
+                return CookieVersion._V1;
             case Constants.COOKIE_V3_KEY:
-                return Constants.COOKIE_V3_KEY;
+                return CookieVersion._V3;
             default:
-                return "";
+                return CookieVersion.UNDEFINED;
 
         }
     }
