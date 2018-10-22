@@ -35,35 +35,8 @@ public abstract class HeaderParser {
         }
         cookieList.sort(new CookieComparator());
 
-        //cookieList = reorderCookies(cookieList);
         return cookieList;
     }
-
-    protected List<RawCookieData> reorderCookies(List<RawCookieData> cookieList){
-        List <RawCookieData> tempList = new ArrayList<>();
-        Iterator<RawCookieData> iter = cookieList.iterator();
-        RawCookieData currentCookie;
-        while (iter.hasNext()){
-            currentCookie = iter.next();
-            if (Constants.COOKIE_V3_KEY.equals(currentCookie.getCookieVersion().getVersionName())){
-                tempList.add(currentCookie);
-                iter.remove();
-                break;
-            }
-        }
-        iter = cookieList.iterator();
-        while (iter.hasNext()){
-            currentCookie = iter.next();
-            if (Constants.COOKIE_V1_KEY.equals(currentCookie.getCookieVersion().getVersionName())){
-                tempList.add(currentCookie);
-                iter.remove();
-                break;
-            }
-        }
-        tempList.addAll(cookieList);
-        return tempList;
-    }
-
 
     protected static CookieVersion getCookieVersion(String version) {
         switch (version) {
