@@ -3,7 +3,6 @@ package com.perimeterx.internal.cookie.cookieparser;
 import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
-import com.perimeterx.utils.Constants;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -24,8 +23,8 @@ public class MobileCookieHeaderParserTest {
     public void testCreateRawCookieDataFromMobile(){
         String cookie = "3:" + singleCookieV3 + "," + "1:" + singleCookieV1;
         List <RawCookieData> cookieList = new ArrayList<>();
-        cookieList.add(new RawCookieData(CookieVersion._V3,singleCookieV3));
-        cookieList.add(new RawCookieData(CookieVersion._V1, singleCookieV1));
+        cookieList.add(new RawCookieData(CookieVersion.V3,singleCookieV3));
+        cookieList.add(new RawCookieData(CookieVersion.V1, singleCookieV1));
         List <RawCookieData> rawcookiedata = mobileCookieHeaderParser.createRawCookieDataList(cookie);
         assertEquals(rawcookiedata, cookieList);
     }
@@ -34,8 +33,8 @@ public class MobileCookieHeaderParserTest {
     public void testCreateRawCookieDataFromMobileAndFail(){
         String cookie = "3:" + singleCookieV3 + "," + "1=" + singleCookieV1;
         List <RawCookieData> cookieList = new ArrayList<>();
-        cookieList.add(new RawCookieData(CookieVersion._V3,singleCookieV3));
-        cookieList.add(new RawCookieData(CookieVersion._V1, singleCookieV1));
+        cookieList.add(new RawCookieData(CookieVersion.V3,singleCookieV3));
+        cookieList.add(new RawCookieData(CookieVersion.V1, singleCookieV1));
         List <RawCookieData> rawcookiedata = mobileCookieHeaderParser.createRawCookieDataList(cookie);
         assertNotEquals(rawcookiedata, cookieList);
     }

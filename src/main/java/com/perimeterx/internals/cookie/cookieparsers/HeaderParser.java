@@ -5,9 +5,7 @@ import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.Cookie;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public abstract class HeaderParser {
@@ -41,13 +39,13 @@ public abstract class HeaderParser {
     protected static CookieVersion getCookieVersion(String version) {
         switch (version) {
             case "3":
-                return CookieVersion._V3;
+                return CookieVersion.V3;
             case "1":
-                return CookieVersion._V1;
+                return CookieVersion.V1;
             case Constants.COOKIE_V1_KEY:
-                return CookieVersion._V1;
+                return CookieVersion.V1;
             case Constants.COOKIE_V3_KEY:
-                return CookieVersion._V3;
+                return CookieVersion.V3;
             default:
                 return CookieVersion.UNDEFINED;
 

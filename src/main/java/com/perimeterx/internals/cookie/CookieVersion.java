@@ -7,8 +7,8 @@ import lombok.Getter;
 public enum CookieVersion {
 
     UNDEFINED("UNDEFINED",0),
-    _V1(Constants.COOKIE_V1_KEY,1),
-    _V3(Constants.COOKIE_V3_KEY,3);
+    V1(Constants.COOKIE_V1_KEY,1),
+    V3(Constants.COOKIE_V3_KEY,3);
 
     private String versionName;
 

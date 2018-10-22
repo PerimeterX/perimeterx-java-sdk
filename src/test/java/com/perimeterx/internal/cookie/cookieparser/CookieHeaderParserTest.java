@@ -3,7 +3,6 @@ package com.perimeterx.internal.cookie.cookieparser;
 import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.internals.cookie.cookieparsers.CookieHeaderParser;
-import com.perimeterx.utils.Constants;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -24,8 +23,8 @@ public class CookieHeaderParserTest {
     public void testCreateRawCookieDataFromCookieHeader(){
         String cookie = "_px3=" + singleCookieV3 + ";" + "_px=" + singleCookieV1;
         List <RawCookieData> cookieList = new ArrayList<>();
-        cookieList.add(new RawCookieData(CookieVersion._V3,singleCookieV3));
-        cookieList.add(new RawCookieData(CookieVersion._V1, singleCookieV1));
+        cookieList.add(new RawCookieData(CookieVersion.V3,singleCookieV3));
+        cookieList.add(new RawCookieData(CookieVersion.V1, singleCookieV1));
 
         List<RawCookieData> rawCookieDataList = cookieHeaderParser.createRawCookieDataList(cookie);
         assertEquals(cookieList, rawCookieDataList);
@@ -35,8 +34,8 @@ public class CookieHeaderParserTest {
     public void testCreateRawCookieDataFromCookieHeaderAndFail(){
         String cookie = "_px3=" + singleCookieV3 + ";" + "px=" + singleCookieV1;
         List <RawCookieData> cookieList = new ArrayList<>();
-        cookieList.add(new RawCookieData(CookieVersion._V3,singleCookieV3));
-        cookieList.add(new RawCookieData(CookieVersion._V1, singleCookieV1));
+        cookieList.add(new RawCookieData(CookieVersion.V3,singleCookieV3));
+        cookieList.add(new RawCookieData(CookieVersion.V1, singleCookieV1));
 
         List <RawCookieData> rawCookieDataList = cookieHeaderParser.createRawCookieDataList(cookie);
         assertNotEquals(cookieList, rawCookieDataList);
