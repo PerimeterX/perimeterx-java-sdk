@@ -53,7 +53,7 @@
         <profile>
             <id>disable-javadoc-doclint</id>
             <activation>
-                <jdk>[1.7,)</jdk>
+                <jdk>[1.8,)</jdk>
             </activation>
             <properties>
                 <additionalparam>-Xdoclint:none</additionalparam>
