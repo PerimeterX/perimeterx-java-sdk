@@ -53,7 +53,7 @@
         <profile>
             <id>disable-javadoc-doclint</id>
             <activation>
-                <jdk>[1.8,)</jdk>
+                <jdk>[1.7,)</jdk>
             </activation>
             <properties>
                 <additionalparam>-Xdoclint:none</additionalparam>
@@ -230,8 +230,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
