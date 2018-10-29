@@ -5,10 +5,16 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RawCookieData {
+public class RawCookieData implements Comparable{
 
-    String version;
+    CookieVersion cookieVersion;
 
     String selectedCookie;
+
+    @Override
+    public int compareTo(Object other)
+    {
+        return(((RawCookieData)other).getCookieVersion().getVersionLevel() - this.getCookieVersion().getVersionLevel());
+    }
 
 }

@@ -1,5 +1,10 @@
 # Change Log
 
+## [v5.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-10-29)
+- Added testing mode capability
+- Added Firsty party fallback when encountering redirection errors
+- Reordered the cookies such that the v3 cookie will be selected before v1
+
 ## [v5.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-08-28)
 - Added handling of mobile tokens: x-px-tokens, x-px-original-tokens 
 - Now using CaptchaV2 instead of a third party captcha provider

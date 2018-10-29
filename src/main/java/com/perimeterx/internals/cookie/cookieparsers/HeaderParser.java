@@ -1,10 +1,12 @@
 package com.perimeterx.internals.cookie.cookieparsers;
 
+import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class HeaderParser {
@@ -30,23 +32,22 @@ public abstract class HeaderParser {
                 }
             }
         }
+        Collections.sort(cookieList);
         return cookieList;
     }
 
-
-
-    protected static String  putInCookieByVersionName(String version) {
+    protected static CookieVersion getCookieVersion(String version) {
         switch (version) {
             case "3":
-                return Constants.COOKIE_V3_KEY;
+                return CookieVersion.V3;
             case "1":
-                return Constants.COOKIE_V1_KEY;
+                return CookieVersion.V1;
             case Constants.COOKIE_V1_KEY:
-                return Constants.COOKIE_V1_KEY;
+                return CookieVersion.V1;
             case Constants.COOKIE_V3_KEY:
-                return Constants.COOKIE_V3_KEY;
+                return CookieVersion.V3;
             default:
-                return "";
+                return CookieVersion.UNDEFINED;
 
         }
     }

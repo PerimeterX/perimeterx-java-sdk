@@ -1,6 +1,7 @@
 package com.perimeterx.internals.cookie.cookieparsers;
 
 
+import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.RawCookieData;
 
 import java.io.UnsupportedEncodingException;
@@ -26,7 +27,7 @@ public class CookieHeaderParser extends HeaderParser {
             } catch (UnsupportedEncodingException e) {
                 cookiePayload = splitCookie[1];
             }
-            String standardVersion = putInCookieByVersionName(version);
+            CookieVersion standardVersion = getCookieVersion(version);
             rawCookieData = new RawCookieData(standardVersion, cookiePayload);
         }
         return rawCookieData;
