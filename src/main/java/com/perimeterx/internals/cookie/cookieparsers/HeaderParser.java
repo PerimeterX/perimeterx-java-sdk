@@ -6,6 +6,7 @@ import com.perimeterx.utils.Constants;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class HeaderParser {
@@ -31,8 +32,7 @@ public abstract class HeaderParser {
                 }
             }
         }
-        cookieList.sort(new CookieComparator());
-
+        Collections.sort(cookieList);
         return cookieList;
     }
 
