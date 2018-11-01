@@ -41,8 +41,8 @@ public class Additional {
     public String pxCookieHmac;
     @JsonUnwrapped
     public CustomParameters customParameters;
-    @JsonProperty
-    public String[] riskCookieNames;
+    @JsonProperty("request_cookie_names")
+    public String[] requestCookieNames;
 
 
     public static Additional fromContext(PXContext ctx) {
@@ -60,7 +60,7 @@ public class Additional {
         additional.decodedOriginalToken = ctx.getDecodedOriginalToken();
         additional.riskMode = ctx.getRiskMode();
         additional.pxCookieHmac = ctx.getCookieHmac();
-        additional.riskCookieNames = CookieNamesExtractor.extractCookieNames(ctx.getHeaders().get(Constants.COOKIE_HEADER_NAME));
+        additional.requestCookieNames = CookieNamesExtractor.extractCookieNames(ctx.getHeaders().get(Constants.COOKIE_HEADER_NAME));
         return additional;
     }
 }
