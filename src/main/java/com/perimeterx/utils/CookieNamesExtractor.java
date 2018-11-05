@@ -1,11 +1,9 @@
 package com.perimeterx.utils;
 
-import java.util.List;
-
 public class CookieNamesExtractor {
 
     public static String[] extractCookieNames (String cookieHeader){
-        String [] cookieNames = null;
+        String[] cookieNames = null;
         if (cookieHeader != null) {
             String[] cookies = cookieHeader.split(";\\s?");
             cookieNames = new String[cookies.length];
