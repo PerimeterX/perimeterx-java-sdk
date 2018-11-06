@@ -15,6 +15,5 @@ public class CookieNamesExtractor {
             }
         }
         return cookiesList.toArray(new String[cookiesList.size()]);
-
     }
 }

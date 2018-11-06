@@ -1,9 +1,7 @@
 package com.perimeterx.utils;
 
 import org.testng.annotations.Test;
-
 import javax.servlet.http.Cookie;
-
 import static org.testng.Assert.assertEquals;
 
 public class CookieNamesExtractorTest {
