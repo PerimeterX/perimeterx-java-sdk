@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
-import com.perimeterx.utils.CookieNamesExtractor;
 
 
 /**
@@ -60,7 +59,7 @@ public class Additional {
         additional.decodedOriginalToken = ctx.getDecodedOriginalToken();
         additional.riskMode = ctx.getRiskMode();
         additional.pxCookieHmac = ctx.getCookieHmac();
-        additional.requestCookieNames = CookieNamesExtractor.extractCookieNames(ctx.getHeaders().get(Constants.COOKIE_HEADER_NAME));
+        additional.requestCookieNames = ctx.getRequestCookieNames();
         return additional;
     }
 }

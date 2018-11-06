@@ -40,7 +40,7 @@ public class PXClientMock implements PXClient {
 
     @Override
     public RiskResponse riskApiCall(RiskRequest riskRequest) throws PXException, IOException {
-        RiskResponse riskResponse = new RiskResponse("uuid", 0, this.score, "c", null);
+        RiskResponse riskResponse = new RiskResponse("uuid", 0, this.score, "c", null,null,null);
         if (forceChallenge) {
             riskResponse.setAction("j");
             riskResponse.setActionData(new RiskResponseBody());

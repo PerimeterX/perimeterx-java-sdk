@@ -12,13 +12,12 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.utils.BlockAction;
-import com.perimeterx.utils.Constants;
-import com.perimeterx.utils.PXCommonUtils;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.models.risk.VidSource;
+import com.perimeterx.utils.*;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -172,6 +171,21 @@ public class PXContext {
     private List <RawCookieData> originalTokens;
     private String cookieVersion;
 
+    /**
+     * All the names of the cookies in the request
+     * */
+    private String[] requestCookieNames;
+
+    /**
+     * the source of the vid
+     * */
+    private VidSource vidSource;
+    /**
+     * the pxhd cookie
+     * */
+
+    private String pxhd;
+
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
@@ -231,16 +245,33 @@ public class PXContext {
             String originalTokenHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
             originalTokens.addAll(headerParser.createRawCookieDataList(originalTokenHeader));
 
-
             this.tokens = tokens;
             if (!originalTokens.isEmpty()){
                 this.originalTokens = originalTokens;
             }
         }
         else {
-            String originalTokensHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
-            tokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
+            Cookie[] cookies = request.getCookies();
+            String cookieHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
+            this.requestCookieNames = CookieNamesExtractor.extractCookieNames(cookies);
+            setVidAndPxhd(cookies);
+            tokens.addAll(headerParser.createRawCookieDataList(cookieHeader));
             this.tokens = tokens;
+        }
+    }
+
+    private void setVidAndPxhd(Cookie[] cookies) {
+        this.vidSource = VidSource.NONE;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("_pxvid")) {
+                    this.vid = cookie.getValue();
+                    this.vidSource = VidSource.VID_COOKIE;
+                }
+                if (cookie.getName().equals("_pxhd")) {
+                    this.pxhd = cookie.getValue();
+                }
+            }
         }
     }
 
