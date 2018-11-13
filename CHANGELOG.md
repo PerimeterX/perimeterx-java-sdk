@@ -1,5 +1,10 @@
 # Change Log
 
+## [v5.1.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-10-29)
+- Fixed an issue when the acitivity telemetry won't send pxConfiguration.
+- Fixed the usage of custom activity handlers: The verification handler used to override the custom
+activity handler.
+
 ## [v5.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-10-29)
 - Added testing mode capability
 - Added Firsty party fallback when encountering redirection errors
