@@ -1,10 +1,10 @@
 package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.Constants;
-import com.perimeterx.utils.JsonUtils;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -36,8 +36,10 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
         }
 
         try {
-            this.enforcerConfigs = JsonUtils.writer.writeValueAsString(pxConfiguration.getTelemetryConfig());
-        } catch (JsonProcessingException e) {
+            Gson gson = new Gson();
+            String pxConfigJson = gson.toJson(pxConfiguration.getTelemetryConfig());
+            this.enforcerConfigs = pxConfigJson;
+        } catch (JsonIOException e) {
             this.enforcerConfigs = "Could not retrieve pxConfiguration";
         }
     }
