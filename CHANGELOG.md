@@ -1,9 +1,10 @@
 # Change Log
 
-## [v5.1.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-10-29)
+## [v5.2.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-11-13)
 - Fixed an issue when the acitivity telemetry won't send pxConfiguration.
 - Fixed the usage of custom activity handlers: The verification handler used to override the custom
 activity handler.
+- Added request cookie name extraction, requestCookieNames field sent during risk api call
 
 ## [v5.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-10-29)
 - Added testing mode capability
