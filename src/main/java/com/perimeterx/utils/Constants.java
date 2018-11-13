@@ -68,7 +68,7 @@ public final class Constants {
     public static final String MOBILE_SDK_ORIGINAL_TOKENS_HEADER = "x-px-original-tokens";
 
     public static final String HEADER_ORIGIN = "header";
-    public static final String COOKIE_ORIGIN = "cookie";
+    public static final String COOKIE_HEADER_NAME = "cookie";
 
     public static final String FILE_NAME_BLOCK = "block";
     public static final String FILE_EXTENSION_MUSTACHE = ".mustache";

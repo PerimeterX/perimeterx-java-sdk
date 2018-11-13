@@ -131,7 +131,7 @@ public class PXContext {
     /**
      * Marks the origin of the pxCookie
      */
-    private String cookieOrigin = Constants.COOKIE_ORIGIN;
+    private String cookieOrigin = Constants.COOKIE_HEADER_NAME;
 
     /**
      * Custom parameters from the requests, cusotm parameters are set via {@link com.perimeterx.api.providers.CustomParametersProvider#buildCustomParameters(PXConfiguration, PXContext)}
@@ -238,7 +238,7 @@ public class PXContext {
             }
         }
         else {
-            String originalTokensHeader = request.getHeader(Constants.COOKIE_ORIGIN);
+            String originalTokensHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
             tokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
             this.tokens = tokens;
         }

@@ -61,8 +61,7 @@ The interfaces should be set after PerimeterX instance has been initialized
                   // the our custom block handler
                 .blockHandler()
                 .build();
-
-        this.enforcer = PerimeterX.getInstance(pxConf);
+        this.enforcer = new PerimeterX(pxConf)
         this.enforcer.setActivityHandler(new BlockingActivityHandler());
 ```
 
