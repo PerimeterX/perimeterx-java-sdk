@@ -116,14 +116,18 @@ public class PerimeterX {
 
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.cookieValidator = new PXCookieValidator(this.configuration);
-        if (configuration.isTestingMode()){
+        setVerificationHandler();
+        this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
+        this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
+    }
+
+    private void setVerificationHandler() {
+        if (this.configuration.isTestingMode()){
             this.verificationHandler = new TestVerificationHandler(this.configuration, this.activityHandler);
         }
         else {
             this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler);
         }
-        this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
-        this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
     }
 
     public PerimeterX(PXConfiguration configuration) throws PXException {
@@ -212,6 +216,7 @@ public class PerimeterX {
      */
     public void setActivityHandler(ActivityHandler activityHandler) {
         this.activityHandler = activityHandler;
+        setVerificationHandler();
     }
 
     /**
