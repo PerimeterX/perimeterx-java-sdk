@@ -36,7 +36,7 @@ public class Activity {
         this.url = context.getFullUrl();
         this.vid = context.getVid();
         this.details = details;
-        if (activityType.equals(Constants.ACTIVITY_PAGE_REQUESTED) && context.getPxhd() != null) {
+        if ((activityType.equals(Constants.ACTIVITY_PAGE_REQUESTED) || activityType.equals(Constants.ACTIVITY_BLOCKED)) && context.getPxhd() != null) {
             this.pxhd = context.getPxhd();
         }
     }
