@@ -26,8 +26,6 @@ public class Activity {
     private String vid;
     private ActivityDetails details;
     private String pxhd;
-    @JsonProperty("block_action")
-    private String blockAction;
 
     public Activity(String activityType, String appId, PXContext context, ActivityDetails details) {
         this.type = activityType;
@@ -41,9 +39,5 @@ public class Activity {
         if (activityType.equals(Constants.ACTIVITY_PAGE_REQUESTED) && context.getPxhd() != null) {
             this.pxhd = context.getPxhd();
         }
-        if (activityType.equals(Constants.ACTIVITY_BLOCKED) && context.getBlockAction() != null) {
-            this.blockAction = context.getBlockAction().getCode();
-        }
     }
-
 }

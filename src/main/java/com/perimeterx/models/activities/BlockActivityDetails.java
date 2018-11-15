@@ -5,12 +5,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.utils.Constants;
+import lombok.Getter;
 
 /**
  * BlockActivityDetails model
  * <p>
  * Created by shikloshi on 06/07/2016.
  */
+@Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BlockActivityDetails implements ActivityDetails {
 
@@ -34,6 +36,9 @@ public class BlockActivityDetails implements ActivityDetails {
     private String cookieOrigin;
     @JsonProperty("simulated_block")
     private String simulatedBlock;
+    @JsonProperty("block_action")
+    private String blockAction;
+
 
 
     public BlockActivityDetails(PXContext context) {
@@ -47,38 +52,9 @@ public class BlockActivityDetails implements ActivityDetails {
         this.cookieOrigin = context.getCookieOrigin();
         this.moduleVersion = Constants.SDK_VERSION;
         this.simulatedBlock = context.getRiskMode();
+        this.blockAction = context.getBlockAction().getCode();
+
 
     }
 
-    public int getBlockScore() {
-        return blockScore;
-    }
-
-    public BlockReason getBlockReason() {
-        return blockReason;
-    }
-
-    public String getBlockUuid() {
-        return blockUuid;
-    }
-
-    public String getHttpMethod() {
-        return httpMethod;
-    }
-
-    public String getHttpVersion() {
-        return httpVersion;
-    }
-
-    public String getPxCookie() {
-        return pxCookie;
-    }
-
-    public long getRiskRtt() {
-        return riskRtt;
-    }
-
-    public String getModuleVersion() {
-        return moduleVersion;
-    }
 }
