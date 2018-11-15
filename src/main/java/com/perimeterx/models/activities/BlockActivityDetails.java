@@ -52,7 +52,9 @@ public class BlockActivityDetails implements ActivityDetails {
         this.cookieOrigin = context.getCookieOrigin();
         this.moduleVersion = Constants.SDK_VERSION;
         this.simulatedBlock = context.getRiskMode();
-        this.blockAction = context.getBlockAction().getCode();
+        if (context.getBlockAction() != null) {
+            this.blockAction = context.getBlockAction().getCode();
+        }
 
 
     }
