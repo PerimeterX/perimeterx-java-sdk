@@ -4,11 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
-import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.*;
 
 import javax.crypto.Cipher;
-import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -60,7 +58,6 @@ public abstract class AbstractPXCookie implements PXCookie {
     public String getCookieVersion() {
         return cookieVersion;
     }
-
 
     public JsonNode getDecodedCookie() {
         return decodedCookie;
@@ -147,38 +144,13 @@ public abstract class AbstractPXCookie implements PXCookie {
         return this.getTimestamp() < System.currentTimeMillis();
     }
 
-    public boolean isHmacValid(String hmacStr, String cookieHmac) throws PXException {
-        boolean isValid = false;
-
-        try {
-            Mac sha256_HMAC = Mac.getInstance("HmacSHA256");
-            SecretKeySpec secret_key = new SecretKeySpec(this.cookieKey.getBytes(), "HmacSHA256");
-            sha256_HMAC.init(secret_key);
-            byte[] b_hmac = sha256_HMAC.doFinal(hmacStr.getBytes(StandardCharsets.UTF_8));
-            byte[] b_cookieHmac = hexStringToByteArray(cookieHmac);
-            isValid = Arrays.equals(b_hmac, b_cookieHmac);
-        } catch (Exception e) {
-            throw new PXException("Failed to validate HMAC => ".concat(e.getMessage()));
-        } finally {
-            if (!isValid) {
-                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, this.userAgent);
-            }
+    public boolean isHmacValid(String hmacStr, String cookieHmac) {
+        boolean isValid = HMACUtils.isHMACValid(hmacStr, cookieHmac, this.cookieKey, logger);
+        if (!isValid) {
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, this.userAgent);
         }
-        return isValid;
-    }
 
-    private static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            if (s.charAt(i) == ' ') continue;
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
-        }
-        return data;
-    }
-
-    public boolean isValid() throws PXCookieDecryptionException, PXException {
-        return this.deserialize() && !this.isExpired() && this.isSecured();
+        return true;
     }
 
     @Override
@@ -194,9 +166,5 @@ public abstract class AbstractPXCookie implements PXCookie {
     @Override
     public String getVID() {
         return decodedCookie.get("v").asText();
-    }
-
-    public static String getMobileCookieVersion(String cookiePrefix) {
-        return Constants.COOKIE_V1_MOBILE_VALUE.equals(cookiePrefix) ?  Constants.COOKIE_V1_KEY :  Constants.COOKIE_V3_KEY;
     }
 }

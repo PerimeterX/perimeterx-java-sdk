@@ -28,6 +28,7 @@ import java.io.IOException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
+import static org.testng.Assert.assertEquals;
 
 /**
  * Test {@link PXS2SValidator}
@@ -44,11 +45,12 @@ public class PXS2SValidatorTest {
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
     private PXClient client;
+    private String dataEnrichmentString = "{\"cookieMonster\":\"ilai\"}";
 
     private PXS2SValidator validator;
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         this.pxConfig = new PXConfiguration.Builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
@@ -63,9 +65,10 @@ public class PXS2SValidatorTest {
     }
 
     @Test
-    public void verifyTest() throws PXException, IOException {
-        boolean verify = validator.verify(context);
+    public void verifyTest() throws PXException {
+        validator.verify(context);
         Assert.assertEquals(context.getRiskScore(), 50);
+        assertEquals(context.getDataEnrichment().toString(), dataEnrichmentString);
     }
 
     @Test
@@ -73,10 +76,10 @@ public class PXS2SValidatorTest {
         this.client = new PXClientMock(100, Constants.CAPTCHA_SUCCESS_CODE, true);
         this.validator = new PXS2SValidator(this.client, this.pxConfig);
         context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.getValue());
-        boolean verify = validator.verify(context);
-        Assert.assertEquals(BlockAction.CHALLENGE,context.getBlockAction());
-        Assert.assertEquals("<html><body></body></html>",context.getBlockActionData());
-        Assert.assertEquals(BlockReason.CHALLENGE,context.getBlockReason());
+        validator.verify(context);
+        Assert.assertEquals(BlockAction.CHALLENGE, context.getBlockAction());
+        Assert.assertEquals("<html><body></body></html>", context.getBlockActionData());
+        Assert.assertEquals(BlockReason.CHALLENGE, context.getBlockReason());
     }
 
     @Test
@@ -96,7 +99,7 @@ public class PXS2SValidatorTest {
         this.client = Mockito.spy(new PXClientMock(0, Constants.CAPTCHA_SUCCESS_CODE, true));
         this.validator = new PXS2SValidator(this.client, conf);
         validator.verify(context);
-        Mockito.verify(testCustomParamProvider, times(1)).buildCustomParameters(any(PXConfiguration.class),any(PXContext.class));
+        Mockito.verify(testCustomParamProvider, times(1)).buildCustomParameters(any(PXConfiguration.class), any(PXContext.class));
         Mockito.verify(client, times(1)).riskApiCall(any(RiskRequest.class));
     }
 }

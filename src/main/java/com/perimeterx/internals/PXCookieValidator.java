@@ -21,9 +21,7 @@ public class PXCookieValidator implements PXValidator {
 
     private PXConfiguration pxConfiguration;
 
-
-
-    public PXCookieValidator (PXConfiguration pxConfiguration) {
+    public PXCookieValidator(PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
     }
 
@@ -33,7 +31,7 @@ public class PXCookieValidator implements PXValidator {
      * @param context - request context, data from cookieOrig will be populated
      * @return S2S call reason according to the result of cookieOrig verification
      */
-    public boolean verify( PXContext context) {
+    public boolean verify(PXContext context) {
         AbstractPXCookie pxCookie = null;
 
         try {
@@ -42,15 +40,17 @@ public class PXCookieValidator implements PXValidator {
                 PXCookieOriginalTokenValidator mobileVerifier = new PXCookieOriginalTokenValidator(pxConfiguration);
                 mobileError = mobileVerifier.getMobileError(context);
                 mobileVerifier.verify(context);
-                if (!StringUtils.isEmpty(mobileError)){
+                if (!StringUtils.isEmpty(mobileError)) {
                     context.setS2sCallReason("mobile_error_" + mobileError);
                     return false;
                 }
             }
+
             pxCookie = CookieSelector.selectFromTokens(context, pxConfiguration);
-            if (ifLegitPxCookie(context, pxCookie) || pxCookie == null){
+            if (ifLegitPxCookie(context, pxCookie) || pxCookie == null) {
                 return false;
             }
+
             context.setPxCookieOrig(pxCookie.getCookieOrig());
             context.setCookieVersion(pxCookie.getCookieVersion());
             context.setRiskCookie(pxCookie);
@@ -81,21 +81,21 @@ public class PXCookieValidator implements PXValidator {
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.getValue());
                 return false;
             }
+
             context.setPassReason(PassReason.COOKIE);
             context.setS2sCallReason(S2SCallReason.NONE.getValue());
+
             return true;
 
         } catch (PXException e) {
             logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
             context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.getValue());
-
-
             return false;
         }
     }
 
     private boolean ifLegitPxCookie(PXContext context, AbstractPXCookie pxCookie) {
-        if (StringUtils.isEmpty(context.getS2sCallReason()) && pxCookie == null){
+        if (StringUtils.isEmpty(context.getS2sCallReason()) && pxCookie == null) {
             context.setS2sCallReason(S2SCallReason.NO_COOKIE.getValue());
         }
         return S2SCallReason.INVALID_DECRYPTION.getValue().equals(context.getS2sCallReason()) || S2SCallReason.NO_COOKIE.getValue().equals(context.getS2sCallReason());

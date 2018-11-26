@@ -19,15 +19,13 @@ import java.lang.reflect.Field;
 public class TestObjectUtils {
 
     public static PXClient blockingPXClient(int minScoreToBlock) {
-        int scoreToReturn = minScoreToBlock;
-        return new PXClientMock(scoreToReturn, Constants.CAPTCHA_SUCCESS_CODE);
+        return new PXClientMock(minScoreToBlock, Constants.CAPTCHA_SUCCESS_CODE);
     }
 
     public static PXClient nonBlockingPXClient(int minScoreToBlock) {
         int scoreToReturn = minScoreToBlock - 1;
         return new PXClientMock(scoreToReturn, Constants.CAPTCHA_SUCCESS_CODE);
     }
-
 
     public static PXConfiguration generateConfiguration() {
         return new PXConfiguration.Builder()

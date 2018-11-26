@@ -17,8 +17,6 @@ import org.testng.annotations.Test;
 import static org.testng.Assert.assertEquals;
 
 public class CookieSelectorTest {
-
-
     private final String COOKIE_KEY = "ASASDSAd32r223f2+wdsafsar2t43ASCASDFTfTt34gsfet3424tFSDFdsfsdr3R";
     private DefaultHostnameProvider hostnameProvider;
     private RemoteAddressIPProvider ipProvider;
@@ -28,9 +26,8 @@ public class CookieSelectorTest {
     private final String PAYLOAD_V1 = "{\"v\":\"b844b860-92fe-11e8-9ad2-075a911258e2\",\"u\":\"e87f6f10-9fb6-11e8-9d8d-572ad86677e3\",\"s\":{\"a\":0,\"b\":0},\"t\":1534247356969,\"h\":\"5adab483c4c6157072a7af160a48018946cc719df7f5b54588fe07c85a56e65e\"}";
     private PXConfiguration pxConfiguration;
 
-
     @BeforeClass
-    public void init (){
+    public void init() {
         pxConfiguration = new PXConfiguration.Builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
@@ -40,13 +37,12 @@ public class CookieSelectorTest {
         ipProvider = new RemoteAddressIPProvider();
     }
 
-
     @Test
     public void testSelectFromTokensHappyFlow() throws PXCookieDecryptionException, PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, CookieV3);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_TOKENS_HEADER, CookieV3 + "," + CookieV1);
-        PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
+        PXContext context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectFromTokens(context, pxConfiguration);
         assertEquals(cookie.getDecodedCookie().toString(), PAYLOAD_V3);
     }
@@ -56,7 +52,7 @@ public class CookieSelectorTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_TOKENS_HEADER, "!@%@#%");
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, CookieV1);
-        PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
+        PXContext context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectFromTokens(context, pxConfiguration);
         assertEquals(cookie.getDecodedCookie().toString(), PAYLOAD_V1);
         assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.getValue());
@@ -68,7 +64,7 @@ public class CookieSelectorTest {
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER, CookieV3 + "," + CookieV1);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, CookieV3);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_TOKENS_HEADER, "2");
-        PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
+        PXContext context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectOriginalTokens(context, pxConfiguration);
         assertEquals(PAYLOAD_V3, cookie.getDecodedCookie().toString());
         assertEquals(context.getOriginalTokenError(), "");
@@ -80,7 +76,7 @@ public class CookieSelectorTest {
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER, "!@%@#%");
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, CookieV3);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_TOKENS_HEADER, "2");
-        PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
+        PXContext context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectOriginalTokens(context, pxConfiguration);
         assertEquals(PAYLOAD_V3, cookie.getDecodedCookie().toString());
         assertEquals(context.getOriginalTokenError(), "");
@@ -89,10 +85,10 @@ public class CookieSelectorTest {
     @Test
     public void testSelectFromOriginalTokensFirstCookieFailed() throws PXCookieDecryptionException, PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER, "!@%@#%,"+ CookieV1);
+        enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER, "!@%@#%," + CookieV1);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, CookieV3);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_TOKENS_HEADER, "2");
-        PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
+        PXContext context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectOriginalTokens(context, pxConfiguration);
         assertEquals(PAYLOAD_V1, cookie.getDecodedCookie().toString());
         assertEquals(cookie.getCookieVersion(), Constants.COOKIE_V1_KEY);
@@ -104,12 +100,11 @@ public class CookieSelectorTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, CookieV3);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_TOKENS_HEADER, "@#@#$@#," + CookieV1);
-        PXContext context = new PXContext(request,ipProvider,hostnameProvider, pxConfiguration);
+        PXContext context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         AbstractPXCookie cookie = CookieSelector.selectFromTokens(context, pxConfiguration);
         assertEquals(PAYLOAD_V1, cookie.getDecodedCookie().toString());
         assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.getValue());
     }
-
 
     private void enrichHttpRequestWithPxHeaders(MockHttpServletRequest request, String headerKey, String headerValue) {
         request.addHeader(headerKey, headerValue);

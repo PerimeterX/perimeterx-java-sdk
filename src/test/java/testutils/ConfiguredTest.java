@@ -29,5 +29,4 @@ public abstract class ConfiguredTest {
     }
 
     abstract protected void testSetup() throws Exception;
-
 }

@@ -8,9 +8,9 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import testutils.TestObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +22,6 @@ import static org.mockito.Mockito.*;
 /**
  * Created by nitzangoldfeder on 23/02/2017.
  */
-@org.testng.annotations.Test
 public class BufferedActivitiesTest {
 
     private BufferedActivityHandler bufferedActivityHandler;
@@ -33,7 +32,6 @@ public class BufferedActivitiesTest {
     private HostnameProvider hostnameProvider;
     private PXContext context;
     private PXConfiguration config;
-
 
     @BeforeMethod
     public void setUp() {
@@ -50,7 +48,6 @@ public class BufferedActivitiesTest {
         this.ipProvider = new RemoteAddressIPProvider();
         this.hostnameProvider = new DefaultHostnameProvider();
         this.context = new PXContext(request, this.ipProvider, this.hostnameProvider, config);
-
     }
 
     @Test
@@ -58,7 +55,6 @@ public class BufferedActivitiesTest {
         for (int i = 0; i <= this.configuration.getMaxBufferLen(); i++) {
             bufferedActivityHandler.handleBlockActivity(context);
         }
-
         verify(pxClient, atLeastOnce()).sendBatchActivities(any(List.class));
     }
 

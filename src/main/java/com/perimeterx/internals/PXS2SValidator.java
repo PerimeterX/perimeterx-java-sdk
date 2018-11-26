@@ -36,7 +36,7 @@ public class PXS2SValidator implements PXValidator {
      *
      * @param pxContext - Request context
      * @return risk response from PX servers
-     * @throws PXException
+     * @throw PXException
      */
     public boolean verify(PXContext pxContext) throws PXException {
         logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
@@ -66,6 +66,7 @@ public class PXS2SValidator implements PXValidator {
             pxContext.setRiskScore(response.getScore());
             pxContext.setUuid(response.getUuid());
             pxContext.setBlockAction(response.getAction());
+            pxContext.setDataEnrichment(response.getDataEnrichment());
 
             if (pxContext.getRiskScore() < pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);

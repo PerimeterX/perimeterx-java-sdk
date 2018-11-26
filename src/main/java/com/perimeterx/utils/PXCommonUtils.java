@@ -14,19 +14,19 @@ import java.util.*;
  * Created by nitzangoldfeder on 16/07/2017.
  */
 public class PXCommonUtils {
-    
-    public static List<Header> getDefaultHeaders(String authToken){
+
+    public static List<Header> getDefaultHeaders(String authToken) {
         Header contentType = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");
         Header authorization = new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + authToken);
         return Arrays.asList(contentType, authorization);
     }
 
-    public static RequestConfig getRequestConfig(PXConfiguration pxConfiguration){
+    public static RequestConfig getRequestConfig(PXConfiguration pxConfiguration) {
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                 .setConnectTimeout(pxConfiguration.getConnectionTimeout())
                 .setConnectionRequestTimeout(pxConfiguration.getApiTimeout());
-        if (pxConfiguration.shouldUseProxy()){
-            HttpHost proxy = new HttpHost(pxConfiguration.getProxyHost(),pxConfiguration.getProxyPort());
+        if (pxConfiguration.shouldUseProxy()) {
+            HttpHost proxy = new HttpHost(pxConfiguration.getProxyHost(), pxConfiguration.getProxyPort());
             requestConfigBuilder.setProxy(proxy);
         }
         return requestConfigBuilder.build();

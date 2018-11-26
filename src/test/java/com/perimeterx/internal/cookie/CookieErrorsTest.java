@@ -42,8 +42,6 @@ public class CookieErrorsTest {
                 .build();
     }
 
-
-
     @Test
     public void testMobileError1() {
         String pxCookie = "1";
