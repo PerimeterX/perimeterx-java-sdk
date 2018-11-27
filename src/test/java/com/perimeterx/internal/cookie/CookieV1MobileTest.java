@@ -45,6 +45,8 @@ public class CookieV1MobileTest {
         this.cookieValidator = new PXCookieValidator(this.pxConfiguration);
     }
 
+
+
     @Test
     public void testCookieV1MobileToken() {
         String pxCookie = "1:eGPYisZ+3qU=:1000:645M2JJ5rYzdSh0T3S6fgtBcHATlIx+A021RUKQpMdr/csetstQJ0/LmAv7HU+gi2Jzd9L47sGGnaCzzcBxbgVd3bwE1dOpKraxwW7iOJ9MGVtlndG8TY5Yvx5mOJFF6Z7Kif1XoicYwNFdPht+KuOoQY8LO51TR4r7b2+OycfvlIKQSVgh41p4SARDbKbFtUM+3VLCoLrYKJT+qq/8a993aZnXlfSc9kqKj89EqS9mz4b7CRhoeVGpMfvDxTFcMicV3AEPlQCdFGUkZonr+yQ==";
@@ -52,6 +54,7 @@ public class CookieV1MobileTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         assertTrue(this.context.isMobileToken());
     }
+
 
     @Test
     public void testCookieV1MobilePass() {

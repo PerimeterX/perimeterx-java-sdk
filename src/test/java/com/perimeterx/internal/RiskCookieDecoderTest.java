@@ -34,7 +34,7 @@ public class RiskCookieDecoderTest {
     @BeforeTest
     public void setUp() throws PXException {
         HttpServletRequest request = new MockHttpServletRequest();
-        ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
+        ((MockHttpServletRequest) request).addHeader("cookie",  pxCookie);
         IPProvider ipProvider = new RemoteAddressIPProvider();
         HostnameProvider hostnameProvider = new DefaultHostnameProvider();
         this.pxConfiguration = new PXConfiguration.Builder()
@@ -48,7 +48,7 @@ public class RiskCookieDecoderTest {
 
     @Test
     public void testOrigPXCookieSentOnCookieDecryptFails() {
-        cookieValidator.verify(context);
+        cookieValidator.verify( context);
         assertEquals(S2SCallReason.INVALID_DECRYPTION.getValue(), context.getS2sCallReason());
         assertEquals(cookie, context.getPxCookieOrig());
     }

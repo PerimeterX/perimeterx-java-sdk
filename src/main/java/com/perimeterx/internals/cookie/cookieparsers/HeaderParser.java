@@ -1,6 +1,5 @@
 package com.perimeterx.internals.cookie.cookieparsers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.DataEnrichmentCookie;
@@ -46,39 +45,34 @@ public abstract class HeaderParser {
     }
 
     public DataEnrichmentCookie getRawDataEnrichmentCookie(List<RawCookieData> rawCookies, String cookieKey) {
-        DataEnrichmentCookie dataEnrichmentCookie = null;
-        RawCookieData dataEnrichmentRawCookie = null;
+        ObjectMapper mapper = new ObjectMapper();
+        DataEnrichmentCookie dataEnrichmentCookie = new DataEnrichmentCookie(mapper.createObjectNode(), false);
+        RawCookieData rawDataEnrichmentCookie = null;
         for (RawCookieData rawCookie : rawCookies) {
             if (CookieVersion.DATA_ENRICHMENT.equals(rawCookie.getCookieVersion())) {
-                dataEnrichmentRawCookie = rawCookie;
+                rawDataEnrichmentCookie = rawCookie;
                 break;
             }
         }
 
-        if (dataEnrichmentRawCookie != null) {
-            String[] cookiePayloadArray = dataEnrichmentRawCookie.getSelectedCookie().split(":");
+        if (rawDataEnrichmentCookie != null) {
+            String[] cookiePayloadArray = rawDataEnrichmentCookie.getSelectedCookie().split(":");
             if (cookiePayloadArray.length != 2) {
-                return null;
+                return dataEnrichmentCookie;
             }
 
             String hmac = cookiePayloadArray[0];
             String encodedPayload = cookiePayloadArray[1];
 
             boolean isValid = HMACUtils.isHMACValid(encodedPayload, hmac, cookieKey, logger);
-            if (!isValid) {
-                return null;
-            }
+            dataEnrichmentCookie.setValid(isValid);
 
             byte[] decodedPayload = Base64.decode(encodedPayload);
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode cookieJsonPayload = null;
             try {
-                cookieJsonPayload = mapper.readTree(decodedPayload);
+                dataEnrichmentCookie.setJsonPayload(mapper.readTree(decodedPayload));
             } catch (IOException e) {
                 logger.error(PXLogger.LogReason.ERROR_DATA_ENRICHMENT_JSON_PARSING_FAILED);
             }
-
-            dataEnrichmentCookie = new DataEnrichmentCookie(cookieJsonPayload);
         }
 
         return dataEnrichmentCookie;

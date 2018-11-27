@@ -62,6 +62,7 @@ public class CookieV3EncodedTest {
         assertTrue(verify);
     }
 
+
     @Test
     public void testCookieV3EncodedFailOnSensitiveRoute() {
         PXConfiguration configuration = new PXConfiguration.Builder()
@@ -107,6 +108,7 @@ public class CookieV3EncodedTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
+
         assertFalse(verify);
         assertEquals(S2SCallReason.INVALID_DECRYPTION.getValue(), context.getS2sCallReason());
     }
@@ -148,4 +150,6 @@ public class CookieV3EncodedTest {
         assertEquals(context.getBlockReason(), BlockReason.NONE);
         assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.getValue());
     }
+
+
 }

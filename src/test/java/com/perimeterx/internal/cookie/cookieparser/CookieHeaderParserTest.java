@@ -14,8 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.*;
 
 public class CookieHeaderParserTest {
 
@@ -56,6 +55,7 @@ public class CookieHeaderParserTest {
         String cookiesString = "_px3=" + singleCookieV3 + ";" + "_pxde=" + dataEnrichmentCookie;
         List<RawCookieData> rawCookieDataList = cookieHeaderParser.createRawCookieDataList(cookiesString);
         DataEnrichmentCookie deCookie = cookieHeaderParser.getRawDataEnrichmentCookie(rawCookieDataList, cookieKey);
-        assertEquals(baseString, deCookie.getCookieJsonPayload().toString());
+        assertEquals(baseString, deCookie.getJsonPayload().toString());
+        assertTrue(deCookie.isValid());
     }
 }

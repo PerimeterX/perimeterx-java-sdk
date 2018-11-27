@@ -174,7 +174,7 @@ public class PXContext {
     private List<RawCookieData> originalTokens;
     private String cookieVersion;
 
-    private JsonNode dataEnrichment;
+    private DataEnrichmentCookie dataEnrichment;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -243,11 +243,7 @@ public class PXContext {
             tokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
             this.tokens = tokens;
 
-            DataEnrichmentCookie dataEnrichmentCookie = headerParser.getRawDataEnrichmentCookie(this.tokens,
-                    this.pxConfiguration.getCookieKey());
-            if (dataEnrichmentCookie != null) {
-                this.dataEnrichment = dataEnrichmentCookie.getCookieJsonPayload();
-            }
+            this.dataEnrichment = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
         }
     }
 

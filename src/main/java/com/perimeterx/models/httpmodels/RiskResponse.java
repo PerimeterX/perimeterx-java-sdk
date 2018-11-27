@@ -21,6 +21,9 @@ public class RiskResponse {
     @JsonProperty("data_enrichment")
     private JsonNode dataEnrichment;
 
+    public RiskResponse() {
+    }
+
     public RiskResponse(String uuid, int status, int score, String action,
                         RiskResponseBody actionData, JsonNode dataEnrichment) {
         this.uuid = uuid;

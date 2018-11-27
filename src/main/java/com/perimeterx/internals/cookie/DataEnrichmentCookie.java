@@ -8,5 +8,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class DataEnrichmentCookie {
-    private JsonNode cookieJsonPayload;
+    private JsonNode jsonPayload;
+    private boolean isValid;
 }
