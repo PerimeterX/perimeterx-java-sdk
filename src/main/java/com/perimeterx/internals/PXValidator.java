@@ -5,7 +5,6 @@ import com.perimeterx.models.exceptions.PXException;
 
 public interface PXValidator {
 
-
-    boolean verify( PXContext pxContext) throws PXException;
+    boolean verify(PXContext pxContext) throws PXException;
 
 }

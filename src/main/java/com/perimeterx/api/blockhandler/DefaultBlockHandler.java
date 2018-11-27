@@ -45,19 +45,17 @@ public class DefaultBlockHandler implements BlockHandler {
                 blockPageResponse = getPage(props, filePrefix);
         }
         try {
-            sendMessage(blockPageResponse, responseWrapper,context);
+            sendMessage(blockPageResponse, responseWrapper, context);
         } catch (IOException e) {
             throw new PXException(e);
         }
 
-
     }
 
     private void sendMessage(String blockPageResponse, HttpServletResponseWrapper responseWrapper, PXContext context) throws PXException, IOException {
-        if (context.getBlockAction() == BlockAction.RATE){
+        if (context.getBlockAction() == BlockAction.RATE) {
             responseWrapper.setStatus(429);
-        }
-        else {
+        } else {
             responseWrapper.setStatus(403);
         }
         if (context.isMobileToken()) {
@@ -68,9 +66,8 @@ public class DefaultBlockHandler implements BlockHandler {
             } catch (JsonProcessingException e) {
                 throw new PXException(e);
             }
-        }
-        else {
-            responseWrapper.setContentType( Constants.CONTENT_TYPE_TEXT_HTML);
+        } else {
+            responseWrapper.setContentType(Constants.CONTENT_TYPE_TEXT_HTML);
         }
         responseWrapper.getWriter().print(blockPageResponse);
     }
@@ -85,7 +82,8 @@ public class DefaultBlockHandler implements BlockHandler {
                 return "ratelimit";
             default:
                 return "captcha";
-        }    }
+        }
+    }
 
     private String getPage(Map<String, String> props, String filePrefix) throws PXException {
 

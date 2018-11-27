@@ -11,7 +11,6 @@ import java.util.Properties;
  */
 public final class Constants {
 
-
     private static Properties prop;
 
     static {

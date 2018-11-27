@@ -1,6 +1,5 @@
 package com.perimeterx.models;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.AbstractPXCookie;

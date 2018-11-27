@@ -48,13 +48,11 @@ public class DefaultActivityHandler implements ActivityHandler {
     public void handleEnforcerTelemetryActivity(PXConfiguration pxConfiguration, UpdateReason updateReason) throws PXException {
         try {
             EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfiguration, updateReason);
-            EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry",pxConfiguration.getAppId(), details);
+            EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfiguration.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry);
         } catch (Exception e) {
             throw new PXException(e);
         }
     }
-
-
 
 }

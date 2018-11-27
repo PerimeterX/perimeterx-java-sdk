@@ -45,7 +45,6 @@ public interface PXClient {
      */
     void sendBatchActivities(List<Activity> activities) throws PXException, IOException;
 
-
     /**
      * Calling remote configuration server and fetching the latest configuration values
      *
@@ -56,10 +55,9 @@ public interface PXClient {
 
     /**
      * Calling PX Servers and reporting enforcer telemetry asynchronously
+     *
      * @param enforcerTelemetry
      */
     void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException;
-
-
 
 }

@@ -20,7 +20,6 @@ import java.util.HashSet;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
 @Test
 public class RemoteConfigurationsTest {
     PXConfiguration config;
@@ -35,9 +34,9 @@ public class RemoteConfigurationsTest {
     }
 
     @Test
-    public void pullConfigurationsSuccess() throws IOException{
+    public void pullConfigurationsSuccess() throws IOException {
         PXDynamicConfiguration pxDynamicConfiguration = getDynamicConfiguration("stub_app_id", "stub_checksum",
-                                1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), false, ModuleMode.BLOCKING);
+                1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), false, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
         RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
         TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config, activityHandler);
@@ -54,7 +53,7 @@ public class RemoteConfigurationsTest {
     }
 
     @Test
-    public void  pullConfigurationsFailed() throws IOException{
+    public void pullConfigurationsFailed() throws IOException {
         PXDynamicConfiguration pxDynamicConfiguration = getDynamicConfiguration("stub_app_id", "stub_checksum",
                 1000, "stub_cookie_key", 1500, 1500, new HashSet<String>(), true, ModuleMode.BLOCKING);
         when(pxClient.getConfigurationFromServer()).thenReturn(pxDynamicConfiguration);
@@ -67,7 +66,7 @@ public class RemoteConfigurationsTest {
     }
 
     private PXDynamicConfiguration getDynamicConfiguration(String appId, String checksum, int blockingScore, String cookieSecert,
-                                   int s2sTimeout, int connectionTimeout, HashSet<String> sensitiveRotues, boolean moduleEnabled, ModuleMode moduleMode){
+                                                           int s2sTimeout, int connectionTimeout, HashSet<String> sensitiveRotues, boolean moduleEnabled, ModuleMode moduleMode) {
         PXDynamicConfiguration pxDynamicConfig = new PXDynamicConfiguration();
         pxDynamicConfig.setAppId(appId);
         pxDynamicConfig.setChecksum(checksum);

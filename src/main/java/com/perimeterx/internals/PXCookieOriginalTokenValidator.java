@@ -11,14 +11,13 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-
 public class PXCookieOriginalTokenValidator implements PXValidator {
 
     private static final PXLogger logger = PXLogger.getLogger(PXCookieOriginalTokenValidator.class);
 
     private PXConfiguration pxConfiguration;
 
-    public PXCookieOriginalTokenValidator (PXConfiguration pxConfiguration){
+    public PXCookieOriginalTokenValidator(PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
     }
 
@@ -30,8 +29,8 @@ public class PXCookieOriginalTokenValidator implements PXValidator {
     public boolean verify(PXContext context) {
         try {
 
-            AbstractPXCookie originalCookie  = CookieSelector.selectOriginalTokens(context, pxConfiguration);
-            if (!StringUtils.isEmpty(context.getOriginalTokenError()) || originalCookie == null){
+            AbstractPXCookie originalCookie = CookieSelector.selectOriginalTokens(context, pxConfiguration);
+            if (!StringUtils.isEmpty(context.getOriginalTokenError()) || originalCookie == null) {
                 return false;
             }
             String decodedOriginalCookie = originalCookie.getDecodedCookie().toString();
@@ -45,7 +44,7 @@ public class PXCookieOriginalTokenValidator implements PXValidator {
             context.setOriginalUuid(originalCookie.getUUID());
 
             if (!originalCookie.isSecured()) {
-                logger.debug("Original token HMAC validation failed, value: " + decodedOriginalCookie  + " user-agent: " + context.getUserAgent());
+                logger.debug("Original token HMAC validation failed, value: " + decodedOriginalCookie + " user-agent: " + context.getUserAgent());
                 context.setOriginalTokenError("validation_failed");
                 return false;
             }
@@ -63,10 +62,10 @@ public class PXCookieOriginalTokenValidator implements PXValidator {
 
     public String getMobileError(PXContext context) {
         String mobileError = "";
-        List <RawCookieData> tokensCookie = context.getTokens();
-        if (!tokensCookie.isEmpty()){
+        List<RawCookieData> tokensCookie = context.getTokens();
+        if (!tokensCookie.isEmpty()) {
             RawCookieData firstCookie = tokensCookie.get(0);
-            if (isErrorMobileHeader(firstCookie.getSelectedCookie())){
+            if (isErrorMobileHeader(firstCookie.getSelectedCookie())) {
                 mobileError = firstCookie.getSelectedCookie();
             }
         }
