@@ -96,6 +96,7 @@ public class PerimeterX {
     }
 
     private void init(PXConfiguration configuration) throws PXException {
+        logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new CombinedIPProvider(configuration);
@@ -122,10 +123,9 @@ public class PerimeterX {
     }
 
     private void setVerificationHandler() {
-        if (this.configuration.isTestingMode()){
+        if (this.configuration.isTestingMode()) {
             this.verificationHandler = new TestVerificationHandler(this.configuration, this.activityHandler);
-        }
-        else {
+        } else {
             this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler);
         }
     }
@@ -160,7 +160,7 @@ public class PerimeterX {
      */
     public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
-        logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICTION);
+        logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
         try {
             if (!moduleEnabled()) {
@@ -177,7 +177,7 @@ public class PerimeterX {
             handleCookies(context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
-            logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION,  e.getMessage());
+            logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
                 context.setPassReason(PassReason.ERROR);
@@ -196,7 +196,7 @@ public class PerimeterX {
         }
         logger.debug(PXLogger.LogReason.DEBUG_COOKIE_MISSING);
         if (serverValidator.verify(context)) {
-            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND,  context.getCookieVersion());
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
             return;
         }
     }

@@ -21,8 +21,6 @@ public class PXCookieValidator implements PXValidator {
 
     private PXConfiguration pxConfiguration;
 
-
-
     public PXCookieValidator (PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
     }
@@ -88,8 +86,6 @@ public class PXCookieValidator implements PXValidator {
         } catch (PXException e) {
             logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
             context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.getValue());
-
-
             return false;
         }
     }
@@ -100,6 +96,4 @@ public class PXCookieValidator implements PXValidator {
         }
         return S2SCallReason.INVALID_DECRYPTION.getValue().equals(context.getS2sCallReason()) || S2SCallReason.NO_COOKIE.getValue().equals(context.getS2sCallReason());
     }
-
-
 }
