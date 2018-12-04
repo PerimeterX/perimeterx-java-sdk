@@ -54,9 +54,9 @@ public class TestVerificationHandler implements VerificationHandler {
         jsonObject.addProperty("block_data", pxContext.getBlockActionData());
         jsonObject.addProperty("sensitive_route", pxContext.isSensitiveRoute());
         jsonObject.addProperty("sensitive_route_list", gson.toJson(pxConfig.getSensitiveRoutes()));
+        jsonObject.addProperty("data_enrichment", pxContext.getDataEnrichment().getJsonPayload().toString());
         httpServletResponseWrapper.getWriter().print(jsonObject);
 
         return false;
-
     }
 }
