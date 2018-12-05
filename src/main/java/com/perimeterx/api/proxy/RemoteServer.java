@@ -25,7 +25,6 @@ import java.util.BitSet;
 import java.util.Enumeration;
 import java.util.Formatter;
 
-
 /**
  * Created by nitzangoldfeder on 14/05/2018.
  */
@@ -47,7 +46,8 @@ public class RemoteServer {
     protected URI targetUriObj;
     protected HttpHost targetHost;
 
-    /** These are the "hop-by-hop" headers that should not be copied.
+    /**
+     * These are the "hop-by-hop" headers that should not be copied.
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
      * I use an HttpClient HeaderGroup class instead of Set&lt;String&gt; because this
      * approach does case insensitive lookup faster.
@@ -56,9 +56,9 @@ public class RemoteServer {
 
     static {
         hopByHopHeaders = new HeaderGroup();
-        String[] headers = new String[] {
+        String[] headers = new String[]{
                 "Connection", "Keep-Alive", "Proxy-Authenticate", "Proxy-Authorization",
-                "TE", "Trailers", "Transfer-Encoding", "Upgrade" };
+                "TE", "Trailers", "Transfer-Encoding", "Upgrade"};
         for (String header : headers) {
             hopByHopHeaders.addHeader(new BasicHeader(header, null));
         }
@@ -78,7 +78,6 @@ public class RemoteServer {
         this.predefinedResponseHelper = predefinedResponseHelper;
         this.pxConfiguration = pxConfiguration;
     }
-
 
     public HttpRequest prepareProxyRequest() throws IOException {
         logger.debug("Preparing proxy request");
@@ -142,7 +141,9 @@ public class RemoteServer {
         return proxyResponse;
     }
 
-    /** Copy response body data (the entity) from the proxy to the servlet client. */
+    /**
+     * Copy response body data (the entity) from the proxy to the servlet client.
+     */
     protected void copyResponseEntity(HttpResponse proxyResponse) throws IOException {
         HttpEntity entity = proxyResponse.getEntity();
         if (entity != null) {
@@ -151,7 +152,9 @@ public class RemoteServer {
         }
     }
 
-    /** Copy proxied response headers back to the servlet client. */
+    /**
+     * Copy proxied response headers back to the servlet client.
+     */
     protected void copyResponseHeaders(HttpResponse proxyResponse, HttpServletRequest servletRequest,
                                        HttpServletResponse servletResponse) {
         for (Header header : proxyResponse.getAllHeaders()) {
@@ -159,7 +162,8 @@ public class RemoteServer {
         }
     }
 
-    /** Copy a proxied response header back to the servlet client.
+    /**
+     * Copy a proxied response header back to the servlet client.
      * This is easily overwritten to filter out certain headers if desired.
      */
     protected void copyResponseHeader(HttpServletRequest servletRequest,
@@ -186,22 +190,22 @@ public class RemoteServer {
     protected String rewriteUrlFromResponse(HttpServletRequest servletRequest, String theUrl) {
         final String targetUri = this.targetUri;
         if (theUrl.startsWith(targetUri)) {
-      /*-
-       * The URL points back to the back-end server.
-       * Instead of returning it verbatim we replace the target path with our
-       * source path in a way that should instruct the original client to
-       * request the URL pointed through this Proxy.
-       * We do this by taking the current request and rewriting the path part
-       * using this servlet's absolute path and the path from the returned URL
-       * after the base target URL.
-       */
+            /*-
+             * The URL points back to the back-end server.
+             * Instead of returning it verbatim we replace the target path with our
+             * source path in a way that should instruct the original client to
+             * request the URL pointed through this Proxy.
+             * We do this by taking the current request and rewriting the path part
+             * using this servlet's absolute path and the path from the returned URL
+             * after the base target URL.
+             */
             StringBuffer curUrl = servletRequest.getRequestURL();//no query
             int pos;
             // Skip the protocol part
-            if ((pos = curUrl.indexOf("://"))>=0) {
+            if ((pos = curUrl.indexOf("://")) >= 0) {
                 // Skip the authority part
                 // + 3 to skip the separator between protocol and authority
-                if ((pos = curUrl.indexOf("/", pos + 3)) >=0) {
+                if ((pos = curUrl.indexOf("/", pos + 3)) >= 0) {
                     // Trim everything after the authority part.
                     curUrl.setLength(pos);
                 }
@@ -225,7 +229,7 @@ public class RemoteServer {
         //build path for resulting cookie
         String path = servletRequest.getContextPath(); // path starts with / or is empty string
         path += servletRequest.getServletPath(); // servlet path starts with / or is empty string
-        if(path.isEmpty()){
+        if (path.isEmpty()) {
             path = "/";
         }
 
@@ -260,7 +264,7 @@ public class RemoteServer {
     /**
      * Append request headers related to PerimeterX
      */
-    protected  void handlePXHeaders(HttpRequest proxyRequest) {
+    protected void handlePXHeaders(HttpRequest proxyRequest) {
         proxyRequest.addHeader("X-PX-ENFORCER-TRUE-IP", this.ipProvider.getRequestIP(this.req));
         proxyRequest.addHeader("X-PX-FIRST-PARTY", "1");
     }
@@ -279,7 +283,6 @@ public class RemoteServer {
         proxyRequest.setHeader(protoHeaderName, protoHeader);
     }
 
-
     /**
      * Copy a request header from the servlet client to the proxy request.
      * This is easily overridden to filter out certain headers if desired.
@@ -287,11 +290,11 @@ public class RemoteServer {
     protected void copyRequestHeader(HttpServletRequest servletRequest, HttpRequest proxyRequest,
                                      String headerName) {
         //Instead the content-length is effectively set via InputStreamEntity
-        if (headerName.equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH)){
+        if (headerName.equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH)) {
             return;
         }
 
-        if (hopByHopHeaders.containsHeader(headerName)){
+        if (hopByHopHeaders.containsHeader(headerName)) {
             return;
         }
 
@@ -345,7 +348,7 @@ public class RemoteServer {
             int fragIdx = queryString.indexOf('#');
             if (fragIdx >= 0) {
                 fragment = queryString.substring(fragIdx + 1);
-                queryString = queryString.substring(0,fragIdx);
+                queryString = queryString.substring(0, fragIdx);
             }
         }
 
@@ -372,18 +375,18 @@ public class RemoteServer {
      * To be more forgiving, we must escape the problematic characters.  See the URI class for the
      * spec.
      *
-     * @param in example: name=value&amp;foo=bar#fragment
+     * @param in            example: name=value&amp;foo=bar#fragment
      * @param encodePercent determine whether percent characters need to be encoded
      */
     private static CharSequence encodeUriQuery(CharSequence in, boolean encodePercent) {
         //Note that I can't simply use URI.java to encode because it will escape pre-existing escaped things.
         StringBuilder outBuf = null;
         Formatter formatter = null;
-        for(int i = 0; i < in.length(); i++) {
+        for (int i = 0; i < in.length(); i++) {
             char c = in.charAt(i);
             boolean escape = true;
             if (c < 128) {
-                if (asciiQueryChars.get((int)c) && !(encodePercent && c == '%')) {
+                if (asciiQueryChars.get((int) c) && !(encodePercent && c == '%')) {
                     escape = false;
                 }
             } else if (!Character.isISOControl(c) && !Character.isSpaceChar(c)) {//not-ascii
@@ -395,32 +398,33 @@ public class RemoteServer {
             } else {
                 //escape
                 if (outBuf == null) {
-                    outBuf = new StringBuilder(in.length() + 5*3);
-                    outBuf.append(in,0,i);
+                    outBuf = new StringBuilder(in.length() + 5 * 3);
+                    outBuf.append(in, 0, i);
                     formatter = new Formatter(outBuf);
                 }
                 //leading %, 0 padded, width 2, capital hex
-                formatter.format("%%%02X",(int)c);
+                formatter.format("%%%02X", (int) c);
             }
         }
         return outBuf != null ? outBuf : in;
     }
 
     private static final BitSet asciiQueryChars;
+
     static {
         char[] c_unreserved = "_-!.~'()*".toCharArray();//plus alphanum
         char[] c_punct = ",;:$&+=".toCharArray();
         char[] c_reserved = "?/[]@".toCharArray();//plus punct
 
         asciiQueryChars = new BitSet(128);
-        for(char c = 'a'; c <= 'z'; c++) asciiQueryChars.set((int)c);
-        for(char c = 'A'; c <= 'Z'; c++) asciiQueryChars.set((int)c);
-        for(char c = '0'; c <= '9'; c++) asciiQueryChars.set((int)c);
-        for(char c : c_unreserved) asciiQueryChars.set((int)c);
-        for(char c : c_punct) asciiQueryChars.set((int)c);
-        for(char c : c_reserved) asciiQueryChars.set((int)c);
+        for (char c = 'a'; c <= 'z'; c++) asciiQueryChars.set((int) c);
+        for (char c = 'A'; c <= 'Z'; c++) asciiQueryChars.set((int) c);
+        for (char c = '0'; c <= '9'; c++) asciiQueryChars.set((int) c);
+        for (char c : c_unreserved) asciiQueryChars.set((int) c);
+        for (char c : c_punct) asciiQueryChars.set((int) c);
+        for (char c : c_reserved) asciiQueryChars.set((int) c);
 
-        asciiQueryChars.set((int)'%');//leave existing percent escapes in place
+        asciiQueryChars.set((int) '%');//leave existing percent escapes in place
     }
 
     protected HttpResponse doExecute(HttpRequest proxyRequest) throws IOException {

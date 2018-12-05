@@ -2,7 +2,7 @@ package com.perimeterx.utils;
 
 public class CookieNamesExtractor {
 
-    public static String[] extractCookieNames (String cookieHeader){
+    public static String[] extractCookieNames(String cookieHeader) {
         String[] cookieNames = null;
         if (cookieHeader != null) {
             String[] cookies = cookieHeader.split(";\\s?");

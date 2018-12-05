@@ -29,7 +29,6 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     @JsonProperty("cookie_origin")
     private String cookieOrigin;
 
-
     public PageRequestedActivityDetails(PXContext context) {
         this.httpMethod = context.getHttpMethod();
         this.httpVersion = context.getHttpVersion();

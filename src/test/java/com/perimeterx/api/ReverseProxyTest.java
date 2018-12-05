@@ -34,10 +34,10 @@ public class ReverseProxyTest {
     PXConfiguration pxConfiguration;
 
     private CloseableHttpResponse getMockedHttpResponse(String responseBody, String contentType) throws IOException {
-        HttpEntity entity  = new BasicHttpEntity();
+        HttpEntity entity = new BasicHttpEntity();
         ((BasicHttpEntity) entity).setContent(new ByteArrayInputStream(responseBody.getBytes()));
 
-        List<Header> responseHeaders  = new ArrayList<Header>(Arrays.asList(
+        List<Header> responseHeaders = new ArrayList<Header>(Arrays.asList(
                 new BasicHeader("Cache-Control", "max-age=600"),
                 new BasicHeader("Content-Type:", contentType)
         ));
@@ -77,7 +77,7 @@ public class ReverseProxyTest {
         HttpServletResponse response = new MockHttpServletResponse();
 
         perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
-        Assert.assertEquals("",((MockHttpServletResponse) response).getContentAsString());
+        Assert.assertEquals("", ((MockHttpServletResponse) response).getContentAsString());
         Assert.assertEquals("application/javascript", response.getHeader("Content-Type"));
     }
 
@@ -90,7 +90,7 @@ public class ReverseProxyTest {
         HttpServletResponse response = new MockHttpServletResponse();
 
         perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
-        Assert.assertEquals("{}",((MockHttpServletResponse) response).getContentAsString());
+        Assert.assertEquals("{}", ((MockHttpServletResponse) response).getContentAsString());
         Assert.assertEquals("application/json", response.getHeader("Content-Type"));
     }
 
@@ -105,7 +105,7 @@ public class ReverseProxyTest {
 
         CloseableHttpClient mockProxyHttpClient = mock(CloseableHttpClient.class);
         CloseableHttpResponse mockedHttpResponse = getMockedHttpResponse("function()", "application/javascript");
-        when(mockProxyHttpClient.execute(any(HttpHost.class),any(HttpRequest.class))).thenReturn(mockedHttpResponse);
+        when(mockProxyHttpClient.execute(any(HttpHost.class), any(HttpRequest.class))).thenReturn(mockedHttpResponse);
 
         ReverseProxy reverseProxy = new DefaultReverseProxy(pxConfiguration, new CombinedIPProvider(pxConfiguration));
         ((DefaultReverseProxy) reverseProxy).setProxyClient(mockProxyHttpClient);
@@ -131,7 +131,7 @@ public class ReverseProxyTest {
 
         CloseableHttpClient mockProxyHttpClient = mock(CloseableHttpClient.class);
         CloseableHttpResponse mockedHttpResponse = getMockedHttpResponse("{\"some\": '\"answer\"}", "application/json");
-        when(mockProxyHttpClient.execute(any(HttpHost.class),any(HttpRequest.class))).thenReturn(mockedHttpResponse);
+        when(mockProxyHttpClient.execute(any(HttpHost.class), any(HttpRequest.class))).thenReturn(mockedHttpResponse);
 
         ReverseProxy reverseProxy = new DefaultReverseProxy(pxConfiguration, new CombinedIPProvider(pxConfiguration));
         ((DefaultReverseProxy) reverseProxy).setProxyClient(mockProxyHttpClient);
@@ -145,6 +145,5 @@ public class ReverseProxyTest {
         Assert.assertEquals("{\"some\": '\"answer\"}", ((MockHttpServletResponse) response).getContentAsString());
         Assert.assertEquals(response.getHeaderNames().size(), mockedHttpResponse.getAllHeaders().length);
     }
-
 
 }

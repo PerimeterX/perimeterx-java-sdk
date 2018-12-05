@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-
 public class CookieSelector {
 
     private static final PXLogger logger = PXLogger.getLogger(CookieSelector.class);
@@ -57,7 +56,6 @@ public class CookieSelector {
 
         return result;
     }
-
 
     /**
      * This function selects the first working pxCookie it can deserialize without any errors.

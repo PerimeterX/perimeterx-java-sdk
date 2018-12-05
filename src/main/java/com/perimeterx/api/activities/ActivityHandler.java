@@ -30,6 +30,7 @@ public interface ActivityHandler {
 
     /**
      * Sends enforcer telemetry activity upon init/new configuration
+     *
      * @param pxConfig
      * @param updateReason
      * @throws PXException

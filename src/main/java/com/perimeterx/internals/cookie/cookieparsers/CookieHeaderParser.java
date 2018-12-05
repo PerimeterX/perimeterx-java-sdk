@@ -1,6 +1,5 @@
 package com.perimeterx.internals.cookie.cookieparsers;
 
-
 import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.RawCookieData;
 
@@ -9,7 +8,6 @@ import java.net.URLDecoder;
 
 public class CookieHeaderParser extends HeaderParser {
 
-
     @Override
     protected String[] splitHeader(String header) {
         return header.split(";\\s?");
@@ -17,9 +15,9 @@ public class CookieHeaderParser extends HeaderParser {
 
     @Override
     protected RawCookieData createCookie(String cookie) {
-        String[] splitCookie = cookie.split("=\\s?",2);
+        String[] splitCookie = cookie.split("=\\s?", 2);
         RawCookieData rawCookieData = null;
-        if (splitCookie.length == 2 && isValidPxCookie(splitCookie[0])){
+        if (splitCookie.length == 2 && isValidPxCookie(splitCookie[0])) {
             String cookiePayload;
             String version = splitCookie[0];
             try {

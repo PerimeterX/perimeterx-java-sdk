@@ -255,7 +255,6 @@ public class PXConfiguration {
         return this.maxConnectionsPerRoute;
     }
 
-
     public Set<String> getIpHeaders() {
         return ipHeaders;
     }
@@ -507,7 +506,6 @@ public class PXConfiguration {
             maxConnectionsPerRoute = val;
             return this;
         }
-
 
         public Builder ipHeaders(Set<String> val) {
             this.ipHeaders = val;

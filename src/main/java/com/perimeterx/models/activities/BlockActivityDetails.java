@@ -35,7 +35,6 @@ public class BlockActivityDetails implements ActivityDetails {
     @JsonProperty("simulated_block")
     private String simulatedBlock;
 
-
     public BlockActivityDetails(PXContext context) {
         this.blockScore = context.getRiskScore();
         this.blockReason = context.getBlockReason();

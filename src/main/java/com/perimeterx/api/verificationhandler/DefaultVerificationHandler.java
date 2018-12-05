@@ -43,7 +43,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
             logger.debug("Request invalid");
             this.activityHandler.handleBlockActivity(context);
         }
-        
+
         if (pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) && !verified) {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
@@ -52,7 +52,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
         return true;
     }
 
-    private boolean shouldPassRequest(PXContext context){
+    private boolean shouldPassRequest(PXContext context) {
         int score = context.getRiskScore();
         int blockingScore = this.pxConfiguration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px

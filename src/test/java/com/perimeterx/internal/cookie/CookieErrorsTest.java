@@ -42,8 +42,6 @@ public class CookieErrorsTest {
                 .build();
     }
 
-
-
     @Test
     public void testMobileError1() {
         String pxCookie = "1";
@@ -60,7 +58,7 @@ public class CookieErrorsTest {
         String pxCookie = "2";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
-        boolean verify = cookieValidator.verify( context);
+        boolean verify = cookieValidator.verify(context);
 
         assertFalse(verify);
         assertEquals("mobile_error_2", context.getS2sCallReason());

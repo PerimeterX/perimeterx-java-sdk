@@ -58,7 +58,6 @@ public class PXHttpClient implements PXClient {
         return instance;
     }
 
-
     private PXHttpClient(PXConfiguration pxConfiguration, CloseableHttpAsyncClient asyncHttpClient, CloseableHttpClient httpClient) {
         this.pxConfiguration = pxConfiguration;
         this.httpClient = httpClient;
@@ -132,7 +131,6 @@ public class PXHttpClient implements PXClient {
         }
     }
 
-
     @Override
     public PXDynamicConfiguration getConfigurationFromServer() {
         logger.debug("TimerConfigUpdater[getConfiguration]");
@@ -144,7 +142,7 @@ public class PXHttpClient implements PXClient {
         PXDynamicConfiguration stub = null;
         HttpGet get = new HttpGet(pxConfiguration.getRemoteConfigurationUrl() + Constants.API_REMOTE_CONFIGURATION + queryParams);
 
-        try (CloseableHttpResponse httpResponse = httpClient.execute(get)){
+        try (CloseableHttpResponse httpResponse = httpClient.execute(get)) {
             int httpCode = httpResponse.getStatusLine().getStatusCode();
             if (httpCode == HttpStatus.SC_OK) {
                 String bodyContent = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
@@ -163,7 +161,7 @@ public class PXHttpClient implements PXClient {
     }
 
     @Override
-    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException{
+    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException {
         HttpAsyncRequestProducer producer = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);

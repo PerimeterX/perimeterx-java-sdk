@@ -37,7 +37,7 @@ public class PXHttpClientTest {
     }
 
     @Test
-    public void testGetRemoteConfigurations() throws IOException{
+    public void testGetRemoteConfigurations() throws IOException {
         mockValidRequest();
         pxClient = new PXClientMock(80, 0);
         PXDynamicConfiguration config = pxClient.getConfigurationFromServer();

@@ -74,9 +74,9 @@ public class PXS2SValidatorTest {
         this.validator = new PXS2SValidator(this.client, this.pxConfig);
         context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.getValue());
         boolean verify = validator.verify(context);
-        Assert.assertEquals(BlockAction.CHALLENGE,context.getBlockAction());
-        Assert.assertEquals("<html><body></body></html>",context.getBlockActionData());
-        Assert.assertEquals(BlockReason.CHALLENGE,context.getBlockReason());
+        Assert.assertEquals(BlockAction.CHALLENGE, context.getBlockAction());
+        Assert.assertEquals("<html><body></body></html>", context.getBlockActionData());
+        Assert.assertEquals(BlockReason.CHALLENGE, context.getBlockReason());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class PXS2SValidatorTest {
         this.client = Mockito.spy(new PXClientMock(0, Constants.CAPTCHA_SUCCESS_CODE, true));
         this.validator = new PXS2SValidator(this.client, conf);
         validator.verify(context);
-        Mockito.verify(testCustomParamProvider, times(1)).buildCustomParameters(any(PXConfiguration.class),any(PXContext.class));
+        Mockito.verify(testCustomParamProvider, times(1)).buildCustomParameters(any(PXConfiguration.class), any(PXContext.class));
         Mockito.verify(client, times(1)).riskApiCall(any(RiskRequest.class));
     }
 }
