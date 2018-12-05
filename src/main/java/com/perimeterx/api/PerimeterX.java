@@ -96,6 +96,12 @@ public class PerimeterX {
     }
 
     private void init(PXConfiguration configuration) throws PXException {
+        if (configuration.isDebugMode()) {
+            PXLogger.setDebugLevel();
+        } else {
+            PXLogger.setErrorLevel();
+        }
+
         logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();

@@ -1,6 +1,7 @@
 package com.perimeterx.utils;
 
-import org.slf4j.Logger;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PXLogger {
@@ -11,7 +12,7 @@ public class PXLogger {
     private final String ERROR_PREFIX = "[PerimeterX - ERROR] ";
 
     public enum LogReason {
-        DEBUG_INITIALIZING_MODULE("Initializing perimeterx enforcer"),
+        DEBUG_INITIALIZING_MODULE("Initializing PerimeterX enforcer"),
 
         DEBUG_MODULE_DISABLED("Request will not be verified, module is disabled"),
         DEBUG_STARTING_REQUEST_VERIFICATION("Starting request verification"),
@@ -53,8 +54,18 @@ public class PXLogger {
         return new PXLogger(clazz);
     }
 
+    public static void setErrorLevel() {
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.ERROR);
+    }
+
+    public static void setDebugLevel() {
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.DEBUG);
+    }
+
     private PXLogger(Class<?> clazz) {
-        logger = LoggerFactory.getLogger(clazz);
+        logger = (Logger) LoggerFactory.getLogger(clazz);
     }
 
     public void debug(LogReason reason, Object... args) {
