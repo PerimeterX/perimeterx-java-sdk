@@ -20,10 +20,17 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
+import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
+import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
+import org.apache.http.nio.reactor.ConnectingIOReactor;
+import org.apache.http.nio.reactor.IOReactorException;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -44,24 +51,49 @@ public class PXHttpClient implements PXClient {
 
     private CloseableHttpClient httpClient;
     private CloseableHttpAsyncClient asyncHttpClient;
+    private PoolingNHttpClientConnectionManager nHttpConnectionManager;
 
     private PXConfiguration pxConfiguration;
 
-    public static PXHttpClient getInstance(PXConfiguration pxConfiguration, CloseableHttpAsyncClient asyncHttpClient, CloseableHttpClient httpClient) {
+    public static PXHttpClient getInstance(PXConfiguration pxConfiguration) throws PXException {
         if (instance == null) {
             synchronized (PXHttpClient.class) {
                 if (instance == null) {
-                    instance = new PXHttpClient(pxConfiguration, asyncHttpClient, httpClient);
+                    instance = new PXHttpClient(pxConfiguration);
                 }
             }
         }
         return instance;
     }
 
-    private PXHttpClient(PXConfiguration pxConfiguration, CloseableHttpAsyncClient asyncHttpClient, CloseableHttpClient httpClient) {
+    private PXHttpClient(PXConfiguration pxConfiguration) throws PXException {
         this.pxConfiguration = pxConfiguration;
-        this.httpClient = httpClient;
-        this.asyncHttpClient = asyncHttpClient;
+        initHttpClient();
+        try {
+            initAsyncHttpClient();
+        } catch (IOReactorException e) {
+            throw new PXException(e);
+        }
+    }
+
+    private void initHttpClient() {
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setMaxTotal(this.pxConfiguration.getMaxConnections());
+        cm.setDefaultMaxPerRoute(this.pxConfiguration.getMaxConnectionsPerRoute());
+        httpClient = HttpClients.custom()
+                .setConnectionManager(cm)
+                .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken()))
+                .build();
+    }
+
+    private void initAsyncHttpClient() throws IOReactorException {
+        ConnectingIOReactor ioReactor = new DefaultConnectingIOReactor();
+        nHttpConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
+        CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.custom()
+                .setConnectionManager(nHttpConnectionManager)
+                .build();
+        closeableHttpAsyncClient.start();
+        asyncHttpClient = closeableHttpAsyncClient;
     }
 
     @Override
@@ -122,6 +154,7 @@ public class PXHttpClient implements PXClient {
             post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
+            nHttpConnectionManager.validatePendingRequests(); // this scans requests queue and releases resources
         } catch (Exception e) {
             throw new PXException(e);
         } finally {
@@ -161,7 +194,7 @@ public class PXHttpClient implements PXClient {
     }
 
     @Override
-    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException {
+    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException {
         HttpAsyncRequestProducer producer = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
@@ -174,6 +207,7 @@ public class PXHttpClient implements PXClient {
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
+            nHttpConnectionManager.validatePendingRequests(); // this scans requests queue and releases resources
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
