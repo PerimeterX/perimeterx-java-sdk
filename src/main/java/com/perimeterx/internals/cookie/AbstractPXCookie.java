@@ -150,7 +150,7 @@ public abstract class AbstractPXCookie implements PXCookie {
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, this.userAgent);
         }
 
-        return true;
+        return isValid;
     }
 
     @Override
