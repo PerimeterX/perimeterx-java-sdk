@@ -46,7 +46,6 @@ public class BlockActivityDetails implements ActivityDetails {
         this.cookieOrigin = context.getCookieOrigin();
         this.moduleVersion = Constants.SDK_VERSION;
         this.simulatedBlock = context.getRiskMode();
-
     }
 
     public int getBlockScore() {
