@@ -46,11 +46,6 @@ public class PXS2SValidator implements PXValidator {
         long rtt;
 
         try {
-            // Extract Custom Params only if we do risk  api
-            CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
-            CustomParameters customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, pxContext);
-            pxContext.setCustomParameters(customParameters);
-
             // Build risk request
             RiskRequest request = RiskRequest.fromContext(pxContext);
             response = pxClient.riskApiCall(request);
