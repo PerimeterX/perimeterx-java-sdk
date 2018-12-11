@@ -56,6 +56,7 @@ public class PXConfiguration {
     private int proxyPort;
     private boolean testingMode;
     private boolean debugMode;
+    private int validateRequestQueueInterval;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -94,6 +95,7 @@ public class PXConfiguration {
         proxyPort = builder.proxyPort;
         testingMode = builder.testingMode;
         debugMode = builder.debugMode;
+        validateRequestQueueInterval = builder.validateRequestQueueInterval;
     }
 
     private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled,
@@ -303,6 +305,10 @@ public class PXConfiguration {
         return debugMode;
     }
 
+    public int getValidateRequestQueueInterval() {
+        return validateRequestQueueInterval;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
@@ -354,6 +360,7 @@ public class PXConfiguration {
         private boolean useProxy;
         private String proxyHost;
         private int proxyPort;
+        private int validateRequestQueueInterval = 5 * 1000;
 
         public Builder() {
         }
@@ -549,6 +556,11 @@ public class PXConfiguration {
 
         public Builder debugMode(boolean debugMode) {
             this.debugMode = debugMode;
+            return this;
+        }
+
+        public Builder validateRequestQueueInterval(int validateRequestQueueInterval) {
+            this.validateRequestQueueInterval = validateRequestQueueInterval;
             return this;
         }
 

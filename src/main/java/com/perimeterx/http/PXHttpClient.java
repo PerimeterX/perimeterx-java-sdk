@@ -74,6 +74,9 @@ public class PXHttpClient implements PXClient {
         } catch (IOReactorException e) {
             throw new PXException(e);
         }
+
+        TimerValidateRequestsQueue timerConfigUpdater = new TimerValidateRequestsQueue(nHttpConnectionManager, pxConfiguration);
+        timerConfigUpdater.schedule();
     }
 
     private void initHttpClient() {
@@ -154,7 +157,6 @@ public class PXHttpClient implements PXClient {
             post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
-            nHttpConnectionManager.validatePendingRequests(); // this scans requests queue and releases resources
         } catch (Exception e) {
             throw new PXException(e);
         } finally {
@@ -207,7 +209,6 @@ public class PXHttpClient implements PXClient {
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
             producer = HttpAsyncMethods.create(post);
             asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
-            nHttpConnectionManager.validatePendingRequests(); // this scans requests queue and releases resources
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
