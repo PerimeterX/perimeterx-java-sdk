@@ -1,6 +1,5 @@
 package com.perimeterx.internal;
 
-import com.perimeterx.api.TestCustomParamProvider;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -10,13 +9,10 @@ import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.risk.BlockReason;
-import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.BlockAction;
 import com.perimeterx.utils.Constants;
-import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -25,9 +21,6 @@ import testutils.PXClientMock;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
 
 /**
  * Test {@link PXS2SValidator}
@@ -77,26 +70,5 @@ public class PXS2SValidatorTest {
         Assert.assertEquals(BlockAction.CHALLENGE, context.getBlockAction());
         Assert.assertEquals("<html><body></body></html>", context.getBlockActionData());
         Assert.assertEquals(BlockReason.CHALLENGE, context.getBlockReason());
-    }
-
-    @Test
-    public void customParamsTest() throws PXException, IOException {
-        CustomParameters customParameters = new CustomParameters();
-        customParameters.setCustomParam2("number 2");
-        customParameters.setCustomParam1("number 1");
-        customParameters.setCustomParam10("number 10");
-        TestCustomParamProvider testCustomParamProvider = Mockito.spy(new TestCustomParamProvider(customParameters));
-
-        PXConfiguration conf = new PXConfiguration.Builder()
-                .appId("APP_ID")
-                .authToken("AUTH_123")
-                .cookieKey("COOKIE_123")
-                .customParametersProvider(testCustomParamProvider)
-                .build();
-        this.client = Mockito.spy(new PXClientMock(0, Constants.CAPTCHA_SUCCESS_CODE, true));
-        this.validator = new PXS2SValidator(this.client, conf);
-        validator.verify(context);
-        Mockito.verify(testCustomParamProvider, times(1)).buildCustomParameters(any(PXConfiguration.class), any(PXContext.class));
-        Mockito.verify(client, times(1)).riskApiCall(any(RiskRequest.class));
     }
 }

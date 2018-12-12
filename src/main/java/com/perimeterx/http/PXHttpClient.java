@@ -114,7 +114,7 @@ public class PXHttpClient implements PXClient {
         HttpAsyncRequestProducer producer = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activities);
-            logger.debug("Sending Activity: {}", requestBody);
+            logger.debug("Sending Activities: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
