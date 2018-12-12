@@ -1,5 +1,13 @@
 # Change Log
 
+## [v5.3.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-12-12)
+- Fixed http components memory leak ([HTTPASYNC-116](https://issues.apache.org/jira/browse/HTTPASYNC-116))
+- Added custom params to async activities (page_requested, block)
+- Added data enrichment to context
+- Changed logger implementation to logback
+- formatted code style across project files
+- Added debugMode configuration that changes the log level from ERROR to DEBUG
+
 ## [v5.2.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-11-13)
 - Fixed an issue when the acitivity telemetry won't send pxConfiguration.
 - Fixed the usage of custom activity handlers: The verification handler used to override the custom

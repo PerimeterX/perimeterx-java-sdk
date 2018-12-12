@@ -9,12 +9,13 @@
 ## Table of Contents
 
 - [Usage](#usage)
-
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Upgrading](#upgrading)
-
 - [Basic Usage Example](#basic-usage)
+- [Advanced Usage Examples](#advanced-usage)
+  - [Data Enrichment](#data-enrichment)
+  - [Custom Parameters](#custom-parameters)
 - [Configuration](CONFIGURATIONS.md)
 - [Logging and Troubleshooting](#loggin-troubleshoot)
 - [Contributing](#contribute)
@@ -132,8 +133,82 @@ protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws Se
 
 Please continue reading about the various configurations available on the sdk in the configurations [page](CONFIGURATIONS.md) .
 
+### <a name="advanced-usage"></a> Advanced Usage Examples
+
+#### <a name="data-enrichment"></a> Data Enrichment
+
+Users can use the additional activity handler to retrieve information for the request using the data-enrichment object.
+First, check that the data enrichment object is verified, then you can access it's properties.
+
+MyVerificationHandler.java:
+```java
+...
+public class MyVerificationHandler implements VerificationHandler {
+    PXConfiguration pxConfig;
+    VerificationHandler defaultVerificationHandler;
+
+    public AutomationVerificationHandler(PXConfiguration pxConfig) throws PXException {
+        this.pxConfig = pxConfig;
+        PXClient pxClient = PXHttpClient.getInstance(pxConfig);
+        ActivityHandler activityHandler = new DefaultActivityHandler(pxClient, pxConfig);
+        this.defaultVerificationHandler = new DefaultVerificationHandler(pxConfig, activityHandler);
+    }
+
+    public boolean handleVerification(PXContext pxContext, HttpServletResponseWrapper httpServletResponseWrapper) throws PXException, IOException {
+        DataEnrichmentCookie dataEnrichment = pxContext.getDataEnrichment();
+        if (dataEnrichment.isValid) {
+            JsonNode dataEnrichmentPayload = dataEnrichment.getJsonPayload()
+            <handle data enrichment payload here>
+        }
+
+        return defaultVerificationHandler.handleVerification(pxContext, httpServletResponseWrapper);
+    }
+}
+```
+
+Then, in your filter:
+```java
+...
+PXConfiguration config = new PXConfiguration.Builder()
+     ...
+     .build();
+PerimeterX enforcer = new PerimeterX(config);
+enforcer.setVerificationHandler(new MyVerificationHandler(config));
+...
+```
+
+#### <a name="custom-parameters"></a> Custom Parameters
+
+With the `customParametersProvider` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before seting the payload on every request to PerimetrX servers.
+
+MyCustomParametersProvider.java:
+```java
+...
+public class MyCustomParametersProvider implements CustomParametersProvider {
+    public CustomParameters buildCustomParameters(PXConfiguration pxConfiguration, PXContext pxContext) {
+        CustomParameters customParameters = new CustomParameters();
+        customParameters.setCustomParam1("my_custom_param_1");
+        customParameters.setCustomParam2("my_custom_param_2");
+        ...
+        customParameters.setCustomParam10("my_custom_param_10");
+        return customParameters;
+    }
+}
+```
+
+Then, in your filter:
+```java
+...
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+     ...
+     .customParametersProvider(new MyCustomParametersProvider())
+     .build();
+...
+```
+
 ### <a name="loggin-troubleshoot"></a> Logging and Troubleshooting
-`perimeterx-java-sdk` is using SLF4J and Logback for logs.  
+`perimeterx-java-sdk` is using SLF4J and Logback for logs.
+
 For further information please visit [SLF4J](https://www.slf4j.org/manual.html) and [Logback](https://logback.qos.ch).
 
 The following steps are welcome when contributing to our project.

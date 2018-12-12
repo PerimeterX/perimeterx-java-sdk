@@ -15,13 +15,13 @@ Directives
 |moduleMode|Set the mode for PerimeterX module, Blocking or Monitor, setting to blocking mode meaning the module will be active blocking, monitor mode will only inspect the request but will not block it|Monitor|ModuleMode.BLOCKING / ModuleMode.MONITOR|enum, mandatory for active blocking|
 |moduleEnabled|Flag for enabling \ disabling Perimeterx protection|true|Boolean| |
 |encryptionEnabled|Flag indicating the module to decode or decrypt a cookie|true|Boolean| |
-|blockingScore|When requests with a score equal to or higher value they will be blocked.|100|Number| |
+|blockingScore|When requests with a score equal to or higher value they will be blocked.|100|int| |
 |sensitiveHeaders|Marks which headers will not be send to PerimeterX backends|[cookie, cookies]|Set<String> | |
-|maxBufferLen|Set the number of activities to send in batched activities|10|Number| |
-|apiTimeout |REST API timeout in milliseconds|1000|Number|Milliseconds|
-|connectionTimeout|Connection timeout in milliseconds|1000|Number|Milliseconds|
-|maxConnectionsPerRoute|Set the maximum connection per route for risk api requests in the connections pool|20|Number| |
-|maxConnections|Set the total maximum connections for risk api client|20|Number| |
+|maxBufferLen|Set the number of activities to send in batched activities|10|int| |
+|apiTimeout |REST API timeout in milliseconds|1000|int|Milliseconds|
+|connectionTimeout|Connection timeout in milliseconds|1000|int|Milliseconds|
+|maxConnectionsPerRoute|Set the maximum connection per route for risk api requests in the connections pool|20|int| |
+|maxConnections|Set the total maximum connections for risk api client|20|int| |
 |sendPageActivities|Toggle sending asynchronous page activities|true|Boolean| |
 |serverURL|Set the base url for PerimeterX servers|https://sapi-\<app_id>.perimeterx.net|String| |
 |customLogo|The logo will be displayed at the top div of the the block page. The logo's max-height property would be 150px and width would be set to auto.|null|String| |
@@ -29,16 +29,18 @@ Directives
 |jsRef|The block page can be added with custom JS file by adding JSRef directive and providing the JS file that will be loaded with the block page.|null|String| |
 |sensitiveRoutes|List of routes the Perimeterx module will always do a server-to-server call for, even if the cookie score is low and valid|Empty list|Set<String>| |
 |remoteConfigurationEnabled|Toggle remote configurations, when true, initial configurations will be set through constructor, then can be tuned from the portal|false|Boolean| |
-|remoteConfigurationInterval|Set the interval value for when to fetch configurations from PerimeterX configuration service|5000|Number|Milliseconds|
-|remoteConfigurationDelay|Set amount of time to delay the remote configuration thread before it starts|0|Number|Milliseconds|
+|remoteConfigurationInterval|Set the interval value for when to fetch configurations from PerimeterX configuration service|5000|int|Milliseconds|
+|remoteConfigurationDelay|Set amount of time to delay the remote configuration thread before it starts|0|int|Milliseconds|
 |remoteConfigurationUrl|Set the url for PerimeterX configuration service||String| |
 |ipHeaders|List of headers to extract the user ip from, if not set, it will be taken from default|Empty List|Set<String>|Use with `CombinedIPProvider`|
 |firstPartyEnabled|Toggle first party requests enabled|true|boolean|Read more details about first pary integration [here](#first-party-integration)|
 |xhrFirstPartyEnabled|Toggle first party XHR requests will be forwarded to PerimeterX servers|true|boolean| |
-|useProxy|The http client shall use a proxy for message forwarding|boolean| |
+|useProxy|The http client shall use a proxy for message forwarding|false|boolean|
 |proxyHost|The proxy's host name|String|
-|proxyPort|The proxy's port|int|
-|testingMode|Running the enforcer in dev environment for testing purposes, response returned as a JSON object. When you run the enforer in testing mode, please do not set costume verification handler|  |boolean
+|proxyPort|The proxy's port|None - required|int|
+|testingMode|Running the enforcer in dev environment for testing purposes, response returned as a JSON object. When you run the enforer in testing mode, please do not set costume verification handler|false|boolean
+|debugMode|Whether to print debug level logs|false|boolean|
+|validateRequestQueueInterval|Interval in seconds of cleaning requests queue. Solves HttpComponent reference leak bug.|5|int|
 
 ## <a name="interfaces"></a> Interfaces
 `perimeterx-java-sdk` can be tuned and set a different type of interface in order to make the module more flexible

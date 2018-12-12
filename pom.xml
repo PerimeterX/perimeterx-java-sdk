@@ -7,7 +7,7 @@
     <name>PerimeterX JAVA SDK</name>
     <groupId>com.perimeterx</groupId>
     <artifactId>perimeterx-sdk</artifactId>
-    <version>5.2.0</version>
+    <version>5.3.0</version>
 
     <packaging>jar</packaging>
     <description>PerimeterX Java SDK</description>
@@ -31,7 +31,12 @@
             <organization>PerimeterX</organization>
             <organizationUrl>https://www.perimeterx.com/</organizationUrl>
         </developer>
-
+        <developer>
+            <name>Ilai Fallach</name>
+            <email>ilai.fallach@perimeterx.com</email>
+            <organization>PerimeterX</organization>
+            <organizationUrl>https://www.perimeterx.com/</organizationUrl>
+        </developer>
     </developers>
 
     <licenses>
