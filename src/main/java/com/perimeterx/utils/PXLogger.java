@@ -1,6 +1,7 @@
 package com.perimeterx.utils;
 
-import org.slf4j.Logger;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PXLogger {
@@ -11,20 +12,16 @@ public class PXLogger {
     private final String ERROR_PREFIX = "[PerimeterX - ERROR] ";
 
     public enum LogReason {
+        DEBUG_INITIALIZING_MODULE("Initializing PerimeterX enforcer"),
 
         DEBUG_MODULE_DISABLED("Request will not be verified, module is disabled"),
-        DEBUG_STARTING_REQUEST_VERIFICTION("Starting request verification"),
+        DEBUG_STARTING_REQUEST_VERIFICATION("Starting request verification"),
         DEBUG_REQUEST_CONTEXT_CREATED("Request context created successfully"),
-
-        DEBUG_CAPTCHA_NO_COOKIE("No Captcha cookie present on the request"),
-        DEBUG_CAPTCHA_COOKIE_FOUND("Captcha cookie found, evaluating"),
-        DEBUG_CAPTCHA_RESPONSE_SUCCESS("Captcha API response validation status: passed"),
-        DEBUG_CAPTCHA_RESPONSE_TIMEOUT("Captcha response timeout - passing request."),
 
         DEBUG_COOKIE_MISSING("Cookie is missing"),
         DEBUG_COOKIE_VERSION_FOUND("Cookie {} found, Evaluating"), //version
-        DEBUG_COOKIE_DECRYPTION_FAILED("Cookie decryption failed, value: {}"), //cookie value
         DEBUG_COOKIE_DECRYPTION_HMAC_FAILED("Cookie HMAC validation failed, value: {}, user-agent: {}"), //decrypted-cookie-value, user agent
+        DEBUG_COOKIE_HMAC_VALIDATION_FAILED("Cookie HMAC validation failed, value: {}"), //decrypted-cookie-value
         DEBUG_COOKIE_TLL_EXPIRED("Cookie TTL is expired, value: {}, age: {}"), //decrypted-cookie-value, cookie age
         DEBUG_COOKIE_EVALUATION_FINISHED("Cookie evaluation ended successfully, risk score: {}"), //score
 
@@ -40,11 +37,7 @@ public class PXLogger {
 
         ERROR_CONFIGURATION_MISSING_MANDATORY_CONFIGURATION("Unable to initialize module, missing mandatory configuration. {}"), //config name
         ERROR_COOKIE_EVALUATION_EXCEPTION("Unexpected exception while evaluating Risk cookie. {}"),//error
-        ERROR_CAPTCHA_RESPONSE_FAILED("Captcha API response validation status: failed"),
-
-        ERROR_MOBILE_NO_TOKEN("Mobile invalid token - no token"),
-        ERROR_MOBILE_NO_CONNECTION("Mobile invalid token - connection error"),
-        ERROR_MOBILE_PINNING("Mobile invalid token - pinning issue");
+        ERROR_DATA_ENRICHMENT_JSON_PARSING_FAILED("Data enrichment payload parsing as json failed");
 
         String reason;
 
@@ -61,8 +54,18 @@ public class PXLogger {
         return new PXLogger(clazz);
     }
 
+    public static void setErrorLevel() {
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.ERROR);
+    }
+
+    public static void setDebugLevel() {
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        root.setLevel(Level.DEBUG);
+    }
+
     private PXLogger(Class<?> clazz) {
-        logger = LoggerFactory.getLogger(clazz);
+        logger = (Logger) LoggerFactory.getLogger(clazz);
     }
 
     public void debug(LogReason reason, Object... args) {

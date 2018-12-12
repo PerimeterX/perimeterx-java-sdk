@@ -148,5 +148,4 @@ public class CookieV3Test {
         assertEquals(S2SCallReason.NONE.getValue(), context.getS2sCallReason());
     }
 
-
 }

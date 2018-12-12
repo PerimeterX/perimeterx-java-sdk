@@ -2,8 +2,10 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.BlockReason;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 
 /**
@@ -34,7 +36,8 @@ public class BlockActivityDetails implements ActivityDetails {
     private String cookieOrigin;
     @JsonProperty("simulated_block")
     private String simulatedBlock;
-
+    @JsonUnwrapped
+    private CustomParameters customParameters;
 
     public BlockActivityDetails(PXContext context) {
         this.blockScore = context.getRiskScore();
@@ -47,7 +50,7 @@ public class BlockActivityDetails implements ActivityDetails {
         this.cookieOrigin = context.getCookieOrigin();
         this.moduleVersion = Constants.SDK_VERSION;
         this.simulatedBlock = context.getRiskMode();
-
+        this.customParameters = context.getCustomParameters();
     }
 
     public int getBlockScore() {
@@ -80,5 +83,9 @@ public class BlockActivityDetails implements ActivityDetails {
 
     public String getModuleVersion() {
         return moduleVersion;
+    }
+
+    public CustomParameters getCustomParameters() {
+        return customParameters;
     }
 }

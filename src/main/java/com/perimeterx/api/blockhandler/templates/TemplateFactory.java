@@ -49,12 +49,12 @@ public abstract class TemplateFactory {
         props.put("jsRef", pxConfig.getJsRef());
         String urlVid = pxContext.getVid() != null ? pxContext.getVid() : "";
 
-        String blockScript = "//" + Constants.CAPTCHA_HOST + "/" + pxConfig.getAppId() + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" :"0");
+        String blockScript = "//" + Constants.CAPTCHA_HOST + "/" + pxConfig.getAppId() + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" : "0");
         String jsClientSrc = "//" + Constants.CLIENT_HOST + "/" + pxConfig.getAppId() + "/main.min.js";
         String hostUrl = pxContext.getCollectorURL();
-        if (pxConfig.isFirstPartyEnabled() && !pxContext.isMobileToken()){
+        if (pxConfig.isFirstPartyEnabled() && !pxContext.isMobileToken()) {
             String prefix = pxConfig.getAppId().substring(2);
-            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" :"0");
+            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" : "0");
             jsClientSrc = "/" + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
             hostUrl = "/" + prefix + Constants.FIRST_PARTY_XHR_PATH;
         }

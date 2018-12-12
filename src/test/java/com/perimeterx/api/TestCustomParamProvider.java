@@ -11,6 +11,7 @@ import com.perimeterx.models.risk.CustomParameters;
 public class TestCustomParamProvider implements CustomParametersProvider {
 
     private CustomParameters customParameters;
+
     public TestCustomParamProvider(CustomParameters customParameters) {
         this.customParameters = customParameters;
     }

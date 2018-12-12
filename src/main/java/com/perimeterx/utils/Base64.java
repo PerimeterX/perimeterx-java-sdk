@@ -66,8 +66,8 @@ import java.util.Arrays;
  * OF SUCH DAMAGE.
  *
  * @author Mikael Grev
- *         Date: 2004-aug-02
- *         Time: 11:31:11
+ * Date: 2004-aug-02
+ * Time: 11:31:11
  * @version 2.2
  */
 
@@ -373,7 +373,6 @@ public class Base64 {
 
         return dArr;
     }
-
 
     /**
      * Decodes a BASE64 encoded byte array that is known to be resonably well formatted. The method is about twice as

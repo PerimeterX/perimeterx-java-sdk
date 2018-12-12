@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum BlockReason {
 
-    NONE("none"),SERVER("s2s_high_score"), COOKIE("cookie_high_score"),CHALLENGE("challenge");
+    NONE("none"), SERVER("s2s_high_score"), COOKIE("cookie_high_score"), CHALLENGE("challenge");
 
     private String value;
 

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Created by nitzangoldfeder on 06/11/2017.
  */
-public class CombinedIPProvider implements IPProvider{
+public class CombinedIPProvider implements IPProvider {
     private PXConfiguration pxConfiguration;
 
     public CombinedIPProvider(PXConfiguration pxConfiguration) {

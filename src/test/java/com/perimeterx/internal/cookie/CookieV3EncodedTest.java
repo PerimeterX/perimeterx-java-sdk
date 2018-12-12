@@ -50,18 +50,17 @@ public class CookieV3EncodedTest {
         pxCookieValidator.verify(context);
         assertEquals(S2SCallReason.NO_COOKIE.getValue(), context.getS2sCallReason());
     }
-    
+
     @Test
     public void testCookieV3EncodedPass() {
-    	String pxCookie = "_px3=5192aabc3a9134f771ed8e464817a419f3df6fb6c0aaa69f998cbb1a2224f4d3%3AR1dKoNUcq1e4W%2BeoC8dYg23pCtVo2wXrOYbybHmYC9FCyo7aEMt%2Btxk1QJqgltOCjcL54g8tkpa8wrlIMLt12w%3D%3D%3A1000%3Av515J1I1muBk4vN1M5IIpA0LhTTpj5ObGk6s%2FPzOIaQb03Mvq%2FLewcPsy85aZKsyDHDM%2F2BPzut7%2F9hhQCIkiQ%3D%3D";
-    	((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
+        String pxCookie = "_px3=5192aabc3a9134f771ed8e464817a419f3df6fb6c0aaa69f998cbb1a2224f4d3%3AR1dKoNUcq1e4W%2BeoC8dYg23pCtVo2wXrOYbybHmYC9FCyo7aEMt%2Btxk1QJqgltOCjcL54g8tkpa8wrlIMLt12w%3D%3D%3A1000%3Av515J1I1muBk4vN1M5IIpA0LhTTpj5ObGk6s%2FPzOIaQb03Mvq%2FLewcPsy85aZKsyDHDM%2F2BPzut7%2F9hhQCIkiQ%3D%3D";
+        ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertTrue(verify);
     }
-    
 
     @Test
     public void testCookieV3EncodedFailOnSensitiveRoute() {
@@ -78,7 +77,7 @@ public class CookieV3EncodedTest {
         this.context = new PXContext(request, ipProvider, hostnameProvider, configuration);
         assertTrue(this.context.isSensitiveRoute());
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
-        boolean verify = pxCookieValidator.verify( context);
+        boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);
         assertEquals(S2SCallReason.SENSITIVE_ROUTE.getValue(), context.getS2sCallReason());
     }
@@ -150,6 +149,5 @@ public class CookieV3EncodedTest {
         assertEquals(context.getBlockReason(), BlockReason.NONE);
         assertEquals(context.getS2sCallReason(), S2SCallReason.NONE.getValue());
     }
-
 
 }

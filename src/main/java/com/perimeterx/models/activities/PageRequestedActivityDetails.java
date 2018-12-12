@@ -2,7 +2,9 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 
@@ -28,7 +30,8 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     private String clientUuid;
     @JsonProperty("cookie_origin")
     private String cookieOrigin;
-
+    @JsonUnwrapped
+    private CustomParameters customParameters;
 
     public PageRequestedActivityDetails(PXContext context) {
         this.httpMethod = context.getHttpMethod();
@@ -39,6 +42,7 @@ public class PageRequestedActivityDetails implements ActivityDetails {
         this.moduleVersion = Constants.SDK_VERSION;
         this.clientUuid = context.getUuid();
         this.cookieOrigin = context.getCookieOrigin();
+        this.customParameters = context.getCustomParameters();
     }
 
     public String getHttpMethod() {
@@ -67,5 +71,9 @@ public class PageRequestedActivityDetails implements ActivityDetails {
 
     public String getClientUuid() {
         return clientUuid;
+    }
+
+    public CustomParameters getCustomParameters() {
+        return customParameters;
     }
 }

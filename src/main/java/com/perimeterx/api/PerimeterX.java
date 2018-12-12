@@ -27,10 +27,7 @@ package com.perimeterx.api;
 
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
-import com.perimeterx.api.providers.CombinedIPProvider;
-import com.perimeterx.api.providers.DefaultHostnameProvider;
-import com.perimeterx.api.providers.HostnameProvider;
-import com.perimeterx.api.providers.IPProvider;
+import com.perimeterx.api.providers.*;
 import com.perimeterx.api.proxy.DefaultReverseProxy;
 import com.perimeterx.api.proxy.ReverseProxy;
 import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigManager;
@@ -47,14 +44,9 @@ import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -79,27 +71,18 @@ public class PerimeterX {
     private VerificationHandler verificationHandler;
     private ReverseProxy reverseProxy;
 
-    private CloseableHttpClient getHttpClient() {
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(configuration.getMaxConnections());
-        cm.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
-        return HttpClients.custom()
-                .setConnectionManager(cm)
-                .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(configuration.getAuthToken()))
-                .build();
-    }
-
-    private CloseableHttpAsyncClient getAsyncHttpClient() {
-        CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createDefault();
-        closeableHttpAsyncClient.start();
-        return closeableHttpAsyncClient;
-    }
-
     private void init(PXConfiguration configuration) throws PXException {
+        if (configuration.isDebugMode()) {
+            PXLogger.setDebugLevel();
+        } else {
+            PXLogger.setErrorLevel();
+        }
+
+        logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new CombinedIPProvider(configuration);
-        PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient());
+        PXHttpClient pxClient = PXHttpClient.getInstance(configuration);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
@@ -122,10 +105,9 @@ public class PerimeterX {
     }
 
     private void setVerificationHandler() {
-        if (this.configuration.isTestingMode()){
+        if (this.configuration.isTestingMode()) {
             this.verificationHandler = new TestVerificationHandler(this.configuration, this.activityHandler);
-        }
-        else {
+        } else {
             this.verificationHandler = new DefaultVerificationHandler(this.configuration, this.activityHandler);
         }
     }
@@ -160,7 +142,7 @@ public class PerimeterX {
      */
     public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
-        logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICTION);
+        logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
         try {
             if (!moduleEnabled()) {
@@ -177,7 +159,7 @@ public class PerimeterX {
             handleCookies(context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
-            logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION,  e.getMessage());
+            logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
                 context.setPassReason(PassReason.ERROR);
@@ -196,7 +178,7 @@ public class PerimeterX {
         }
         logger.debug(PXLogger.LogReason.DEBUG_COOKIE_MISSING);
         if (serverValidator.verify(context)) {
-            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND,  context.getCookieVersion());
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
             return;
         }
     }

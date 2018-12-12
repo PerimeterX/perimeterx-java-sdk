@@ -28,7 +28,6 @@ public class TestObjectUtils {
         return new PXClientMock(scoreToReturn, Constants.CAPTCHA_SUCCESS_CODE);
     }
 
-
     public static PXConfiguration generateConfiguration() {
         return new PXConfiguration.Builder()
                 .appId("appId")

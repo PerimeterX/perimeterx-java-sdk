@@ -1,8 +1,11 @@
 package com.perimeterx.models;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
+import com.perimeterx.internals.cookie.DataEnrichmentCookie;
 import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.internals.cookie.cookieparsers.CookieHeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
@@ -99,6 +102,7 @@ public class PXContext {
 
     /**
      * Reason for request being verified
+     *
      * @see com.perimeterx.models.risk.PassReason
      */
     private PassReason passReason;
@@ -145,32 +149,33 @@ public class PXContext {
      */
     private boolean firstPartyRequest;
 
-
     /**
      * The original uuid of the request.
-     * */
+     */
     private String originalUuid;
     /**
      * The original token decoded.
-     * */
+     */
     private String decodedOriginalToken;
     /**
      * Errors encountered during the creation process of the cookie
-     * */
+     */
     private String originalTokenError;
     /**
      * The original token cookie.
-     * */
+     */
     private String originalTokenCookie;
 
     /**
      * The risk mode (monitor / active_blocking) of the request
-     * */
+     */
     private String riskMode;
 
-    private List <RawCookieData> tokens;
-    private List <RawCookieData> originalTokens;
+    private List<RawCookieData> tokens;
+    private List<RawCookieData> originalTokens;
     private String cookieVersion;
+
+    private DataEnrichmentCookie dataEnrichment;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -209,14 +214,16 @@ public class PXContext {
         }
 
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
-    }
 
+        CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
+        this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
+    }
 
     private void parseCookies(HttpServletRequest request, boolean isMobileToken) {
         HeaderParser headerParser = new CookieHeaderParser();
-        List <RawCookieData> tokens = new ArrayList<>();
-        List <RawCookieData> originalTokens = new ArrayList<>();
-        if (isMobileToken){
+        List<RawCookieData> tokens = new ArrayList<>();
+        List<RawCookieData> originalTokens = new ArrayList<>();
+        if (isMobileToken) {
             headerParser = new MobileCookieHeaderParser();
 
             String tokensHeader = request.getHeader(Constants.MOBILE_SDK_TOKENS_HEADER);
@@ -231,19 +238,21 @@ public class PXContext {
             String originalTokenHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
             originalTokens.addAll(headerParser.createRawCookieDataList(originalTokenHeader));
 
-
             this.tokens = tokens;
-            if (!originalTokens.isEmpty()){
+            if (!originalTokens.isEmpty()) {
                 this.originalTokens = originalTokens;
             }
-        }
-        else {
+
+            ObjectMapper mapper = new ObjectMapper();
+            this.dataEnrichment = new DataEnrichmentCookie(mapper.createObjectNode(), true);
+        } else {
             String originalTokensHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
             tokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
             this.tokens = tokens;
+
+            this.dataEnrichment = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
         }
     }
-
 
     public String getPxOriginalTokenCookie() {
         return originalTokenCookie;
@@ -257,11 +266,9 @@ public class PXContext {
         this.originalTokenCookie = originalTokenCookie;
     }
 
-
     public void setRiskCookie(AbstractPXCookie riskCookie) {
         this.riskCookie = riskCookie.getDecodedCookie().toString();
     }
-
 
     public void setBlockAction(String blockAction) {
         switch (blockAction) {
@@ -283,11 +290,11 @@ public class PXContext {
         }
     }
 
-
     /**
      * Check if request is verified or not
-     * @deprecated - Use {@link PXContext#isHandledResponse}
+     *
      * @return true if request is valid, false otherwise
+     * @deprecated - Use {@link PXContext#isHandledResponse}
      */
     @Deprecated
     public boolean isVerified() {
@@ -298,7 +305,7 @@ public class PXContext {
      * Check if request is verified or not, this method should not be used as a condition if to pass the request to
      * the application, instead use {@link PXContext#isHandledResponse} for the reason that its not
      * handling a case where we already responded if this is a first party request
-     *
+     * <p>
      * The {@link PXContext#isRequestLowScore} only indicates if the request was verified and should
      * called only if more details about the request is needed (like knowing the reason why shouldn't be passed)
      *
@@ -331,7 +338,6 @@ public class PXContext {
     public String getCollectorURL() {
         return String.format("%s%s%s", Constants.API_COLLECTOR_PREFIX, appId, Constants.API_COLLECTOR_POSTFIX);
     }
-
 
     public void setCookieVersion(String cookieVersion) {
         this.cookieVersion = cookieVersion;

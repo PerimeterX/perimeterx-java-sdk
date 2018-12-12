@@ -199,7 +199,7 @@ public class PBKDF2Engine implements PBKDF2 {
      *
      * @param a Numerator
      * @param b Denominator
-     * @return ceil(a/b)
+     * @return ceil(a / b)
      * @see <a href="http://tools.ietf.org/html/rfc2898">RFC 2898 5.2 Step 2.</a>
      */
     protected int ceil(int a, int b) {

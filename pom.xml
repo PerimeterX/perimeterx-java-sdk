@@ -7,7 +7,7 @@
     <name>PerimeterX JAVA SDK</name>
     <groupId>com.perimeterx</groupId>
     <artifactId>perimeterx-sdk</artifactId>
-    <version>5.2.0</version>
+    <version>5.3.0</version>
 
     <packaging>jar</packaging>
     <description>PerimeterX Java SDK</description>
@@ -31,7 +31,12 @@
             <organization>PerimeterX</organization>
             <organizationUrl>https://www.perimeterx.com/</organizationUrl>
         </developer>
-
+        <developer>
+            <name>Ilai Fallach</name>
+            <email>ilai.fallach@perimeterx.com</email>
+            <organization>PerimeterX</organization>
+            <organizationUrl>https://www.perimeterx.com/</organizationUrl>
+        </developer>
     </developers>
 
     <licenses>
@@ -161,9 +166,15 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.2.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.2.3</version>
         </dependency>
 
         <dependency>
@@ -221,7 +232,6 @@
         </dependency>
 
     </dependencies>
-
 
     <build>
         <plugins>
@@ -281,7 +291,7 @@
                     <value>${project.version}</value>
                 </configuration>
             </plugin>
-    </plugins>
+        </plugins>
     </build>
 
     <distributionManagement>

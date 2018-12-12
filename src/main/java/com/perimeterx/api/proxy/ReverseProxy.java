@@ -14,6 +14,7 @@ public interface ReverseProxy {
      * This method will reverse the request and fetch the client from PerimeterX backends
      * if return false, the module will continue to inspect the request
      * There must be a condition to redirect the request, it much match a certain prefix with combination of the appid and path
+     *
      * @param req - Request object
      * @param res - Response object
      * @return true if response was handled, false otherwise
@@ -25,6 +26,7 @@ public interface ReverseProxy {
      * This method will reverse the request and send any XHR request back to PerimeterX backends
      * if return false, the module will continue to inspect the request
      * There must be a condition to redirect the request, it much match a certain prefix with combination of the appid and path
+     *
      * @param req - Request object
      * @param res - Response object
      * @return true if response was handled, false otherwise

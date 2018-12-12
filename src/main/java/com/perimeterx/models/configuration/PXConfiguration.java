@@ -55,6 +55,8 @@ public class PXConfiguration {
     private String proxyHost;
     private int proxyPort;
     private boolean testingMode;
+    private boolean debugMode;
+    private int validateRequestQueueInterval;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -92,6 +94,8 @@ public class PXConfiguration {
         proxyHost = builder.proxyHost;
         proxyPort = builder.proxyPort;
         testingMode = builder.testingMode;
+        debugMode = builder.debugMode;
+        validateRequestQueueInterval = builder.validateRequestQueueInterval;
     }
 
     private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled,
@@ -100,7 +104,7 @@ public class PXConfiguration {
                             String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled,
                             ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute,
                             String remoteConfigurationUrl, CustomParametersProvider customParametersProvider,
-                            BlockHandler blockHandler, String collectorUrl, boolean firstPartyEnabled, boolean xhrFirstPartyEnable,
+                            BlockHandler blockHandler, String collectorUrl, boolean firstPartyEnabled, boolean xhrFirstPartyEnabled,
                             String clientHost, boolean useProxy, String proxyHost, int proxyPort) {
         this.appId = appId;
         this.cookieKey = cookieKey;
@@ -139,9 +143,9 @@ public class PXConfiguration {
         this.proxyPort = proxyPort;
     }
 
-    /*
-    * @return Configuration Object clone without cookieKey and authToken
-    * */
+    /**
+     * @return Configuration Object clone without cookieKey and authToken
+     **/
     public PXConfiguration getTelemetryConfig() {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
@@ -149,7 +153,7 @@ public class PXConfiguration {
                 customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost, useProxy, proxyHost, proxyPort);
     }
 
-    public String getRemoteConfigurationUrl(){
+    public String getRemoteConfigurationUrl() {
         return this.remoteConfigurationUrl;
     }
 
@@ -237,22 +241,21 @@ public class PXConfiguration {
         return moduleMode;
     }
 
-    public int getRemoteConfigurationInterval(){
+    public int getRemoteConfigurationInterval() {
         return this.remoteConfigurationInterval;
     }
 
-    public int getRemoteConfigurationDelay(){
+    public int getRemoteConfigurationDelay() {
         return this.remoteConfigurationDelay;
     }
 
-    public int getMaxConnections(){
+    public int getMaxConnections() {
         return this.maxConnections;
     }
 
-    public int getMaxConnectionsPerRoute(){
+    public int getMaxConnectionsPerRoute() {
         return this.maxConnectionsPerRoute;
     }
-
 
     public Set<String> getIpHeaders() {
         return ipHeaders;
@@ -282,20 +285,28 @@ public class PXConfiguration {
         return clientHost;
     }
 
-    public boolean shouldUseProxy(){
+    public boolean shouldUseProxy() {
         return useProxy;
     }
 
-    public String getProxyHost(){
+    public String getProxyHost() {
         return proxyHost;
     }
 
-    public int getProxyPort(){
+    public int getProxyPort() {
         return proxyPort;
     }
 
-    public boolean isTestingMode(){
+    public boolean isTestingMode() {
         return testingMode;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public int getValidateRequestQueueInterval() {
+        return validateRequestQueueInterval;
     }
 
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
@@ -313,6 +324,7 @@ public class PXConfiguration {
     }
 
     public static final class Builder {
+        private boolean debugMode;
         private boolean testingMode;
         private String appId;
         private String cookieKey;
@@ -348,6 +360,7 @@ public class PXConfiguration {
         private boolean useProxy;
         private String proxyHost;
         private int proxyPort;
+        private int validateRequestQueueInterval = 5 * 1000;
 
         public Builder() {
         }
@@ -491,16 +504,15 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder maxConnection(int val){
+        public Builder maxConnection(int val) {
             maxConnections = val;
             return this;
         }
 
-        public Builder maxConnectionsPerRoute(int val){
+        public Builder maxConnectionsPerRoute(int val) {
             maxConnectionsPerRoute = val;
             return this;
         }
-
 
         public Builder ipHeaders(Set<String> val) {
             this.ipHeaders = val;
@@ -537,8 +549,18 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder testingMode(boolean testingMode){
+        public Builder testingMode(boolean testingMode) {
             this.testingMode = testingMode;
+            return this;
+        }
+
+        public Builder debugMode(boolean debugMode) {
+            this.debugMode = debugMode;
+            return this;
+        }
+
+        public Builder validateRequestQueueInterval(int validateRequestQueueInterval) {
+            this.validateRequestQueueInterval = validateRequestQueueInterval;
             return this;
         }
 
