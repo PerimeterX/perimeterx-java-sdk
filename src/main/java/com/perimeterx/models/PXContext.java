@@ -1,6 +1,7 @@
 package com.perimeterx.models;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
@@ -213,6 +214,9 @@ public class PXContext {
         }
 
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
+
+        CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
+        this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
     }
 
     private void parseCookies(HttpServletRequest request, boolean isMobileToken) {
