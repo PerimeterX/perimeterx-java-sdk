@@ -1,5 +1,6 @@
 package com.perimeterx.models;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -241,6 +242,9 @@ public class PXContext {
             if (!originalTokens.isEmpty()) {
                 this.originalTokens = originalTokens;
             }
+
+            ObjectMapper mapper = new ObjectMapper();
+            this.dataEnrichment = new DataEnrichmentCookie(mapper.createObjectNode(), true);
         } else {
             String originalTokensHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
             tokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));

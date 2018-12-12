@@ -46,13 +46,7 @@ import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -77,22 +71,6 @@ public class PerimeterX {
     private VerificationHandler verificationHandler;
     private ReverseProxy reverseProxy;
 
-    private CloseableHttpClient getHttpClient() {
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(configuration.getMaxConnections());
-        cm.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
-        return HttpClients.custom()
-                .setConnectionManager(cm)
-                .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(configuration.getAuthToken()))
-                .build();
-    }
-
-    private CloseableHttpAsyncClient getAsyncHttpClient() {
-        CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createDefault();
-        closeableHttpAsyncClient.start();
-        return closeableHttpAsyncClient;
-    }
-
     private void init(PXConfiguration configuration) throws PXException {
         if (configuration.isDebugMode()) {
             PXLogger.setDebugLevel();
@@ -104,7 +82,7 @@ public class PerimeterX {
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new CombinedIPProvider(configuration);
-        PXHttpClient pxClient = PXHttpClient.getInstance(configuration, getAsyncHttpClient(), getHttpClient());
+        PXHttpClient pxClient = PXHttpClient.getInstance(configuration);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
