@@ -21,8 +21,6 @@ public class PXDynamicConfiguration {
     private String appId;
     @JsonProperty("blockingScore")
     private int blockingScore;
-    @JsonProperty("debugMode")
-    private boolean debugMode;
     @JsonProperty("moduleMode")
     private ModuleMode moduleMode;
     @JsonProperty("connectTimeout")
@@ -72,14 +70,6 @@ public class PXDynamicConfiguration {
 
     public void setBlockingScore(int blockingScore) {
         this.blockingScore = blockingScore;
-    }
-
-    public boolean isDebugMode() {
-        return debugMode;
-    }
-
-    public void setDebugMode(boolean debugMode) {
-        this.debugMode = debugMode;
     }
 
     public ModuleMode getModuleMode() {
