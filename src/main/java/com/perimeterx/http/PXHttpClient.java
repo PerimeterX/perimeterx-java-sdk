@@ -147,6 +147,7 @@ public class PXHttpClient implements PXClient {
     @Override
     public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
         HttpAsyncRequestProducer producer = null;
+        BasicAsyncResponseConsumer basicAsyncResponseConsumer = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activities);
             logger.debug("Sending Activities: {}", requestBody);
@@ -156,12 +157,16 @@ public class PXHttpClient implements PXClient {
             post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             producer = HttpAsyncMethods.create(post);
-            asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
+            basicAsyncResponseConsumer = new BasicAsyncResponseConsumer();
+            asyncHttpClient.execute(producer, basicAsyncResponseConsumer, new PxClientAsyncHandler());
         } catch (Exception e) {
             throw new PXException(e);
         } finally {
             if (producer != null) {
                 producer.close();
+            }
+            if (basicAsyncResponseConsumer != null) {
+                basicAsyncResponseConsumer.close();
             }
         }
     }
@@ -182,7 +187,7 @@ public class PXHttpClient implements PXClient {
             if (httpCode == HttpStatus.SC_OK) {
                 String bodyContent = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
                 stub = JsonUtils.pxConfigurationStubReader.readValue(bodyContent);
-                logger.debug("[getConfiguration] GET request successfully executed {}", bodyContent);
+                logger.debug("[getConfiguration] GET request successfully executed");
             } else if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
                 logger.debug("[getConfiguration] No updates found");
             } else {
@@ -198,6 +203,7 @@ public class PXHttpClient implements PXClient {
     @Override
     public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException {
         HttpAsyncRequestProducer producer = null;
+        BasicAsyncResponseConsumer basicAsyncResponseConsumer = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
             logger.debug("Sending enforcer telemetry: {}", requestBody);
@@ -208,12 +214,16 @@ public class PXHttpClient implements PXClient {
             post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
             producer = HttpAsyncMethods.create(post);
-            asyncHttpClient.execute(producer, new BasicAsyncResponseConsumer(), new PxClientAsyncHandler());
+            basicAsyncResponseConsumer = new BasicAsyncResponseConsumer();
+            asyncHttpClient.execute(producer, basicAsyncResponseConsumer, new PxClientAsyncHandler());
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (producer != null) {
                 producer.close();
+            }
+            if (basicAsyncResponseConsumer != null) {
+                basicAsyncResponseConsumer.close();
             }
         }
     }

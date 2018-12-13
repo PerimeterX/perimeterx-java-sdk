@@ -39,7 +39,6 @@ Directives
 |proxyHost|The proxy's host name|String|
 |proxyPort|The proxy's port|None - required|int|
 |testingMode|Running the enforcer in dev environment for testing purposes, response returned as a JSON object. When you run the enforer in testing mode, please do not set costume verification handler|false|boolean
-|debugMode|Whether to print debug level logs|false|boolean|
 |validateRequestQueueInterval|Interval in seconds of cleaning requests queue. Solves HttpComponent reference leak bug.|5|int|
 
 ## <a name="interfaces"></a> Interfaces

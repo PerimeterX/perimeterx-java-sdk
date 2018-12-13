@@ -54,7 +54,7 @@ public class PXHttpClientTest {
 
     private void mockValidRequest() {
         try {
-            String json = "{\"moduleEnabled\":false,\"cookieKey\":\"a_cookie_key\",\"blockingScore\":1000,\"appId\":\"a_app_id\",\"moduleMode\":\"blocking\",\"sensitiveHeaders\":[],\"connectTimeout\":3000,\"riskTimeout\":3000,\"debugMode\":false,\"checksum\":\"a_check_sum\"}";
+            String json = "{\"moduleEnabled\":false,\"cookieKey\":\"a_cookie_key\",\"blockingScore\":1000,\"appId\":\"a_app_id\",\"moduleMode\":\"blocking\",\"sensitiveHeaders\":[],\"connectTimeout\":3000,\"riskTimeout\":3000,\"checksum\":\"a_check_sum\"}";
             HttpEntity entity = mock(HttpEntity.class);
             CloseableHttpResponse response = mock(CloseableHttpResponse.class);
             StatusLine statusLine = mock(StatusLine.class);

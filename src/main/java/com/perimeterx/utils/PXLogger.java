@@ -1,7 +1,6 @@
 package com.perimeterx.utils;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PXLogger {
@@ -54,18 +53,8 @@ public class PXLogger {
         return new PXLogger(clazz);
     }
 
-    public static void setErrorLevel() {
-        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.ERROR);
-    }
-
-    public static void setDebugLevel() {
-        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        root.setLevel(Level.DEBUG);
-    }
-
     private PXLogger(Class<?> clazz) {
-        logger = (Logger) LoggerFactory.getLogger(clazz);
+        logger = LoggerFactory.getLogger(clazz);
     }
 
     public void debug(LogReason reason, Object... args) {
