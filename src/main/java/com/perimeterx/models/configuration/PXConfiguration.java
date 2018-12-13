@@ -55,7 +55,6 @@ public class PXConfiguration {
     private String proxyHost;
     private int proxyPort;
     private boolean testingMode;
-    private boolean debugMode;
     private int validateRequestQueueInterval;
 
     private PXConfiguration(Builder builder) {
@@ -94,7 +93,6 @@ public class PXConfiguration {
         proxyHost = builder.proxyHost;
         proxyPort = builder.proxyPort;
         testingMode = builder.testingMode;
-        debugMode = builder.debugMode;
         validateRequestQueueInterval = builder.validateRequestQueueInterval;
     }
 
@@ -301,10 +299,6 @@ public class PXConfiguration {
         return testingMode;
     }
 
-    public boolean isDebugMode() {
-        return debugMode;
-    }
-
     public int getValidateRequestQueueInterval() {
         return validateRequestQueueInterval;
     }
@@ -324,7 +318,6 @@ public class PXConfiguration {
     }
 
     public static final class Builder {
-        private boolean debugMode;
         private boolean testingMode;
         private String appId;
         private String cookieKey;
@@ -551,11 +544,6 @@ public class PXConfiguration {
 
         public Builder testingMode(boolean testingMode) {
             this.testingMode = testingMode;
-            return this;
-        }
-
-        public Builder debugMode(boolean debugMode) {
-            this.debugMode = debugMode;
             return this;
         }
 
