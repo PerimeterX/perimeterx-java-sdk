@@ -55,6 +55,7 @@ public class TestVerificationHandler implements VerificationHandler {
         jsonObject.addProperty("sensitive_route", pxContext.isSensitiveRoute());
         jsonObject.addProperty("sensitive_route_list", gson.toJson(pxConfig.getSensitiveRoutes()));
         jsonObject.addProperty("pxde", pxContext.getPxde().toString());
+        jsonObject.addProperty("pxde_verified", pxContext.isPxdeVerified());
         httpServletResponseWrapper.getWriter().print(jsonObject);
 
         return false;

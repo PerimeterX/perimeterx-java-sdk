@@ -155,7 +155,7 @@ public class MyVerificationHandler implements VerificationHandler {
     }
 
     public boolean handleVerification(PXContext pxContext, HttpServletResponseWrapper httpServletResponseWrapper) throws PXException, IOException {
-        if (pxContext.pxdeVerified) {
+        if (pxContext.isPxdeVerified()) {
             JsonNode dataEnrichmentPayload = pxContext.getPxde();
             <handle data enrichment payload here>
         }
