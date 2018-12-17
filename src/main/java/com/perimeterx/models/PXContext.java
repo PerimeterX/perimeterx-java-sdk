@@ -176,8 +176,11 @@ public class PXContext {
     private List<RawCookieData> originalTokens;
     private String cookieVersion;
 
+    /**
+     * PerimeterX data enrichment cookie payload
+     * */
     private JsonNode pxde;
-    private boolean pxdeVerified;
+    private boolean pxdeVerified = false;
 
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
