@@ -1,5 +1,6 @@
 package com.perimeterx.models;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
@@ -175,7 +176,12 @@ public class PXContext {
     private List<RawCookieData> originalTokens;
     private String cookieVersion;
 
-    private DataEnrichmentCookie dataEnrichment;
+    /**
+     * PerimeterX data enrichment cookie payload
+     * */
+    private JsonNode pxde;
+    private boolean pxdeVerified = false;
+
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -244,13 +250,16 @@ public class PXContext {
             }
 
             ObjectMapper mapper = new ObjectMapper();
-            this.dataEnrichment = new DataEnrichmentCookie(mapper.createObjectNode(), true);
+            this.pxde = mapper.createObjectNode();
+            this.pxdeVerified = true;
         } else {
             String originalTokensHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
             tokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
             this.tokens = tokens;
 
-            this.dataEnrichment = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
+            DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
+            this.pxde = deCookie.getJsonPayload();
+            this.pxdeVerified = deCookie.isValid();
         }
     }
 
