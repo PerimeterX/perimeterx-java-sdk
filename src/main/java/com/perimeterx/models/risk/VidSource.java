@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum VidSource {
 
-    RISK_COOKIE("RISK_COOKIE"),
-    VID_COOKIE("VID_COOKIE"),
-    NONE("NONE");
+    RISK_COOKIE("risk_cookie"),
+    VID_COOKIE("vid_cookie"),
+    NONE("none");
     private String value;
     VidSource(String value){
         this.value = value;
