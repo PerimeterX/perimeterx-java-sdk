@@ -15,7 +15,7 @@ public class DefaultRemoteConfigManager implements RemoteConfigurationManager {
     private PXClient pxClient;
     private PXConfiguration pxConfiguration;
 
-    public DefaultRemoteConfigManager(PXConfiguration pxConfiguration, PXClient pxClient){
+    public DefaultRemoteConfigManager(PXConfiguration pxConfiguration, PXClient pxClient) {
         this.pxClient = pxClient;
         this.pxConfiguration = pxConfiguration;
     }

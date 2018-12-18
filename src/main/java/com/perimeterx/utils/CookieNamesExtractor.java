@@ -1,20 +1,17 @@
 package com.perimeterx.utils;
 
-import javax.servlet.http.Cookie;
-import java.util.ArrayList;
-import java.util.List;
-
 public class CookieNamesExtractor {
 
-    public static String[] extractCookieNames (Cookie[] cookies){
-        List <String> cookiesList = new ArrayList<>();
-        if (cookies != null) {
-            cookiesList = new ArrayList<>();
-            for (Cookie cookie : cookies) {
-                cookiesList.add(cookie.getName());
+    public static String[] extractCookieNames(String cookieHeader) {
+        String[] cookieNames = null;
+        if (cookieHeader != null) {
+            String[] cookies = cookieHeader.split(";\\s?");
+            cookieNames = new String[cookies.length];
+            for (int i = 0; i < cookies.length; i++) {
+                String[] keyValue = cookies[i].split("=\\s?");
+                cookieNames[i] = keyValue[0];
             }
         }
-        return cookiesList.toArray(new String[cookiesList.size()]);
-
+        return cookieNames;
     }
 }

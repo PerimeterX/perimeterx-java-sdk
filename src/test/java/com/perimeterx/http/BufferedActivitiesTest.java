@@ -34,7 +34,6 @@ public class BufferedActivitiesTest {
     private PXContext context;
     private PXConfiguration config;
 
-
     @BeforeMethod
     public void setUp() {
         config = new PXConfiguration.Builder()

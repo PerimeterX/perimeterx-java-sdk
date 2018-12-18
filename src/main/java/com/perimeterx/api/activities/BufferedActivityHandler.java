@@ -31,7 +31,6 @@ public class BufferedActivityHandler implements ActivityHandler {
         this.bufferedActivities = new ArrayList<>();
     }
 
-
     @Override
     public void handleBlockActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
@@ -48,7 +47,7 @@ public class BufferedActivityHandler implements ActivityHandler {
     public void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason) throws PXException {
         try {
             EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfig, updateReason);
-            EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry",pxConfig.getAppId(), details);
+            EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfig.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry);
         } catch (IOException e) {
             throw new PXException(e);

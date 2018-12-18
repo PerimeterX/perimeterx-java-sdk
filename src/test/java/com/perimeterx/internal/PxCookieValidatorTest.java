@@ -25,7 +25,7 @@ public class PxCookieValidatorTest {
     private RemoteAddressIPProvider ipProvider;
 
     @BeforeClass
-    public void init (){
+    public void init() {
         this.pxConfiguration = new PXConfiguration.Builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
@@ -36,9 +36,9 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerify(){
+    public void testVerify() {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        String cookies = Constants.COOKIE_V3_KEY + ":" +CookieV3 + "," + Constants.COOKIE_V1_KEY + ":" + CookieV1;
+        String cookies = Constants.COOKIE_V3_KEY + ":" + CookieV3 + "," + Constants.COOKIE_V1_KEY + ":" + CookieV1;
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, CookieV1);
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_TOKENS_HEADER, cookies);
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
@@ -51,7 +51,7 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerifyFromTokensFirstCorrupted(){
+    public void testVerifyFromTokensFirstCorrupted() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = "@$@#%" + "," + Constants.COOKIE_V1_KEY + ":" + CookieV1;
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, Constants.COOKIE_V3_KEY + ":" + CookieV3);
@@ -66,7 +66,7 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerifyFromTokensBothCorruptedSelectAuthHeaderCookie(){
+    public void testVerifyFromTokensBothCorruptedSelectAuthHeaderCookie() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = "@$@#%" + "," + "@%@%@#";
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, Constants.COOKIE_V3_KEY + ":" + CookieV3);
@@ -81,7 +81,7 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerifyFromTokensBothCorruptedSelectOriginalTokenDecryptionError(){
+    public void testVerifyFromTokensBothCorruptedSelectOriginalTokenDecryptionError() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = "3:@$@#%" + "," + "1:@%@%@#";
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER, Constants.COOKIE_V3_KEY + ":" + CookieV3);
@@ -97,9 +97,8 @@ public class PxCookieValidatorTest {
         assertEquals(pxContext.getVid(), "84f7db40-9592-11e8-a7b3-5319fb36a9bf");
     }
 
-
     @Test
-    public void testVerifyFromTokensNoneSelectOriginalTokenDecryptionError(){
+    public void testVerifyFromTokensNoneSelectOriginalTokenDecryptionError() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = "";
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER, Constants.COOKIE_V3_KEY + ":" + CookieV3);
@@ -115,11 +114,8 @@ public class PxCookieValidatorTest {
         assertEquals(pxContext.getVid(), "84f7db40-9592-11e8-a7b3-5319fb36a9bf");
     }
 
-
     private void enrichHttpRequestWithPxHeaders(MockHttpServletRequest request, String headerKey, String headerValue) {
         request.addHeader(headerKey, headerValue);
     }
-
-
 
 }

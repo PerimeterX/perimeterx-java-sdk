@@ -1,14 +1,13 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.http.PXClient;
+import com.perimeterx.internals.cookie.DataEnrichmentCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
-import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
@@ -36,7 +35,7 @@ public class PXS2SValidator implements PXValidator {
      *
      * @param pxContext - Request context
      * @return risk response from PX servers
-     * @throws PXException
+     * @throws PXException will be thrown when an error occurs
      */
     public boolean verify(PXContext pxContext) throws PXException {
         logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
@@ -45,16 +44,11 @@ public class PXS2SValidator implements PXValidator {
         long rtt;
 
         try {
-            // Extract Custom Params only if we do risk  api
-            CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
-            CustomParameters customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, pxContext);
-            pxContext.setCustomParameters(customParameters);
-
             // Build risk request
             RiskRequest request = RiskRequest.fromContext(pxContext);
             response = pxClient.riskApiCall(request);
             rtt = System.currentTimeMillis() - startRiskRtt;
-            logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null)? "": response.getScore(), rtt);
+            logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null) ? "" : response.getScore(), rtt);
 
             pxContext.setMadeS2SApiCall(true);
             if (response == null) {
@@ -68,6 +62,9 @@ public class PXS2SValidator implements PXValidator {
             pxContext.setRiskScore(response.getScore());
             pxContext.setUuid(response.getUuid());
             pxContext.setBlockAction(response.getAction());
+            DataEnrichmentCookie dataEnrichment = new DataEnrichmentCookie(response.getDataEnrichment(), true);
+            pxContext.setPxde(dataEnrichment.getJsonPayload());
+            pxContext.setPxdeVerified(dataEnrichment. isValid());
 
             if (pxContext.getRiskScore() < pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);

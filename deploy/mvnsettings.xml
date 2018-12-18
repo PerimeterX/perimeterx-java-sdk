@@ -2,8 +2,8 @@
     <servers>
         <server>
             <id>ossrh</id>
-            <username>${env.OSSRH_JIRA_USERNAME}</username>
-            <password>${env.OSSRH_JIRA_PASSWORD}</password>
+            <username>bendpx</username>
+            <password>123123aa</password>
         </server>
     </servers>
 

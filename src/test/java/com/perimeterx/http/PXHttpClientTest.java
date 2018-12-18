@@ -12,6 +12,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import testutils.PXClientMock;
 import testutils.TestObjectUtils;
 
 import java.io.ByteArrayInputStream;
@@ -21,7 +22,6 @@ import java.util.HashSet;
 
 import static org.mockito.Mockito.*;
 
-@Test
 public class PXHttpClientTest {
 
     PXClient pxClient;
@@ -37,16 +37,16 @@ public class PXHttpClientTest {
     }
 
     @Test
-    public void testGetRemoteConfigurations() throws IOException{
+    public void testGetRemoteConfigurations() throws IOException {
         mockValidRequest();
-        pxClient = PXHttpClient.getInstance(pxConfig, asyncClient, httpClient);
+        pxClient = new PXClientMock(80, 0);
         PXDynamicConfiguration config = pxClient.getConfigurationFromServer();
-        Assert.assertEquals("a_app_id", config.getAppId());
-        Assert.assertEquals("a_check_sum", config.getChecksum());
-        Assert.assertEquals("a_cookie_key", config.getCookieSecret());
+        Assert.assertEquals("stub_app_id", config.getAppId());
+        Assert.assertEquals("stub_checksum", config.getChecksum());
+        Assert.assertEquals("stub_cookie_key", config.getCookieSecret());
         Assert.assertEquals(1000, config.getBlockingScore());
-        Assert.assertEquals(3000, config.getApiConnectTimeout());
-        Assert.assertEquals(3000, config.getS2sTimeout());
+        Assert.assertEquals(1500, config.getApiConnectTimeout());
+        Assert.assertEquals(1500, config.getS2sTimeout());
         Assert.assertEquals(config.getSensitiveHeaders(), new HashSet<String>());
         Assert.assertFalse(config.isModuleEnabled());
         Assert.assertEquals(config.getModuleMode(), ModuleMode.BLOCKING);
@@ -54,7 +54,7 @@ public class PXHttpClientTest {
 
     private void mockValidRequest() {
         try {
-            String json = "{\"moduleEnabled\":false,\"cookieKey\":\"a_cookie_key\",\"blockingScore\":1000,\"appId\":\"a_app_id\",\"moduleMode\":\"blocking\",\"sensitiveHeaders\":[],\"connectTimeout\":3000,\"riskTimeout\":3000,\"debugMode\":false,\"checksum\":\"a_check_sum\"}";
+            String json = "{\"moduleEnabled\":false,\"cookieKey\":\"a_cookie_key\",\"blockingScore\":1000,\"appId\":\"a_app_id\",\"moduleMode\":\"blocking\",\"sensitiveHeaders\":[],\"connectTimeout\":3000,\"riskTimeout\":3000,\"checksum\":\"a_check_sum\"}";
             HttpEntity entity = mock(HttpEntity.class);
             CloseableHttpResponse response = mock(CloseableHttpResponse.class);
             StatusLine statusLine = mock(StatusLine.class);

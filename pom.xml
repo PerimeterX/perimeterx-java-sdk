@@ -7,7 +7,7 @@
     <name>PerimeterX JAVA SDK</name>
     <groupId>com.perimeterx</groupId>
     <artifactId>perimeterx-sdk</artifactId>
-    <version>5.2.0</version>
+    <version>5.4.0</version>
 
     <packaging>jar</packaging>
     <description>PerimeterX Java SDK</description>
@@ -31,7 +31,12 @@
             <organization>PerimeterX</organization>
             <organizationUrl>https://www.perimeterx.com/</organizationUrl>
         </developer>
-
+        <developer>
+            <name>Ilai Fallach</name>
+            <email>ilai.fallach@perimeterx.com</email>
+            <organization>PerimeterX</organization>
+            <organizationUrl>https://www.perimeterx.com/</organizationUrl>
+        </developer>
     </developers>
 
     <licenses>
@@ -213,6 +218,7 @@
             <version>1.16.16</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -221,7 +227,6 @@
         </dependency>
 
     </dependencies>
-
 
     <build>
         <plugins>
@@ -281,7 +286,7 @@
                     <value>${project.version}</value>
                 </configuration>
             </plugin>
-    </plugins>
+        </plugins>
     </build>
 
     <distributionManagement>

@@ -54,7 +54,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         String reverseAppId = pxConfiguration.getAppId().substring(2);
         this.clientReversePrefix = String.format("/%s/%s", reverseAppId, CLIENT_FP_PATH);
         this.xhrReversePrefix = String.format("/%s/%s", reverseAppId, XHR_PATH);
-        this.captchaReversePrefix  = "/" + reverseAppId + "/" + CAPTACHA_PATH;
+        this.captchaReversePrefix = "/" + reverseAppId + "/" + CAPTACHA_PATH;
         this.clientPath = String.format("/%s/%s", pxConfiguration.getAppId(), CLIENT_TP_PATH);
         this.collectorUrl = pxConfiguration.getCollectorUrl();
         this.ipProvider = ipProvider;
@@ -66,7 +66,6 @@ public class DefaultReverseProxy implements ReverseProxy {
                 .setConnectionManager(cm)
                 .build();
     }
-
 
     public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
         if (!req.getRequestURI().startsWith(clientReversePrefix)) {
@@ -119,10 +118,10 @@ public class DefaultReverseProxy implements ReverseProxy {
 
     @Override
     public boolean reverseCaptcha(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
-        if (!req.getRequestURI().contains(captchaReversePrefix)){
+        if (!req.getRequestURI().contains(captchaReversePrefix)) {
             return false;
         }
-        if (!pxConfiguration.isFirstPartyEnabled()){
+        if (!pxConfiguration.isFirstPartyEnabled()) {
             logger.debug("First party is disabled, rendering default response");
             PredefinedResponse predefinedResponse = new PredefinedResponse(CONTENT_TYPE_JAVASCRIPT, DEFAULT_JAVASCRIPT_VALUE);
             predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
@@ -130,7 +129,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         }
         String query = req.getQueryString();
         String originalRequest = pxConfiguration.getAppId() + "/captcha.js?" + query;
-        String url = "https://" + Constants.CAPTCHA_HOST  + "/" + originalRequest;
+        String url = "https://" + Constants.CAPTCHA_HOST + "/" + originalRequest;
         logger.debug("Forwarding request from " + captchaReversePrefix + "/" + originalRequest + "to xhr at " + url);
 
         RemoteServer remoteServer = new RemoteServer("", url, req, res, ipProvider, proxyClient, null, predefinedResponseHelper, pxConfiguration);

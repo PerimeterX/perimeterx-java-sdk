@@ -6,7 +6,6 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 
-
 /**
  * Created by shikloshi on 06/08/2016.
  */
@@ -42,7 +41,6 @@ public class Additional {
     public CustomParameters customParameters;
     @JsonProperty("request_cookie_names")
     public String[] requestCookieNames;
-
 
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
