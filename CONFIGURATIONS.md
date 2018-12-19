@@ -18,8 +18,8 @@ Directives
 |blockingScore|When requests with a score equal to or higher value they will be blocked.|100|int| |
 |sensitiveHeaders|Marks which headers will not be send to PerimeterX backends|[cookie, cookies]|Set<String> | |
 |maxBufferLen|Set the number of activities to send in batched activities|10|int| |
-|apiTimeout |REST API timeout in milliseconds|1000|int|Milliseconds|
-|connectionTimeout|Connection timeout in milliseconds|1000|int|Milliseconds|
+|riskRequestTimeout|Risk requests timeout|1000|int|Milliseconds|
+|offlineRequestTimeout|Activities and other offline requests timeout|5000|int|Milliseconds|
 |maxConnectionsPerRoute|Set the maximum connection per route for risk api requests in the connections pool|20|int| |
 |maxConnections|Set the total maximum connections for risk api client|20|int| |
 |sendPageActivities|Toggle sending asynchronous page activities|true|Boolean| |

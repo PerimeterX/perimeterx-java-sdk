@@ -45,8 +45,8 @@ public class PXHttpClientTest {
         Assert.assertEquals("stub_checksum", config.getChecksum());
         Assert.assertEquals("stub_cookie_key", config.getCookieSecret());
         Assert.assertEquals(1000, config.getBlockingScore());
-        Assert.assertEquals(1500, config.getApiConnectTimeout());
-        Assert.assertEquals(1500, config.getS2sTimeout());
+        Assert.assertEquals(1500, config.getConnectTimeout());
+        Assert.assertEquals(1500, config.getRiskRequestTimeout());
         Assert.assertEquals(config.getSensitiveHeaders(), new HashSet<String>());
         Assert.assertFalse(config.isModuleEnabled());
         Assert.assertEquals(config.getModuleMode(), ModuleMode.BLOCKING);

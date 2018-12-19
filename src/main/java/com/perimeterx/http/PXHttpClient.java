@@ -107,7 +107,7 @@ public class PXHttpClient implements PXClient {
             logger.debug("Risk API Request: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
+            post.setConfig(PXCommonUtils.getRiskRequestConfig(pxConfiguration));
 
             httpResponse = httpClient.execute(post);
             String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
@@ -131,7 +131,7 @@ public class PXHttpClient implements PXClient {
             logger.debug("Sending Activity: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
+            post.setConfig(PXCommonUtils.getOfflineRequestConfig(pxConfiguration));
 
             httpResponse = httpClient.execute(post);
             EntityUtils.consume(httpResponse.getEntity());
@@ -153,7 +153,7 @@ public class PXHttpClient implements PXClient {
             logger.debug("Sending Activities: {}", requestBody);
             HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
             post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
+            post.setConfig(PXCommonUtils.getOfflineRequestConfig(pxConfiguration));
             post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
             producer = HttpAsyncMethods.create(post);
@@ -212,12 +212,12 @@ public class PXHttpClient implements PXClient {
             PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());
             post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
             post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
+            post.setConfig(PXCommonUtils.getOfflineRequestConfig(pxConfiguration));
             producer = HttpAsyncMethods.create(post);
             basicAsyncResponseConsumer = new BasicAsyncResponseConsumer();
             asyncHttpClient.execute(producer, basicAsyncResponseConsumer, new PxClientAsyncHandler());
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[sendEnforcerTelemetry] exception: {}", e.getMessage());
         } finally {
             if (producer != null) {
                 producer.close();
