@@ -325,7 +325,7 @@ public class PXConfiguration {
         private boolean encryptionEnabled = true;
         private int blockingScore = 100;
         private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookieOrig", "cookies"));
-        private int maxBufferLen = 10;
+        private int maxBufferLen = 50;
         private int riskRequestTimeout = 1000;
         private int offlineRequestTimeout = 5000;
         private boolean sendPageActivities = true;
@@ -339,7 +339,7 @@ public class PXConfiguration {
         private ModuleMode moduleMode = ModuleMode.MONITOR;
         private int remoteConfigurationInterval = 1000 * 5;
         private int remoteConfigurationDelay = 0;
-        private int maxConnectionsPerRoute = 20;
+        private int maxConnectionsPerRoute = 50;
         private int maxConnections = 200;
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
         private Set<String> ipHeaders = new HashSet<>();

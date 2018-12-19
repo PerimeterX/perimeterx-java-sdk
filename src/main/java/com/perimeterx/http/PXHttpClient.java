@@ -92,6 +92,8 @@ public class PXHttpClient implements PXClient {
     private void initAsyncHttpClient() throws IOReactorException {
         ConnectingIOReactor ioReactor = new DefaultConnectingIOReactor();
         nHttpConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
+        nHttpConnectionManager.setMaxTotal(this.pxConfiguration.getMaxConnections());
+        nHttpConnectionManager.setDefaultMaxPerRoute(this.pxConfiguration.getMaxConnectionsPerRoute());
         CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.custom()
                 .setConnectionManager(nHttpConnectionManager)
                 .build();
