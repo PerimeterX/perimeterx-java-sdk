@@ -7,6 +7,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
+import com.perimeterx.models.risk.VidSource;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,6 +54,7 @@ public class PXCookieValidator implements PXValidator {
             context.setCookieVersion(pxCookie.getCookieVersion());
             context.setRiskCookie(pxCookie);
             context.setVid(pxCookie.getVID());
+            context.setVidSource(VidSource.RISK_COOKIE);
             context.setUuid(pxCookie.getUUID());
             context.setRiskScore(pxCookie.getScore());
             context.setBlockAction(pxCookie.getBlockAction());

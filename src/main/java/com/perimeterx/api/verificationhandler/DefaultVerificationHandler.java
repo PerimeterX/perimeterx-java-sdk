@@ -9,6 +9,8 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
 
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
@@ -43,7 +45,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
             logger.debug("Request invalid");
             this.activityHandler.handleBlockActivity(context);
         }
-
+        setVidPxhdCookie(context, responseWrapper);
         if (pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) && !verified) {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
@@ -52,7 +54,21 @@ public class DefaultVerificationHandler implements VerificationHandler {
         return true;
     }
 
-    private boolean shouldPassRequest(PXContext context) {
+    private void setVidPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
+        String setCookie = responseWrapper.getHeader("Set-Cookie");
+        String pxhdCookieValue = context.getPxhd();
+        List <String> cookies = new ArrayList<>();
+        if (setCookie != null) {
+            cookies.add(setCookie);
+        }
+        if (pxhdCookieValue != null) {
+            cookies.add("_pxhd=" + pxhdCookieValue);
+        }
+        String vidPxhdCookies = org.apache.commons.lang3.StringUtils.join(cookies, ", ");
+        responseWrapper.setHeader("Set-Cookie", vidPxhdCookies);
+    }
+
+    private boolean shouldPassRequest(PXContext context){
         int score = context.getRiskScore();
         int blockingScore = this.pxConfiguration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px
