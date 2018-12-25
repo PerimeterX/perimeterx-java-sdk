@@ -138,7 +138,7 @@ public class PXHttpClient implements PXClient {
             httpResponse = httpClient.execute(post);
             EntityUtils.consume(httpResponse.getEntity());
         } catch (Exception e) {
-            throw new PXException(e);
+            logger.debug("Sending activity failed. Error: {}", e.getMessage());
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();
@@ -162,7 +162,7 @@ public class PXHttpClient implements PXClient {
             basicAsyncResponseConsumer = new BasicAsyncResponseConsumer();
             asyncHttpClient.execute(producer, basicAsyncResponseConsumer, new PxClientAsyncHandler());
         } catch (Exception e) {
-            throw new PXException(e);
+            logger.debug("Sending batch activities failed. Error: {}", e.getMessage());
         } finally {
             if (producer != null) {
                 producer.close();
