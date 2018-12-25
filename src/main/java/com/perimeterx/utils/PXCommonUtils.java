@@ -21,10 +21,20 @@ public class PXCommonUtils {
         return Arrays.asList(contentType, authorization);
     }
 
-    public static RequestConfig getRequestConfig(PXConfiguration pxConfiguration) {
+    public static RequestConfig getRiskRequestConfig(PXConfiguration pxConfiguration) {
+        return getRequestConfig(pxConfiguration, true);
+    }
+
+    public static RequestConfig getOfflineRequestConfig(PXConfiguration pxConfiguration) {
+        return getRequestConfig(pxConfiguration, false);
+    }
+
+    public static RequestConfig getRequestConfig(PXConfiguration pxConfiguration, boolean isRisk) {
+        int requestTimeout = (isRisk) ? pxConfiguration.getRiskRequestTimeout() : pxConfiguration.getOfflineRequestTimeout();
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
-                .setConnectTimeout(pxConfiguration.getConnectionTimeout())
-                .setConnectionRequestTimeout(pxConfiguration.getApiTimeout());
+                .setConnectTimeout(requestTimeout)
+                .setConnectionRequestTimeout(requestTimeout)
+                .setSocketTimeout(requestTimeout);
         if (pxConfiguration.shouldUseProxy()) {
             HttpHost proxy = new HttpHost(pxConfiguration.getProxyHost(), pxConfiguration.getProxyPort());
             requestConfigBuilder.setProxy(proxy);

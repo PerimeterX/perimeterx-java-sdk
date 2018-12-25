@@ -27,8 +27,8 @@ public class PXConfiguration {
     private int blockingScore;
     private Set<String> sensitiveHeaders;
     private int maxBufferLen;
-    private int apiTimeout;
-    private int connectionTimeout;
+    private int riskRequestTimeout;
+    private int offlineRequestTimeout;
     private boolean sendPageActivities;
     private boolean signedWithIP;
     private String serverURL;
@@ -66,8 +66,8 @@ public class PXConfiguration {
         blockingScore = builder.blockingScore;
         sensitiveHeaders = builder.sensitiveHeaders;
         maxBufferLen = builder.maxBufferLen;
-        apiTimeout = builder.apiTimeout;
-        connectionTimeout = builder.connectionTimeout;
+        riskRequestTimeout = builder.riskRequestTimeout;
+        offlineRequestTimeout = builder.offlineRequestTimeout;
         sendPageActivities = builder.sendPageActivities;
         signedWithIP = builder.signedWithIP;
         serverURL = builder.serverURL;
@@ -97,7 +97,7 @@ public class PXConfiguration {
     }
 
     private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled,
-                            int blockingScore, Set<String> sensitiveHeaders, int maxBufferLen, int apiTimeout, int connectionTimeout,
+                            int blockingScore, Set<String> sensitiveHeaders, int maxBufferLen, int riskRequestTimeout, int offlineRequestTimeout,
                             boolean sendPageActivities, boolean signedWithIP, String serverURL, String customLogo, String cssRef,
                             String jsRef, Set<String> sensitiveRoutes, Set<String> ipHeaders, String checksum, boolean remoteConfigurationEnabled,
                             ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute,
@@ -112,8 +112,8 @@ public class PXConfiguration {
         this.blockingScore = blockingScore;
         this.sensitiveHeaders = sensitiveHeaders;
         this.maxBufferLen = maxBufferLen;
-        this.apiTimeout = apiTimeout;
-        this.connectionTimeout = connectionTimeout;
+        this.riskRequestTimeout = riskRequestTimeout;
+        this.offlineRequestTimeout = offlineRequestTimeout;
         this.sendPageActivities = sendPageActivities;
         this.signedWithIP = signedWithIP;
         this.serverURL = serverURL;
@@ -145,8 +145,8 @@ public class PXConfiguration {
      * @return Configuration Object clone without cookieKey and authToken
      **/
     public PXConfiguration getTelemetryConfig() {
-        return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
-                connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
+        return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, riskRequestTimeout,
+                offlineRequestTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
                 moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl,
                 customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost, useProxy, proxyHost, proxyPort);
     }
@@ -191,12 +191,12 @@ public class PXConfiguration {
         return maxBufferLen;
     }
 
-    public int getApiTimeout() {
-        return apiTimeout;
+    public int getRiskRequestTimeout() {
+        return riskRequestTimeout;
     }
 
-    public int getConnectionTimeout() {
-        return this.connectionTimeout;
+    public int getOfflineRequestTimeout() {
+        return this.offlineRequestTimeout;
     }
 
     public boolean shouldSendPageActivities() {
@@ -309,8 +309,7 @@ public class PXConfiguration {
         this.checksum = pxDynamicConfiguration.getChecksum();
         this.cookieKey = pxDynamicConfiguration.getCookieSecret();
         this.blockingScore = pxDynamicConfiguration.getBlockingScore();
-        this.apiTimeout = pxDynamicConfiguration.getApiConnectTimeout();
-        this.connectionTimeout = pxDynamicConfiguration.getApiConnectTimeout();
+        this.riskRequestTimeout = pxDynamicConfiguration.getRiskRequestTimeout();
         this.sensitiveHeaders = pxDynamicConfiguration.getSensitiveHeaders();
         this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
         this.moduleMode = pxDynamicConfiguration.getModuleMode();
@@ -326,9 +325,9 @@ public class PXConfiguration {
         private boolean encryptionEnabled = true;
         private int blockingScore = 100;
         private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookieOrig", "cookies"));
-        private int maxBufferLen = 10;
-        private int apiTimeout = 1000;
-        private int connectionTimeout = 1000;
+        private int maxBufferLen = 50;
+        private int riskRequestTimeout = 1000;
+        private int offlineRequestTimeout = 2 * 1000;
         private boolean sendPageActivities = true;
         private boolean signedWithIP = false;
         private String serverURL;
@@ -338,9 +337,9 @@ public class PXConfiguration {
         private Set<String> sensitiveRoutes = new HashSet<>();
         private boolean remoteConfigurationEnabled = false;
         private ModuleMode moduleMode = ModuleMode.MONITOR;
-        private int remoteConfigurationInterval = 1000 * 5;
+        private int remoteConfigurationInterval = 5 * 1000;
         private int remoteConfigurationDelay = 0;
-        private int maxConnectionsPerRoute = 20;
+        private int maxConnectionsPerRoute = 50;
         private int maxConnections = 200;
         private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
         private Set<String> ipHeaders = new HashSet<>();
@@ -432,8 +431,8 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder apiTimeout(int val) {
-            apiTimeout = val;
+        public Builder riskRequestTimeout(int val) {
+            riskRequestTimeout = val;
             return this;
         }
 
@@ -482,8 +481,8 @@ public class PXConfiguration {
             return this;
         }
 
-        public Builder connectionTimeout(int val) {
-            connectionTimeout = val;
+        public Builder offlineRequestTimeout(int val) {
+            offlineRequestTimeout = val;
             return this;
         }
 
