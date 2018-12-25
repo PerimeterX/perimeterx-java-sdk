@@ -24,7 +24,8 @@ public class PXCommonUtils {
     public static RequestConfig getRequestConfig(PXConfiguration pxConfiguration) {
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom()
                 .setConnectTimeout(pxConfiguration.getConnectionTimeout())
-                .setConnectionRequestTimeout(pxConfiguration.getApiTimeout());
+                .setConnectionRequestTimeout(pxConfiguration.getApiTimeout())
+                .setSocketTimeout(pxConfiguration.getApiTimeout());
         if (pxConfiguration.shouldUseProxy()) {
             HttpHost proxy = new HttpHost(pxConfiguration.getProxyHost(), pxConfiguration.getProxyPort());
             requestConfigBuilder.setProxy(proxy);
