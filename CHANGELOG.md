@@ -1,5 +1,11 @@
 # Change Log
 
+## [v6.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-12-25)
+- Added PXHD handling
+- Added async custom params
+- Fixed activities connection errors
+
+
 ## [v5.4.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-12-13)
 - Removed logback log implementation.
 - Removed debugMode configuration, instead use log level configuration per logger implementation.

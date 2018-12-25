@@ -12,6 +12,7 @@ public enum S2SCallReason {
 
     NONE("none"),
     NO_COOKIE("no_cookie"),
+    NO_COOKIE_W_VID("no_cookie_w_vid"),
     COOKIE_EXPIRED("cookie_expired"),
     INVALID_DECRYPTION("cookie_decryption_failed"),
     INVALID_VERIFICATION("cookie_validation_failed"),
