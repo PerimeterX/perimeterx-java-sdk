@@ -20,8 +20,8 @@ Directives
 |maxBufferLen|Set the number of activities to send in batched activities|10|int| |
 |apiTimeout |REST API timeout in milliseconds|1000|int|Milliseconds|
 |connectionTimeout|Connection timeout in milliseconds|1000|int|Milliseconds|
-|maxConnectionsPerRoute|Set the maximum connection per route for risk api requests in the connections pool|20|int| |
-|maxConnections|Set the total maximum connections for risk api client|20|int| |
+|maxConnectionsPerRoute|Set the maximum connection per route for risk api requests in the connections pool|50|int| |
+|maxConnections|Set the total maximum connections for risk api client|200|int| |
 |sendPageActivities|Toggle sending asynchronous page activities|true|Boolean| |
 |serverURL|Set the base url for PerimeterX servers|https://sapi-\<app_id>.perimeterx.net|String| |
 |customLogo|The logo will be displayed at the top div of the the block page. The logo's max-height property would be 150px and width would be set to auto.|null|String| |

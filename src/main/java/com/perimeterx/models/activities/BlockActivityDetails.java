@@ -7,12 +7,14 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
+import lombok.Getter;
 
 /**
  * BlockActivityDetails model
  * <p>
  * Created by shikloshi on 06/07/2016.
  */
+@Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class BlockActivityDetails implements ActivityDetails {
 
@@ -38,6 +40,10 @@ public class BlockActivityDetails implements ActivityDetails {
     private String simulatedBlock;
     @JsonUnwrapped
     private CustomParameters customParameters;
+    @JsonProperty("block_action")
+    private String blockAction;
+
+
 
     public BlockActivityDetails(PXContext context) {
         this.blockScore = context.getRiskScore();
@@ -51,41 +57,10 @@ public class BlockActivityDetails implements ActivityDetails {
         this.moduleVersion = Constants.SDK_VERSION;
         this.simulatedBlock = context.getRiskMode();
         this.customParameters = context.getCustomParameters();
+        if (context.getBlockAction() != null) {
+            this.blockAction = context.getBlockAction().getCode();
+        }
     }
 
-    public int getBlockScore() {
-        return blockScore;
-    }
 
-    public BlockReason getBlockReason() {
-        return blockReason;
-    }
-
-    public String getBlockUuid() {
-        return blockUuid;
-    }
-
-    public String getHttpMethod() {
-        return httpMethod;
-    }
-
-    public String getHttpVersion() {
-        return httpVersion;
-    }
-
-    public String getPxCookie() {
-        return pxCookie;
-    }
-
-    public long getRiskRtt() {
-        return riskRtt;
-    }
-
-    public String getModuleVersion() {
-        return moduleVersion;
-    }
-
-    public CustomParameters getCustomParameters() {
-        return customParameters;
-    }
 }

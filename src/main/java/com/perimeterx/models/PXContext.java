@@ -1,5 +1,6 @@
 package com.perimeterx.models;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
@@ -15,13 +16,12 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.utils.BlockAction;
-import com.perimeterx.utils.Constants;
-import com.perimeterx.utils.PXCommonUtils;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.models.risk.VidSource;
+import com.perimeterx.utils.*;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -175,7 +175,27 @@ public class PXContext {
     private List<RawCookieData> originalTokens;
     private String cookieVersion;
 
-    private DataEnrichmentCookie dataEnrichment;
+    /**
+     * PerimeterX data enrichment cookie payload
+     * */
+    private JsonNode pxde;
+    private boolean pxdeVerified = false;
+
+
+    /**
+     * All the names of the cookies in the request
+     * */
+    private String[] requestCookieNames;
+
+    /**
+     * the source of the vid
+     * */
+    private VidSource vidSource = VidSource.NONE;
+    /**
+     * the pxhd cookie
+     * */
+
+    private String pxhd;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -244,15 +264,35 @@ public class PXContext {
             }
 
             ObjectMapper mapper = new ObjectMapper();
-            this.dataEnrichment = new DataEnrichmentCookie(mapper.createObjectNode(), true);
+            this.pxde = mapper.createObjectNode();
+            this.pxdeVerified = true;
         } else {
-            String originalTokensHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
-            tokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
+            Cookie[] cookies = request.getCookies();
+            String cookieHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
+            this.requestCookieNames = CookieNamesExtractor.extractCookieNames(cookies);
+            setVidAndPxhd(cookies);
+            tokens.addAll(headerParser.createRawCookieDataList(cookieHeader));
             this.tokens = tokens;
-
-            this.dataEnrichment = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
+            DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
+            this.pxde = deCookie.getJsonPayload();
+            this.pxdeVerified = deCookie.isValid();
         }
     }
+
+    private void setVidAndPxhd(Cookie[] cookies) {
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("_pxvid")) {
+                    this.vid = cookie.getValue();
+                    this.vidSource = VidSource.VID_COOKIE;
+                }
+                if (cookie.getName().equals("_pxhd")) {
+                    this.pxhd = cookie.getValue();
+                }
+            }
+        }
+    }
+
 
     public String getPxOriginalTokenCookie() {
         return originalTokenCookie;

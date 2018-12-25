@@ -2,6 +2,8 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.utils.Constants;
+import lombok.Getter;
 
 import java.util.Map;
 
@@ -10,6 +12,7 @@ import java.util.Map;
  * <p>
  * Created by shikloshi on 06/07/2016.
  */
+@Getter
 public class Activity {
 
     private String type;
@@ -22,6 +25,7 @@ public class Activity {
     private String pxAppId;
     private String vid;
     private ActivityDetails details;
+    private String pxhd;
 
     public Activity(String activityType, String appId, PXContext context, ActivityDetails details) {
         this.type = activityType;
@@ -32,37 +36,8 @@ public class Activity {
         this.url = context.getFullUrl();
         this.vid = context.getVid();
         this.details = details;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public String getSocketIp() {
-        return socketIp;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getPxAppId() {
-        return pxAppId;
-    }
-
-    public String getVid() {
-        return vid;
-    }
-
-    public ActivityDetails getDetails() {
-        return details;
+        if ((activityType.equals(Constants.ACTIVITY_PAGE_REQUESTED) || activityType.equals(Constants.ACTIVITY_BLOCKED)) && context.getPxhd() != null) {
+            this.pxhd = context.getPxhd();
+        }
     }
 }

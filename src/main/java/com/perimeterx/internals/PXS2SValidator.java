@@ -1,6 +1,5 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.cookie.DataEnrichmentCookie;
 import com.perimeterx.models.PXContext;
@@ -9,7 +8,6 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
-import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
@@ -59,10 +57,13 @@ public class PXS2SValidator implements PXValidator {
                 pxContext.setPassReason(PassReason.ERROR);
                 return true;
             }
+            pxContext.setPxhd(response.getPxhd());
             pxContext.setRiskScore(response.getScore());
             pxContext.setUuid(response.getUuid());
             pxContext.setBlockAction(response.getAction());
-            pxContext.setDataEnrichment(new DataEnrichmentCookie(response.getDataEnrichment(), true));
+            DataEnrichmentCookie dataEnrichment = new DataEnrichmentCookie(response.getDataEnrichment(), true);
+            pxContext.setPxde(dataEnrichment.getJsonPayload());
+            pxContext.setPxdeVerified(dataEnrichment. isValid());
 
             if (pxContext.getRiskScore() < pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);

@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v5.1.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C5.1.0%7Cjar)
+> Latest stable version: [v6.0.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.0.0%7Cjar)
 
 ## Table of Contents
 
@@ -135,9 +135,9 @@ Please continue reading about the various configurations available on the sdk in
 
 ### <a name="advanced-usage"></a> Advanced Usage Examples
 
-#### <a name="data-enrichment"></a> Data Enrichment
+#### <a name="data-enrichment"></a> Data Enrichment - pxde(PerimeterX Data Enrichment)
 
-Users can use the additional activity handler to retrieve information for the request using the data-enrichment object.
+Users can use the additional activity handler to retrieve information for the request using the pxde object.
 First, check that the data enrichment object is verified, then you can access it's properties.
 
 MyVerificationHandler.java:
@@ -155,9 +155,8 @@ public class MyVerificationHandler implements VerificationHandler {
     }
 
     public boolean handleVerification(PXContext pxContext, HttpServletResponseWrapper httpServletResponseWrapper) throws PXException, IOException {
-        DataEnrichmentCookie dataEnrichment = pxContext.getDataEnrichment();
-        if (dataEnrichment.isValid) {
-            JsonNode dataEnrichmentPayload = dataEnrichment.getJsonPayload()
+        if (pxContext.isPxdeVerified()) {
+            JsonNode dataEnrichmentPayload = pxContext.getPxde();
             <handle data enrichment payload here>
         }
 
