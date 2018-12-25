@@ -1,7 +1,7 @@
 # Change Log
 
 ## [v6.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-12-25)
-- Added PXHD handling
+- Added PXHD handling (new px cookie has been added)
 - Added async custom params
 - Fixed activities connection errors
 
