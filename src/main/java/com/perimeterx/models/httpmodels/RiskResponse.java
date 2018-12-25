@@ -28,5 +28,4 @@ public class RiskResponse {
     private JsonNode dataEnrichment;
     private String pxhd;
 
-
 }
