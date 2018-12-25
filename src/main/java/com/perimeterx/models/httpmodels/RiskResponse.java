@@ -26,7 +26,6 @@ public class RiskResponse {
     private RiskResponseBody actionData;
     @JsonProperty("data_enrichment")
     private JsonNode dataEnrichment;
-    private String vid;
     private String pxhd;
 
 

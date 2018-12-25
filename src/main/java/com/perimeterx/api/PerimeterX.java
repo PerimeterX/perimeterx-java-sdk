@@ -147,7 +147,7 @@ public class PerimeterX {
                 return null;
             }
 
-            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+           context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
             if (shouldReverseRequest(req, responseWrapper)) {
                 context.setFirstPartyRequest(true);
