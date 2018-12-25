@@ -42,8 +42,8 @@ public class PerimeterXTest extends ConfiguredTest {
         Assert.assertEquals(clonedConfig.getBlockingScore(), configuration.getBlockingScore());
         Assert.assertTrue(compareCollections(clonedConfig.getSensitiveHeaders(), configuration.getSensitiveHeaders()));
         Assert.assertEquals(clonedConfig.getMaxBufferLen(), configuration.getMaxBufferLen());
-        Assert.assertEquals(clonedConfig.getRiskRequestTimeout(), configuration.getRiskRequestTimeout());
-        Assert.assertEquals(clonedConfig.getOfflineRequestTimeout(), configuration.getOfflineRequestTimeout());
+        Assert.assertEquals(clonedConfig.getApiTimeout(), configuration.getApiTimeout());
+        Assert.assertEquals(clonedConfig.getConnectionTimeout(), configuration.getConnectionTimeout());
         Assert.assertEquals(clonedConfig.shouldSendPageActivities(), configuration.shouldSendPageActivities());
         Assert.assertEquals(clonedConfig.wasSignedWithIP(), configuration.wasSignedWithIP());
         Assert.assertEquals(clonedConfig.getServerURL(), configuration.getServerURL());

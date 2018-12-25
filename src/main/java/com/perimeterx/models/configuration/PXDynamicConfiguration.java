@@ -24,9 +24,9 @@ public class PXDynamicConfiguration {
     @JsonProperty("moduleMode")
     private ModuleMode moduleMode;
     @JsonProperty("connectTimeout")
-    private int connectTimeout;
+    private int apiConnectTimeout;
     @JsonProperty("riskTimeout")
-    private int riskRequestTimeout;
+    private int s2sTimeout;
     @JsonProperty("sensitiveHeaders")
     private Set<String> sensitiveHeaders;
     @JsonProperty("ipHeaders")
@@ -80,20 +80,20 @@ public class PXDynamicConfiguration {
         this.moduleMode = moduleMode;
     }
 
-    public int getConnectTimeout() {
-        return connectTimeout;
+    public int getApiConnectTimeout() {
+        return apiConnectTimeout;
     }
 
-    public void setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
+    public void setApiConnectTimeout(int apiConnectTimeout) {
+        this.apiConnectTimeout = apiConnectTimeout;
     }
 
-    public int getRiskRequestTimeout() {
-        return riskRequestTimeout;
+    public int getS2sTimeout() {
+        return s2sTimeout;
     }
 
-    public void setRiskRequestTimeout(int riskRequestTimeout) {
-        this.riskRequestTimeout = riskRequestTimeout;
+    public void setS2sTimeout(int s2sTimeout) {
+        this.s2sTimeout = s2sTimeout;
     }
 
     public Set<String> getSensitiveHeaders() {

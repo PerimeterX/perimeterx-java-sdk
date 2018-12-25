@@ -71,8 +71,8 @@ public class PXClientMock implements PXClient {
         stub.setChecksum("stub_checksum");
         stub.setBlockingScore(1000);
         stub.setCookieSecret("stub_cookie_key");
-        stub.setRiskRequestTimeout(1500);
-        stub.setConnectTimeout(1500);
+        stub.setS2sTimeout(1500);
+        stub.setApiConnectTimeout(1500);
         stub.setSensitiveHeaders(new HashSet<String>());
         stub.setModuleEnabled(false);
         stub.setModuleMode(ModuleMode.BLOCKING);

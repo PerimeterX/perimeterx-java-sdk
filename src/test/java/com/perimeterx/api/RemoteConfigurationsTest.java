@@ -45,7 +45,8 @@ public class RemoteConfigurationsTest {
         Assert.assertTrue(config.getCookieKey().equals("stub_cookie_key"));
         Assert.assertTrue(config.getChecksum().equals("stub_checksum"));
         Assert.assertTrue(config.getBlockingScore() == 1000);
-        Assert.assertTrue(config.getRiskRequestTimeout() == 1500);
+        Assert.assertTrue(config.getConnectionTimeout() == 1500);
+        Assert.assertTrue(config.getApiTimeout() == 1500);
         Assert.assertTrue(config.getSensitiveHeaders().equals(new HashSet<String>()));
         Assert.assertTrue(config.isModuleEnabled() == false);
         Assert.assertTrue(config.getModuleMode().equals(ModuleMode.BLOCKING));
@@ -65,14 +66,14 @@ public class RemoteConfigurationsTest {
     }
 
     private PXDynamicConfiguration getDynamicConfiguration(String appId, String checksum, int blockingScore, String cookieSecert,
-                                                           int apiTimeout, int connectionTimeout, HashSet<String> sensitiveRotues, boolean moduleEnabled, ModuleMode moduleMode) {
+                                                           int s2sTimeout, int connectionTimeout, HashSet<String> sensitiveRotues, boolean moduleEnabled, ModuleMode moduleMode) {
         PXDynamicConfiguration pxDynamicConfig = new PXDynamicConfiguration();
         pxDynamicConfig.setAppId(appId);
         pxDynamicConfig.setChecksum(checksum);
         pxDynamicConfig.setBlockingScore(blockingScore);
         pxDynamicConfig.setCookieSecret(cookieSecert);
-        pxDynamicConfig.setRiskRequestTimeout(apiTimeout);
-        pxDynamicConfig.setConnectTimeout(connectionTimeout);
+        pxDynamicConfig.setS2sTimeout(s2sTimeout);
+        pxDynamicConfig.setApiConnectTimeout(connectionTimeout);
         pxDynamicConfig.setSensitiveHeaders(sensitiveRotues);
         pxDynamicConfig.setModuleEnabled(moduleEnabled);
         pxDynamicConfig.setModuleMode(moduleMode);
