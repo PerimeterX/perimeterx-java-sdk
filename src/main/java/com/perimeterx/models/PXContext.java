@@ -190,7 +190,7 @@ public class PXContext {
     /**
      * the source of the vid
      * */
-    private VidSource vidSource;
+    private VidSource vidSource = VidSource.NONE;
     /**
      * the pxhd cookie
      * */
@@ -280,7 +280,6 @@ public class PXContext {
     }
 
     private void setVidAndPxhd(Cookie[] cookies) {
-        this.vidSource = VidSource.NONE;
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("_pxvid")) {
