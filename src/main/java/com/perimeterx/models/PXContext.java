@@ -43,7 +43,7 @@ public class PXContext {
      */
     private final HttpServletRequest request;
 
-    private String pxCookieOrig;
+    private String pxCookieRaw;
 
     /**
      * Original Captcha cookie

@@ -50,7 +50,7 @@ public class PXCookieValidator implements PXValidator {
             if (ifLegitPxCookie(context, pxCookie) || pxCookie == null) {
                 return false;
             }
-            context.setPxCookieOrig(pxCookie.getCookieOrig());
+            context.setPxCookieRaw(pxCookie.getCookieOrig());
             context.setCookieVersion(pxCookie.getCookieVersion());
             context.setRiskCookie(pxCookie);
             context.setVid(pxCookie.getVID());
