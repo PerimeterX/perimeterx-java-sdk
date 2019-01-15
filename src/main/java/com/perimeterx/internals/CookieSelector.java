@@ -28,7 +28,7 @@ public class CookieSelector {
         AbstractPXCookie result = null;
         S2SCallReason s2SCallReason = S2SCallReason.NONE;
         List<RawCookieData> tokens = context.getTokens();
-        String cookieOrig = null;
+        String cookieRaw = null;
         if (tokens != null) {
             for (RawCookieData token : tokens) {
                 String cookie = token.getSelectedCookie();
@@ -38,7 +38,7 @@ public class CookieSelector {
                     continue;
                 }
 
-                cookieOrig = cookie;
+                cookieRaw = version + "=" + cookie;
                 AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 s2SCallReason = evaluateCookie(selectedCookie, cookie);
                 if (S2SCallReason.NONE == s2SCallReason) {
@@ -49,7 +49,7 @@ public class CookieSelector {
             }
         }
 
-        context.setPxCookieOrig(cookieOrig);
+        context.setPxCookieRaw(cookieRaw);
         if (!(s2SCallReason == S2SCallReason.NONE && result == null)) {
             context.setS2sCallReason(s2SCallReason.getValue());
         }
@@ -84,7 +84,7 @@ public class CookieSelector {
                 }
             }
         }
-        context.setPxCookieOrig(cookieOrig);
+        context.setPxCookieRaw(cookieOrig);
         context.setOriginalTokenError(errorMessage);
         return result;
     }
