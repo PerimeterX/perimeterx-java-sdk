@@ -33,7 +33,7 @@ public class RiskRequest {
         riskRequest.vidSource = context.getVidSource().getValue();
         riskRequest.additional = com.perimeterx.models.httpmodels.Additional.fromContext(context);
         riskRequest.firstParty = context.getPxConfiguration().isFirstPartyEnabled();
-        if (riskRequest.vid != null && riskRequest.pxhd != null && "no_cookie".equals(riskRequest.additional.callReason)) {
+        if (riskRequest.pxhd != null && "no_cookie".equals(riskRequest.additional.callReason)) {
             riskRequest.additional.callReason = S2SCallReason.NO_COOKIE_W_VID.getValue();
         }
         return riskRequest;

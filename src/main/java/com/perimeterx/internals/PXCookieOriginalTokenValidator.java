@@ -39,7 +39,7 @@ public class PXCookieOriginalTokenValidator implements PXValidator {
             if (context.getVid() == null) {
                 context.setVid(originalCookie.getVID());
             }
-            context.setPxCookieOrig(originalCookie.getCookieOrig());
+            context.setPxCookieRaw(originalCookie.getCookieOrig());
             context.setCookieVersion(originalCookie.getCookieVersion());
             context.setOriginalUuid(originalCookie.getUUID());
 
