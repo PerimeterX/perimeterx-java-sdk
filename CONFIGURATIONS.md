@@ -33,7 +33,7 @@ Directives
 |remoteConfigurationDelay|Set amount of time to delay the remote configuration thread before it starts|0|int|Milliseconds|
 |remoteConfigurationUrl|Set the url for PerimeterX configuration service||String| |
 |ipHeaders|List of headers to extract the user ip from, if not set, it will be taken from default|Empty List|Set<String>|Use with `CombinedIPProvider`|
-|firstPartyEnabled|Toggle first party requests enabled|true|boolean|Read more details about first pary integration [here](#first-party-integration)|
+|firstPartyEnabled|Toggle first party requests enabled|true|boolean|Read more details about first party integration [here](#first-party-integration)|
 |xhrFirstPartyEnabled|Toggle first party XHR requests will be forwarded to PerimeterX servers|true|boolean| |
 |useProxy|The http client shall use a proxy for message forwarding|false|boolean|
 |proxyHost|The proxy's host name|String|
