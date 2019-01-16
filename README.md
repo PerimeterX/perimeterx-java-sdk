@@ -66,7 +66,7 @@ compile group: 'com.perimeterx', name: 'perimeterx-sdk', version: '${VERSION}'
 <a name="upgrading"></a> Upgrading
 ----------------------------------------
 
-#### SDK < v4.x
+#### To SDK < v4.x
 The PXContext on SDK v4.x has changed, following these changes, the implementation of PerimeterX SDK on the java filter must be changed accordingly.
 
 PerimeterX SDK reports now if handled the response instead of reporting if request was verified (using `ctx.isVerified()`) instead, its PXContext expose the following methods: `ctx.isHandledResponse()`.  
