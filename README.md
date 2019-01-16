@@ -65,8 +65,17 @@ compile group: 'com.perimeterx', name: 'perimeterx-sdk', version: '${VERSION}'
 
 <a name="upgrading"></a> Upgrading
 ----------------------------------------
+#### <a name="4x"></a> SDK > v4.x
 
-#### To SDK < v4.x
+To upgrade to the latest Enforcer version, run:
+
+`mvn versions:display-dependency-updates`
+
+Open the project’s `pom.xml` and change the version number to the latest version.
+
+Your Enforcer version is now upgraded to the latest enforcer version.
+
+#### SDK < v4.x
 The PXContext on SDK v4.x has changed, following these changes, the implementation of PerimeterX SDK on the java filter must be changed accordingly.
 
 PerimeterX SDK reports now if handled the response instead of reporting if request was verified (using `ctx.isVerified()`) instead, its PXContext expose the following methods: `ctx.isHandledResponse()`.  
@@ -76,6 +85,7 @@ PerimeterX SDK reports now if handled the response instead of reporting if reque
 `isHandledResponse()` will return `true` in the following cases
 1. Request is blocked and PerimeterX handled the response by rendering a block page (because score was high)
 2. Response was handled by first party mechanism (not score related).
+
 * More information about First Party can be found in the [configurations page](CONFIGURATIONS.md)
 
 Following the instructions above, the filter should be changed according the the example below
@@ -103,6 +113,9 @@ Following the instructions above, the filter should be changed according the the
 
  filterChain.doFilter(servletRequest, servletResponse);
 ```
+Once the filter is changed, follow the instructions [above](#4x).
+
+For more information, contact [PerimeterX Support](support@perimeterx.com).
 
 ### <a name="basic-usage"></a> Basic Usage Example
 
