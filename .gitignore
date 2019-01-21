@@ -10,3 +10,4 @@ examples/examples.iml
 .DS_Store
 .classpath
 .project
+.factorypath
