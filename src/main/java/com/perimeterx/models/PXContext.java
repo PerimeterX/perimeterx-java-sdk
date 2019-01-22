@@ -177,23 +177,22 @@ public class PXContext {
 
     /**
      * PerimeterX data enrichment cookie payload
-     * */
+     */
     private JsonNode pxde;
     private boolean pxdeVerified = false;
 
-
     /**
      * All the names of the cookies in the request
-     * */
+     */
     private String[] requestCookieNames;
 
     /**
      * the source of the vid
-     * */
+     */
     private VidSource vidSource = VidSource.NONE;
     /**
      * the pxhd cookie
-     * */
+     */
 
     private String pxhd;
 
@@ -293,13 +292,16 @@ public class PXContext {
         }
     }
 
-
     public String getPxOriginalTokenCookie() {
         return originalTokenCookie;
     }
 
+    public Boolean isBlocking() {
+        return pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING);
+    }
+
     public String getRiskMode() {
-        return pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) ? "active_blocking" : "monitor";
+        return this.isBlocking() ? "active_blocking" : "monitor";
     }
 
     public void setOriginalTokenCookie(String originalTokenCookie) {
