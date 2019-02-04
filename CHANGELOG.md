@@ -3,6 +3,9 @@
 ## [v6.0.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-02-04)
 - Added multiple applications support (PerimeterX class can be initialized multiple times within the same process)
 - Added some logs to increase visibility over httpasyncclient exceptions
+- Add client PXVID as a vid source
+- Changed simulatedBlock to be a boolean
+- Added vid_source to additional in async activities and renamed to enforcer_vid_source
 
 ## [v6.0.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-01-15)
 - Removed pxvid from no_cookie_w_vid assertion
