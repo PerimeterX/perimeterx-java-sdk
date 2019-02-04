@@ -79,7 +79,7 @@ public class PerimeterX {
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new CombinedIPProvider(configuration);
-        PXHttpClient pxClient = PXHttpClient.getInstance(configuration);
+        PXHttpClient pxClient = new PXHttpClient(configuration);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
@@ -147,7 +147,7 @@ public class PerimeterX {
                 return null;
             }
 
-           context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
             if (shouldReverseRequest(req, responseWrapper)) {
                 context.setFirstPartyRequest(true);

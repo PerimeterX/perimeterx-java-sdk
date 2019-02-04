@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v6.0.3](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.0.3%7Cjar)
+> Latest stable version: [v6.0.4](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.0.4%7Cjar)
 
 ## Table of Contents
 
@@ -16,6 +16,7 @@
 - [Advanced Usage Examples](#advanced-usage)
   - [Data Enrichment](#data-enrichment)
   - [Custom Parameters](#custom-parameters)
+  - [Multiple Application Support](#multi-app-support)
 - [Configuration](CONFIGURATIONS.md)
 - [Logging and Troubleshooting](#loggin-troubleshoot)
 - [Contributing](#contribute)
@@ -134,7 +135,7 @@ PerimeterX enforcer = new PerimeterX(pxConfiguration);
 
 // Inside the request / Filter
 @Override
-protected void doGet(HttpServletRequest req, HttpservletResponse resp) throws ServletException, IOExcption {
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOExcption {
 ...
     PXContext ctx = enforcer.pxVerify(req, new HttpServletResponseWrapper(resp);
     if (!ctx.isHandledResponse()) {
@@ -162,7 +163,7 @@ public class MyVerificationHandler implements VerificationHandler {
 
     public AutomationVerificationHandler(PXConfiguration pxConfig) throws PXException {
         this.pxConfig = pxConfig;
-        PXClient pxClient = PXHttpClient.getInstance(pxConfig);
+        PXClient pxClient = new PXHttpClient(pxConfig);
         ActivityHandler activityHandler = new DefaultActivityHandler(pxClient, pxConfig);
         this.defaultVerificationHandler = new DefaultVerificationHandler(pxConfig, activityHandler);
     }
@@ -216,6 +217,31 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
      .customParametersProvider(new MyCustomParametersProvider())
      .build();
 ...
+```
+
+#### <a name="multi-app-support"></a> Multiple Application Support
+Simply create multiple instances of the PerimeterX class:
+```java
+PerimeterX enforcerApp1 = new PerimeterX(new PXConfiguration.Builder().appId(APP_ID_1)...build(););
+PerimeterX enforcerApp2 = new PerimeterX(new PXConfiguration.Builder().appId(APP_ID_2)...build(););
+
+...
+
+// Inside route request handler for app 1:
+@Override
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOExcption {
+    PXContext ctx = enforcerApp1.pxVerify(req, new HttpServletResponseWrapper(resp);
+    ...
+}
+
+...
+
+// Inside route request handler for app 2:
+@Override
+protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOExcption {
+    PXContext ctx = enforcerApp2.pxVerify(req, new HttpServletResponseWrapper(resp);
+    ...
+}
 ```
 
 ### <a name="loggin-troubleshoot"></a> Logging and Troubleshooting
