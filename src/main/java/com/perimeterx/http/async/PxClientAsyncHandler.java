@@ -13,7 +13,7 @@ public class PxClientAsyncHandler implements FutureCallback<HttpResponse> {
 
     @Override
     public void completed(HttpResponse httpResponse) {
-        logger.debug("Response completed {}", httpResponse.getEntity());
+        logger.debug("Response completed {}", httpResponse != null ? httpResponse.getEntity() : "");
     }
 
     @Override

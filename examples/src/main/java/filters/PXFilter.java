@@ -4,7 +4,6 @@ import com.perimeterx.api.PXConfiguration;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.exceptions.PXException;
-import org.springframework.stereotype.Component;
 import px.CustomBlockHandler;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,6 @@ import java.io.IOException;
 /**
  * Filter implementation based on PerimeterX SDK
  */
-@Component
 public class PXFilter implements Filter {
 
     private PerimeterX enforcer;
@@ -31,7 +29,7 @@ public class PXFilter implements Filter {
                 .authToken("") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/#/app/applicationsmgmt
                 .build();
         try {
-            this.enforcer = PerimeterX.getInstance(pxConf);
+            this.enforcer = new PerimeterX(pxConf);
             // This will set the blocking handler from the default one to the our custom block handler
             // note that when we enable captcha logic we must use a blocking handler that display the appropriate html page with captcha
             // for instance CaptchaBlockHandler that is included in the SDK
