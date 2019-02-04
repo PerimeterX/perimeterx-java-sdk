@@ -1,6 +1,6 @@
 # Change Log
 
-## [v6.0.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-01-15)
+## [v6.0.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-01-15)
 - Added multiple applications support (PerimeterX class can be initialized multiple times within the same process)
 - Added some logs to increase visibility over httpasyncclient exceptions
 
