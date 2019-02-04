@@ -37,13 +37,11 @@ public class BlockActivityDetails implements ActivityDetails {
     @JsonProperty("cookie_origin")
     private String cookieOrigin;
     @JsonProperty("simulated_block")
-    private String simulatedBlock;
+    private Boolean simulatedBlock;
     @JsonUnwrapped
     private CustomParameters customParameters;
     @JsonProperty("block_action")
     private String blockAction;
-
-
 
     public BlockActivityDetails(PXContext context) {
         this.blockScore = context.getRiskScore();
@@ -55,12 +53,10 @@ public class BlockActivityDetails implements ActivityDetails {
         this.riskRtt = context.getRiskRtt();
         this.cookieOrigin = context.getCookieOrigin();
         this.moduleVersion = Constants.SDK_VERSION;
-        this.simulatedBlock = context.getRiskMode();
+        this.simulatedBlock = !context.isBlocking();
         this.customParameters = context.getCustomParameters();
         if (context.getBlockAction() != null) {
             this.blockAction = context.getBlockAction().getCode();
         }
     }
-
-
 }

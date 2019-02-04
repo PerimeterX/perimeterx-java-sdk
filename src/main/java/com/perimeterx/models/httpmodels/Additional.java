@@ -41,6 +41,8 @@ public class Additional {
     public CustomParameters customParameters;
     @JsonProperty("request_cookie_names")
     public String[] requestCookieNames;
+    @JsonProperty("enforcer_vid_source")
+    public String vidSource;
 
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
@@ -58,6 +60,7 @@ public class Additional {
         additional.riskMode = ctx.getRiskMode();
         additional.pxCookieHmac = ctx.getCookieHmac();
         additional.requestCookieNames = ctx.getRequestCookieNames();
+        additional.vidSource = ctx.getVidSource().getValue();
         return additional;
     }
 }

@@ -29,8 +29,8 @@ import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.nio.client.methods.HttpAsyncMethods;
 import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
-import org.apache.http.nio.reactor.ConnectingIOReactor;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.http.nio.reactor.IOReactorExceptionHandler;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -46,7 +46,6 @@ public class PXHttpClient implements PXClient {
 
     private static final PXLogger logger = PXLogger.getLogger(PXHttpClient.class);
 
-    private static PXHttpClient instance;
     private static final Charset UTF_8 = Charset.forName("utf-8");
 
     private CloseableHttpClient httpClient;
@@ -55,18 +54,7 @@ public class PXHttpClient implements PXClient {
 
     private PXConfiguration pxConfiguration;
 
-    public static PXHttpClient getInstance(PXConfiguration pxConfiguration) throws PXException {
-        if (instance == null) {
-            synchronized (PXHttpClient.class) {
-                if (instance == null) {
-                    instance = new PXHttpClient(pxConfiguration);
-                }
-            }
-        }
-        return instance;
-    }
-
-    private PXHttpClient(PXConfiguration pxConfiguration) throws PXException {
+    public PXHttpClient(PXConfiguration pxConfiguration) throws PXException {
         this.pxConfiguration = pxConfiguration;
         initHttpClient();
         try {
@@ -90,7 +78,22 @@ public class PXHttpClient implements PXClient {
     }
 
     private void initAsyncHttpClient() throws IOReactorException {
-        ConnectingIOReactor ioReactor = new DefaultConnectingIOReactor();
+        DefaultConnectingIOReactor ioReactor = new DefaultConnectingIOReactor();
+
+        ioReactor.setExceptionHandler(new IOReactorExceptionHandler() {
+            @Override
+            public boolean handle(IOException ex) {
+                logger.error("IO Reactor encountered an IOException, shutting down reactor. {}", ex);
+                return false;
+            }
+
+            @Override
+            public boolean handle(RuntimeException ex) {
+                logger.error("IO Reactor encountered a RuntimeException, shutting down reactor. {}", ex);
+                return false;
+            }
+        });
+
         nHttpConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
         CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.custom()
                 .setConnectionManager(nHttpConnectionManager)
@@ -100,7 +103,7 @@ public class PXHttpClient implements PXClient {
     }
 
     @Override
-    public RiskResponse riskApiCall(RiskRequest riskRequest) throws PXException, IOException {
+    public RiskResponse riskApiCall(RiskRequest riskRequest) throws IOException {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
@@ -124,7 +127,7 @@ public class PXHttpClient implements PXClient {
     }
 
     @Override
-    public void sendActivity(Activity activity) throws PXException, IOException {
+    public void sendActivity(Activity activity) throws IOException {
         CloseableHttpResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
@@ -145,7 +148,7 @@ public class PXHttpClient implements PXClient {
     }
 
     @Override
-    public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
+    public void sendBatchActivities(List<Activity> activities) throws IOException {
         HttpAsyncRequestProducer producer = null;
         BasicAsyncResponseConsumer basicAsyncResponseConsumer = null;
         try {

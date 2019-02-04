@@ -22,15 +22,13 @@ public class RiskRequest {
     public boolean firstParty;
     @JsonProperty("pxhd")
     public String pxhd;
-    @JsonProperty("vid_source")
-    public String vidSource;
+
 
     public static RiskRequest fromContext(PXContext context) {
         RiskRequest riskRequest = new RiskRequest();
         riskRequest.request = com.perimeterx.models.risk.Request.fromContext(context);
         riskRequest.vid = context.getVid();
         riskRequest.pxhd = context.getPxhd();
-        riskRequest.vidSource = context.getVidSource().getValue();
         riskRequest.additional = com.perimeterx.models.httpmodels.Additional.fromContext(context);
         riskRequest.firstParty = context.getPxConfiguration().isFirstPartyEnabled();
         if (riskRequest.pxhd != null && "no_cookie".equals(riskRequest.additional.callReason)) {
