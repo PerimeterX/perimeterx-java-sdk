@@ -196,6 +196,8 @@ public class PXContext {
 
     private String pxhd;
 
+    private String responsePxhd;
+
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
