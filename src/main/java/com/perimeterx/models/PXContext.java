@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -288,7 +290,11 @@ public class PXContext {
                     this.vidSource = VidSource.VID_COOKIE;
                 }
                 if (cookie.getName().equals("_pxhd")) {
-                    this.pxhd = cookie.getValue();
+                    try {
+                        this.pxhd = URLDecoder.decode(cookie.getValue(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        logger.error("Failed while decoding the pxhd value");
+                    }
                 }
             }
         }
