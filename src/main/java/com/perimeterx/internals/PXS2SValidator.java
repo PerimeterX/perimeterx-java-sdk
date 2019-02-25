@@ -57,7 +57,7 @@ public class PXS2SValidator implements PXValidator {
                 pxContext.setPassReason(PassReason.ERROR);
                 return true;
             }
-            pxContext.setPxhd(response.getPxhd());
+            pxContext.setResponsePxhd(response.getPxhd());
             pxContext.setRiskScore(response.getScore());
             pxContext.setUuid(response.getUuid());
             pxContext.setBlockAction(response.getAction());

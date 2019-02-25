@@ -7,9 +7,13 @@ import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponseWrapper;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
@@ -54,11 +58,18 @@ public class DefaultVerificationHandler implements VerificationHandler {
     }
 
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
-        String pxhdCookieValue = context.getPxhd();
-        Cookie cookie = new Cookie("_pxhd", pxhdCookieValue);
-        cookie.setPath("/");
-        cookie.setMaxAge(3600 * 24 * 365);
-        responseWrapper.addCookie(cookie);
+        try {
+            if (!StringUtils.isEmpty(context.getResponsePxhd()) && !context.getResponsePxhd().equals(context.getPxhd())) {
+                String pxhdCookieValue = context.getResponsePxhd();
+                Cookie cookie = new Cookie("_pxhd", URLEncoder.encode(pxhdCookieValue, "UTF-8"));
+                cookie.setPath("/");
+                cookie.setMaxAge(3600 * 24 * 365);
+                responseWrapper.addCookie(cookie);
+            }
+        }
+        catch (UnsupportedEncodingException e){
+            logger.error(e.getMessage());
+        }
     }
 
     private boolean shouldPassRequest(PXContext context){
