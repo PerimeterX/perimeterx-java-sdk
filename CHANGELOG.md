@@ -1,7 +1,7 @@
 # Change Log
 
 ## [v6.0.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-02-25)
-- Fixed the setting process of thew pxhd cookie
+- Fixed the setting process of the pxhd cookie
 
 ## [v6.0.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-02-04)
 - Added multiple applications support (PerimeterX class can be initialized multiple times within the same process)
