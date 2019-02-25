@@ -23,6 +23,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -196,6 +198,8 @@ public class PXContext {
 
     private String pxhd;
 
+    private String responsePxhd;
+
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
@@ -286,7 +290,11 @@ public class PXContext {
                     this.vidSource = VidSource.VID_COOKIE;
                 }
                 if (cookie.getName().equals("_pxhd")) {
-                    this.pxhd = cookie.getValue();
+                    try {
+                        this.pxhd = URLDecoder.decode(cookie.getValue(), "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        logger.error("Failed while decoding the pxhd value");
+                    }
                 }
             }
         }
