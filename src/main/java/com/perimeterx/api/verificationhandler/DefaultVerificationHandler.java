@@ -49,7 +49,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
             this.activityHandler.handleBlockActivity(context);
         }
         setPxhdCookie(context, responseWrapper);
-        boolean shouldBypassMonitor = !StringUtils.isEmpty(this.pxConfiguration.getBypassMonitorHeader()) && context.getHeaders().get(this.pxConfiguration.getBypassMonitorHeader()).equals("1");
+        boolean shouldBypassMonitor = !StringUtils.isEmpty(this.pxConfiguration.getBypassMonitorHeader()) && context.getHeaders().get(this.pxConfiguration.getBypassMonitorHeader().toLowerCase()).equals("1");
         if ((pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) || shouldBypassMonitor)&& !verified){
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
