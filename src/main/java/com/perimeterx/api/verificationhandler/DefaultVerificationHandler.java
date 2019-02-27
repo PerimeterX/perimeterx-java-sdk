@@ -50,7 +50,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
         }
         setPxhdCookie(context, responseWrapper);
         boolean shouldBypassMonitor = shouldBypassMonitor(context);
-        if ((pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) || shouldBypassMonitor)&& !verified){
+        if ((pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) || shouldBypassMonitor) && !verified) {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
         }
@@ -71,13 +71,12 @@ public class DefaultVerificationHandler implements VerificationHandler {
                 cookie.setMaxAge(3600 * 24 * 365);
                 responseWrapper.addCookie(cookie);
             }
-        }
-        catch (UnsupportedEncodingException e){
+        } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private boolean shouldPassRequest(PXContext context){
+    private boolean shouldPassRequest(PXContext context) {
         int score = context.getRiskScore();
         int blockingScore = this.pxConfiguration.getBlockingScore();
         // If should block this request we will apply our block handle and send the block activity to px

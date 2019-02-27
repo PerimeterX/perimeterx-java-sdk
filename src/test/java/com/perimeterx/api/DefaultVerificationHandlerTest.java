@@ -56,7 +56,7 @@ public class DefaultVerificationHandlerTest {
                 .bypassMonitorHeader("TEST-BYPASS")
                 .build();
         HttpServletRequest request = new MockHttpServletRequest();
-        ((MockHttpServletRequest) request).addHeader("TEST-BYPASS","1");
+        ((MockHttpServletRequest) request).addHeader("TEST-BYPASS", "1");
         HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
         PXContext context = new PXContext(request, ipProvider, hostnameProvider, config);
         context.setRiskScore(100);
@@ -78,7 +78,7 @@ public class DefaultVerificationHandlerTest {
                 .bypassMonitorHeader("TEST-BYPASS")
                 .build();
         HttpServletRequest request = new MockHttpServletRequest();
-        ((MockHttpServletRequest) request).addHeader("TEST-BYPASS","0");
+        ((MockHttpServletRequest) request).addHeader("TEST-BYPASS", "0");
         HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
         PXContext context = new PXContext(request, ipProvider, hostnameProvider, config);
         context.setRiskScore(100);
