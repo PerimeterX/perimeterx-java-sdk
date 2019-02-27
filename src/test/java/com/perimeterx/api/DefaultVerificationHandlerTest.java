@@ -88,4 +88,25 @@ public class DefaultVerificationHandlerTest {
         Assert.assertTrue(verified);
     }
 
+    @Test
+    public void TestMonitorModeBypassHeaderDefinedAndMissingFromRequest() throws IOException, PXException {
+        PXConfiguration config = new PXConfiguration.Builder()
+                .appId("appId")
+                .authToken("token")
+                .cookieKey("cookieKey")
+                .moduleMode(ModuleMode.MONITOR)
+                .remoteConfigurationEnabled(false)
+                .blockingScore(30)
+                .bypassMonitorHeader("TEST-BYPASS")
+                .build();
+        HttpServletRequest request = new MockHttpServletRequest();
+        HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
+        PXContext context = new PXContext(request, ipProvider, hostnameProvider, config);
+        context.setRiskScore(100);
+        DefaultVerificationHandler defaultVerificationHandler = new DefaultVerificationHandler(config, activityHandler);
+        context.setBlockAction("b");
+        boolean verified = defaultVerificationHandler.handleVerification(context, response);
+        Assert.assertTrue(verified);
+    }
+
 }

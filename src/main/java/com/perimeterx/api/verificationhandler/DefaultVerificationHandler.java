@@ -49,13 +49,17 @@ public class DefaultVerificationHandler implements VerificationHandler {
             this.activityHandler.handleBlockActivity(context);
         }
         setPxhdCookie(context, responseWrapper);
-        boolean shouldBypassMonitor = !StringUtils.isEmpty(this.pxConfiguration.getBypassMonitorHeader()) && context.getHeaders().get(this.pxConfiguration.getBypassMonitorHeader().toLowerCase()).equals("1");
+        boolean shouldBypassMonitor = shouldBypassMonitor(context);
         if ((pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) || shouldBypassMonitor)&& !verified){
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
         }
 
         return true;
+    }
+
+    private boolean shouldBypassMonitor(PXContext context) {
+        return !StringUtils.isEmpty(this.pxConfiguration.getBypassMonitorHeader()) && context.getHeaders().containsKey(this.pxConfiguration.getBypassMonitorHeader().toLowerCase()) && context.getHeaders().get(this.pxConfiguration.getBypassMonitorHeader().toLowerCase()).equals("1");
     }
 
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
