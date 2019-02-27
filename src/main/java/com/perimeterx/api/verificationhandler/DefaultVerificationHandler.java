@@ -59,7 +59,9 @@ public class DefaultVerificationHandler implements VerificationHandler {
     }
 
     private boolean shouldBypassMonitor(PXContext context) {
-        return !StringUtils.isEmpty(this.pxConfiguration.getBypassMonitorHeader()) && context.getHeaders().containsKey(this.pxConfiguration.getBypassMonitorHeader().toLowerCase()) && context.getHeaders().get(this.pxConfiguration.getBypassMonitorHeader().toLowerCase()).equals("1");
+        String bypassHeader = this.pxConfiguration.getBypassMonitorHeader();
+        return !StringUtils.isEmpty(bypassHeader) && context.getHeaders().containsKey(bypassHeader.toLowerCase())
+                && context.getHeaders().get(bypassHeader.toLowerCase()).equals("1");
     }
 
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
