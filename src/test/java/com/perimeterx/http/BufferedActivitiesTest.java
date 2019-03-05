@@ -36,7 +36,7 @@ public class BufferedActivitiesTest {
 
     @BeforeMethod
     public void setUp() {
-        config = new PXConfiguration.Builder()
+        config = PXConfiguration.builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")

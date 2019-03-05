@@ -35,7 +35,7 @@ public class CookieV3MobileTest {
         request = new MockHttpServletRequest();
         ipProvider = new RemoteAddressIPProvider();
         hostnameProvider = new DefaultHostnameProvider();
-        this.pxConfiguration = new PXConfiguration.Builder()
+        this.pxConfiguration = PXConfiguration.builder()
                 .cookieKey("COOKIE_KEY_STRING_MOBILE")
                 .appId("APP_ID")
                 .authToken("AUTH_TOKEN")
@@ -62,7 +62,7 @@ public class CookieV3MobileTest {
 
     @Test
     public void testCookieV3MobileFailOnSensitiveRoute() {
-        PXConfiguration configuration = new PXConfiguration.Builder()
+        PXConfiguration configuration = PXConfiguration.builder()
                 .cookieKey("COOKIE_KEY_STRING_MOBILE")
                 .appId("APP_ID")
                 .authToken("AUTH_TOKEN")
@@ -83,7 +83,7 @@ public class CookieV3MobileTest {
     public void testCookieV3MobileFailOnDecryption() {
         String pxCookie = "3:2402d0b20e83c4e2517b39cb09ae59ad212abb362095c51de1d100fe91104701:9T6dRNxqkrw=:1000:IddId3O2fmSlorPoxtg8Sfdll9K0wbP4LXaEUCByLpU12gcZriwwwsGLGxG31uePy1nsOAwHze22rw6TAHR77+zfrSTASxYR5jODn0Nr+sYJm4GVT9OkUHpq0Z5JzgdpMBuzgsLGKQcKMcajHIzWGNzSEWjcHKRHHqL153w7PSJ0IEOj/hNWHKWfuLICZ4nS";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
-        this.pxConfiguration = new PXConfiguration.Builder()
+        this.pxConfiguration = PXConfiguration.builder()
                 .cookieKey("INVALID COOKIE TOKEN")
                 .appId("APP_ID")
                 .authToken("AUTH_TOKEN")

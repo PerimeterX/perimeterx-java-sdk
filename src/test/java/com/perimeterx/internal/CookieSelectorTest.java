@@ -29,7 +29,7 @@ public class CookieSelectorTest {
 
     @BeforeClass
     public void init() {
-        pxConfiguration = new PXConfiguration.Builder()
+        pxConfiguration = PXConfiguration.builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
                 .cookieKey(COOKIE_KEY)

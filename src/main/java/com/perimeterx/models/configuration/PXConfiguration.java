@@ -6,9 +6,7 @@ import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,6 +20,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class PXConfiguration {
     private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
 
@@ -90,5 +89,21 @@ public class PXConfiguration {
         this.moduleEnabled = pxDynamicConfiguration.isModuleEnabled();
         this.moduleMode = pxDynamicConfiguration.getModuleMode();
         this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
+    }
+
+    public static class PXConfigurationBuilder {
+
+        public  PXConfigurationBuilder appId(String appId){
+            this.appId = appId;
+
+            if (this.serverURL == null) {
+                this.serverURL = String.format(Constants.SERVER_URL, appId.toLowerCase());
+            }
+
+            if (this.collectorUrl == null) {
+                this.collectorUrl = String.format(Constants.COLLECTOR_URL, appId.toLowerCase());
+            }
+            return this;
+        }
     }
 }

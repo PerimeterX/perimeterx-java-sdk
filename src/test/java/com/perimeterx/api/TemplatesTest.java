@@ -31,7 +31,7 @@ public class TemplatesTest {
     @BeforeClass
     public void setUp() throws Exception {
         appId = "PX_APPID";
-        config = new PXConfiguration.Builder()
+        config = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123").build();
@@ -45,7 +45,7 @@ public class TemplatesTest {
 
     @Test
     public void testCaptchaPageContainsLogo() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
@@ -60,7 +60,7 @@ public class TemplatesTest {
 
     @Test
     public void testDefaultPageContainsLogo() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
@@ -75,7 +75,7 @@ public class TemplatesTest {
 
     @Test
     public void testCaptchaPageContainsCSS() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
@@ -90,7 +90,7 @@ public class TemplatesTest {
 
     @Test
     public void testDefualtPageContainsCSS() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
@@ -105,7 +105,7 @@ public class TemplatesTest {
 
     @Test
     public void testDefualtPageContainsJS() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
@@ -120,7 +120,7 @@ public class TemplatesTest {
 
     @Test
     public void testCaptchaPageContainsJS() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
@@ -135,7 +135,7 @@ public class TemplatesTest {
 
     @Test
     public void testCaptchaPageContainsUUID() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
@@ -149,7 +149,7 @@ public class TemplatesTest {
 
     @Test
     public void testDefaultPageContainsUUID() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
@@ -163,7 +163,7 @@ public class TemplatesTest {
 
     @Test
     public void testCaptchaPageContainsVID() throws Exception {
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")

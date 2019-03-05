@@ -39,7 +39,7 @@ public class PXContextTest {
         customParameters.setCustomParam10("number10");
         TestCustomParamProvider spyTestCustomParamProvider = Mockito.spy(new TestCustomParamProvider(customParameters));
 
-        PXConfiguration pxConfig = new PXConfiguration.Builder()
+        PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")

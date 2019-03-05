@@ -37,7 +37,7 @@ public class RiskCookieDecoderTest {
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         IPProvider ipProvider = new RemoteAddressIPProvider();
         HostnameProvider hostnameProvider = new DefaultHostnameProvider();
-        this.pxConfiguration = new PXConfiguration.Builder()
+        this.pxConfiguration = PXConfiguration.builder()
                 .cookieKey("COOKIE_KEY_STRING")
                 .appId("APP_ID")
                 .authToken("AUTH_TOKEN")

@@ -60,7 +60,7 @@ public class ReverseProxyTest {
 
     @BeforeMethod
     public void setUp() {
-        pxConfiguration = new PXConfiguration.Builder()
+        pxConfiguration = PXConfiguration.builder()
                 .appId("PX12345678")
                 .cookieKey("COOKIE_KEY")
                 .authToken("AUTH_TOKEN")
@@ -96,7 +96,7 @@ public class ReverseProxyTest {
 
     @Test
     public void testReverseProxyClientMethod() throws Exception {
-        pxConfiguration = new PXConfiguration.Builder()
+        pxConfiguration = PXConfiguration.builder()
                 .appId("PX12345678")
                 .cookieKey("COOKIE_KEY")
                 .authToken("AUTH_TOKEN")
@@ -122,7 +122,7 @@ public class ReverseProxyTest {
 
     @Test
     public void testReverseProxyXHRMethod() throws Exception {
-        pxConfiguration = new PXConfiguration.Builder()
+        pxConfiguration = PXConfiguration.builder()
                 .appId("PX12345678")
                 .cookieKey("COOKIE_KEY")
                 .authToken("AUTH_TOKEN")

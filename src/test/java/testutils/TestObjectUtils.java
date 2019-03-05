@@ -29,7 +29,7 @@ public class TestObjectUtils {
     }
 
     public static PXConfiguration generateConfiguration() {
-        return new PXConfiguration.Builder()
+        return PXConfiguration.builder()
                 .appId("appId")
                 .authToken("token")
                 .cookieKey("cookieKey")
