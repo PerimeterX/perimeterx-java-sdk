@@ -56,6 +56,7 @@ public class PXConfiguration {
     private int proxyPort;
     private boolean testingMode;
     private int validateRequestQueueInterval;
+    private String bypassMonitorHeader;
 
     private PXConfiguration(Builder builder) {
         appId = builder.appId;
@@ -94,6 +95,7 @@ public class PXConfiguration {
         proxyPort = builder.proxyPort;
         testingMode = builder.testingMode;
         validateRequestQueueInterval = builder.validateRequestQueueInterval;
+        bypassMonitorHeader = builder.bypassMonitorHeader;
     }
 
     private PXConfiguration(String appId, String cookieKey, String authToken, boolean moduleEnabled, boolean encryptionEnabled,
@@ -103,7 +105,7 @@ public class PXConfiguration {
                             ModuleMode moduleMode, int remoteConfigurationInterval, int remoteConfigurationDelay, int maxConnections, int maxConnectionsPerRoute,
                             String remoteConfigurationUrl, CustomParametersProvider customParametersProvider,
                             BlockHandler blockHandler, String collectorUrl, boolean firstPartyEnabled, boolean xhrFirstPartyEnabled,
-                            String clientHost, boolean useProxy, String proxyHost, int proxyPort) {
+                            String clientHost, boolean useProxy, String proxyHost, int proxyPort, String bypassMonitorHeader) {
         this.appId = appId;
         this.cookieKey = cookieKey;
         this.authToken = authToken;
@@ -139,6 +141,7 @@ public class PXConfiguration {
         this.useProxy = useProxy;
         this.proxyHost = proxyHost;
         this.proxyPort = proxyPort;
+        this.bypassMonitorHeader = bypassMonitorHeader;
     }
 
     /**
@@ -148,7 +151,7 @@ public class PXConfiguration {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
                 moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl,
-                customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost, useProxy, proxyHost, proxyPort);
+                customParametersProvider, blockHandler, collectorUrl, firstPartyEnabled, xhrFirstPartyEnabled, clientHost, useProxy, proxyHost, proxyPort, bypassMonitorHeader);
     }
 
     public String getRemoteConfigurationUrl() {
@@ -303,6 +306,10 @@ public class PXConfiguration {
         return validateRequestQueueInterval;
     }
 
+    public String getBypassMonitorHeader() {
+        return bypassMonitorHeader;
+    }
+
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
@@ -354,6 +361,7 @@ public class PXConfiguration {
         private String proxyHost;
         private int proxyPort;
         private int validateRequestQueueInterval = 5 * 1000;
+        private String bypassMonitorHeader;
 
         public Builder() {
         }
@@ -544,6 +552,11 @@ public class PXConfiguration {
 
         public Builder testingMode(boolean testingMode) {
             this.testingMode = testingMode;
+            return this;
+        }
+
+        public Builder bypassMonitorHeader(String bypassMonitorHeader) {
+            this.bypassMonitorHeader = bypassMonitorHeader;
             return this;
         }
 
