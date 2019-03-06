@@ -46,7 +46,7 @@ public class DefaultVerificationHandlerTest {
 
     @Test
     public void TestMonitorModeBypass() throws IOException, PXException {
-        PXConfiguration config = new PXConfiguration.Builder()
+        PXConfiguration config = PXConfiguration.builder()
                 .appId("appId")
                 .authToken("token")
                 .cookieKey("cookieKey")
@@ -68,7 +68,7 @@ public class DefaultVerificationHandlerTest {
 
     @Test
     public void TestMonitorModeBypassWrongValueInHeader() throws IOException, PXException {
-        PXConfiguration config = new PXConfiguration.Builder()
+        PXConfiguration config = PXConfiguration.builder()
                 .appId("appId")
                 .authToken("token")
                 .cookieKey("cookieKey")
@@ -90,7 +90,7 @@ public class DefaultVerificationHandlerTest {
 
     @Test
     public void TestMonitorModeBypassHeaderDefinedAndMissingFromRequest() throws IOException, PXException {
-        PXConfiguration config = new PXConfiguration.Builder()
+        PXConfiguration config = PXConfiguration.builder()
                 .appId("appId")
                 .authToken("token")
                 .cookieKey("cookieKey")
