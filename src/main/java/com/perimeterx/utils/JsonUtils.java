@@ -3,6 +3,7 @@ package com.perimeterx.utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.httpmodels.RiskResponse;
 
@@ -17,6 +18,7 @@ public final class JsonUtils {
 
     public final static ObjectReader riskResponseReader = mapper.reader(RiskResponse.class);
     public final static ObjectReader pxConfigurationStubReader = mapper.reader(PXDynamicConfiguration.class);
+    public final static ObjectReader pxConfigurationReader = mapper.reader(PXConfiguration.class);
     public final static ObjectWriter writer = mapper.writer();
 
     protected JsonUtils() {

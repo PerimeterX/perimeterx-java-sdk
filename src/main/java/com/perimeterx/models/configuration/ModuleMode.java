@@ -8,21 +8,22 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum ModuleMode {
 
-    MONITOR("monitoring"), BLOCKING("blocking");
+    MONITOR(0), BLOCKING(1);
 
-    private String value;
+    private int value;
 
-    ModuleMode(String value) {
+    ModuleMode(int value) {
         this.value = value;
     }
 
+
     @JsonValue
-    public String getValue() {
-        return value;
+    public int getValue() {
+        return this.value;
     }
 
     @JsonCreator
-    public void setValue(String value) {
+    public void setValue(int value) {
         this.value = value;
     }
 }

@@ -5,11 +5,16 @@ import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.FilesUtils;
 import com.perimeterx.utils.PXLogger;
 import lombok.*;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -62,6 +67,7 @@ public class PXConfiguration {
     private boolean testingMode;
     @Builder.Default private int validateRequestQueueInterval = 5 * 1000;
     private String bypassMonitorHeader;
+    private String configFilePath;
 
     /**
      * @return Configuration Object clone without cookieKey and authToken
@@ -70,7 +76,8 @@ public class PXConfiguration {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled, blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout,
                 connectionTimeout, sendPageActivities, signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum, remoteConfigurationEnabled,
                 moduleMode, remoteConfigurationInterval, remoteConfigurationDelay, maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl,
-                customParametersProvider, blockHandler, collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort, testingMode,validateRequestQueueInterval, bypassMonitorHeader);
+                customParametersProvider, blockHandler, collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort, testingMode,validateRequestQueueInterval, bypassMonitorHeader,
+                configFilePath);
     }
 
     public void disableModule() {
@@ -90,6 +97,35 @@ public class PXConfiguration {
         this.moduleMode = pxDynamicConfiguration.getModuleMode();
         this.ipHeaders = pxDynamicConfiguration.getIpHeaders();
     }
+
+    public void mergeConfigurations() {
+        String filepath = this.getConfigFilePath();
+        if (!StringUtils.isEmpty(filepath)){
+            try {
+                Map<String, String> fileConfigParams = FilesUtils.readFileConfigAsMap(filepath);
+                PXConfiguration loadedConfig = FilesUtils.readFileConfigAsPXConfig(filepath);
+                updateWithParamsMap(fileConfigParams, loadedConfig);
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+
+    }
+
+    private void updateWithParamsMap(Map<String, String> fileConfigParams, PXConfiguration loadedConfig) {
+        for (String param : fileConfigParams.keySet()){
+            try {
+                Field field = this.getClass().getDeclaredField(param);
+                field.setAccessible(true);
+                Object newVal = field.get(loadedConfig);
+                field.set(this, newVal);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                logger.error("Config param " + param + "does not exist in PXConfiguration.");
+            }
+
+        }
+    }
+
 
     public static class PXConfigurationBuilder {
 
