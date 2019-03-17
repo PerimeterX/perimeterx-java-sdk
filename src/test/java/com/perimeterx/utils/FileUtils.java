@@ -32,13 +32,14 @@ public class FileUtils extends PowerMockTestCase {
     public void testReadFile() throws IOException {
         PowerMock.mockStaticPartial(FilesUtils.class, "readFile");
         EasyMock.expect(FilesUtils.readFile("config.json")).andReturn("{\n" +
-                "  \"moduleMode\": 0,\n" +
-                "  \"remoteConfigurationInterval\": 1\n" +
+                "  \"px_module_mode\": 0,\n" +
+                "  \"px_remote_configuration_interval_ms\": 1\n" +
                 "}\n");
         PowerMock.replayAll();
-        PXConfiguration result = FilesUtils.readFileConfigAsPXConfig("config.json");
-        Assert.assertEquals(result.getModuleMode(), ModuleMode.MONITOR);
-        Assert.assertEquals(result.getRemoteConfigurationInterval(), 1);
+        PXConfiguration pxConfiguration = new PXConfiguration();
+        FilesUtils.readFileConfigAsPXConfig(pxConfiguration, "config.json");
+        Assert.assertEquals(pxConfiguration.getModuleMode(), ModuleMode.MONITOR);
+        Assert.assertEquals(pxConfiguration.getRemoteConfigurationInterval(), 1);
     }
 
 }

@@ -34,8 +34,8 @@ public class PXConfigurationTest extends PowerMockTestCase {
                 .build();
         PowerMock.mockStaticPartial(FilesUtils.class, "readFile");
         EasyMock.expect(FilesUtils.readFile("config.json")).andReturn("{\n" +
-                "  \"moduleMode\": 0,\n" +
-                "  \"remoteConfigurationInterval\": 1\n" +
+                "  \"px_module_mode\": 0,\n" +
+                "  \"px_remote_configuration_interval_ms\": 1\n" +
                 "}\n").times(2);
         PowerMock.replayAll();
         pxConfiguration.mergeConfigurations();
