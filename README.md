@@ -222,8 +222,8 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 #### <a name="multi-app-support"></a> Multiple Application Support
 Simply create multiple instances of the PerimeterX class:
 ```java
-PerimeterX enforcerApp1 = new PerimeterX(new PXConfiguration.Builder().appId(APP_ID_1)...build(););
-PerimeterX enforcerApp2 = new PerimeterX(new PXConfiguration.Builder().appId(APP_ID_2)...build(););
+PerimeterX enforcerApp1 = new PerimeterX(new PXConfiguration.Builder().appId(APP_ID_1)...build());
+PerimeterX enforcerApp2 = new PerimeterX(new PXConfiguration.Builder().appId(APP_ID_2)...build());
 
 ...
 
