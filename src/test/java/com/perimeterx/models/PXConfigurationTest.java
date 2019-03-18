@@ -16,9 +16,6 @@ import java.util.HashSet;
 
 @PrepareForTest(FilesUtils.class)
 public class PXConfigurationTest extends PowerMockTestCase {
-
-
-
     @Test
     public void testMergeConfigurations() throws FileNotFoundException {
         PXConfiguration pxConfiguration = PXConfiguration.builder()
