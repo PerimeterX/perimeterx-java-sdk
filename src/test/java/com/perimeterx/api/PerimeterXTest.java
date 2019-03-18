@@ -44,8 +44,8 @@ public class PerimeterXTest extends ConfiguredTest {
         Assert.assertEquals(clonedConfig.getMaxBufferLen(), configuration.getMaxBufferLen());
         Assert.assertEquals(clonedConfig.getApiTimeout(), configuration.getApiTimeout());
         Assert.assertEquals(clonedConfig.getConnectionTimeout(), configuration.getConnectionTimeout());
-        Assert.assertEquals(clonedConfig.shouldSendPageActivities(), configuration.shouldSendPageActivities());
-        Assert.assertEquals(clonedConfig.wasSignedWithIP(), configuration.wasSignedWithIP());
+        Assert.assertEquals(clonedConfig.isSendPageActivities(), configuration.isSendPageActivities());
+        Assert.assertEquals(clonedConfig.isSignedWithIP(), configuration.isSignedWithIP());
         Assert.assertEquals(clonedConfig.getServerURL(), configuration.getServerURL());
         Assert.assertEquals(clonedConfig.getCustomLogo(), configuration.getCustomLogo());
         Assert.assertEquals(clonedConfig.getCssRef(), configuration.getCssRef());
@@ -94,7 +94,7 @@ public class PerimeterXTest extends ConfiguredTest {
     @Test
     public void testPXConfigURL_verified() throws Exception {
         String appId = "nitzan";
-        PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+        PXConfiguration pxConfiguration = PXConfiguration.builder()
                 .cookieKey("cookieToken")
                 .authToken("authToken")
                 .appId(appId)

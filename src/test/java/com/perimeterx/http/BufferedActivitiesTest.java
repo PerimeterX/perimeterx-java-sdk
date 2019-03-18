@@ -22,7 +22,6 @@ import static org.mockito.Mockito.*;
 /**
  * Created by nitzangoldfeder on 23/02/2017.
  */
-@org.testng.annotations.Test
 public class BufferedActivitiesTest {
 
     private BufferedActivityHandler bufferedActivityHandler;
@@ -36,7 +35,7 @@ public class BufferedActivitiesTest {
 
     @BeforeMethod
     public void setUp() {
-        config = new PXConfiguration.Builder()
+        config = PXConfiguration.builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")

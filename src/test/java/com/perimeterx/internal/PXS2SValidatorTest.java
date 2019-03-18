@@ -42,7 +42,7 @@ public class PXS2SValidatorTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        this.pxConfig = new PXConfiguration.Builder()
+        this.pxConfig = PXConfiguration.builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")

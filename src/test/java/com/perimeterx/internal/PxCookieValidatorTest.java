@@ -26,7 +26,7 @@ public class PxCookieValidatorTest {
 
     @BeforeClass
     public void init() {
-        this.pxConfiguration = new PXConfiguration.Builder()
+        this.pxConfiguration = PXConfiguration.builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
                 .cookieKey(COOKIE_KEY)

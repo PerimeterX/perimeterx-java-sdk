@@ -41,7 +41,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
         if (verified) {
             logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
             // Not blocking request and sending page_requested activity to px if configured as true
-            if (this.pxConfiguration.shouldSendPageActivities()) {
+            if (this.pxConfiguration.isSendPageActivities()) {
                 this.activityHandler.handlePageRequestedActivity(context);
             }
         } else {
