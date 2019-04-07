@@ -392,4 +392,8 @@ public class PXContext {
     public void setCookieVersion(String cookieVersion) {
         this.cookieVersion = cookieVersion;
     }
+
+    public boolean isAdvancedBlockingResponse() {
+        return pxConfiguration.isAdvancedBlockingResponse();
+    }
 }

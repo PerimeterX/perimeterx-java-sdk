@@ -129,6 +129,11 @@ public class PXConfiguration {
     @JsonProperty("px_bypass_monitor_header")
     private String bypassMonitorHeader;
     private String configFilePath;
+    @Builder.Default
+    @JsonProperty("px_advanced_blocking_response")
+    private boolean advancedBlockingResponse = true;
+
+
 
     /**
      * @return Configuration Object clone without cookieKey and authToken
@@ -140,7 +145,7 @@ public class PXConfiguration {
                 remoteConfigurationEnabled, moduleMode, remoteConfigurationInterval, remoteConfigurationDelay,
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
-                testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath);
+                testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse);
     }
 
     public void disableModule() {

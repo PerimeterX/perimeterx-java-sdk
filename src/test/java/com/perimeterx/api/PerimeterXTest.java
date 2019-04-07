@@ -2,6 +2,7 @@ package com.perimeterx.api;
 
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.JSONUtilsTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
@@ -101,6 +102,17 @@ public class PerimeterXTest extends ConfiguredTest {
                 .build();
 
         Assert.assertEquals(pxConfiguration.getServerURL(), "https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
+    }
+
+    @Test
+    public void testAdvancedBlockingResponse() throws Exception {
+        PXClient client = TestObjectUtils.blockingPXClient(configuration.getBlockingScore());
+        PerimeterX perimeterx = TestObjectUtils.testablePerimeterXObject(configuration, client);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("accept", "application/json");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
+        Assert.assertTrue(JSONUtilsTest.isJSONValid(response.getContentAsString()));
     }
 
     @Test

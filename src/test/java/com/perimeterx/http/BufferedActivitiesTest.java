@@ -8,9 +8,9 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import org.testng.annotations.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import testutils.TestObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
