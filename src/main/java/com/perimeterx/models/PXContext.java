@@ -204,10 +204,10 @@ public class PXContext {
         this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
-        initContext(request, pxConfiguration);
         this.ip = ipProvider.getRequestIP(request);
         this.hostname = hostnameProvider.getHostname(request);
         this.request = request;
+        initContext(request, pxConfiguration);
     }
 
     private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
