@@ -148,16 +148,17 @@ public class PerimeterX {
                 return null;
             }
 
-            //if path ext is defined at whitelist, let the request pass
-            if(configuration.isExtWhiteListed(req.getRequestURI()))
-                return null;
-
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
             if (shouldReverseRequest(req, responseWrapper)) {
                 context.setFirstPartyRequest(true);
                 return context;
             }
+
+            //if path ext is defined at whitelist, let the request pass
+            if(configuration.isExtWhiteListed(req.getRequestURI()))
+                return null;
+
             handleCookies(context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
