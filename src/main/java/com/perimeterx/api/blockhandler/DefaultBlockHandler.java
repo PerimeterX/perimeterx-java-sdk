@@ -6,6 +6,7 @@ import com.perimeterx.api.blockhandler.templates.TemplateFactory;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.models.httpmodels.AdvancedBlockingResponse;
 import com.perimeterx.models.httpmodels.MobilePageResponse;
 import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.BlockAction;
@@ -45,14 +46,13 @@ public class DefaultBlockHandler implements BlockHandler {
                 blockPageResponse = getPage(props, filePrefix);
         }
         try {
-            sendMessage(blockPageResponse, responseWrapper, context);
+            sendMessage(blockPageResponse, responseWrapper, context, pxConfig);
         } catch (IOException e) {
             throw new PXException(e);
         }
-
     }
 
-    private void sendMessage(String blockPageResponse, HttpServletResponseWrapper responseWrapper, PXContext context) throws PXException, IOException {
+    private void sendMessage(String blockPageResponse, HttpServletResponseWrapper responseWrapper, PXContext context, PXConfiguration pxConfig) throws PXException, IOException {
         if (context.getBlockAction() == BlockAction.RATE) {
             responseWrapper.setStatus(429);
         } else {
@@ -67,9 +67,47 @@ public class DefaultBlockHandler implements BlockHandler {
                 throw new PXException(e);
             }
         } else {
-            responseWrapper.setContentType(Constants.CONTENT_TYPE_TEXT_HTML);
+            //handle advanced blocking mode
+            if (shouldHandleAdvancedBlockingResponse(context)) {
+                responseWrapper.setContentType(Constants.CONTENT_TYPE_APPLICATION_JSON);
+
+                Map<String, String> props = TemplateFactory.getProps(context, pxConfig);
+                AdvancedBlockingResponse advancedBlockingResponse = new AdvancedBlockingResponse(props.get("appId"),
+                        props.get("jsClientSrc"),
+                        props.get("firstPartyEnabled"),
+                        props.get("vid"),
+                        props.get("uuid"),
+                        props.get("hostUrl"),
+                        props.get("blockScript"));
+
+                blockPageResponse = new ObjectMapper().writeValueAsString(advancedBlockingResponse);
+            } else {
+                responseWrapper.setContentType(Constants.CONTENT_TYPE_TEXT_HTML);
+            }
         }
         responseWrapper.getWriter().print(blockPageResponse);
+    }
+
+    private boolean shouldHandleAdvancedBlockingResponse(PXContext context) {
+
+        //if advanced blocking response config is disabled
+        if (!context.isAdvancedBlockingResponse())
+            return false;
+
+        boolean headerExists;
+
+        //otherwise check headers
+        String header = context.getHeaders().get("accept");
+        if (header != null && header.toLowerCase().contains("application/json")) {
+            headerExists = true;
+        } else {
+            header = context.getHeaders().get("content-type");
+            headerExists = header != null && header.toLowerCase().contains("application/json");
+        }
+
+        return headerExists
+                && context.getCookieOrigin().equals(Constants.COOKIE_HEADER_NAME)
+                && context.getBlockAction() != BlockAction.RATE;
     }
 
     private String parseAction(String code) {
