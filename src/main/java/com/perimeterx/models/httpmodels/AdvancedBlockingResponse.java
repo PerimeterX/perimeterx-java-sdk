@@ -25,9 +25,7 @@ public class AdvancedBlockingResponse {
     @JsonProperty("blockScript")
     private String blockScript;
 
-
-    public AdvancedBlockingResponse(String appId, String jsClientSrc, String firstPartyEnabled, String vid, String uuid, String hostUrl, String blockScript)
-    {
+    public AdvancedBlockingResponse(String appId, String jsClientSrc, String firstPartyEnabled, String vid, String uuid, String hostUrl, String blockScript) {
         this.appId = appId;
         this.jsClientSrc = jsClientSrc;
         this.firstPartyEnabled = firstPartyEnabled;
