@@ -224,8 +224,7 @@ public class PXConfiguration {
      * @param path the path to check against the white list extension
      * @return true if path is to static file defined at the white list
      */
-    public boolean isExtWhiteListed(String path)
-    {
+    public boolean isExtWhiteListed(String path) {
         return  staticFilesExt.contains(FilenameUtils.getExtension(path));
     }
 }
