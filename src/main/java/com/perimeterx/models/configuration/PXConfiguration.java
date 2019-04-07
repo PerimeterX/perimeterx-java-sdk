@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -133,7 +134,18 @@ public class PXConfiguration {
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
 
-
+    @Builder.Default
+    private Set<String> staticFilesExt = new HashSet<String>() {
+        {
+            add("css"); add("bmp"); add("tif"); add("ttf"); add("woff2"); add("docx");
+            add("js"); add("pict"); add("tiff"); add("eot"); add("xlsx"); add("jpg");
+            add("csv"); add("woff"); add("xls"); add("jpeg"); add("doc"); add("eps");
+            add("ejs"); add("otf"); add("pptx"); add("gif"); add("pdf"); add("swf");
+            add("svg"); add("ps"); add("ico"); add("pls"); add("midi"); add("svgz");
+            add("class"); add("png"); add("ppt"); add("mid"); add("webp"); add("jar");
+            add("json");
+        }
+    };
 
     /**
      * @return Configuration Object clone without cookieKey and authToken
@@ -145,7 +157,8 @@ public class PXConfiguration {
                 remoteConfigurationEnabled, moduleMode, remoteConfigurationInterval, remoteConfigurationDelay,
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
-                testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse);
+                testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
+                staticFilesExt);
     }
 
     public void disableModule() {
@@ -175,7 +188,6 @@ public class PXConfiguration {
                 logger.error(e.getMessage());
             }
         }
-
     }
 
     private void updateWithParamsMap(Map<String, String> fileConfigParams, PXConfiguration loadedConfig) {
@@ -206,5 +218,14 @@ public class PXConfiguration {
             }
             return this;
         }
+    }
+
+    /**
+     * @param path the path to check against the white list extension
+     * @return true if path is to static file defined at the white list
+     */
+    public boolean isExtWhiteListed(String path)
+    {
+        return  staticFilesExt.contains(FilenameUtils.getExtension(path));
     }
 }
