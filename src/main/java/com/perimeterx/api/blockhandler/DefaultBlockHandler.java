@@ -91,8 +91,9 @@ public class DefaultBlockHandler implements BlockHandler {
     private boolean shouldHandleAdvancedBlockingResponse(PXContext context) {
 
         //if advanced blocking response config is disabled
-        if (!context.isAdvancedBlockingResponse())
+        if (!context.isAdvancedBlockingResponse()) {
             return false;
+        }
 
         boolean headerExists;
 
