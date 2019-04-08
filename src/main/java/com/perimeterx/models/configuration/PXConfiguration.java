@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -133,7 +134,13 @@ public class PXConfiguration {
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
 
+    private static final String[] extensions = {"css", "bmp", "tif", "ttf", "woff2", "docx",
+            "js", "pict", "tiff", "eot", "xlsx", "jpg", "csv", "woff", "xls", "jpeg", "doc", "eps",
+            "ejs", "otf", "pptx", "gif", "pdf", "swf", "svg", "ps", "ico", "pls", "midi", "svgz",
+            "class", "png", "ppt", "mid", "webp", "jar", "json"};
 
+    @Builder.Default
+    private Set<String> staticFilesExt = new HashSet<>(Arrays.asList(extensions));
 
     /**
      * @return Configuration Object clone without cookieKey and authToken
@@ -145,7 +152,8 @@ public class PXConfiguration {
                 remoteConfigurationEnabled, moduleMode, remoteConfigurationInterval, remoteConfigurationDelay,
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
-                testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse);
+                testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
+                staticFilesExt);
     }
 
     public void disableModule() {
@@ -175,7 +183,6 @@ public class PXConfiguration {
                 logger.error(e.getMessage());
             }
         }
-
     }
 
     private void updateWithParamsMap(Map<String, String> fileConfigParams, PXConfiguration loadedConfig) {
@@ -206,5 +213,13 @@ public class PXConfiguration {
             }
             return this;
         }
+    }
+
+    /**
+     * @param path the path to check against the white list extension
+     * @return true if path is to static file defined at the white list
+     */
+    public boolean isExtWhiteListed(String path) {
+        return  staticFilesExt.contains(FilenameUtils.getExtension(path));
     }
 }

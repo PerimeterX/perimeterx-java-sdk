@@ -154,6 +154,12 @@ public class PerimeterX {
                 context.setFirstPartyRequest(true);
                 return context;
             }
+
+            //if path ext is defined at whitelist, let the request pass
+            if(configuration.isExtWhiteListed(req.getRequestURI())) {
+                return null;
+            }
+
             handleCookies(context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
