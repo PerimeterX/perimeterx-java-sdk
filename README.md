@@ -96,7 +96,7 @@ Following the instructions above, the filter should be changed according the the
   PXContext ctx = enforcer.pxVerify(req, new HttpServletResponseWrapper(resp);
 
   // Notice that isVerified() changed to isHandledResponse()
-  if (ctx.isHandledResponse()) {
+  if (ctx != null && ctx.isHandledResponse()) {
 
      // Optional: check why response was handled
      if (ctx.isFirstPartyRequest()) {
@@ -138,7 +138,7 @@ PerimeterX enforcer = new PerimeterX(pxConfiguration);
 protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOExcption {
 ...
     PXContext ctx = enforcer.pxVerify(req, new HttpServletResponseWrapper(resp);
-    if (!ctx.isHandledResponse()) {
+    if (ctx != null && !ctx.isHandledResponse()) {
        // request should be blocked and BlockHandler was triggered on HttpServerResponseWrapper
     }
 ...
@@ -230,7 +230,7 @@ PerimeterX enforcerApp2 = new PerimeterX(new PXConfiguration.Builder().appId(APP
 // Inside route request handler for app 1:
 @Override
 protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOExcption {
-    PXContext ctx = enforcerApp1.pxVerify(req, new HttpServletResponseWrapper(resp);
+    PXContext ctx = enforcerApp1.px(req, new HttpServletResponseWrapper(resp);
     ...
 }
 
@@ -240,7 +240,9 @@ protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws Se
 @Override
 protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOExcption {
     PXContext ctx = enforcerApp2.pxVerify(req, new HttpServletResponseWrapper(resp);
-    ...
+    if(ctx != null) {
+      ...
+    }
 }
 ```
 
