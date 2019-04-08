@@ -2,6 +2,7 @@ package com.perimeterx.api;
 
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.JSONUtilsTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
@@ -44,8 +45,8 @@ public class PerimeterXTest extends ConfiguredTest {
         Assert.assertEquals(clonedConfig.getMaxBufferLen(), configuration.getMaxBufferLen());
         Assert.assertEquals(clonedConfig.getApiTimeout(), configuration.getApiTimeout());
         Assert.assertEquals(clonedConfig.getConnectionTimeout(), configuration.getConnectionTimeout());
-        Assert.assertEquals(clonedConfig.shouldSendPageActivities(), configuration.shouldSendPageActivities());
-        Assert.assertEquals(clonedConfig.wasSignedWithIP(), configuration.wasSignedWithIP());
+        Assert.assertEquals(clonedConfig.isSendPageActivities(), configuration.isSendPageActivities());
+        Assert.assertEquals(clonedConfig.isSignedWithIP(), configuration.isSignedWithIP());
         Assert.assertEquals(clonedConfig.getServerURL(), configuration.getServerURL());
         Assert.assertEquals(clonedConfig.getCustomLogo(), configuration.getCustomLogo());
         Assert.assertEquals(clonedConfig.getCssRef(), configuration.getCssRef());
@@ -94,13 +95,24 @@ public class PerimeterXTest extends ConfiguredTest {
     @Test
     public void testPXConfigURL_verified() throws Exception {
         String appId = "nitzan";
-        PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+        PXConfiguration pxConfiguration = PXConfiguration.builder()
                 .cookieKey("cookieToken")
                 .authToken("authToken")
                 .appId(appId)
                 .build();
 
         Assert.assertEquals(pxConfiguration.getServerURL(), "https://sapi-" + appId.toLowerCase() + ".perimeterx.net");
+    }
+
+    @Test
+    public void testAdvancedBlockingResponse() throws Exception {
+        PXClient client = TestObjectUtils.blockingPXClient(configuration.getBlockingScore());
+        PerimeterX perimeterx = TestObjectUtils.testablePerimeterXObject(configuration, client);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("accept", "application/json");
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
+        Assert.assertTrue(JSONUtilsTest.isJSONValid(response.getContentAsString()));
     }
 
     @Test

@@ -76,6 +76,7 @@ public class PerimeterX {
 
     private void init(PXConfiguration configuration) throws PXException {
         logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
+        configuration.mergeConfigurations();
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new CombinedIPProvider(configuration);
@@ -153,6 +154,12 @@ public class PerimeterX {
                 context.setFirstPartyRequest(true);
                 return context;
             }
+
+            //if path ext is defined at whitelist, let the request pass
+            if(configuration.isExtWhiteListed(req.getRequestURI())) {
+                return null;
+            }
+
             handleCookies(context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {

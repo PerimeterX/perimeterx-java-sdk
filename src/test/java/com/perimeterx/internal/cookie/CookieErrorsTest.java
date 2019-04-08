@@ -35,7 +35,7 @@ public class CookieErrorsTest {
         ipProvider = new RemoteAddressIPProvider();
         hostnameProvider = new DefaultHostnameProvider();
         this.cookieValidator = new PXCookieValidator(pxConfiguration);
-        this.pxConfiguration = new PXConfiguration.Builder()
+        this.pxConfiguration = PXConfiguration.builder()
                 .cookieKey("COOKIE_KEY_STRING_MOBILE")
                 .appId("APP_ID")
                 .authToken("AUTH_TOKEN")

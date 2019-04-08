@@ -8,9 +8,9 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
 import testutils.TestObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +22,6 @@ import static org.mockito.Mockito.*;
 /**
  * Created by nitzangoldfeder on 23/02/2017.
  */
-@org.testng.annotations.Test
 public class BufferedActivitiesTest {
 
     private BufferedActivityHandler bufferedActivityHandler;
@@ -36,7 +35,7 @@ public class BufferedActivitiesTest {
 
     @BeforeMethod
     public void setUp() {
-        config = new PXConfiguration.Builder()
+        config = PXConfiguration.builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")
                 .cookieKey("COOKIE_123")
