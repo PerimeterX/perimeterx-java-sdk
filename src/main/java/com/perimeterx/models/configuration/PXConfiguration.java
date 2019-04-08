@@ -134,18 +134,13 @@ public class PXConfiguration {
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
 
+    private static final String[] extensions = {"css", "bmp", "tif", "ttf", "woff2", "docx",
+            "js", "pict", "tiff", "eot", "xlsx", "jpg", "csv", "woff", "xls", "jpeg", "doc", "eps",
+            "ejs", "otf", "pptx", "gif", "pdf", "swf", "svg", "ps", "ico", "pls", "midi", "svgz",
+            "class", "png", "ppt", "mid", "webp", "jar", "json"};
+
     @Builder.Default
-    private Set<String> staticFilesExt = new HashSet<String>() {
-        {
-            add("css"); add("bmp"); add("tif"); add("ttf"); add("woff2"); add("docx");
-            add("js"); add("pict"); add("tiff"); add("eot"); add("xlsx"); add("jpg");
-            add("csv"); add("woff"); add("xls"); add("jpeg"); add("doc"); add("eps");
-            add("ejs"); add("otf"); add("pptx"); add("gif"); add("pdf"); add("swf");
-            add("svg"); add("ps"); add("ico"); add("pls"); add("midi"); add("svgz");
-            add("class"); add("png"); add("ppt"); add("mid"); add("webp"); add("jar");
-            add("json");
-        }
-    };
+    private Set<String> staticFilesExt = new HashSet<>(Arrays.asList(extensions));
 
     /**
      * @return Configuration Object clone without cookieKey and authToken
