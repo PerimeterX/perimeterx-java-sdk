@@ -1,5 +1,10 @@
 # Change Log
 
+## [v6.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-04-08)
+- Support advanced blocking response - response can be json structured instead of html
+- Ignoring static files (json, imgs ...) 
+- Support for testing blocking flow in monitor mode
+
 ## [v6.0.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-02-25)
 - Fixed the setting process of thew pxhd cookie
 
