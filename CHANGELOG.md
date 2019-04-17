@@ -4,6 +4,8 @@
 - Support advanced blocking response - response can be json structured instead of html
 - Ignoring static files (json, imgs ...) 
 - Support for testing blocking flow in monitor mode
+- Bypass Bypass
+- Added support to load config from a file
 
 ## [v6.0.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-02-25)
 - Fixed the setting process of thew pxhd cookie
