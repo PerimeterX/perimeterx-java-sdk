@@ -1,9 +1,14 @@
 # Change Log
 
+## [v6.1.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.1...HEAD) (2019-06-30)
+- Fixed vulnerability issue by upgrading FasterXML version
+
 ## [v6.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-04-08)
 - Support advanced blocking response - response can be json structured instead of html
 - Ignoring static files (json, imgs ...) 
 - Support for testing blocking flow in monitor mode
+- Bypass Bypass
+- Added support to load config from a file
 
 ## [v6.0.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-02-25)
 - Fixed the setting process of the pxhd cookie
