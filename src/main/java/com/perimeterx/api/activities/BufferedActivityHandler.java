@@ -6,10 +6,17 @@ import com.perimeterx.models.activities.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
+import edu.emory.mathcs.backport.java.util.Arrays;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * Buffered activities and sends them to PX servers when buffer is full
@@ -18,17 +25,18 @@ import java.util.List;
  */
 public class BufferedActivityHandler implements ActivityHandler {
 
-    private int maxBufferLength;
-    private List<Activity> bufferedActivities;
+    private final int maxBufferLength;
+    private volatile ConcurrentLinkedQueue<Activity> bufferedActivities = new ConcurrentLinkedQueue<>();
+    private final AtomicInteger counter = new AtomicInteger(0);
     private PXConfiguration configuration;
     private PXClient client;
-    private Object lock = new Object();
+    private ReentrantLock lock = new ReentrantLock();
+
 
     public BufferedActivityHandler(PXClient client, PXConfiguration configuration) {
         this.configuration = configuration;
         this.client = client;
-        this.maxBufferLength = configuration.getMaxBufferLen();
-        this.bufferedActivities = new ArrayList<>();
+        maxBufferLength = configuration.getMaxBufferLen();
     }
 
     @Override
@@ -55,26 +63,48 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     private void handleSendActivities(Activity activity) throws PXException {
+        int count = counter.incrementAndGet();
+        if (count >= maxBufferLength) {
+            handleOverflow();
+        }
         bufferedActivities.add(activity);
-        if (bufferedActivities.size() >= maxBufferLength) {
-            flush();
-            bufferedActivities.clear();
+    }
+
+    private void handleOverflow() throws PXException {
+        lock.lock();
+        if (counter.get() >= maxBufferLength) {
+            ConcurrentLinkedQueue<Activity> activitiesToSend = flush();
+            lock.unlock();
+            sendAsync(activitiesToSend);
+        } else {    //flush already handled
+            lock.unlock();
         }
     }
 
-    /**
-     * Will trigger the client to send a batch of activities to PX Servers
-     * Most likely to call clear after to remove sent activities
-     *
-     * @throws PXException - when transport layer fails to report activities
-     */
-    private void flush() throws PXException {
-        synchronized (lock) {
-            try {
-                client.sendBatchActivities(bufferedActivities);
-            } catch (Exception e) {
-                throw new PXException(e);
-            }
+    private void sendAsync(ConcurrentLinkedQueue<Activity> activitiesToSend) throws PXException {
+        List<Activity> activities = activitiesAsList(activitiesToSend);
+
+        try {
+            client.sendBatchActivities(activities);
+        } catch (Exception e) {
+            throw new PXException(e);
         }
+
+    }
+
+    private List<Activity> activitiesAsList(ConcurrentLinkedQueue<Activity> activitiesToSend) {
+        List<Activity> activities = new ArrayList<>();
+        while (!activitiesToSend.isEmpty()) {
+            Activity activity = activitiesToSend.poll();
+            activities.add(activity);
+        }
+        return activities;
+    }
+
+    private ConcurrentLinkedQueue<Activity> flush() {
+        ConcurrentLinkedQueue<Activity> activitiesToSend = bufferedActivities;
+        bufferedActivities = new ConcurrentLinkedQueue<>();
+        counter.set(0);
+        return activitiesToSend;
     }
 }
