@@ -6,17 +6,14 @@ import com.perimeterx.models.activities.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
-import edu.emory.mathcs.backport.java.util.Arrays;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
+
 
 /**
  * Buffered activities and sends them to PX servers when buffer is full
@@ -71,13 +68,17 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     private void handleOverflow() throws PXException {
-        lock.lock();
-        if (counter.get() >= maxBufferLength) {
-            ConcurrentLinkedQueue<Activity> activitiesToSend = flush();
-            lock.unlock();
-            sendAsync(activitiesToSend);
-        } else {    //flush already handled
-            lock.unlock();
+        boolean gainedLock = lock.tryLock();
+        if (gainedLock) {
+            ConcurrentLinkedQueue<Activity> activitiesToSend;
+            try {
+                activitiesToSend = flush();
+            } finally {
+                lock.unlock();
+            }
+            if (activitiesToSend != null) {
+                sendAsync(activitiesToSend);
+            }
         }
     }
 
