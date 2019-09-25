@@ -68,38 +68,38 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     private void handleOverflow() throws PXException {
-        boolean gainedLock = lock.tryLock();
-        if (gainedLock) {
-            ConcurrentLinkedQueue<Activity> activitiesToSend;
+        ConcurrentLinkedQueue<Activity> activitiesToSend;
+        if (lock.tryLock()) {
             try {
                 activitiesToSend = flush();
             } finally {
                 lock.unlock();
             }
-            if (activitiesToSend != null) {
-                sendAsync(activitiesToSend);
-            }
+            sendAsync(activitiesToSend);
         }
     }
 
     private void sendAsync(ConcurrentLinkedQueue<Activity> activitiesToSend) throws PXException {
-        List<Activity> activities = activitiesAsList(activitiesToSend);
-
+        if (activitiesToSend == null) {
+            return;
+        }
+        
+        List<Activity> activitiesLocal = activitiesAsList(activitiesToSend);
         try {
-            client.sendBatchActivities(activities);
+            client.sendBatchActivities(activitiesLocal);
         } catch (Exception e) {
             throw new PXException(e);
         }
 
     }
 
-    private List<Activity> activitiesAsList(ConcurrentLinkedQueue<Activity> activitiesToSend) {
-        List<Activity> activities = new ArrayList<>();
-        while (!activitiesToSend.isEmpty()) {
-            Activity activity = activitiesToSend.poll();
-            activities.add(activity);
+    private List<Activity> activitiesAsList(ConcurrentLinkedQueue<Activity> activityQueue) {
+        List<Activity> localActivityList = new ArrayList<>();
+        while (!activityQueue.isEmpty()) {
+            Activity activity = activityQueue.poll();
+            localActivityList.add(activity);
         }
-        return activities;
+        return localActivityList;
     }
 
     private ConcurrentLinkedQueue<Activity> flush() {
