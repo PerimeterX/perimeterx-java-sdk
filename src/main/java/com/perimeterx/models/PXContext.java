@@ -79,7 +79,7 @@ public class PXContext {
     private String cookieHmac;
 
     /**
-     * Score for the current request - if riskScore is above configured {@link com.perimeterx.models.configuration.PXConfiguration#blockingScore} on
+     * Score for the current request - if riskScore is above configured blockingScore on
      * PXConfiguration then the {@link com.perimeterx.models.PXContext#verified} is set to false
      */
     private int riskScore;
