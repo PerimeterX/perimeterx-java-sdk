@@ -94,8 +94,9 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     private List<Activity> activitiesAsList(ConcurrentLinkedQueue<Activity> activityQueue) {
+        final int maxElements = maxBufferLength + 10;
         List<Activity> localActivityList = new ArrayList<>();
-        while (!activityQueue.isEmpty()) {
+        for (int i = 0; i < maxElements && !activityQueue.isEmpty(); i++) {
             Activity activity = activityQueue.poll();
             localActivityList.add(activity);
         }
