@@ -60,11 +60,11 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     private void handleSendActivities(Activity activity) throws PXException {
+        bufferedActivities.add(activity);
         int count = counter.incrementAndGet();
-        if (count >= maxBufferLength) {
+        if (count > maxBufferLength) {
             handleOverflow();
         }
-        bufferedActivities.add(activity);
     }
 
     private void handleOverflow() throws PXException {
