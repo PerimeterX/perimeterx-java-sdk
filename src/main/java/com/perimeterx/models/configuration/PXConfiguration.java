@@ -54,7 +54,7 @@ public class PXConfiguration {
     private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookieOrig", "cookies"));
     @Builder.Default
     @JsonProperty("px_max_buffer_length")
-    private int maxBufferLen = 10;
+    private int maxBufferLen = 20;
     @Builder.Default
     @JsonProperty("px_sync_request_timeout_ms")
     private int apiTimeout = 1000;
