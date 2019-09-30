@@ -1,5 +1,10 @@
 # Change Log
 
+## [v6.1.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.2...HEAD) (2019-09-29)
+- Fix potential concurrency problems within activity buffer
+- Increase default activities batch size from 10 to 20
+- Update underlying libs versions
+
 ## [v6.1.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.1...HEAD) (2019-06-30)
 - Fixed vulnerability issue by upgrading FasterXML version
 
