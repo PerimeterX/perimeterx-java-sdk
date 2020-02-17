@@ -72,9 +72,9 @@ The interfaces should be set after PerimeterX instance has been initialized
  ```java
 PXConfiguration pxConf = new PXConfiguration.Builder()
     .appId("APP_ID")
-    .cookieKey("AUTH_TOKEN") // Should copy from RiskCookie section in https://console.perimeterx.com/#/app/policiesmgmt
+    .cookieKey("AUTH_TOKEN") // Should copy from RiskCookie section in https://console.perimeterx.com/botDefender/admin?page=policiesmgmt
     .moduleMode(ModuleMode.BLOCKING)
-    .authToken("AUTH_TOKEN") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/#/app/applicationsmgmt
+    .authToken("AUTH_TOKEN") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/botDefender/admin?page=applicationsmgmt
     .build();
 ```
 

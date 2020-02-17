@@ -23,10 +23,10 @@ public class PXFilter implements Filter {
         // Creating filter configuration
         PXConfiguration pxConf = new PXConfiguration.Builder()
                 .appId("") // Your PerimeterX application ID
-                .cookieKey("") // Should copy from RiskCookie section in https://console.perimeterx.com/#/app/policiesmgmt
+                .cookieKey("") // Should copy from RiskCookie section in https://console.perimeterx.com/botDefender/admin?page=policiesmgmt
                 .captchaEnabled(false) // This will trigger captcha validation flow when blocking
                 .moduleMode(ModuleMode.BLOCKING)
-                .authToken("") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/#/app/applicationsmgmt
+                .authToken("") // PX Server request auth token to be copied from Token section in https://console.perimeterx.com/botDefender/admin?page=applicationsmgmt
                 .build();
         try {
             this.enforcer = new PerimeterX(pxConf);
