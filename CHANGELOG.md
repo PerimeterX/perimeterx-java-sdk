@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.1.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.3...HEAD) (2020-02-24)
+- fix PBKDF2 iterations range check to be greater than 0
+
 ## [v6.1.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.2...HEAD) (2019-09-29)
 - Fix potential concurrency problems within activity buffer
 - Increase default activities batch size from 10 to 20
