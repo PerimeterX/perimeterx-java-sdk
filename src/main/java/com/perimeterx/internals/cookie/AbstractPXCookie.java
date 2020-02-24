@@ -98,7 +98,7 @@ public abstract class AbstractPXCookie implements PXCookie {
             throw new PXCookieDecryptionException("Salt is empty");
         }
         final int iterations = Integer.parseInt(parts[1]);
-        if (iterations < 0 || iterations > 10000) {
+        if (iterations < 1 || iterations > 5000) {
             throw new PXCookieDecryptionException("Iterations not in range");
         }
         final byte[] encrypted = Base64.decode(parts[2]);
