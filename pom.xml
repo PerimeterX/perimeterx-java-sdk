@@ -7,7 +7,7 @@
     <name>PerimeterX JAVA SDK</name>
     <groupId>com.perimeterx</groupId>
     <artifactId>perimeterx-sdk</artifactId>
-    <version>6.1.2</version>
+    <version>6.1.3</version>
 
     <packaging>jar</packaging>
     <description>PerimeterX Java SDK</description>
@@ -20,20 +20,8 @@
 
     <developers>
         <developer>
-            <name>Aviad Shikloshi</name>
-            <email>aviad@perimeterx.com</email>
-            <organization>PerimeterX</organization>
-            <organizationUrl>https://www.perimeterx.com/</organizationUrl>
-        </developer>
-        <developer>
-            <name>Nitzan Goldfeder</name>
-            <email>nitzan@perimeterx.com</email>
-            <organization>PerimeterX</organization>
-            <organizationUrl>https://www.perimeterx.com/</organizationUrl>
-        </developer>
-        <developer>
-            <name>Ilai Fallach</name>
-            <email>ilai.fallach@perimeterx.com</email>
+            <name>Noam Levi</name>
+            <email>noam.levi@perimeterx.com</email>
             <organization>PerimeterX</organization>
             <organizationUrl>https://www.perimeterx.com/</organizationUrl>
         </developer>
