@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.1.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.4...HEAD) (2020-02-29)
+- Log exception information on deserialize by cookie selector 
+
 ## [v6.1.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.3...HEAD) (2020-02-24)
 - fix PBKDF2 iterations range check to be greater than 0
 
