@@ -97,11 +97,11 @@ public class CookieSelector {
         } else {
             try {
                 if (!selectedCookie.deserialize()) {
-                    logger.debug("Cookie decryption failed, value: " + cookie);
+                    logger.debug("Cookie decryption failed, value: {}", cookie);
                     s2SCallReason = S2SCallReason.INVALID_DECRYPTION;
                 }
             } catch (Exception e) {
-                logger.debug("Cookie decryption failed, value: " + cookie);
+                logger.debug("Cookie decryption failed with exception, value: {}", cookie, e);
                 s2SCallReason = S2SCallReason.INVALID_DECRYPTION;
             }
         }
@@ -116,11 +116,11 @@ public class CookieSelector {
         } else {
             try {
                 if (!selectedCookie.deserialize()) {
-                    logger.debug("Original token decryption failed, value: " + selectedCookie.getPxCookie());
+                    logger.debug("Original token decryption failed, value: {}", selectedCookie.getPxCookie());
                     error = "decryption_failed";
                 }
             } catch (PXCookieDecryptionException e) {
-                logger.debug("Original token decryption failed, value: " + selectedCookie.getPxCookie());
+                logger.debug("Original token decryption failed with exception, value: {}", selectedCookie.getPxCookie(), e);
                 error = "decryption_failed";
             }
         }
