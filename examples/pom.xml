@@ -15,12 +15,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-            <version>1.4.0.RELEASE</version>
+            <version>1.5.22.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>com.perimeterx</groupId>
             <artifactId>perimeterx-sdk</artifactId>
-            <version>1.0.8-SNAPSHOT</version>
+            <version>6.1.2</version>
         </dependency>
     </dependencies>
 
