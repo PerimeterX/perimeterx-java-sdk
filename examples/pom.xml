@@ -20,7 +20,7 @@
         <dependency>
             <groupId>com.perimeterx</groupId>
             <artifactId>perimeterx-sdk</artifactId>
-            <version>6.1.2</version>
+            <version>6.1.4</version>
         </dependency>
     </dependencies>
 
