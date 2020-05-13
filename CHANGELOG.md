@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.1.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.5...HEAD) (2020-05-13) 
+- Fixed 3rd party libs vulnerability issues 
+
 ## [v6.1.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.4...HEAD) (2020-03-04)
 - Log exception information on deserialize by cookie selector 
 - Fixed vulnerability issue by upgrading FasterXML version 

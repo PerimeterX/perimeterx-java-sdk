@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v6.1.1](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.1.1%7Cjar)
+> Latest stable version: [v6.1.5](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.1.5%7Cjar)
 
 ## Table of Contents
 
@@ -30,8 +30,7 @@ Use `jdk 1.7` or higher.
 
 ### Unlimited Strength Jurisdiction Policy:
 
-Make sure your JDK suppor
-ts unlimited key length.
+Make sure your JDK supports unlimited key length.
 
 If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors on startup, follow the instructions below:
 
