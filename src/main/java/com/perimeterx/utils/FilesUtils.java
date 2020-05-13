@@ -1,7 +1,7 @@
 package com.perimeterx.utils;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.perimeterx.models.configuration.PXConfiguration;
 
 import java.io.FileNotFoundException;
