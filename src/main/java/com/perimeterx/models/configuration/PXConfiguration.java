@@ -76,7 +76,11 @@ public class PXConfiguration {
     private String jsRef;
     @Builder.Default
     @JsonProperty("px_sensitive_routes")
+    @Deprecated
     private Set<String> sensitiveRoutes = new HashSet<>();
+    @Builder.Default
+    @JsonProperty("px_sensitive_routes_regex")
+    private Set<String> sensitiveRoutesRegex = new HashSet<>();
     @Builder.Default
     @JsonProperty("px_ip_headers")
     private Set<String> ipHeaders = new HashSet<>();
@@ -148,7 +152,7 @@ public class PXConfiguration {
     public PXConfiguration getTelemetryConfig() {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled,
                 blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout, connectionTimeout, sendPageActivities,
-                signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, ipHeaders, checksum,
+                signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, sensitiveRoutesRegex, ipHeaders, checksum,
                 remoteConfigurationEnabled, moduleMode, remoteConfigurationInterval, remoteConfigurationDelay,
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
