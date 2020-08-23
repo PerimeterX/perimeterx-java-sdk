@@ -53,7 +53,7 @@ public class CookieV3Test {
 
     @Test
     public void testCookieV3Pass() {
-        String pxCookie = "_px3=5192aabc3a9134f771ed8e464817a419f3df6fb6c0aaa69f998cbb1a2224f4d3:R1dKoNUcq1e4W+eoC8dYg23pCtVo2wXrOYbybHmYC9FCyo7aEMt+txk1QJqgltOCjcL54g8tkpa8wrlIMLt12w==:1000:v515J1I1muBk4vN1M5IIpA0LhTTpj5ObGk6s/PzOIaQb03Mvq/LewcPsy85aZKsyDHDM/2BPzut7/9hhQCIkiQ==";
+        String pxCookie = "_px3=2019a92cbfd71f4711e69c0365cc901e4344f842972582b1a52ff8548a2cf05d:m9ON6t71FV8=:1000:X413RgesdhajGQcg3sKOXmDe9OtDLcuus32yUgeXSRCC2Lwx0ecg0fEw7jlS8DzVrfZREhObOmM/l54wTak7uwD0iU9zDqmrmptG+185YKWcbZrpzQAlxoKLcXHOqGuVGjHoa5ScRBUfhpfPH7KelLY5dIvLp6pRz2JeSM/roRQMv0fRlp2xYZMj0UKUFOH1";
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -125,7 +125,7 @@ public class CookieV3Test {
 
     @Test
     public void testCookieV3PassAndHighScore() {
-        String pxCookie = "_px3=5192aabc3a9134f771ed8e464817a419f3df6fb6c0aaa69f998cbb1a2224f4d3:R1dKoNUcq1e4W+eoC8dYg23pCtVo2wXrOYbybHmYC9FCyo7aEMt+txk1QJqgltOCjcL54g8tkpa8wrlIMLt12w==:1000:v515J1I1muBk4vN1M5IIpA0LhTTpj5ObGk6s/PzOIaQb03Mvq/LewcPsy85aZKsyDHDM/2BPzut7/9hhQCIkiQ==";
+        String pxCookie = "_px3=69777b776fd822edd7857834ca03b09fa5453c260ba603d7b35e2b840480b47b:jE6jQAndx80=:1000:8Feb3FhgDelIXTRjHL2gyOAy+PCyDtKJ3bqhhAVfo8Sjdw2swLosAd6vSqXH/PCI4DAJezgZSf6AVAYbzU+JW/9v6gy9+uxjpvkYPY3oLvTeJp+f3FaXzUV9qYE4HZWTzCg1EoVK9D8TKw1g7Rk1C38kzt2X8DMyvSRLimr349Vw7xg3y6Vf2IspMVVy9c7f";
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);

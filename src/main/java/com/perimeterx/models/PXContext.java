@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -236,7 +238,9 @@ public class PXContext {
             this.httpMethod = StringUtils.EMPTY;
         }
 
-        this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri);
+        this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
+                || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri);
+
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
@@ -379,6 +383,20 @@ public class PXContext {
     private boolean checkSensitiveRoute(Set<String> sensitiveRoutes, String uri) {
         for (String sensitiveRoutePrefix : sensitiveRoutes) {
             if (uri.startsWith(sensitiveRoutePrefix)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkSensitiveRouteRegex(Set<String> sensitiveRoutes, String uri) {
+        Pattern pattern;
+        Matcher matcher;
+
+        for (String sensitiveRouteRegex : sensitiveRoutes) {
+            pattern = Pattern.compile(sensitiveRouteRegex);
+            matcher = pattern.matcher(uri);
+            if (matcher.find()) {
                 return true;
             }
         }
