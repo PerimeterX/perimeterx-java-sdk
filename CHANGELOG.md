@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.2.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.1...HEAD) (2020-10-08) 
+- fixed CLIENT_HOST configuration field
+
 ## [v6.2.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.0...HEAD) (2020-08-23) 
 - Support regex values for sensitive-routes configuration 
 
