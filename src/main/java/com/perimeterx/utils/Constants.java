@@ -36,7 +36,7 @@ public final class Constants {
 
     public static final String SERVER_URL = "https://sapi-%s.perimeterx.net";
     public static final String COLLECTOR_URL = "https://collector-%s.perimeterx.net";
-    public static final String CLIENT_HOST = "https://client.perimeterx.net";
+    public static final String CLIENT_HOST = "client.perimeterx.net";
     public static final String CAPTCHA_HOST = "captcha.px-cdn.net";
     public static final String COOKIE_V1_KEY = "_px";
     public static final String COOKIE_V3_KEY = "_px3";
