@@ -79,7 +79,9 @@ public class DefaultReverseProxy implements ReverseProxy {
             return true;
         }
 
-        RemoteServer remoteServer = new RemoteServer(pxConfiguration.getClientHost(), clientPath, req, res, ipProvider, proxyClient, null, null, pxConfiguration);
+        String url = "https://" + pxConfiguration.getClientHost();
+
+        RemoteServer remoteServer = new RemoteServer(url, clientPath, req, res, ipProvider, proxyClient, null, null, pxConfiguration);
         HttpRequest proxyRequest = remoteServer.prepareProxyRequest();
         remoteServer.handleResponse(proxyRequest, false);
         return true;
