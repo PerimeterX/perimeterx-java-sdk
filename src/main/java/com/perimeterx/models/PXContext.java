@@ -21,6 +21,7 @@ import com.perimeterx.utils.*;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -224,7 +225,7 @@ public class PXContext {
         this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
-        this.fullUrl = request.getRequestURL().toString();
+        this.fullUrl = extractURL(request); //full URL with query string
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
         this.madeS2SApiCall = false;
@@ -244,6 +245,14 @@ public class PXContext {
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
+    }
+
+    private String extractURL(ServletRequest request) {
+        StringBuffer requestURL = ((HttpServletRequest) request).getRequestURL();
+        if (((HttpServletRequest) request).getQueryString() != null) {
+            requestURL.append("?").append(((HttpServletRequest) request).getQueryString());
+        }
+        return requestURL.toString();
     }
 
     private void parseCookies(HttpServletRequest request, boolean isMobileToken) {

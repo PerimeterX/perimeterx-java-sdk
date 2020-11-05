@@ -2,6 +2,7 @@
 
 ## [v6.2.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.3...HEAD) (2020-11-04) 
 - fixed CLIENT_HOST scheme
+- add query params to URL field
 
 ## [v6.2.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.2...HEAD) (2020-10-09) 
 - new version to update files on Maven Central
