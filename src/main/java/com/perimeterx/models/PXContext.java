@@ -232,16 +232,12 @@ public class PXContext {
         this.riskRtt = 0;
 
         this.httpMethod = request.getMethod();
+
         String protocolDetails[] = request.getProtocol().split("/");
-        if (protocolDetails.length > 1) {
-            this.httpVersion = protocolDetails[1];
-        } else {
-            this.httpMethod = StringUtils.EMPTY;
-        }
+        this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
 
         this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
                 || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri);
-
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);

@@ -1,24 +1,27 @@
 # Change Log
 
-## [v6.2.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.3...HEAD) (2020-11-04) 
+## [v6.2.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.4...HEAD) (2020-12-06)
+- fix http_method bug when there is no http_version
+
+## [v6.2.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.3...HEAD) (2020-11-04)
 - fixed CLIENT_HOST scheme
 - add query params to URL field
 
-## [v6.2.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.2...HEAD) (2020-10-09) 
+## [v6.2.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.2...HEAD) (2020-10-09)
 - new version to update files on Maven Central
 
-## [v6.2.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.1...HEAD) (2020-10-08) 
+## [v6.2.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.1...HEAD) (2020-10-08)
 - fixed CLIENT_HOST configuration field
 
-## [v6.2.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.0...HEAD) (2020-08-23) 
-- Support regex values for sensitive-routes configuration 
+## [v6.2.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.0...HEAD) (2020-08-23)
+- Support regex values for sensitive-routes configuration
 
-## [v6.1.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.5...HEAD) (2020-05-13) 
-- Fixed 3rd party libs vulnerability issues 
+## [v6.1.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.5...HEAD) (2020-05-13)
+- Fixed 3rd party libs vulnerability issues
 
 ## [v6.1.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.4...HEAD) (2020-03-04)
-- Log exception information on deserialize by cookie selector 
-- Fixed vulnerability issue by upgrading FasterXML version 
+- Log exception information on deserialize by cookie selector
+- Fixed vulnerability issue by upgrading FasterXML version
 
 ## [v6.1.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.1.3...HEAD) (2020-02-24)
 - fix PBKDF2 iterations range check to be greater than 0
@@ -33,7 +36,7 @@
 
 ## [v6.1.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2019-04-08)
 - Support advanced blocking response - response can be json structured instead of html
-- Ignoring static files (json, imgs ...) 
+- Ignoring static files (json, imgs ...)
 - Support for testing blocking flow in monitor mode
 - Bypass Bypass
 - Added support to load config from a file
@@ -81,7 +84,7 @@ activity handler.
 - Reordered the cookies such that the v3 cookie will be selected before v1
 
 ## [v5.0.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v1.0.17...HEAD) (2018-08-28)
-- Added handling of mobile tokens: x-px-tokens, x-px-original-tokens 
+- Added handling of mobile tokens: x-px-tokens, x-px-original-tokens
 - Now using CaptchaV2 instead of a third party captcha provider
 - Added proxy support
 
