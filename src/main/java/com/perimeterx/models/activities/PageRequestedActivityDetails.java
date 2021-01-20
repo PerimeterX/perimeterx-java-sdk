@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.PassReason;
+import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.utils.Constants;
 
 /**
@@ -22,6 +23,14 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     private String riskCookie;
     @JsonProperty("pass_reason")
     private PassReason passReason;
+    @JsonProperty("s2s_error_reason")
+    private S2SErrorReason s2SErrorReason;
+    @JsonProperty("s2s_error_message")
+    private String s2sErrorMessage;
+    @JsonProperty("s2s_error_http_status")
+    private int s2sErrorHttpStatus;
+    @JsonProperty("s2s_error_http_message")
+    private String s2sErrorHttpMessage;
     @JsonProperty("risk_rtt")
     private long riskRtt;
     @JsonProperty("module_version")
@@ -38,6 +47,10 @@ public class PageRequestedActivityDetails implements ActivityDetails {
         this.httpVersion = context.getHttpVersion();
         this.riskCookie = context.getRiskCookie();
         this.passReason = context.getPassReason();
+        this.s2SErrorReason = context.getS2sErrorReason();
+        this.s2sErrorMessage = context.getS2sErrorMessage();
+        this.s2sErrorHttpStatus = context.getS2sErrorHttpStatus();
+        this.s2sErrorHttpMessage = context.getS2sErrorHttpMessage();
         this.riskRtt = context.getRiskRtt();
         this.moduleVersion = Constants.SDK_VERSION;
         this.clientUuid = context.getUuid();

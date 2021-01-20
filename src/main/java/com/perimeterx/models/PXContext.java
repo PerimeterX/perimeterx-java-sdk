@@ -13,10 +13,7 @@ import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.models.risk.BlockReason;
-import com.perimeterx.models.risk.CustomParameters;
-import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.models.risk.VidSource;
+import com.perimeterx.models.risk.*;
 import com.perimeterx.utils.*;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -111,6 +108,28 @@ public class PXContext {
      * @see com.perimeterx.models.risk.PassReason
      */
     private PassReason passReason;
+
+    /**
+     * Reason for s2s_error if occurred
+     *
+     * @see com.perimeterx.models.risk.S2SErrorReason
+     */
+    private S2SErrorReason s2sErrorReason;
+
+    /**
+     * Message with detail if s2s_error occurred
+     */
+    private String s2sErrorMessage;
+
+    /**
+     * HTTP status code if s2s_error occurred
+     */
+    private int s2sErrorHttpStatus;
+
+    /**
+     * HTTP message if s2s_error occurred
+     */
+    private String s2sErrorHttpMessage;
 
     /**
      * Risk api timing
