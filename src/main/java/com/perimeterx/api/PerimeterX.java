@@ -166,7 +166,7 @@ public class PerimeterX {
             logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
-                context.setPassReason(PassReason.ERROR);
+                context.setPassReason(PassReason.S2S_ERROR);
                 activityHandler.handlePageRequestedActivity(context);
                 context.setVerified(true);
             }

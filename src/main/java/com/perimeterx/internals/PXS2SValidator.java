@@ -54,7 +54,7 @@ public class PXS2SValidator implements PXValidator {
             if (response == null) {
                 // Error from PX prepareProxyRequest
                 pxContext.setRiskRtt(rtt);
-                pxContext.setPassReason(PassReason.ERROR);
+                pxContext.setPassReason(PassReason.S2S_ERROR);
                 return true;
             }
             pxContext.setResponsePxhd(response.getPxhd());
@@ -82,7 +82,7 @@ public class PXS2SValidator implements PXValidator {
             return true;
         } catch (Exception e) {
             pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
-            pxContext.setPassReason(PassReason.ERROR);
+            pxContext.setPassReason(PassReason.S2S_ERROR);
             throw new PXException(e);
         } finally {
             pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);

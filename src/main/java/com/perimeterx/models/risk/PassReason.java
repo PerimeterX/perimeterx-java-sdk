@@ -12,7 +12,7 @@ public enum PassReason {
     CAPTCHA_TIMEOUT("captcha_timeout"),
     S2S("s2s"),
     S2S_TIMEOUT("s2s_timeout"),
-    ERROR("error");
+    S2S_ERROR("s2s_error");
 
     public String value;
 
