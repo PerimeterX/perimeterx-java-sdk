@@ -247,6 +247,7 @@ public class PXContext {
         this.fullUrl = extractURL(request); //full URL with query string
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
+        this.s2sErrorReason = S2SErrorReason.NO_ERROR;
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
 
@@ -437,5 +438,12 @@ public class PXContext {
 
     public boolean isAdvancedBlockingResponse() {
         return pxConfiguration.isAdvancedBlockingResponse();
+    }
+
+    public void setS2SErrorInfo(S2SErrorReason reason, String message, int httpStatusCode, String httpMessage) {
+        this.s2sErrorReason = reason;
+        this.s2sErrorMessage = message;
+        this.s2sErrorHttpStatus = httpStatusCode;
+        this.s2sErrorHttpMessage = httpMessage;
     }
 }
