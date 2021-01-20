@@ -5,7 +5,6 @@ import com.perimeterx.internals.cookie.DataEnrichmentCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
@@ -44,9 +43,7 @@ public class PXS2SValidator implements PXValidator {
         long rtt;
 
         try {
-            // Build risk request
-            RiskRequest request = RiskRequest.fromContext(pxContext);
-            response = pxClient.riskApiCall(request);
+            response = pxClient.riskApiCall(pxContext);
             rtt = System.currentTimeMillis() - startRiskRtt;
             logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null) ? "" : response.getScore(), rtt);
 

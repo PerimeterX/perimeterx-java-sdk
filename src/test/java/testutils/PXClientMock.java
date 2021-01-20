@@ -3,6 +3,7 @@ package testutils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.perimeterx.http.PXClient;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.ModuleMode;
@@ -41,7 +42,7 @@ public class PXClientMock implements PXClient {
     }
 
     @Override
-    public RiskResponse riskApiCall(RiskRequest riskRequest) {
+    public RiskResponse riskApiCall(PXContext pxContext) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode dataEnrichment = mapper.createObjectNode();
         dataEnrichment.put("cookieMonster", "ilai");
