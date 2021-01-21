@@ -120,6 +120,8 @@ public class PXS2SValidator implements PXValidator {
             return response.getMessage();
         }
         int CURRENT_FUNCTION_INDEX = 1;
-        return String.format("Error: %s", Thread.currentThread().getStackTrace()[CURRENT_FUNCTION_INDEX].toString());
+        return String.format("Error: %s - Response is %s",
+                Thread.currentThread().getStackTrace()[CURRENT_FUNCTION_INDEX].toString(),
+                response == null ? "null" : response.toString());
     }
 }
