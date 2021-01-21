@@ -21,6 +21,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -37,6 +38,7 @@ import org.apache.http.nio.reactor.IOReactorExceptionHandler;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -141,18 +143,23 @@ public class PXHttpClient implements PXClient {
         }
     }
 
-    private CloseableHttpResponse executeRiskAPICall(String requestBody, PXContext pxContext) {
+    private CloseableHttpResponse executeRiskAPICall(String requestBody, PXContext pxContext) throws ConnectTimeoutException {
         HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
         post.setEntity(new StringEntity(requestBody, UTF_8));
         post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
 
         try {
             return httpClient.execute(post);
-        } catch (Exception e) {
+
+        } catch (ConnectTimeoutException e) {
+            throw e;
+        } catch (SocketTimeoutException e) {
+            throw new ConnectTimeoutException(e.getMessage());
+        }  catch (IOException e) {
             pxContext.setS2SErrorInfo(S2SErrorReason.UNABLE_TO_SEND_REQUEST, e.getMessage(), -1, null);
-            logger.debug("Error {}: {}", e.getMessage(), e.getStackTrace());
-            return null;
+            logger.error("Error {}: {}", e.getMessage(), e.getStackTrace());
         }
+        return null;
     }
 
     private RiskResponse validateRiskAPIResponse(CloseableHttpResponse httpResponse, PXContext pxContext) {
