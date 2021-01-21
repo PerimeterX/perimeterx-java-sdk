@@ -37,7 +37,7 @@ public class PXS2SValidator implements PXValidator {
      * @return risk response from PX servers
      * @throws PXException will be thrown when an error occurs
      */
-    public boolean verify(PXContext pxContext) throws PXException {
+    public boolean verify(PXContext pxContext) {
         logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
         RiskResponse response = null;
         long startRiskRtt = System.currentTimeMillis();
@@ -72,8 +72,8 @@ public class PXS2SValidator implements PXValidator {
             return true;
         } catch (Exception e) {
             handleS2SError(pxContext, System.currentTimeMillis() - startRiskRtt, response, e);
-            logger.debug("Error {}: {}", e.getMessage(), e.getStackTrace());
-            throw new PXException(e);
+            logger.error("Error {}: {}", e.toString(), e.getStackTrace());
+            return true;
         } finally {
             pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
         }
@@ -115,7 +115,7 @@ public class PXS2SValidator implements PXValidator {
 
     private String getS2SErrorMessage(RiskResponse response, Exception exception) {
         if (exception != null) {
-            return exception.getMessage();
+            return exception.toString();
         } else if (response != null && isResponseInvalid(response)) {
             return response.getMessage();
         }

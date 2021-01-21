@@ -174,7 +174,7 @@ public class PerimeterX {
         return context;
     }
 
-    private void handleCookies(PXContext context) throws PXException {
+    private void handleCookies(PXContext context) {
         if (cookieValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
