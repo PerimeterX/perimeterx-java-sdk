@@ -48,6 +48,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
+import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.utils.PXLogger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -167,6 +168,9 @@ public class PerimeterX {
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
                 context.setPassReason(PassReason.S2S_ERROR);
+                if (context.getS2sErrorReason() == S2SErrorReason.NO_ERROR) {
+                    context.setS2SErrorInfo(S2SErrorReason.UNKNOWN_ERROR, e.toString(), -1, null);
+                }
                 activityHandler.handlePageRequestedActivity(context);
                 context.setVerified(true);
             }
