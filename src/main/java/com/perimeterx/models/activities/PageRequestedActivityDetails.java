@@ -47,10 +47,10 @@ public class PageRequestedActivityDetails implements ActivityDetails {
         this.httpVersion = context.getHttpVersion();
         this.riskCookie = context.getRiskCookie();
         this.passReason = context.getPassReason();
-        this.s2SErrorReason = context.getS2sErrorReason();
-        this.s2sErrorMessage = context.getS2sErrorMessage();
-        this.s2sErrorHttpStatus = context.getS2sErrorHttpStatus();
-        this.s2sErrorHttpMessage = context.getS2sErrorHttpMessage();
+        this.s2SErrorReason = context.getS2sErrorReasonInfo().getReason();
+        this.s2sErrorMessage = context.getS2sErrorReasonInfo().getMessage();
+        this.s2sErrorHttpStatus = context.getS2sErrorReasonInfo().getHttpStatus();
+        this.s2sErrorHttpMessage = context.getS2sErrorReasonInfo().getHttpMessage();
         this.riskRtt = context.getRiskRtt();
         this.moduleVersion = Constants.SDK_VERSION;
         this.clientUuid = context.getUuid();

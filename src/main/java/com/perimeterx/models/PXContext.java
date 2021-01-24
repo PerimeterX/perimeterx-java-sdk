@@ -112,24 +112,9 @@ public class PXContext {
     /**
      * Reason for s2s_error if occurred
      *
-     * @see com.perimeterx.models.risk.S2SErrorReason
+     * @see com.perimeterx.models.risk.S2SErrorReasonInfo
      */
-    private S2SErrorReason s2sErrorReason;
-
-    /**
-     * Message with detail if s2s_error occurred
-     */
-    private String s2sErrorMessage;
-
-    /**
-     * HTTP status code if s2s_error occurred
-     */
-    private int s2sErrorHttpStatus;
-
-    /**
-     * HTTP message if s2s_error occurred
-     */
-    private String s2sErrorHttpMessage;
+    private S2SErrorReasonInfo s2sErrorReasonInfo;
 
     /**
      * Risk api timing
@@ -247,7 +232,7 @@ public class PXContext {
         this.fullUrl = extractURL(request); //full URL with query string
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
-        this.s2sErrorReason = S2SErrorReason.NO_ERROR;
+        this.s2sErrorReasonInfo = new S2SErrorReasonInfo();
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
 
@@ -438,12 +423,5 @@ public class PXContext {
 
     public boolean isAdvancedBlockingResponse() {
         return pxConfiguration.isAdvancedBlockingResponse();
-    }
-
-    public void setS2SErrorInfo(S2SErrorReason reason, String message, int httpStatusCode, String httpMessage) {
-        this.s2sErrorReason = reason;
-        this.s2sErrorMessage = message;
-        this.s2sErrorHttpStatus = httpStatusCode;
-        this.s2sErrorHttpMessage = httpMessage;
     }
 }

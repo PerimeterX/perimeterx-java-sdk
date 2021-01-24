@@ -11,7 +11,7 @@ public enum S2SErrorReason {
     REQUEST_FAILED_ON_SERVER("request_failed_on_server"),
     UNKNOWN_ERROR("unknown_error");
 
-    public String value;
+    private String value;
 
     S2SErrorReason(String value) {
         this.value = value;
@@ -21,5 +21,4 @@ public enum S2SErrorReason {
     public String getValue() {
         return this.value;
     }
-
 }

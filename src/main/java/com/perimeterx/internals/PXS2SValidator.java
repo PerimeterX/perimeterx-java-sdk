@@ -9,6 +9,7 @@ import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SErrorReason;
+import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
@@ -48,7 +49,7 @@ public class PXS2SValidator implements PXValidator {
             rtt = System.currentTimeMillis() - startRiskRtt;
             logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null) ? "" : response.getScore(), rtt);
 
-            if (isResponseInvalid(response)) {
+            if (!isResponseValid(response)) {
                 handleS2SError(pxContext, rtt, response, null);
                 return true;
             }
@@ -89,25 +90,25 @@ public class PXS2SValidator implements PXValidator {
         pxContext.setPxdeVerified(dataEnrichment.isValid());
     }
 
-    private boolean isResponseInvalid(RiskResponse response) {
-        return response == null || response.getStatus() != 0;
+    private boolean isResponseValid(RiskResponse response) {
+        return response != null && response.getStatus() == 0;
     }
 
     private void handleS2SError(PXContext pxContext, long rtt, RiskResponse response, Exception exception) {
         pxContext.setRiskRtt(rtt);
         pxContext.setPassReason(PassReason.S2S_ERROR);
 
-        if (pxContext.getS2sErrorReason() == S2SErrorReason.NO_ERROR) {
+        if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
             S2SErrorReason errorReason = getS2SErrorReason(pxContext, response);
             String errorMessage = getS2SErrorMessage(response, exception);
-            pxContext.setS2SErrorInfo(errorReason, errorMessage, pxContext.getS2sErrorHttpStatus(), pxContext.getS2sErrorHttpMessage());
+            pxContext.setS2sErrorReasonInfo(new S2SErrorReasonInfo(errorReason, errorMessage));
         }
     }
 
     private S2SErrorReason getS2SErrorReason(PXContext pxContext, RiskResponse response) {
         if (!pxContext.isMadeS2SApiCall()) {
             return S2SErrorReason.UNABLE_TO_SEND_REQUEST;
-        } else if (response != null && isResponseInvalid(response)) {
+        } else if (response != null && !isResponseValid(response)) {
             return S2SErrorReason.REQUEST_FAILED_ON_SERVER;
         }
         return S2SErrorReason.UNKNOWN_ERROR;
@@ -116,7 +117,7 @@ public class PXS2SValidator implements PXValidator {
     private String getS2SErrorMessage(RiskResponse response, Exception exception) {
         if (exception != null) {
             return exception.toString();
-        } else if (response != null && isResponseInvalid(response)) {
+        } else if (response != null && !isResponseValid(response)) {
             return response.getMessage();
         }
         int CURRENT_FUNCTION_INDEX = 1;

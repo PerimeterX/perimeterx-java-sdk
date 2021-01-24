@@ -1,5 +1,6 @@
 package com.perimeterx.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
@@ -10,6 +11,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.risk.S2SErrorReason;
+import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PXCommonUtils;
@@ -136,9 +138,8 @@ public class PXHttpClient implements PXClient {
             String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
             logger.debug("Risk API Request: {}", requestBody);
             return requestBody;
-        } catch (Exception e) {
-            pxContext.setS2SErrorInfo(S2SErrorReason.UNABLE_TO_SEND_REQUEST, e.toString(), -1, null);
-            logger.debug("Error {}: {}", e.toString(), e.getStackTrace());
+        } catch (JsonProcessingException e) {
+            handleException(pxContext, e, S2SErrorReason.UNABLE_TO_SEND_REQUEST, null);
             return null;
         }
     }
@@ -156,8 +157,7 @@ public class PXHttpClient implements PXClient {
         } catch (SocketTimeoutException e) {
             throw new ConnectTimeoutException(e.getMessage());
         }  catch (IOException e) {
-            pxContext.setS2SErrorInfo(S2SErrorReason.UNABLE_TO_SEND_REQUEST, e.toString(), -1, null);
-            logger.error("Error {}: {}", e.toString(), e.getStackTrace());
+            handleException(pxContext, e, S2SErrorReason.UNABLE_TO_SEND_REQUEST, null);
         }
         return null;
     }
@@ -178,8 +178,7 @@ public class PXHttpClient implements PXClient {
             logger.debug("Risk API Response: {}", s);
             return JsonUtils.riskResponseReader.readValue(s);
         } catch (Exception e) {
-            pxContext.setS2SErrorInfo(S2SErrorReason.INVALID_RESPONSE, e.toString(), httpStatus.getStatusCode(), httpStatus.getReasonPhrase());
-            logger.debug("Error {}: {}", e.toString(), e.getStackTrace());
+            handleException(pxContext, e, S2SErrorReason.INVALID_RESPONSE, httpResponse.getStatusLine());
         }
         return null;
     }
@@ -195,8 +194,15 @@ public class PXHttpClient implements PXClient {
         } else if (statusCode >= 400) {
             errorReason = S2SErrorReason.BAD_REQUEST;
         }
+        String message = String.format("Risk API returned status %d: %s", statusCode, statusMessage);
+        pxContext.setS2sErrorReasonInfo(new S2SErrorReasonInfo(errorReason, message, statusCode, statusMessage));
+    }
 
-        pxContext.setS2SErrorInfo(errorReason, String.format("Risk API returned status %d: %s", statusCode, statusMessage), statusCode, statusMessage);
+    private void handleException(PXContext pxContext, Exception e, S2SErrorReason errorReason, StatusLine httpStatusLine) {
+        S2SErrorReasonInfo errorReasonInfo = httpStatusLine == null ? new S2SErrorReasonInfo(errorReason, e.toString()) :
+                new S2SErrorReasonInfo(errorReason, e.toString(), httpStatusLine.getStatusCode(), httpStatusLine.getReasonPhrase());
+        pxContext.setS2sErrorReasonInfo(errorReasonInfo);
+        logger.error("Error {}: {}", e.toString(), e.getStackTrace());
     }
 
     @Override
