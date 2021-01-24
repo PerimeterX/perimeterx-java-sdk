@@ -54,7 +54,7 @@ public class PXS2SValidator implements PXValidator {
                 return true;
             }
 
-            updateContext(pxContext, response);
+            updateContextFromResponse(pxContext, response);
 
             if (pxContext.getRiskScore() < pxConfiguration.getBlockingScore()) {
                 pxContext.setPassReason(PassReason.S2S);
@@ -80,7 +80,7 @@ public class PXS2SValidator implements PXValidator {
         }
     }
 
-    private void updateContext(PXContext pxContext, RiskResponse response) {
+    private void updateContextFromResponse(PXContext pxContext, RiskResponse response) {
         pxContext.setResponsePxhd(response.getPxhd());
         pxContext.setRiskScore(response.getScore());
         pxContext.setUuid(response.getUuid());
