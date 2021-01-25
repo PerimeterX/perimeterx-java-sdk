@@ -1,5 +1,6 @@
 package com.perimeterx.http;
 
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
@@ -25,7 +26,7 @@ public interface PXClient {
      * @throws PXException
      * @throws IOException
      */
-    RiskResponse riskApiCall(RiskRequest riskRequest) throws PXException, IOException;
+    RiskResponse riskApiCall(PXContext pxContext) throws IOException;
 
     /**
      * Calling PX Server to report Activity

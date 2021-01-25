@@ -1,6 +1,8 @@
 package com.perimeterx.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.perimeterx.http.async.PxClientAsyncHandler;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -8,6 +10,8 @@ import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
+import com.perimeterx.models.risk.S2SErrorReason;
+import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PXCommonUtils;
@@ -15,9 +19,11 @@ import com.perimeterx.utils.PXLogger;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -34,6 +40,7 @@ import org.apache.http.nio.reactor.IOReactorExceptionHandler;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -103,27 +110,99 @@ public class PXHttpClient implements PXClient {
     }
 
     @Override
-    public RiskResponse riskApiCall(RiskRequest riskRequest) throws IOException {
+    public RiskResponse riskApiCall(PXContext pxContext) throws IOException {
         CloseableHttpResponse httpResponse = null;
         try {
-            String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
-            logger.debug("Risk API Request: {}", requestBody);
-            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
-            post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
-
-            httpResponse = httpClient.execute(post);
-            String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
-            logger.debug("Risk API Response: {}", s);
-            if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                return JsonUtils.riskResponseReader.readValue(s);
+            String requestBody = createRequestBody(pxContext);
+            if (requestBody == null) {
+                return null;
             }
-            return null;
+
+            httpResponse = executeRiskAPICall(requestBody, pxContext);
+            if (httpResponse == null) {
+                return null;
+            }
+
+            pxContext.setMadeS2SApiCall(true);
+            return validateRiskAPIResponse(httpResponse, pxContext);
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();
             }
         }
+    }
+
+    private String createRequestBody(PXContext pxContext) {
+        try {
+            RiskRequest riskRequest = RiskRequest.fromContext(pxContext);
+            String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
+            logger.debug("Risk API Request: {}", requestBody);
+            return requestBody;
+        } catch (JsonProcessingException e) {
+            handleException(pxContext, e, S2SErrorReason.UNABLE_TO_SEND_REQUEST, null);
+            return null;
+        }
+    }
+
+    private CloseableHttpResponse executeRiskAPICall(String requestBody, PXContext pxContext) throws ConnectTimeoutException {
+        HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
+        post.setEntity(new StringEntity(requestBody, UTF_8));
+        post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
+
+        try {
+            return httpClient.execute(post);
+
+        } catch (ConnectTimeoutException e) {
+            throw e;
+        } catch (SocketTimeoutException e) {
+            throw new ConnectTimeoutException(e.getMessage());
+        }  catch (IOException e) {
+            handleException(pxContext, e, S2SErrorReason.UNABLE_TO_SEND_REQUEST, null);
+        }
+        return null;
+    }
+
+    private RiskResponse validateRiskAPIResponse(CloseableHttpResponse httpResponse, PXContext pxContext) {
+        StatusLine httpStatus = httpResponse.getStatusLine();
+
+        if (httpStatus.getStatusCode() != 200) {
+            handleUnexpectedHttpStatusError(pxContext, httpStatus);
+            return null;
+        }
+
+        try {
+            String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
+            if (s.equals("null")) {
+                throw new PXException("Risk API returned null JSON");
+            }
+            logger.debug("Risk API Response: {}", s);
+            return JsonUtils.riskResponseReader.readValue(s);
+        } catch (Exception e) {
+            handleException(pxContext, e, S2SErrorReason.INVALID_RESPONSE, httpResponse.getStatusLine());
+        }
+        return null;
+    }
+
+    private void handleUnexpectedHttpStatusError(PXContext pxContext, StatusLine httpStatus) {
+        S2SErrorReason errorReason = S2SErrorReason.UNKNOWN_ERROR;
+
+        int statusCode = httpStatus.getStatusCode();
+        String statusMessage = httpStatus.getReasonPhrase();
+
+        if (statusCode >= 500) {
+            errorReason = S2SErrorReason.SERVER_ERROR;
+        } else if (statusCode >= 400) {
+            errorReason = S2SErrorReason.BAD_REQUEST;
+        }
+        String message = String.format("Risk API returned status %d: %s", statusCode, statusMessage);
+        pxContext.setS2sErrorReasonInfo(new S2SErrorReasonInfo(errorReason, message, statusCode, statusMessage));
+    }
+
+    private void handleException(PXContext pxContext, Exception e, S2SErrorReason errorReason, StatusLine httpStatusLine) {
+        S2SErrorReasonInfo errorReasonInfo = httpStatusLine == null ? new S2SErrorReasonInfo(errorReason, e.toString()) :
+                new S2SErrorReasonInfo(errorReason, e.toString(), httpStatusLine.getStatusCode(), httpStatusLine.getReasonPhrase());
+        pxContext.setS2sErrorReasonInfo(errorReasonInfo);
+        logger.error("Error {}: {}", e.toString(), e.getStackTrace());
     }
 
     @Override

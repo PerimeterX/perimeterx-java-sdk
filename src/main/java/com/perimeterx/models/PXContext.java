@@ -13,10 +13,7 @@ import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.models.risk.BlockReason;
-import com.perimeterx.models.risk.CustomParameters;
-import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.models.risk.VidSource;
+import com.perimeterx.models.risk.*;
 import com.perimeterx.utils.*;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -111,6 +108,13 @@ public class PXContext {
      * @see com.perimeterx.models.risk.PassReason
      */
     private PassReason passReason;
+
+    /**
+     * Reason for s2s_error if occurred
+     *
+     * @see com.perimeterx.models.risk.S2SErrorReasonInfo
+     */
+    private S2SErrorReasonInfo s2sErrorReasonInfo;
 
     /**
      * Risk api timing
@@ -228,6 +232,7 @@ public class PXContext {
         this.fullUrl = extractURL(request); //full URL with query string
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
+        this.s2sErrorReasonInfo = new S2SErrorReasonInfo();
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
 

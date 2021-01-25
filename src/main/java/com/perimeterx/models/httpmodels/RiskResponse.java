@@ -1,11 +1,11 @@
 package com.perimeterx.models.httpmodels;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * Risk API server Response POJO
@@ -14,10 +14,8 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RiskResponse {
-
     private String uuid;
     private int status;
     private int score;
@@ -27,5 +25,10 @@ public class RiskResponse {
     @JsonProperty("data_enrichment")
     private JsonNode dataEnrichment;
     private String pxhd;
+    private String message;
 
+    @JsonCreator
+    public RiskResponse(@JsonProperty(value = "uuid", required = true) String uuid) {
+        this.uuid = uuid;
+    }
 }
