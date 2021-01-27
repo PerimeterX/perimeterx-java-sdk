@@ -189,9 +189,9 @@ public class PXHttpClient implements PXClient {
         int statusCode = httpStatus.getStatusCode();
         String statusMessage = httpStatus.getReasonPhrase();
 
-        if (statusCode >= 500) {
+        if (statusCode >= 500 && statusCode < 600) {
             errorReason = S2SErrorReason.SERVER_ERROR;
-        } else if (statusCode >= 400) {
+        } else if (statusCode >= 400 && statusCode < 500) {
             errorReason = S2SErrorReason.BAD_REQUEST;
         }
         String message = String.format("Risk API returned status %d: %s", statusCode, statusMessage);
