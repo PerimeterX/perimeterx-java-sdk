@@ -48,6 +48,8 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
+import com.perimeterx.models.risk.S2SErrorReason;
+import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.PXLogger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -166,7 +168,10 @@ public class PerimeterX {
             logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
-                context.setPassReason(PassReason.ERROR);
+                context.setPassReason(PassReason.S2S_ERROR);
+                if (!context.getS2sErrorReasonInfo().isErrorSet()) {
+                    context.setS2sErrorReasonInfo(new S2SErrorReasonInfo(S2SErrorReason.UNKNOWN_ERROR, e.toString()));
+                }
                 activityHandler.handlePageRequestedActivity(context);
                 context.setVerified(true);
             }
@@ -174,7 +179,7 @@ public class PerimeterX {
         return context;
     }
 
-    private void handleCookies(PXContext context) throws PXException {
+    private void handleCookies(PXContext context) {
         if (cookieValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
