@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.2.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.5...HEAD) (2021-05-03)
+- Fixed dependencies vulnerability issue by upgrading dependencies
+
 ## [v6.2.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.4...HEAD) (2020-12-06)
 - fix http_method bug when there is no http_version
 
