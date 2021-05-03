@@ -116,7 +116,7 @@ Following the instructions above, the filter should be changed according the the
 ```
 Once the filter is changed, follow the instructions [above](#4x).
 
-For more information, contact [PerimeterX Support](support@perimeterx.com).
+For more information, contact [PerimeterX Support](mailto:support@perimeterx.com).
 
 ### <a name="basic-usage"></a> Basic Usage Example
 
