@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.2.6](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.6...HEAD) (2021-05-31)
+- Added supported features list to project metadata
+
 ## [v6.2.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.5...HEAD) (2021-05-03)
 - Fixed dependencies vulnerability issue by upgrading dependencies
 
