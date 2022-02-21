@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.2.7](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.7...HEAD) (2022-02-21)
+- Added ability to mark simulated block on context
+
 ## [v6.2.6](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.6...HEAD) (2021-05-31)
 - Added supported features list to project metadata
 
