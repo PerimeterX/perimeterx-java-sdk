@@ -316,16 +316,20 @@ public class PXContext {
         }
     }
 
-    public void setSimulatedBlock(boolean shouldBlock){
-        this.simulatedBlock = shouldBlock;
+    public void setSimulatedBlock(boolean isSimulated){
+        this.simulatedBlock = isSimulated;
     }
 
     public String getPxOriginalTokenCookie() {
         return originalTokenCookie;
     }
 
-    public Boolean isBlocking() {
+    public Boolean isSimulatedBlock(){
         return this.simulatedBlock;
+    }
+
+    public Boolean isBlocking() {
+        return !this.simulatedBlock;
     }
 
     public String getRiskMode() {
