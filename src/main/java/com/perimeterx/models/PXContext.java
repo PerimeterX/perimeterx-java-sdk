@@ -206,6 +206,7 @@ public class PXContext {
     private String pxhd;
 
     private String responsePxhd;
+    private boolean simulatedBlock;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -235,8 +236,9 @@ public class PXContext {
         this.s2sErrorReasonInfo = new S2SErrorReasonInfo();
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
-
         this.httpMethod = request.getMethod();
+        this.simulatedBlock = pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR);
+
 
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
@@ -314,12 +316,20 @@ public class PXContext {
         }
     }
 
+    public void setSimulatedBlock(boolean isSimulated){
+        this.simulatedBlock = isSimulated;
+    }
+
     public String getPxOriginalTokenCookie() {
         return originalTokenCookie;
     }
 
+    public Boolean isSimulatedBlock(){
+        return this.simulatedBlock;
+    }
+
     public Boolean isBlocking() {
-        return pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING);
+        return !this.simulatedBlock;
     }
 
     public String getRiskMode() {
