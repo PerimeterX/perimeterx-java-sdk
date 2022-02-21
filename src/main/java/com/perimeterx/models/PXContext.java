@@ -237,7 +237,7 @@ public class PXContext {
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
         this.httpMethod = request.getMethod();
-        this.simulatedBlock = pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING);
+        this.simulatedBlock = pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR);
 
 
         String protocolDetails[] = request.getProtocol().split("/");
