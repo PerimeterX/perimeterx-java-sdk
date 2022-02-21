@@ -1,0 +1,33 @@
+{
+  "version": "6.2.7",
+  "supported_features": [
+    "additional_activity_handler",
+    "advanced_blocking_response",
+    "bypass_monitor_header",
+    "block_activity",
+    "block_page_captcha",
+    "block_page_js_challenge",
+    "block_page_rate_limit",
+    "bypass_monitor_header",
+    "client_ip_extraction",
+    "cookie_v3",
+    "css_ref",
+    "custom_logo",
+    "custom_parameters",
+    "custom_proxy",
+    "logger",
+    "filter_by_extension",
+    "filter_by_route",
+    "first_party",
+    "js_ref",
+    "mobile_support",
+    "module_enable",
+    "module_mode",
+    "page_requested_activity",
+    "pxde",
+    "vid_extraction",
+    "risk_api",
+    "sensitive_routes",
+    "telemetry_command"
+  ]
+}
