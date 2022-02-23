@@ -44,36 +44,6 @@ public class TemplatesTest {
     }
 
     @Test
-    public void testCaptchaPageContainsLogo() throws Exception {
-        PXConfiguration pxConfig = PXConfiguration.builder()
-                .appId(appId)
-                .authToken("AUTH_123")
-                .cookieKey("COOKIE_123")
-                .blockingScore(70)
-                .customLogo("http://www.google.com/logo.jpg")
-                .build();
-        pxContext.setBlockAction("c");
-        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
-        assertTrue(actualHTML.contains("http://www.google.com/logo.jpg"));
-    }
-
-    @Test
-    public void testDefaultPageContainsLogo() throws Exception {
-        PXConfiguration pxConfig = PXConfiguration.builder()
-                .appId(appId)
-                .authToken("AUTH_123")
-                .cookieKey("COOKIE_123")
-                .blockingScore(70)
-                .customLogo("http://www.google.com/logo.jpg")
-                .build();
-        pxContext.setBlockAction("b");
-        Map<String, String> props = TemplateFactory.getProps(pxContext, pxConfig);
-        String actualHTML = TemplateFactory.getTemplate("captcha_template.mustache", props);
-        assertTrue(actualHTML.contains("http://www.google.com/logo.jpg"));
-    }
-
-    @Test
     public void testCaptchaPageContainsCSS() throws Exception {
         PXConfiguration pxConfig = PXConfiguration.builder()
                 .appId(appId)
