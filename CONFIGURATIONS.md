@@ -24,6 +24,7 @@ Directives
 |maxConnections|Set the total maximum connections for risk api client|200|int| |
 |sendPageActivities|Toggle sending asynchronous page activities|true|Boolean| |
 |serverURL|Set the base url for PerimeterX servers|https://sapi-\<app_id>.perimeterx.net|String| |
+|customLogo|The logo will be displayed at the top div of the the block page. The logo's max-height property would be 150px and width would be set to auto.|null|String| |
 |cssRef|The block page can be modified with a custom CSS by adding the CSSRef directive and providing a valid URL to the css|null|String| |
 |jsRef|The block page can be added with custom JS file by adding JSRef directive and providing the JS file that will be loaded with the block page.|null|String| |
 |sensitiveRoutes|List of routes the Perimeterx module will always do a server-to-server call for, even if the cookie score is low and valid|Empty list|Set<String>| |
@@ -123,6 +124,7 @@ PXConfiguration pxConf = new PXConfiguration.Builder()
  ```java
 PXConfiguration pxConf = new PXConfiguration.Builder()
 ...
+    .customLogo(URL_TO_LOGO)
     .cssRef(URL_TO_CSS)
     .jsRef(URL_TO_JS)
 ...

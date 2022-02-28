@@ -48,6 +48,7 @@ public class PerimeterXTest extends ConfiguredTest {
         Assert.assertEquals(clonedConfig.isSendPageActivities(), configuration.isSendPageActivities());
         Assert.assertEquals(clonedConfig.isSignedWithIP(), configuration.isSignedWithIP());
         Assert.assertEquals(clonedConfig.getServerURL(), configuration.getServerURL());
+        Assert.assertEquals(clonedConfig.getCustomLogo(), configuration.getCustomLogo());
         Assert.assertEquals(clonedConfig.getCssRef(), configuration.getCssRef());
         Assert.assertEquals(clonedConfig.getJsRef(), configuration.getJsRef());
         Assert.assertTrue(compareCollections(clonedConfig.getSensitiveRoutes(), configuration.getSensitiveRoutes()));

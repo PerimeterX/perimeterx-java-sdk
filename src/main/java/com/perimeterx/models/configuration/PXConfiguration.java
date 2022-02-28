@@ -68,6 +68,8 @@ public class PXConfiguration {
     private boolean signedWithIP = false;
     @JsonProperty("px_server_url")
     private String serverURL;
+    @JsonProperty("px_custom_logo")
+    private String customLogo;
     @JsonProperty("px_css_ref")
     private String cssRef;
     @JsonProperty("px_js_ref")
@@ -150,7 +152,7 @@ public class PXConfiguration {
     public PXConfiguration getTelemetryConfig() {
         return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled,
                 blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout, connectionTimeout, sendPageActivities,
-                signedWithIP, serverURL, cssRef, jsRef, sensitiveRoutes, sensitiveRoutesRegex, ipHeaders, checksum,
+                signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, sensitiveRoutesRegex, ipHeaders, checksum,
                 remoteConfigurationEnabled, moduleMode, remoteConfigurationInterval, remoteConfigurationDelay,
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,

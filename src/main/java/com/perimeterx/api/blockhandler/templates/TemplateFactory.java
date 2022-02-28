@@ -43,6 +43,7 @@ public abstract class TemplateFactory {
         props.put("appId", pxConfig.getAppId());
         props.put("vid", pxContext.getVid());
         props.put("uuid", pxContext.getUuid());
+        props.put("customLogo", pxConfig.getCustomLogo());
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
 
@@ -62,6 +63,7 @@ public abstract class TemplateFactory {
         props.put("altBlockScript", altBlockScript);
         props.put("jsClientSrc", jsClientSrc);
         props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : "false");
+        props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
 
         return props;
     }
