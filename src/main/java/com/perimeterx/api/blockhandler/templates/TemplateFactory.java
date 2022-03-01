@@ -44,6 +44,7 @@ public abstract class TemplateFactory {
         props.put("vid", pxContext.getVid());
         props.put("uuid", pxContext.getUuid());
         props.put("customLogo", pxConfig.getCustomLogo());
+        props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
 
