@@ -79,7 +79,8 @@ public class DefaultBlockHandler implements BlockHandler {
                         props.get("uuid"),
                         props.get("hostUrl"),
                         props.get("blockScript"),
-                        props.get("altBlockScript"));
+                        props.get("altBlockScript"),
+                        props.get("customLogo"));
 
                 blockPageResponse = new ObjectMapper().writeValueAsString(advancedBlockingResponse);
             } else {
