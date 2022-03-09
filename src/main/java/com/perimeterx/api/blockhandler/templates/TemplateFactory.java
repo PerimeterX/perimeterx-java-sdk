@@ -41,29 +41,28 @@ public abstract class TemplateFactory {
         Map<String, String> props = new HashMap<>();
 
         props.put("appId", pxConfig.getAppId());
+        props.put("refId", pxContext.getUuid());
         props.put("vid", pxContext.getVid());
         props.put("uuid", pxContext.getUuid());
         props.put("customLogo", pxConfig.getCustomLogo());
-        props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
+        String urlVid = pxContext.getVid() != null ? pxContext.getVid() : "";
 
-        String captchaSrcParams = getCaptchaSrcParams(pxContext);
-        String blockScript = getCaptchaUrl(Constants.CAPTCHA_HOST, pxConfig.getAppId(), captchaSrcParams);
-        String altBlockScript = getCaptchaUrl(Constants.ALT_CAPTCHA_HOST, pxConfig.getAppId(), captchaSrcParams);
+        String blockScript = "//" + Constants.CAPTCHA_HOST + "/" + pxConfig.getAppId() + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" : "0");
         String jsClientSrc = "//" + Constants.CLIENT_HOST + "/" + pxConfig.getAppId() + "/main.min.js";
         String hostUrl = pxContext.getCollectorURL();
         if (pxConfig.isFirstPartyEnabled() && !pxContext.isMobileToken()) {
             String prefix = pxConfig.getAppId().substring(2);
-            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "/captcha.js?" + captchaSrcParams;
+            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "/captcha.js?a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" : "0");
             jsClientSrc = "/" + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
             hostUrl = "/" + prefix + Constants.FIRST_PARTY_XHR_PATH;
         }
         props.put("hostUrl", hostUrl);
         props.put("blockScript", blockScript);
-        props.put("altBlockScript", altBlockScript);
         props.put("jsClientSrc", jsClientSrc);
         props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : "false");
+        props.put("logoVisibility", pxConfig.getCustomLogo() == null ? "hidden" : "visible");
 
         return props;
     }
@@ -76,14 +75,5 @@ public abstract class TemplateFactory {
         }
         templateString = IOUtils.toString(templateStream);
         return new StringReader(templateString);
-    }
-
-    private static String getCaptchaSrcParams(PXContext pxContext) {
-        String urlVid = pxContext.getVid() != null ? pxContext.getVid() : "";
-        return "a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" : "0");
-    }
-
-    private static String getCaptchaUrl(String host, String appId, String params) {
-        return "//" + host + "/" + appId + "/captcha.js?" + params;
     }
 }
