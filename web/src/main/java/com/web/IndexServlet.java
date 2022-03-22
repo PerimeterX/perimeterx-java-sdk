@@ -10,7 +10,7 @@ import java.io.IOException;
 import static com.web.Utils.setDefaultPageAttributes;
 
 
-@WebServlet("/index")
+@WebServlet("/")
 public class IndexServlet extends HttpServlet {
 
     @Override

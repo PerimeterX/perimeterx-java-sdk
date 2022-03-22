@@ -53,7 +53,8 @@ public class Utils {
     }
 
     private static String getEnforcerConfigPath() {
-        return Thread.currentThread().getContextClassLoader().getResource("").getPath().replace("/target/classes","")
+        return Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(""))
+                .getPath().replace("/target/classes","")
                 + RESOURCES_RELATIVE_PATH + ENFORCER_CONFIG + JSON_SUFFIX;
     }
 
