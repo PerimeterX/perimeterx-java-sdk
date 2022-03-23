@@ -2,6 +2,7 @@ package com.web;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,14 @@ import static com.web.Constants.JSON_SUFFIX;
 
 public class Utils {
     private final static String RESOURCES_RELATIVE_PATH = "src/main/resources/";
+
+    public static Set<String> jsonArrayToSet(JSONArray jsonArray){
+        Set<String> stringsSet = new HashSet<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            stringsSet.add(jsonArray.getString(i));
+        }
+        return stringsSet;
+    }
 
     public static void setDefaultPageAttributes(HttpServletRequest request) {
         final String appId = getAppId();
@@ -43,7 +52,7 @@ public class Utils {
         return (boolean) getEnforcerConfig().get("px_first_party_enabled");
     }
 
-    private static JSONObject getEnforcerConfig() {
+    public static JSONObject getEnforcerConfig() {
         final String filePath = getEnforcerConfigPath();
         try {
             return readJsonFile(filePath);
@@ -52,7 +61,7 @@ public class Utils {
         }
     }
 
-    private static String getEnforcerConfigPath() {
+    public static String getEnforcerConfigPath() {
         return Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(""))
                 .getPath().replace("/target/classes","")
                 + RESOURCES_RELATIVE_PATH + ENFORCER_CONFIG + JSON_SUFFIX;
