@@ -23,10 +23,10 @@ public class Utils {
         return stringsSet;
     }
 
-    public static void setDefaultPageAttributes(HttpServletRequest request) {
+    public static void setDefaultPageAttributes(HttpServletRequest request, Config config) {
         final String appId = getAppId();
         request.setAttribute(APP_ID_KEY, appId);
-        request.setAttribute(SENSOR_SRC_KEY, "/" + getSensorSrc(appId));
+        request.setAttribute(SENSOR_SRC_KEY, "/" + getSensorSrc(appId, config));
     }
 
     private static String getAppId() {
@@ -39,15 +39,11 @@ public class Utils {
         }
     }
 
-    private static String getSensorSrc(String appId) {
-        if (isFirstParty()) {
+    private static String getSensorSrc(String appId, Config config) {
+        if (config.getPxConfiguration().isFirstPartyEnabled()) {
             return appId.replace(PX_PREFIX,"") + FIRST_PARTY_SENSOR_SUFFIX;
         }
         return String.format(THIRD_PARTY_SENSOR_URL_TEMPLATE,appId);
-    }
-
-    private static boolean isFirstParty() {
-        return (boolean) getEnforcerConfig().get(FIRST_PARTY_ENABLED_KEY);
     }
 
     public static JSONObject getEnforcerConfig() {
