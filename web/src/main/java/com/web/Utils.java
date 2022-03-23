@@ -11,11 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static com.web.Constants.ENFORCER_CONFIG;
-import static com.web.Constants.JSON_SUFFIX;
+import static com.web.Constants.*;
 
 public class Utils {
-    private final static String RESOURCES_RELATIVE_PATH = "src/main/resources/";
 
     public static Set<String> jsonArrayToSet(JSONArray jsonArray){
         Set<String> stringsSet = new HashSet<>();
@@ -27,15 +25,15 @@ public class Utils {
 
     public static void setDefaultPageAttributes(HttpServletRequest request) {
         final String appId = getAppId();
-        request.setAttribute("app_id", appId);
-        request.setAttribute("sensor_src_url", "/" + getSensorSrc(appId));
+        request.setAttribute(APP_ID_KEY, appId);
+        request.setAttribute(SENSOR_SRC_KEY, "/" + getSensorSrc(appId));
     }
 
     private static String getAppId() {
         final String filePath = getEnforcerConfigPath();
         try {
             return (String) Objects.requireNonNull(readJsonFile(filePath))
-                    .get("px_app_id");
+                    .get(PX_APP_ID_FIELD);
         } catch (JsonParseException jpe) {
             throw new RuntimeException("Failed to extract App ID from file :: " + filePath + ".\n Exception :: " + jpe);
         }
@@ -43,13 +41,13 @@ public class Utils {
 
     private static String getSensorSrc(String appId) {
         if (isFirstParty()) {
-            return appId.replace("PX","") + "/init.js";
+            return appId.replace(PX_PREFIX,"") + FIRST_PARTY_SENSOR_SUFFIX;
         }
-        return String.format( "//client.px-cloud.net/%s/main.min.js",appId);
+        return String.format(THIRD_PARTY_SENSOR_URL_TEMPLATE,appId);
     }
 
     private static boolean isFirstParty() {
-        return (boolean) getEnforcerConfig().get("px_first_party_enabled");
+        return (boolean) getEnforcerConfig().get(FIRST_PARTY_ENABLED_KEY);
     }
 
     public static JSONObject getEnforcerConfig() {
@@ -63,7 +61,7 @@ public class Utils {
 
     public static String getEnforcerConfigPath() {
         return Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource(""))
-                .getPath().replace("/target/classes","")
+                .getPath().replace(COMPILED_FILES_BASIC_PATH,"")
                 + RESOURCES_RELATIVE_PATH + ENFORCER_CONFIG + JSON_SUFFIX;
     }
 
