@@ -137,6 +137,10 @@ public class PXConfiguration {
     @Builder.Default
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
+    @JsonProperty("px_enforced_routes")
+    private Set<String> enforcedRoutes = new HashSet<>();
+    @JsonProperty("px_monitored_routes")
+    private Set<String> monitoredRoutes = new HashSet<>();
 
     private static final String[] extensions = {"css", "bmp", "tif", "ttf", "woff2", "docx",
             "js", "pict", "tiff", "eot", "xlsx", "jpg", "csv", "woff", "xls", "jpeg", "doc", "eps",
@@ -157,7 +161,7 @@ public class PXConfiguration {
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
                 testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
-                staticFilesExt);
+                staticFilesExt, enforcedRoutes, monitoredRoutes);
     }
 
     public void disableModule() {
@@ -224,6 +228,6 @@ public class PXConfiguration {
      * @return true if path is to static file defined at the white list
      */
     public boolean isExtWhiteListed(String path) {
-        return  staticFilesExt.contains(FilenameUtils.getExtension(path));
+        return staticFilesExt.contains(FilenameUtils.getExtension(path));
     }
 }

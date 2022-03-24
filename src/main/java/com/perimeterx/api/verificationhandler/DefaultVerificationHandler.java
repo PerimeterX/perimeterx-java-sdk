@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
@@ -50,12 +53,19 @@ public class DefaultVerificationHandler implements VerificationHandler {
         }
         setPxhdCookie(context, responseWrapper);
         boolean shouldBypassMonitor = shouldBypassMonitor(context);
-        if ((pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) || shouldBypassMonitor) && !verified) {
+        if (shouldBlockRequest(context) && !verified) {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
         }
 
         return true;
+    }
+
+    public boolean shouldBlockRequest(PXContext context) {
+        return (pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) &&
+                !checkIfIsSpecialRoute(this.pxConfiguration.getMonitoredRoutes(), context.getUri())) ||
+                checkIfIsSpecialRoute(this.pxConfiguration.getEnforcedRoutes(), context.getUri()) ||
+                shouldBypassMonitor(context);
     }
 
     private boolean shouldBypassMonitor(PXContext context) {
@@ -87,5 +97,20 @@ public class DefaultVerificationHandler implements VerificationHandler {
         logger.debug(verified ? DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK : DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK, score, blockingScore);
 
         return verified;
+    }
+
+    private boolean checkIfIsSpecialRoute(Set<String> routes, String uri) {
+        Pattern pattern;
+        Matcher matcher;
+
+        for (String specialRoute : routes) {
+            pattern = Pattern.compile(specialRoute, Pattern.CASE_INSENSITIVE);
+            matcher = pattern.matcher(uri);
+            if (matcher.find()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
