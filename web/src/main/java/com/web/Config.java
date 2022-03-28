@@ -101,6 +101,12 @@ public class Config {
                 case "px_max_http_client_connections":
                     builder.maxConnections(enforcerConfig.getInt(key));
                     break;
+                case "px_login_credentials_extraction_enabled":
+                    builder.loginCredentialsExtractionEnabled(enforcerConfig.getBoolean(key));
+                    break;
+                case "px_login_credentials_extraction":
+                    builder.loginCredentials(enforcerConfig.getJSONArray(key).toString());
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
