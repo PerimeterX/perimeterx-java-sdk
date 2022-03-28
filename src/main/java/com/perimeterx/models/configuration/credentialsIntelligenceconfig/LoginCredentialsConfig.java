@@ -29,7 +29,7 @@ public class LoginCredentialsConfig {
     private String userName;
 
     @JsonProperty("path_type")
-    private String pathType;
+    private PathType pathType;
 
     @JsonProperty("callback")
     private Function<HttpServletRequest,LoginCredentials> customCallback;
