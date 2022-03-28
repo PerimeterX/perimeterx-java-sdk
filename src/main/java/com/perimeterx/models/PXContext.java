@@ -206,7 +206,7 @@ public class PXContext {
     private String pxhd;
 
     private String responsePxhd;
-    private boolean simulatedBlock;
+    private boolean isMonitoredRequest;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -237,7 +237,7 @@ public class PXContext {
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
         this.httpMethod = request.getMethod();
-        this.simulatedBlock = pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR);
+        this.isMonitoredRequest = checkIfMonitorRequest();
 
 
         String protocolDetails[] = request.getProtocol().split("/");
@@ -248,6 +248,27 @@ public class PXContext {
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
+    }
+
+    private boolean checkIfIsSpecialRoute(Set<String> routes, String uri) {
+        Pattern pattern;
+        Matcher matcher;
+
+        for (String specialRoute : routes) {
+            pattern = Pattern.compile(specialRoute, Pattern.CASE_INSENSITIVE);
+            matcher = pattern.matcher(uri);
+            if (matcher.matches()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkIfMonitorRequest() {
+        return (pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR) &&
+                !checkIfIsSpecialRoute(this.pxConfiguration.getEnforcedRoutes(), this.getUri())) ||
+                checkIfIsSpecialRoute(this.pxConfiguration.getMonitoredRoutes(), this.getUri());
     }
 
     private String extractURL(ServletRequest request) {
@@ -316,20 +337,16 @@ public class PXContext {
         }
     }
 
-    public void setSimulatedBlock(boolean isSimulated){
-        this.simulatedBlock = isSimulated;
-    }
-
     public String getPxOriginalTokenCookie() {
         return originalTokenCookie;
     }
 
-    public Boolean isSimulatedBlock(){
-        return this.simulatedBlock;
+    public Boolean isMonitoredRequest() {
+        return this.isMonitoredRequest;
     }
 
     public Boolean isBlocking() {
-        return !this.simulatedBlock;
+        return !this.isMonitoredRequest;
     }
 
     public String getRiskMode() {

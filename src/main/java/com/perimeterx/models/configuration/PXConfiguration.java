@@ -137,8 +137,10 @@ public class PXConfiguration {
     @Builder.Default
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
+    @Builder.Default
     @JsonProperty("px_enforced_routes")
     private Set<String> enforcedRoutes = new HashSet<>();
+    @Builder.Default
     @JsonProperty("px_monitored_routes")
     private Set<String> monitoredRoutes = new HashSet<>();
 
