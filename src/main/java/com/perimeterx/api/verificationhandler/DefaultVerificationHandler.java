@@ -41,8 +41,10 @@ public class DefaultVerificationHandler implements VerificationHandler {
     @Override
     public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws PXException {
         boolean verified = shouldPassRequest(context);
+
         if (verified) {
             logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
+
             // Not blocking request and sending page_requested activity to px if configured as true
             if (this.pxConfiguration.isSendPageActivities()) {
                 this.activityHandler.handlePageRequestedActivity(context);
@@ -53,6 +55,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
         }
         setPxhdCookie(context, responseWrapper);
         boolean shouldBypassMonitor = shouldBypassMonitor(context);
+
         if (!verified && (context.isBlocking() || shouldBypassMonitor)) {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
