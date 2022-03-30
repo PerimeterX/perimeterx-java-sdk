@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,20 +55,13 @@ public class DefaultVerificationHandler implements VerificationHandler {
             this.activityHandler.handleBlockActivity(context);
         }
         setPxhdCookie(context, responseWrapper);
-        boolean shouldBypassMonitor = shouldBypassMonitor(context);
 
-        if (!verified && (context.isBlocking() || shouldBypassMonitor)) {
+        if (!verified && !context.isMonitoredRequest()) {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
         }
 
         return true;
-    }
-
-    private boolean shouldBypassMonitor(PXContext context) {
-        String bypassHeader = this.pxConfiguration.getBypassMonitorHeader();
-        return !StringUtils.isEmpty(bypassHeader) && context.getHeaders().containsKey(bypassHeader.toLowerCase())
-                && context.getHeaders().get(bypassHeader.toLowerCase()).equals("1");
     }
 
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {

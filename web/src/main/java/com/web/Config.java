@@ -107,6 +107,8 @@ public class Config {
                 case "px_monitored_routes":
                     builder.monitoredRoutes(jsonArrayToSet(enforcerConfig.getJSONArray(key)));
                     break;
+                case "px_bypass_monitor_header":
+                    builder.bypassMonitorHeader(enforcerConfig.getString(key));
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":

@@ -237,7 +237,7 @@ public class PXContext {
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
         this.httpMethod = request.getMethod();
-        this.isMonitoredRequest = checkIfMonitorRequest();
+        this.isMonitoredRequest = shouldMonitorRequest() && !shouldBypassMonitor();
 
 
         String protocolDetails[] = request.getProtocol().split("/");
@@ -250,13 +250,14 @@ public class PXContext {
         this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
     }
 
-    private boolean checkIfIsSpecialRoute(Set<String> routes, String uri) {
+    private boolean isRoutesContainUri(Set<String> routes, String uri) {
         Pattern pattern;
         Matcher matcher;
 
-        for (String specialRoute : routes) {
-            pattern = Pattern.compile(specialRoute, Pattern.CASE_INSENSITIVE);
+        for (String routeExpression : routes) {
+            pattern = Pattern.compile(routeExpression, Pattern.CASE_INSENSITIVE);
             matcher = pattern.matcher(uri);
+
             if (matcher.matches()) {
                 return true;
             }
@@ -265,10 +266,16 @@ public class PXContext {
         return false;
     }
 
-    private boolean checkIfMonitorRequest() {
-        return (pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR) &&
-                !checkIfIsSpecialRoute(this.pxConfiguration.getEnforcedRoutes(), this.getUri())) ||
-                checkIfIsSpecialRoute(this.pxConfiguration.getMonitoredRoutes(), this.getUri());
+    private boolean shouldMonitorRequest() {
+        return ((pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR) &&
+                !isRoutesContainUri(this.pxConfiguration.getEnforcedRoutes(), this.getUri())) ||
+                isRoutesContainUri(this.pxConfiguration.getMonitoredRoutes(), this.getUri()));
+    }
+
+    private boolean shouldBypassMonitor() {
+        String bypassHeader = this.pxConfiguration.getBypassMonitorHeader();
+        return !StringUtils.isEmpty(bypassHeader) && this.getHeaders().containsKey(bypassHeader.toLowerCase())
+                && this.getHeaders().get(bypassHeader.toLowerCase()).equals("1");
     }
 
     private String extractURL(ServletRequest request) {
@@ -345,12 +352,8 @@ public class PXContext {
         return this.isMonitoredRequest;
     }
 
-    public Boolean isBlocking() {
-        return !this.isMonitoredRequest;
-    }
-
     public String getRiskMode() {
-        return this.isBlocking() ? "active_blocking" : "monitor";
+        return !this.isMonitoredRequest() ? "active_blocking" : "monitor";
     }
 
     public void setOriginalTokenCookie(String originalTokenCookie) {
