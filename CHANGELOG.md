@@ -1,5 +1,10 @@
 # Change Log
 
+##[v6.2.8](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.8...HEAD) (2022-03-31)
+- Added monitored routes feature. 
+- Added enforced routes feature.
+- Updated Lombok dependency version to 1.18.22
+
 ## [v6.2.7](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.7...HEAD) (2022-02-21)
 - Added ability to mark simulated block on context
 

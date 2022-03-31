@@ -206,7 +206,7 @@ public class PXContext {
     private String pxhd;
 
     private String responsePxhd;
-    private boolean simulatedBlock;
+    private boolean isMonitoredRequest;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -237,7 +237,7 @@ public class PXContext {
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
         this.httpMethod = request.getMethod();
-        this.simulatedBlock = pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR);
+        this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
 
 
         String protocolDetails[] = request.getProtocol().split("/");
@@ -248,6 +248,34 @@ public class PXContext {
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
+    }
+
+    private boolean isRoutesContainUri(Set<String> routes, String uri) {
+        Pattern pattern;
+        Matcher matcher;
+
+        for (String routeExpression : routes) {
+            pattern = Pattern.compile(routeExpression, Pattern.CASE_INSENSITIVE);
+            matcher = pattern.matcher(uri);
+
+            if (matcher.matches()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean shouldMonitorRequest() {
+        return ((pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR) &&
+                !isRoutesContainUri(this.pxConfiguration.getEnforcedRoutes(), this.getUri())) ||
+                isRoutesContainUri(this.pxConfiguration.getMonitoredRoutes(), this.getUri()));
+    }
+
+    private boolean shouldBypassMonitor() {
+        String bypassHeader = this.pxConfiguration.getBypassMonitorHeader();
+        return !StringUtils.isEmpty(bypassHeader) && this.getHeaders().containsKey(bypassHeader.toLowerCase())
+                && this.getHeaders().get(bypassHeader.toLowerCase()).equals("1");
     }
 
     private String extractURL(ServletRequest request) {
@@ -316,24 +344,16 @@ public class PXContext {
         }
     }
 
-    public void setSimulatedBlock(boolean isSimulated){
-        this.simulatedBlock = isSimulated;
-    }
-
     public String getPxOriginalTokenCookie() {
         return originalTokenCookie;
     }
 
-    public Boolean isSimulatedBlock(){
-        return this.simulatedBlock;
-    }
-
-    public Boolean isBlocking() {
-        return !this.simulatedBlock;
+    public Boolean isMonitoredRequest() {
+        return this.isMonitoredRequest;
     }
 
     public String getRiskMode() {
-        return this.isBlocking() ? "active_blocking" : "monitor";
+        return this.isMonitoredRequest() ? "monitor" : "active_blocking";
     }
 
     public void setOriginalTokenCookie(String originalTokenCookie) {

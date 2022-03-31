@@ -14,6 +14,10 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
@@ -38,8 +42,10 @@ public class DefaultVerificationHandler implements VerificationHandler {
     @Override
     public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws PXException {
         boolean verified = shouldPassRequest(context);
+
         if (verified) {
             logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
+
             // Not blocking request and sending page_requested activity to px if configured as true
             if (this.pxConfiguration.isSendPageActivities()) {
                 this.activityHandler.handlePageRequestedActivity(context);
@@ -49,19 +55,13 @@ public class DefaultVerificationHandler implements VerificationHandler {
             this.activityHandler.handleBlockActivity(context);
         }
         setPxhdCookie(context, responseWrapper);
-        boolean shouldBypassMonitor = shouldBypassMonitor(context);
-        if ((pxConfiguration.getModuleMode().equals(ModuleMode.BLOCKING) || shouldBypassMonitor) && !verified) {
+
+        if (!verified && !context.isMonitoredRequest()) {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
             return false;
         }
 
         return true;
-    }
-
-    private boolean shouldBypassMonitor(PXContext context) {
-        String bypassHeader = this.pxConfiguration.getBypassMonitorHeader();
-        return !StringUtils.isEmpty(bypassHeader) && context.getHeaders().containsKey(bypassHeader.toLowerCase())
-                && context.getHeaders().get(bypassHeader.toLowerCase()).equals("1");
     }
 
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
