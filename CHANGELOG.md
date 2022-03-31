@@ -1,6 +1,6 @@
 # Change Log
 
-##[lastest version]()
+##[v6.2.8](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.8...HEAD) (2022-03-31)
 - Added monitored routes feature. 
 - Added enforced routes feature.
 - Updated Lombok dependency version to 1.18.22

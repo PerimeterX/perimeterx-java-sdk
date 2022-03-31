@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.perimeterx</groupId>
             <artifactId>perimeterx-sdk</artifactId>
-            <version>6.2.7</version>
+            <version>6.2.8</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
