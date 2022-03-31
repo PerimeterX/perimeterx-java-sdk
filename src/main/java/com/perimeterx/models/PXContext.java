@@ -237,7 +237,7 @@ public class PXContext {
         this.madeS2SApiCall = false;
         this.riskRtt = 0;
         this.httpMethod = request.getMethod();
-        this.isMonitoredRequest = shouldMonitorRequest() && !shouldBypassMonitor();
+        this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
 
 
         String protocolDetails[] = request.getProtocol().split("/");
@@ -353,7 +353,7 @@ public class PXContext {
     }
 
     public String getRiskMode() {
-        return !this.isMonitoredRequest() ? "active_blocking" : "monitor";
+        return this.isMonitoredRequest() ? "monitor" : "active_blocking";
     }
 
     public void setOriginalTokenCookie(String originalTokenCookie) {
