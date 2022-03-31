@@ -101,6 +101,15 @@ public class Config {
                 case "px_max_http_client_connections":
                     builder.maxConnections(enforcerConfig.getInt(key));
                     break;
+                case "px_enforced_routes":
+                    builder.enforcedRoutes(jsonArrayToSet(enforcerConfig.getJSONArray(key)));
+                    break;
+                case "px_monitored_routes":
+                    builder.monitoredRoutes(jsonArrayToSet(enforcerConfig.getJSONArray(key)));
+                    break;
+                case "px_bypass_monitor_header":
+                    builder.bypassMonitorHeader(enforcerConfig.getString(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
