@@ -109,6 +109,7 @@ public class Config {
                     break;
                 case "px_bypass_monitor_header":
                     builder.bypassMonitorHeader(enforcerConfig.getString(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
