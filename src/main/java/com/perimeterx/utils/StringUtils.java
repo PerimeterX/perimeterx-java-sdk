@@ -1,7 +1,13 @@
 package com.perimeterx.utils;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public final class StringUtils {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private final static int HEX_BASE = 16;
+    private final static int GENERATED_HASH_LENGTH = 32;
 
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
@@ -21,5 +27,24 @@ public final class StringUtils {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public static String encodeString(String text, HashAlgorithm hashAlgorithm) {
+        try {
+            final MessageDigest msgDst = MessageDigest.getInstance(hashAlgorithm.getValue());
+            final byte[] msgArr = msgDst.digest(text.getBytes());
+            final BigInteger bi = new BigInteger(1, msgArr);
+
+            StringBuilder hshtxt = new StringBuilder(bi.toString(HEX_BASE));
+
+            while (hshtxt.length() < GENERATED_HASH_LENGTH) {
+                hshtxt.insert(0, "0");
+            }
+
+            return hshtxt.toString();
+        }
+        catch (NoSuchAlgorithmException abc) {
+            throw new RuntimeException(abc);
+        }
     }
 }
