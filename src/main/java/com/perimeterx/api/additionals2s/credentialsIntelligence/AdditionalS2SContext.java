@@ -6,6 +6,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 public class AdditionalS2SContext {
     private final CredentialsIntelligence credentialsIntelligence;
@@ -14,7 +15,7 @@ public class AdditionalS2SContext {
         this.credentialsIntelligence = new CredentialsIntelligence(configuration, request);
     }
 
-    public void setAdditionalContext(PXContext pxContext) throws PXException {
+    public void setAdditionalContext(PXContext pxContext) throws PXException, IOException {
         final UserLoginData userLoginData = credentialsIntelligence.getUserLoginData();
         pxContext.setLoginCredentials(userLoginData);
     }

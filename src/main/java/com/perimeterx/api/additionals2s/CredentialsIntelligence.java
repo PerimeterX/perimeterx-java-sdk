@@ -15,7 +15,11 @@ import com.perimeterx.models.exceptions.PXException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.function.Function;
+
+import static com.perimeterx.utils.StringUtils.splitQueryParams;
 
 public class CredentialsIntelligence {
     private static final String CREDENTIALS_PATH_SEPARATOR = "\\.";
@@ -28,7 +32,7 @@ public class CredentialsIntelligence {
         this.request = request;
     }
 
-    public UserLoginData getUserLoginData() throws PXException {
+    public UserLoginData getUserLoginData() throws PXException, IOException {
         if (pxConfiguration.isLoginCredentialsExtractionEnabled()) {
             final LoginCredentials rawCredentials = extractCredentials();
 
@@ -46,18 +50,11 @@ public class CredentialsIntelligence {
         return ciProtocol.generateUserLoginData(rawCredentials);
     }
 
-    private LoginCredentials extractCredentials() throws PXException {
+    private LoginCredentials extractCredentials() throws PXException, IOException {
         final CredentialsExtractionDetails credentialsExtractionDetails = getCredentialsExtractionDetails();
 
         if (credentialsExtractionDetails != null) {
-
-            if (credentialsExtractionDetails.getCustomCallBack() != null) {
-                final Function<HttpServletRequest, LoginCredentials> customCallBack = credentialsExtractionDetails.getCustomCallBack();
-
-                return customCallBack.apply(request);
-            } else {
-                return getRequestFields(credentialsExtractionDetails);
-            }
+            return extractCredentials(credentialsExtractionDetails);
         }
 
         return null;
@@ -69,12 +66,23 @@ public class CredentialsIntelligence {
                 .getCredentialsExtractionDetails(request.getServletPath(), request.getMethod());
     }
 
-    private LoginCredentials getRequestFields(CredentialsExtractionDetails credentialsExtractionDetails) throws PXException {
+    private LoginCredentials extractCredentials(CredentialsExtractionDetails credentialsExtractionDetails) throws PXException, IOException {
+        if (credentialsExtractionDetails.getCustomCallBack() != null) {
+            final Function<HttpServletRequest, LoginCredentials> customCallBack = credentialsExtractionDetails.getCustomCallBack();
+            return customCallBack.apply(request);
+        } else {
+            return extractByLocation(credentialsExtractionDetails);
+        }
+    }
+
+    private LoginCredentials extractByLocation(CredentialsExtractionDetails credentialsExtractionDetails) throws PXException, UnsupportedEncodingException {
         final ConfigCredentialsFieldPath credentialsFieldPath = credentialsExtractionDetails.getConfigCredentialsFieldPath();
+
         switch (credentialsExtractionDetails.getCredentialsLocationInRequest()) {
             case BODY:
                 return extractRequestBodyFields(credentialsFieldPath);
             case HEADER:
+                return extractBodyParams(credentialsFieldPath);
             case QUERY_PARAM:
                 return extractRequestParams(credentialsFieldPath);
             default:
@@ -93,7 +101,6 @@ public class CredentialsIntelligence {
         final String[] path = fieldPath.split(CREDENTIALS_PATH_SEPARATOR);
 
         try {
-            request = new RequestWrapper(request);
             return getNestedField(path);
         } catch (IOException ioe) {
             throw new PXException("Failed to extract field credentials by field path :: " + fieldPath + ". Error :: " + ioe);
@@ -113,6 +120,13 @@ public class CredentialsIntelligence {
         }
 
         return null;
+    }
+
+    private LoginCredentials extractBodyParams(ConfigCredentialsFieldPath configCredentialsFieldPath) throws UnsupportedEncodingException {
+        final Map<String, String> queryParams = splitQueryParams(((RequestWrapper) request).getBody());
+
+        return new LoginCredentials(queryParams.get(configCredentialsFieldPath.getUsernameFieldPath()),
+                queryParams.get(configCredentialsFieldPath.getPasswordFieldPath()));
     }
 
     private LoginCredentials extractRequestParams(ConfigCredentialsFieldPath configCredentialsFieldPath) {

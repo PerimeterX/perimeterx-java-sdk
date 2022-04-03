@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
+
 /**
  * PXContext - Populate relevant data from HttpRequest
  * <p>
@@ -437,5 +439,9 @@ public class PXContext {
 
     public boolean isAdvancedBlockingResponse() {
         return pxConfiguration.isAdvancedBlockingResponse();
+    }
+
+    public boolean isBreachedAccount() {
+        return this.pxde != null && this.pxdeVerified && this.pxde.has(BREACHED_ACCOUNT_KEY_NAME);
     }
 }

@@ -41,6 +41,7 @@ import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.TestVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
+import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
@@ -57,6 +58,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -165,6 +168,7 @@ public class PerimeterX {
 
             handleCookies(context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
+            addCustomHeadersToRequest(req, context);
         } catch (Exception e) {
             logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
@@ -180,7 +184,7 @@ public class PerimeterX {
         return context;
     }
 
-    private PXContext createContext(HttpServletRequest request) throws PXException {
+    private PXContext createContext(HttpServletRequest request) throws PXException, IOException {
         final PXContext pxContext = new PXContext(request, this.ipProvider, this.hostnameProvider, configuration);
         final AdditionalS2SContext additionalS2SContext = new AdditionalS2SContext(request, this.configuration);
 
@@ -206,6 +210,17 @@ public class PerimeterX {
         logger.debug(PXLogger.LogReason.DEBUG_COOKIE_MISSING);
         if (serverValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
+        }
+    }
+
+    private void addCustomHeadersToRequest(HttpServletRequest request, PXContext context) {
+        setBreachedAccount(request, context);
+    }
+
+    private void setBreachedAccount(HttpServletRequest request, PXContext context) {
+        if(configuration.isLoginCredentialsExtractionEnabled() && context.isBreachedAccount()) {
+            ((RequestWrapper) request).addHeader(configuration.getPxCompromisedCredentialsHeader(),
+                    String.valueOf(context.getPxde().get(BREACHED_ACCOUNT_KEY_NAME)));
         }
     }
 

@@ -175,7 +175,6 @@ public class PXConfiguration {
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
 
-    @Builder.Default
     @JsonProperty("px_login_credentials_extraction_enabled")
     private boolean loginCredentialsExtractionEnabled;
 
@@ -185,6 +184,10 @@ public class PXConfiguration {
     @Builder.Default
     @JsonProperty("px_credentials_intelligence_version")
     private CIVersion ciVersion = CIVersion.V1;
+
+    @Builder.Default
+    @JsonProperty("px_compromised_credentials_header")
+    private String pxCompromisedCredentialsHeader = "px-compromised-credentials";
 
     private static final String[] extensions = {"css", "bmp", "tif", "ttf", "woff2", "docx",
             "js", "pict", "tiff", "eot", "xlsx", "jpg", "csv", "woff", "xls", "jpeg", "doc", "eps",
@@ -205,7 +208,7 @@ public class PXConfiguration {
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
                 testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
-                loginCredentialsExtractionEnabled, loginCredentials, CIVersion.V1, staticFilesExt);
+                loginCredentialsExtractionEnabled, loginCredentials, ciVersion, pxCompromisedCredentialsHeader, staticFilesExt);
     }
 
     public void disableModule() {

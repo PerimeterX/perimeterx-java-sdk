@@ -1,8 +1,15 @@
 package com.perimeterx.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLDecoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.perimeterx.utils.Constants.*;
+import static com.perimeterx.utils.Constants.UNICODE_TYPE;
 
 public final class StringUtils {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -46,5 +53,18 @@ public final class StringUtils {
         catch (NoSuchAlgorithmException abc) {
             throw new RuntimeException(abc);
         }
+    }
+
+    public static Map<String, String> splitQueryParams(String queryParams) throws UnsupportedEncodingException {
+        final Map<String, String> params = new HashMap<>();
+        final String[] pairs = queryParams.split(QUERY_PARAM_PAIRS_SEPARATOR);
+        int idx;
+
+        for (String pair : pairs) {
+            idx = pair.indexOf(QUERY_PARAM_KEY_VALUE_SEPARATOR);
+            params.put(URLDecoder.decode(pair.substring(0, idx), UNICODE_TYPE), URLDecoder.decode(pair.substring(idx + 1), UNICODE_TYPE));
+        }
+
+        return params;
     }
 }

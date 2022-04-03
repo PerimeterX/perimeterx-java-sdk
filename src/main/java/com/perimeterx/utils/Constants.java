@@ -76,4 +76,10 @@ public final class Constants {
 
     public static final String CAPTCHA_BLOCK_TEMPLATE = "captcha_template";
     public static final String RATELIMIT_TEMPLATE = "ratelimit";
+
+    public static final String BREACHED_ACCOUNT_KEY_NAME = "breached_account";
+
+    public static final String UNICODE_TYPE = "UTF-8";
+    public static final String QUERY_PARAM_PAIRS_SEPARATOR = "&";
+    public static final String QUERY_PARAM_KEY_VALUE_SEPARATOR = "=";
 }
