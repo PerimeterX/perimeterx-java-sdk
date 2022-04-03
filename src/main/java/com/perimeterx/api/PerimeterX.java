@@ -25,6 +25,7 @@
 
 package com.perimeterx.api;
 
+import com.google.gson.Gson;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalS2SContext;
@@ -45,6 +46,9 @@ import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.activities.Activity;
+import com.perimeterx.models.activities.ActivityFactory;
+import com.perimeterx.models.activities.AdditionalS2SActivity;
 import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
@@ -52,6 +56,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
+import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +64,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
+import static com.perimeterx.utils.Constants.*;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -215,12 +220,29 @@ public class PerimeterX {
 
     private void addCustomHeadersToRequest(HttpServletRequest request, PXContext context) {
         setBreachedAccount(request, context);
+        setAdditionalS2SActivityHeaders(request, context);
     }
 
     private void setBreachedAccount(HttpServletRequest request, PXContext context) {
         if(configuration.isLoginCredentialsExtractionEnabled() && context.isBreachedAccount()) {
             ((RequestWrapper) request).addHeader(configuration.getPxCompromisedCredentialsHeader(),
                     String.valueOf(context.getPxde().get(BREACHED_ACCOUNT_KEY_NAME)));
+        }
+    }
+
+    private void setAdditionalS2SActivityHeaders(HttpServletRequest request, PXContext context) {
+        if (configuration.isAdditionalS2SActivityHeaderEnabled()) {
+            final Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_ADDITIONAL_S2S, configuration.getAppId(), context);
+
+            if(context.isBreachedAccount() && configuration.isAllowToAddRawUserNameOnS2SActivity()) {
+                ((AdditionalS2SActivity) activity.getDetails()).setUsername(context.getLoginCredentials().getUsername());
+            }
+
+            final String stringifyActivity = new Gson().toJson(activity);
+            final String urlHeader = configuration.getServerURL() + API_ACTIVITIES;
+
+            ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_HEADER, stringifyActivity);
+            ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_URL_HEADER, urlHeader);
         }
     }
 

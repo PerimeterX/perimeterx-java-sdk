@@ -189,6 +189,12 @@ public class PXConfiguration {
     @JsonProperty("px_compromised_credentials_header")
     private String pxCompromisedCredentialsHeader = "px-compromised-credentials";
 
+    @JsonProperty("px_send_raw_username_on_additional_s2s_activity")
+    private boolean allowToAddRawUserNameOnS2SActivity;
+
+    @JsonProperty("px_additional_s2s_activity_header_enabled")
+    private boolean additionalS2SActivityHeaderEnabled;
+
     private static final String[] extensions = {"css", "bmp", "tif", "ttf", "woff2", "docx",
             "js", "pict", "tiff", "eot", "xlsx", "jpg", "csv", "woff", "xls", "jpeg", "doc", "eps",
             "ejs", "otf", "pptx", "gif", "pdf", "swf", "svg", "ps", "ico", "pls", "midi", "svgz",
@@ -208,7 +214,8 @@ public class PXConfiguration {
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
                 testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
-                loginCredentialsExtractionEnabled, loginCredentials, ciVersion, pxCompromisedCredentialsHeader, staticFilesExt);
+                loginCredentialsExtractionEnabled, loginCredentials, ciVersion, pxCompromisedCredentialsHeader,
+                allowToAddRawUserNameOnS2SActivity, additionalS2SActivityHeaderEnabled, staticFilesExt);
     }
 
     public void disableModule() {

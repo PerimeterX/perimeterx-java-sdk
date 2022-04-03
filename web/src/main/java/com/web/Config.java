@@ -110,6 +110,15 @@ public class Config {
                     break;
                 case "px_credentials_intelligence_version":
                     builder.ciVersion(CIVersion.getKeyByValue(enforcerConfig.getString(key)));
+                    break;
+                case "px_compromised_credentials_header":
+                    builder.pxCompromisedCredentialsHeader(enforcerConfig.getString(key));
+                    break;
+                case "px_send_raw_username_on_additional_s2s_activity":
+                    builder.allowToAddRawUserNameOnS2SActivity(enforcerConfig.getBoolean(key));
+                    break;
+                case "px_additional_s2s_activity_header_enabled":
+                    builder.additionalS2SActivityHeaderEnabled(enforcerConfig.getBoolean(key));
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":

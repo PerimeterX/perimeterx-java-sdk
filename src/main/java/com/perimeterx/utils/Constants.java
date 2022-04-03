@@ -32,6 +32,7 @@ public final class Constants {
 
     public final static String ACTIVITY_BLOCKED = "block";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
+    public final static String ACTIVITY_ADDITIONAL_S2S = "additional_s2s";
 
     public static final String REMOTE_CONFIGURATION_SERVER_URL = "https://px-conf.perimeterx.net";
 
@@ -62,6 +63,9 @@ public final class Constants {
     public static final String MOBILE_SDK_ORIGINAL_TOKEN_HEADER = "x-px-original-token";
     public static final String MOBILE_SDK_TOKENS_HEADER = "x-px-tokens";
     public static final String MOBILE_SDK_ORIGINAL_TOKENS_HEADER = "x-px-original-tokens";
+
+    public static String ADDITIONAL_ACTIVITY_HEADER = "px-additional-activity";
+    public static String ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url";
 
     public static final String HEADER_ORIGIN = "header";
     public static final String COOKIE_HEADER_NAME = "cookie";
