@@ -1,5 +1,6 @@
 package com.web;
 
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import org.json.JSONObject;
@@ -107,6 +108,8 @@ public class Config {
                 case "px_login_credentials_extraction":
                     builder.loginCredentials(enforcerConfig.getJSONArray(key).toString());
                     break;
+                case "px_credentials_intelligence_version":
+                    builder.ciVersion(CIVersion.getKeyByValue(enforcerConfig.getString(key)));
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":

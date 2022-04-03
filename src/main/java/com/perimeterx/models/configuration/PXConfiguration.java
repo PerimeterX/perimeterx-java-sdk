@@ -1,15 +1,12 @@
 package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
-import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentialsConfig;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
 import com.perimeterx.utils.PXLogger;
@@ -178,11 +175,16 @@ public class PXConfiguration {
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
 
+    @Builder.Default
     @JsonProperty("px_login_credentials_extraction_enabled")
     private boolean loginCredentialsExtractionEnabled;
 
     @JsonProperty("px_login_credentials_extraction")
     private CILoginMap loginCredentials;
+
+    @Builder.Default
+    @JsonProperty("px_credentials_intelligence_version")
+    private CIVersion ciVersion = CIVersion.V1;
 
     private static final String[] extensions = {"css", "bmp", "tif", "ttf", "woff2", "docx",
             "js", "pict", "tiff", "eot", "xlsx", "jpg", "csv", "woff", "xls", "jpeg", "doc", "eps",
@@ -203,7 +205,7 @@ public class PXConfiguration {
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
                 testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
-                loginCredentialsExtractionEnabled, loginCredentials, staticFilesExt);
+                loginCredentialsExtractionEnabled, loginCredentials, CIVersion.V1, staticFilesExt);
     }
 
     public void disableModule() {
