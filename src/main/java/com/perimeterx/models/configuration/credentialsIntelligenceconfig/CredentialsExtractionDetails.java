@@ -11,5 +11,5 @@ import java.util.function.Function;
 public class CredentialsExtractionDetails {
     private final CredentialsLocationInRequest credentialsLocationInRequest;
     private final Function<HttpServletRequest, LoginCredentials> customCallBack;
-    private final ConfigCredentialsFieldNames configCredentialsFieldNames;
+    private final ConfigCredentialsFieldPath configCredentialsFieldPath;
 }

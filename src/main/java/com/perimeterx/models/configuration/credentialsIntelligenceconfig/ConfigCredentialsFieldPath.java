@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class ConfigCredentialsFieldNames {
-    private final String userFieldName;
-    private final String passwordFieldName;
+public class ConfigCredentialsFieldPath {
+    private final String usernameFieldPath;
+    private final String passwordFieldPath;
 }

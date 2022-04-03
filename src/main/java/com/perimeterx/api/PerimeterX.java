@@ -27,6 +27,7 @@ package com.perimeterx.api;
 
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalS2SContext;
 import com.perimeterx.api.providers.CombinedIPProvider;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
@@ -140,7 +141,7 @@ public class PerimeterX {
      * @return PXContext, or null if module is disabled
      * @throws PXException - PXException
      */
-    public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
+    public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException, IOException {
         PXContext context = null;
         logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
@@ -150,7 +151,7 @@ public class PerimeterX {
                 return null;
             }
 
-            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+            context = createContext(req);
 
             if (shouldReverseRequest(req, responseWrapper)) {
                 context.setFirstPartyRequest(true);
@@ -179,6 +180,23 @@ public class PerimeterX {
         return context;
     }
 
+    private PXContext createContext(HttpServletRequest request) throws PXException {
+        final PXContext pxContext = new PXContext(request, this.ipProvider, this.hostnameProvider, configuration);
+        final AdditionalS2SContext additionalS2SContext = new AdditionalS2SContext(request, this.configuration);
+
+        additionalS2SContext.setAdditionalContext(pxContext);
+
+        return pxContext;
+    }
+
+    private boolean moduleEnabled() {
+        return this.configuration.isModuleEnabled();
+    }
+
+    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
+        return reverseProxy.reversePxClient(req, res) || reverseProxy.reversePxXhr(req, res) || reverseProxy.reverseCaptcha(req, res);
+    }
+
     private void handleCookies(PXContext context) {
         if (cookieValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
@@ -189,14 +207,6 @@ public class PerimeterX {
         if (serverValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
         }
-    }
-
-    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
-        return reverseProxy.reversePxClient(req, res) || reverseProxy.reversePxXhr(req, res) || reverseProxy.reverseCaptcha(req, res);
-    }
-
-    private boolean moduleEnabled() {
-        return this.configuration.isModuleEnabled();
     }
 
     /**

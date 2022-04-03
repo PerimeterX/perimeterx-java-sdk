@@ -1,7 +1,9 @@
 package com.perimeterx.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.UserLoginData;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -204,9 +206,11 @@ public class PXContext {
      */
 
     private String pxhd;
-
     private String responsePxhd;
     private boolean simulatedBlock;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private UserLoginData loginCredentials = null;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;

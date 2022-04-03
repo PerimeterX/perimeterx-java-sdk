@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Getter
 public class CILoginMap {
@@ -42,9 +44,9 @@ public class CILoginMap {
     private void setMapValues(Collection<LoginCredentialsConfig> loginCredentials) {
         loginCredentials.forEach(lc -> {
             final String key = generateMapKey(lc.getPath(), lc.getMethod().toString());
-            final ConfigCredentialsFieldNames credsFieldNames = new ConfigCredentialsFieldNames(lc.getUserName(), lc.getPassword());
+            final ConfigCredentialsFieldPath credentialsFieldNames = new ConfigCredentialsFieldPath(lc.getUserName(), lc.getPassword());
             final CredentialsExtractionDetails credentialsExtractionDetails = new CredentialsExtractionDetails(
-                    lc.getCredentialsLocationInRequest(), lc.getCustomCallback(), credsFieldNames);
+                    lc.getCredentialsLocationInRequest(), lc.getCustomCallback(), credentialsFieldNames);
 
             if(isRegex(lc)) {
                 regexPathAndMethodToLoginExtractionDetails.put(key, credentialsExtractionDetails);
@@ -54,11 +56,37 @@ public class CILoginMap {
         });
     }
 
-    private String generateMapKey(String path, String method) {
-        return path + DELIMITER + method;
-    }
-
     private boolean isRegex(LoginCredentialsConfig lc) {
         return lc.getPathType() != null && lc.getPathType().equals(PathType.REGEX);
+    }
+
+    public CredentialsExtractionDetails getCredentialsExtractionDetails(String path, String method) {
+        final String key = generateMapKey(path, method);
+
+        if(pathAndMethodToLoginExtractionDetails.containsKey(key)) {
+            return pathAndMethodToLoginExtractionDetails.get(key);
+        } else {
+            for (String regexKey : regexPathAndMethodToLoginExtractionDetails.keySet()) {
+                final boolean regexLoginRoute = isRegexLoginRoute(path, method, regexKey);
+
+                if(regexLoginRoute) {
+                    return regexPathAndMethodToLoginExtractionDetails.get(regexKey);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isRegexLoginRoute(String path, String method, String regexKey) {
+        final String[] pathAndMethod = regexKey.split(DELIMITER);
+        final Pattern regexPath = Pattern.compile(pathAndMethod[0], Pattern.CASE_INSENSITIVE);
+        final Matcher matcher = regexPath.matcher(path);
+
+        return pathAndMethod[1].equals(method) && matcher.find();
+    }
+
+    private String generateMapKey(String path, String method) {
+        return path + DELIMITER + method;
     }
 }
