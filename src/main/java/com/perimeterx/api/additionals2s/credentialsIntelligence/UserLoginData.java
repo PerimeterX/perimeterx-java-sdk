@@ -7,16 +7,16 @@ import lombok.Getter;
 @Getter
 public class UserLoginData {
     private final String encodedPassword;
-    private final String encodedUsername;
+    private final String username;
     private final String rawUsername;
-    private final CIVersion version;
+    private final CIVersion ciVersion;
     private final SSOStep ssoStep;
 
-    public UserLoginData(String encodedPassword, String encodedUsername, String rawUsername, CIVersion version, SSOStep ssoStep) {
+    public UserLoginData(String encodedPassword, String username, String rawUsername, CIVersion version, SSOStep ssoStep) {
         this.encodedPassword = encodedPassword;
-        this.encodedUsername = encodedUsername;
+        this.username = username;
         this.rawUsername = rawUsername;
-        this.version = version;
+        this.ciVersion = version;
         this.ssoStep = ssoStep;
     }
 }
