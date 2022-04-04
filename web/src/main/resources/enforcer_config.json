@@ -1,6 +1,5 @@
 {
   "px_app_id": "PXJWbMQarF",
-  "px_auth_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsicmlza19zY29yZSIsInJlc3RfYXBpIl0sImlhdCI6MTQ2OTM3MDE2Niwic3ViIjoiUFhKV2JNUWFyRiIsImp0aSI6IjFiOGVlNDMyLTliOWEtNGQ1Yi1iNGFjLTEzZjZkMzlhMjIwZCJ9.BzIy_-tv27PU3pmEtPF6lIz8Qagm30tHTGOoak5xlrk",
-  "px_cookie_secret": "RjXdmYp+DigzpRmrXZ00UIrq7nUG7ZSmO9Z0nGX4xEWibf3yvS7tHQ1gnKEnpIq4",
-  "px_module_mode": "active_blocking"
+  "px_auth_token": "",
+  "px_cookie_secret": ""
 }
