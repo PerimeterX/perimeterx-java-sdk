@@ -180,9 +180,11 @@ public class PXConfiguration {
     @Builder.Default
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
+
     @Builder.Default
     @JsonProperty("px_enforced_routes")
     private Set<String> enforcedRoutes = new HashSet<>();
+
     @Builder.Default
     @JsonProperty("px_monitored_routes")
     private Set<String> monitoredRoutes = new HashSet<>();
@@ -247,10 +249,11 @@ public class PXConfiguration {
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
                 testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
-                loginCredentialsExtractionEnabled, loginCredentials, ciVersion, pxCompromisedCredentialsHeader,
-                isAllowToAddRawUserNameOnS2SActivity, additionalS2SActivityHeaderEnabled, loginResponseValidationReportingMethod,
-                loginResponseValidationRegexBody, loginResponseValidationHeaderName, loginResponseValidationHeaderValue,
-                loginResponseValidationStatusCode, loginResponseValidationCustomCallback, staticFilesExt, enforcedRoutes, monitoredRoutes);
+                enforcedRoutes, monitoredRoutes, loginCredentialsExtractionEnabled, loginCredentials, ciVersion,
+                pxCompromisedCredentialsHeader, isAllowToAddRawUserNameOnS2SActivity, additionalS2SActivityHeaderEnabled,
+                loginResponseValidationReportingMethod, loginResponseValidationRegexBody, loginResponseValidationHeaderName,
+                loginResponseValidationHeaderValue, loginResponseValidationStatusCode, loginResponseValidationCustomCallback,
+                staticFilesExt);
     }
 
     public void disableModule() {
