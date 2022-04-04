@@ -44,8 +44,7 @@ public class CredentialsIntelligence {
     }
 
     private UserLoginData generateUserLoginData(LoginCredentials rawCredentials) throws PXException {
-        final CredentialsIntelligenceProtocolFactory factory = new CredentialsIntelligenceProtocolFactory();
-        final CredentialsIntelligenceProtocol ciProtocol = factory.create(pxConfiguration.getCiVersion());
+        final CredentialsIntelligenceProtocol ciProtocol = CredentialsIntelligenceProtocolFactory.create(pxConfiguration.getCiVersion());
 
         return ciProtocol.generateUserLoginData(rawCredentials);
     }

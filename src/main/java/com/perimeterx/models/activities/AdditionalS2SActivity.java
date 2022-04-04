@@ -25,8 +25,8 @@ public class AdditionalS2SActivity implements ActivityDetails {
     public AdditionalS2SActivity(PXContext context) {
         this.clientUuid = context.getUuid();
         this.username = null;
-        this.ciVersion = context.getLoginCredentials().getCiVersion();
-        this.ssoStep = context.getLoginCredentials().getSsoStep();
+        this.ciVersion = context.getAdditionalS2SContext().getLoginCredentials().getCiVersion();
+        this.ssoStep = context.getAdditionalS2SContext().getLoginCredentials().getSsoStep();
         this.credentialsCompromised = context.isBreachedAccount();
     }
 

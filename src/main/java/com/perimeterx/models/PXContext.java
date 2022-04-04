@@ -1,9 +1,8 @@
 package com.perimeterx.models;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.UserLoginData;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalS2SContext;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -210,9 +209,7 @@ public class PXContext {
     private String pxhd;
     private String responsePxhd;
     private boolean simulatedBlock;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private UserLoginData loginCredentials = null;
+    private AdditionalS2SContext additionalS2SContext;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -443,5 +440,9 @@ public class PXContext {
 
     public boolean isBreachedAccount() {
         return this.pxde != null && this.pxdeVerified && this.pxde.has(BREACHED_ACCOUNT_KEY_NAME);
+    }
+
+    public boolean isContainCredentialIntelligence() {
+        return this.getAdditionalS2SContext() != null && this.getAdditionalS2SContext().getLoginCredentials() != null;
     }
 }

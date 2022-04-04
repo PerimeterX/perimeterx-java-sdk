@@ -55,4 +55,9 @@ public class DefaultActivityHandler implements ActivityHandler {
         }
     }
 
+    @Override
+    public void handleAdditionalS2SActivity(PXContext context, boolean loginFailed) throws PXException {
+
+    }
+
 }

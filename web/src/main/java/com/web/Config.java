@@ -1,13 +1,24 @@
 package com.web;
 
 import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
+import jdk.nashorn.api.scripting.AbstractJSObject;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import javax.servlet.http.HttpServletResponse;
+import java.util.function.Function;
+
 import static com.web.Utils.*;
 
 public class Config {
     private final JSONObject enforcerConfig;
+    private final String SCRIPT_ENGINE_IMPLEMENTATION_NAME = "nashorn";
 
     public Config() {
         enforcerConfig = getEnforcerConfig();
@@ -115,10 +126,29 @@ public class Config {
                     builder.pxCompromisedCredentialsHeader(enforcerConfig.getString(key));
                     break;
                 case "px_send_raw_username_on_additional_s2s_activity":
-                    builder.allowToAddRawUserNameOnS2SActivity(enforcerConfig.getBoolean(key));
+                    builder.isAllowToAddRawUserNameOnS2SActivity(enforcerConfig.getBoolean(key));
                     break;
                 case "px_additional_s2s_activity_header_enabled":
                     builder.additionalS2SActivityHeaderEnabled(enforcerConfig.getBoolean(key));
+                    break;
+                case "px_login_successful_reporting_method":
+                    builder.loginResponseValidationReportingMethod(LoginResponseValidationReportingMethod.getKeyByValue(enforcerConfig.getString(key)));
+                    break;
+                case "px_login_successful_body_regex":
+                    builder.loginResponseValidationRegexBody(enforcerConfig.getString(key));
+                    break;
+                case "px_login_successful_header_name":
+                    builder.loginResponseValidationHeaderName(enforcerConfig.getString(key));
+                    break;
+                case "px_login_successful_header_value":
+                    builder.loginResponseValidationHeaderValue(enforcerConfig.getString(key));
+                    break;
+                case "px_login_successful_status":
+                    builder.loginResponseValidationStatusCode(unpackStatusCode(key));
+                    break;
+                case "px_login_successful_custom_callback":
+                    builder.loginResponseValidationCustomCallback(extractCustomCallback(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
@@ -131,6 +161,27 @@ public class Config {
         }
 
         return builder.build();
+    }
+
+    private int[] unpackStatusCode(String key) {
+        final JSONArray jsonField = enforcerConfig.getJSONArray(key);
+        final int[] statusCode = new int[jsonField.length()];
+
+        for(int i = 0; i < statusCode.length; i ++) {
+            statusCode[i] = jsonField.getInt(i);
+        }
+        return statusCode;
+    }
+
+    private Function<HttpServletResponse, Boolean> extractCustomCallback(String key) {
+        final ScriptEngine engine = new ScriptEngineManager().getEngineByName(SCRIPT_ENGINE_IMPLEMENTATION_NAME);
+        try {
+            final AbstractJSObject callback = (AbstractJSObject) engine.eval(enforcerConfig.getString(key));
+            return re -> (Boolean) callback.call(null, re);
+        } catch (ScriptException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
 

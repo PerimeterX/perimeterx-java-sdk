@@ -36,4 +36,13 @@ public interface ActivityHandler {
      * @throws PXException
      */
     void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason) throws PXException;
+
+    /**
+     * Sends additional server to server activity upon match use cases: login request.
+     *
+     * @param context
+     * @param loginFailed - whether the login request failed if it was sent.
+     * @throws PXException
+     */
+    void handleAdditionalS2SActivity(PXContext context, boolean loginFailed) throws PXException;
 }

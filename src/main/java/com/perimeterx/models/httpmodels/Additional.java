@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.SSOStep;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.UserLoginData;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
@@ -71,11 +72,9 @@ public class Additional {
     public String password;
 
     @JsonProperty("ci_version")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public CIVersion ciVersion;
 
     @JsonProperty("sso_step")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public SSOStep ssoStep;
 
     public static Additional fromContext(PXContext ctx) {
@@ -102,11 +101,12 @@ public class Additional {
     }
 
     private static void setLoginCredentials(PXContext ctx, Additional additional) {
-        if(ctx.getLoginCredentials() != null) {
-            additional.username = ctx.getLoginCredentials().getUsername();
-            additional.password = ctx.getLoginCredentials().getEncodedPassword();
-            additional.ciVersion = ctx.getLoginCredentials().getCiVersion();
-            additional.ssoStep = ctx.getLoginCredentials().getSsoStep();
+        if(ctx.isContainCredentialIntelligence()) {
+            final UserLoginData loginCredentials = ctx.getAdditionalS2SContext().getLoginCredentials();
+            additional.username = loginCredentials.getUsername();
+            additional.password = loginCredentials.getEncodedPassword();
+            additional.ciVersion = loginCredentials.getCiVersion();
+            additional.ssoStep = loginCredentials.getSsoStep();
         }
     }
 }

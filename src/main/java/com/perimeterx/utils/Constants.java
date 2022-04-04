@@ -86,4 +86,7 @@ public final class Constants {
     public static final String UNICODE_TYPE = "UTF-8";
     public static final String QUERY_PARAM_PAIRS_SEPARATOR = "&";
     public static final String QUERY_PARAM_KEY_VALUE_SEPARATOR = "=";
+
+    public static final String DEFAULT_LOGIN_RESPONSE_HEADER_NAME = "x-px-login-successful";
+    public static final String DEFAULT_LOGIN_RESPONSE_HEADER_VALUE = "1";
 }

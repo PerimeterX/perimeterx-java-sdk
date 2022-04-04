@@ -6,10 +6,7 @@ import java.util.Arrays;
 
 public enum CIVersion {
 
-    @JsonProperty("v1")
     V1("v1"),
-
-    @JsonProperty("multistep_sso")
     MULTI_STEP_SSO("multistep_sso"),
     ;
 

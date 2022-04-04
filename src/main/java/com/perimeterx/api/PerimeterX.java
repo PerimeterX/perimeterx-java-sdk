@@ -29,6 +29,8 @@ import com.google.gson.Gson;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalS2SContext;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidator;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidatorFactory;
 import com.perimeterx.api.providers.CombinedIPProvider;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
@@ -43,6 +45,7 @@ import com.perimeterx.api.verificationhandler.TestVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.http.RequestWrapper;
+import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
@@ -58,6 +61,7 @@ import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
+import org.apache.http.HttpResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -193,7 +197,7 @@ public class PerimeterX {
         final PXContext pxContext = new PXContext(request, this.ipProvider, this.hostnameProvider, configuration);
         final AdditionalS2SContext additionalS2SContext = new AdditionalS2SContext(request, this.configuration);
 
-        additionalS2SContext.setAdditionalContext(pxContext);
+        pxContext.setAdditionalS2SContext(additionalS2SContext);
 
         return pxContext;
     }
@@ -232,11 +236,7 @@ public class PerimeterX {
 
     private void setAdditionalS2SActivityHeaders(HttpServletRequest request, PXContext context) {
         if (configuration.isAdditionalS2SActivityHeaderEnabled()) {
-            final Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_ADDITIONAL_S2S, configuration.getAppId(), context);
-
-            if(context.isBreachedAccount() && configuration.isAllowToAddRawUserNameOnS2SActivity()) {
-                ((AdditionalS2SActivity) activity.getDetails()).setUsername(context.getLoginCredentials().getUsername());
-            }
+            final Activity activity = ((BufferedActivityHandler) activityHandler).createAdditionalS2SActivity(context, false);
 
             final String stringifyActivity = new Gson().toJson(activity);
             final String urlHeader = configuration.getServerURL() + API_ACTIVITIES;
@@ -245,6 +245,17 @@ public class PerimeterX {
             ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_URL_HEADER, urlHeader);
         }
     }
+
+    public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
+        if(configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialIntelligence()) {
+            final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
+            final boolean isSuccessfulLogin = loginResponseValidator != null && loginResponseValidator.isSuccessfulLogin(response);
+
+            activityHandler.handleAdditionalS2SActivity(context, !isSuccessfulLogin);
+        }
+    }
+
+
 
     /**
      * Set activity handler
