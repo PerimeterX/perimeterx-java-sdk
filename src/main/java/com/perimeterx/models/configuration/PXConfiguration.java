@@ -180,6 +180,12 @@ public class PXConfiguration {
     @Builder.Default
     @JsonProperty("px_advanced_blocking_response")
     private boolean advancedBlockingResponse = true;
+    @Builder.Default
+    @JsonProperty("px_enforced_routes")
+    private Set<String> enforcedRoutes = new HashSet<>();
+    @Builder.Default
+    @JsonProperty("px_monitored_routes")
+    private Set<String> monitoredRoutes = new HashSet<>();
 
     @JsonProperty("px_login_credentials_extraction_enabled")
     private boolean loginCredentialsExtractionEnabled;
@@ -244,7 +250,7 @@ public class PXConfiguration {
                 loginCredentialsExtractionEnabled, loginCredentials, ciVersion, pxCompromisedCredentialsHeader,
                 isAllowToAddRawUserNameOnS2SActivity, additionalS2SActivityHeaderEnabled, loginResponseValidationReportingMethod,
                 loginResponseValidationRegexBody, loginResponseValidationHeaderName, loginResponseValidationHeaderValue,
-                loginResponseValidationStatusCode, loginResponseValidationCustomCallback, staticFilesExt);
+                loginResponseValidationStatusCode, loginResponseValidationCustomCallback, staticFilesExt, enforcedRoutes, monitoredRoutes);
     }
 
     public void disableModule() {
@@ -316,6 +322,6 @@ public class PXConfiguration {
      * @return true if path is to static file defined at the white list
      */
     public boolean isExtWhiteListed(String path) {
-        return  staticFilesExt.contains(FilenameUtils.getExtension(path));
+        return staticFilesExt.contains(FilenameUtils.getExtension(path));
     }
 }
