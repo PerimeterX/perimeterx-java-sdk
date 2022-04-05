@@ -1,5 +1,6 @@
-package com.perimeterx.api.additionals2s.credentialsIntelligence;
+package com.perimeterx.api.additionals2s.credentialsIntelligence.protocol;
 
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
 import com.perimeterx.models.exceptions.PXException;
 
 import java.util.Arrays;
@@ -9,6 +10,8 @@ public class CredentialsIntelligenceProtocolFactory {
         switch (ciVersion) {
             case V1:
                 return new V1CIProtocol();
+            case V2:
+                return new V2CIProtocol();
             case MULTI_STEP_SSO:
                 return new MultiStepSSOCIProtocol();
             default:

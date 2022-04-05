@@ -7,6 +7,7 @@ import java.util.Arrays;
 public enum CIVersion {
 
     V1("v1"),
+    V2("v2"),
     MULTI_STEP_SSO("multistep_sso"),
     ;
 

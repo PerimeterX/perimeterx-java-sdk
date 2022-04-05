@@ -1,5 +1,8 @@
-package com.perimeterx.api.additionals2s.credentialsIntelligence;
+package com.perimeterx.api.additionals2s.credentialsIntelligence.protocol;
 
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.SSOStep;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.UserLoginData;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
 import com.perimeterx.utils.HashAlgorithm;
 

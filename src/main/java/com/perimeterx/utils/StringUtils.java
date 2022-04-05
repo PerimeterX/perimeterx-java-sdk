@@ -7,14 +7,18 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.Constants.*;
 import static com.perimeterx.utils.Constants.UNICODE_TYPE;
+import static com.perimeterx.utils.HashAlgorithm.SHA256;
 
 public final class StringUtils {
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private final static int HEX_BASE = 16;
     private final static int GENERATED_HASH_LENGTH = 32;
+    private final static String OWASP_EMAIL_ADDRESS_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+    private final static String GMAIL_DOMAIN = "@gmail.com";
 
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
@@ -49,8 +53,7 @@ public final class StringUtils {
             }
 
             return hshtxt.toString();
-        }
-        catch (NoSuchAlgorithmException abc) {
+        } catch (NoSuchAlgorithmException abc) {
             throw new RuntimeException(abc);
         }
     }
@@ -66,5 +69,37 @@ public final class StringUtils {
         }
 
         return params;
+    }
+
+    public static boolean isValid(String email) {
+        final Pattern pat = Pattern.compile(OWASP_EMAIL_ADDRESS_REGEX);
+
+        if (email == null) {
+            return false;
+        }
+        return pat.matcher(email).matches();
+    }
+
+    public static String getV2NormalizedEmailAddress(String emailAddress) {
+        final String lowercaseAddress = emailAddress.toLowerCase();
+        final int index = lowercaseAddress.indexOf('@');
+        final String domain = lowercaseAddress.substring(index);
+
+        String username = lowercaseAddress.substring(0,index);
+        username = username.replace(".", "");
+
+        if (domain.equals(GMAIL_DOMAIN)) {
+            final int plusIndex = username.indexOf("+");
+            username = plusIndex != -1 ? username.substring(0, plusIndex) : username;
+        }
+
+        return username + domain;
+    }
+
+    public static String getEncodedV2Password(String normalizedUsername, String password) {
+        final String encodedUserName = encodeString(normalizedUsername, SHA256);
+        final String encodedPassword = encodeString(password, SHA256);
+
+        return encodeString(encodedUserName + encodedPassword, SHA256);
     }
 }
