@@ -14,6 +14,6 @@ public class LoginResponseStatusCodeValidator implements LoginResponseValidator 
 
     @Override
     public boolean isSuccessfulLogin(ResponseWrapper response) {
-        return response != null && Arrays.stream(statusCode).anyMatch(sc -> sc == response.getStatus());
+        return Arrays.stream(statusCode).anyMatch(sc -> sc == response.getStatus());
     }
 }

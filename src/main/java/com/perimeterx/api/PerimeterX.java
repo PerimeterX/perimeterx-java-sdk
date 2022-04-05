@@ -223,8 +223,10 @@ public class PerimeterX {
     }
 
     private void addCustomHeadersToRequest(HttpServletRequest request, PXContext context) {
-        setBreachedAccount(request, context);
-        setAdditionalS2SActivityHeaders(request, context);
+        if (context.getAdditionalS2SContext() != null && context.getAdditionalS2SContext().getLoginCredentials() != null){
+            setBreachedAccount(request, context);
+            setAdditionalS2SActivityHeaders(request, context);
+        }
     }
 
     private void setBreachedAccount(HttpServletRequest request, PXContext context) {
@@ -248,7 +250,7 @@ public class PerimeterX {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            if (configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialIntelligence()) {
+            if (response != null && configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialIntelligence()) {
                 final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
                 final boolean loginFailed = !loginResponseValidator.isSuccessfulLogin(response);
 
