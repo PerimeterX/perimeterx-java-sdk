@@ -153,7 +153,7 @@ public class PerimeterX {
      * @return PXContext, or null if module is disabled
      * @throws PXException - PXException
      */
-    public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException, IOException {
+    public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
         logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
