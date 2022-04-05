@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.function.Function;
 
 public class LoginResponseCustomCallbackValidator implements LoginResponseValidator {
-    PXLogger logger = PXLogger.getLogger(LoginResponseCustomCallbackValidator.class);
+    final PXLogger logger = PXLogger.getLogger(LoginResponseCustomCallbackValidator.class);
 
     private final Function<HttpServletResponse, Boolean> customCallback;
 
@@ -19,10 +19,12 @@ public class LoginResponseCustomCallbackValidator implements LoginResponseValida
     @Override
     public boolean isSuccessfulLogin(ResponseWrapper response) {
         try {
-            Boolean successfulLogin = this.customCallback.apply(response);
+            final Boolean successfulLogin = this.customCallback.apply(response);
+
             return successfulLogin != null ? successfulLogin : false;
         } catch (Exception e) {
             logger.error("Failed to execute custom callback while trying to validate login response " + e);
+
             return false;
         }
     }

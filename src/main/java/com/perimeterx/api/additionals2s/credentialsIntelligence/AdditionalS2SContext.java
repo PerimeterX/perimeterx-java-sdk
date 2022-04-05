@@ -11,6 +11,7 @@ import java.io.IOException;
 
 @Getter
 public class AdditionalS2SContext {
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private UserLoginData loginCredentials;
 

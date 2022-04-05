@@ -72,12 +72,11 @@ public final class StringUtils {
     }
 
     public static boolean isValid(String email) {
-        final Pattern pat = Pattern.compile(OWASP_EMAIL_ADDRESS_REGEX);
-
         if (email == null) {
             return false;
         }
-        return pat.matcher(email).matches();
+        final Pattern pattern = Pattern.compile(OWASP_EMAIL_ADDRESS_REGEX);
+        return pattern.matcher(email).matches();
     }
 
     public static String getV2NormalizedEmailAddress(String emailAddress) {

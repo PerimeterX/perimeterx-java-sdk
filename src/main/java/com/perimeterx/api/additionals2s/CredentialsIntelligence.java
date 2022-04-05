@@ -25,7 +25,7 @@ public class CredentialsIntelligence {
     private static final String CREDENTIALS_PATH_SEPARATOR = "\\.";
 
     private final PXConfiguration pxConfiguration;
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
     public CredentialsIntelligence(PXConfiguration pxConfiguration, HttpServletRequest request) {
         this.pxConfiguration = pxConfiguration;
@@ -41,12 +41,6 @@ public class CredentialsIntelligence {
             }
         }
         return null;
-    }
-
-    private UserLoginData generateUserLoginData(LoginCredentials rawCredentials) throws PXException {
-        final CredentialsIntelligenceProtocol ciProtocol = CredentialsIntelligenceProtocolFactory.create(pxConfiguration.getCiVersion());
-
-        return ciProtocol.generateUserLoginData(rawCredentials);
     }
 
     private LoginCredentials extractCredentials() throws PXException, IOException {
@@ -68,6 +62,7 @@ public class CredentialsIntelligence {
     private LoginCredentials extractCredentials(CredentialsExtractionDetails credentialsExtractionDetails) throws PXException, IOException {
         if (credentialsExtractionDetails.getCustomCallBack() != null) {
             final Function<HttpServletRequest, LoginCredentials> customCallBack = credentialsExtractionDetails.getCustomCallBack();
+
             return customCallBack.apply(request);
         } else {
             return extractByLocation(credentialsExtractionDetails);
@@ -107,12 +102,13 @@ public class CredentialsIntelligence {
     }
 
     private String getNestedField(String[] path) throws IOException {
+        final int lastIndexInPath = path.length - 1;
         JsonObject body = new Gson().fromJson(request.getReader(), JsonObject.class);
 
         for (int i = 0; i < path.length; i++) {
 
-            if (i == path.length - 1) {
-                JsonPrimitive nestedField = body.getAsJsonPrimitive(path[path.length - 1]);
+            if (i == lastIndexInPath) {
+                JsonPrimitive nestedField = body.getAsJsonPrimitive(path[lastIndexInPath]);
                 return nestedField != null ? String.valueOf(nestedField) : null;
             }
             body = body.getAsJsonObject(path[i]);
@@ -135,4 +131,9 @@ public class CredentialsIntelligence {
         return new LoginCredentials(username, password);
     }
 
+    private UserLoginData generateUserLoginData(LoginCredentials rawCredentials) throws PXException {
+        final CredentialsIntelligenceProtocol ciProtocol = CredentialsIntelligenceProtocolFactory.create(pxConfiguration.getCiVersion());
+
+        return ciProtocol.generateUserLoginData(rawCredentials);
+    }
 }

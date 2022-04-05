@@ -35,7 +35,9 @@ public class PXFilter implements Filter {
         try {
             request = new RequestWrapper((HttpServletRequest) request);
             response = new ResponseWrapper((HttpServletResponse) response);
-            PXContext context = pxFilter.pxVerify((HttpServletRequest) request, new HttpServletResponseWrapper((HttpServletResponse) response));
+
+            final PXContext context = pxFilter.pxVerify((HttpServletRequest) request, new HttpServletResponseWrapper((HttpServletResponse) response));
+
             setDefaultPageAttributes((HttpServletRequest) request, config);
 
             if (context != null && context.isRequestLowScore()) {

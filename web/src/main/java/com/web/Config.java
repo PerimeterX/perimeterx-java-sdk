@@ -153,7 +153,7 @@ public class Config {
                     builder.loginResponseValidationHeaderValue(enforcerConfig.getString(key));
                     break;
                 case "px_login_successful_status":
-                    builder.loginResponseValidationStatusCode(unpackStatusCode(key));
+                    builder.loginResponseValidationStatusCode(extractStatusCode(key));
                     break;
                 case "px_login_successful_custom_callback":
                     builder.loginResponseValidationCustomCallback(extractCustomCallback(key));
@@ -172,7 +172,7 @@ public class Config {
         return builder.build();
     }
 
-    private int[] unpackStatusCode(String key) {
+    private int[] extractStatusCode(String key) {
         final JSONArray jsonField = enforcerConfig.getJSONArray(key);
         final int[] statusCode = new int[jsonField.length()];
 
@@ -186,7 +186,7 @@ public class Config {
         final ScriptEngine engine = new ScriptEngineManager().getEngineByName(SCRIPT_ENGINE_IMPLEMENTATION_NAME);
         try {
             final AbstractJSObject callback = (AbstractJSObject) engine.eval(enforcerConfig.getString(key));
-            return re -> (Boolean) callback.call(null, re);
+            return response -> (Boolean) callback.call(null, response);
         } catch (ScriptException e) {
             e.printStackTrace();
             return null;

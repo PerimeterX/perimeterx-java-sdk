@@ -247,11 +247,15 @@ public class PerimeterX {
     }
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
-        if(configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialIntelligence()) {
-            final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
-            final boolean isSuccessfulLogin = loginResponseValidator != null && loginResponseValidator.isSuccessfulLogin(response);
+        try {
+            if (configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialIntelligence()) {
+                final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
+                final boolean loginFailed = !loginResponseValidator.isSuccessfulLogin(response);
 
-            activityHandler.handleAdditionalS2SActivity(context, !isSuccessfulLogin);
+                activityHandler.handleAdditionalS2SActivity(context, loginFailed);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to post verify response. Error :: ", e);
         }
     }
 
