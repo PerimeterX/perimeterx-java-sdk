@@ -86,11 +86,11 @@ public final class StringUtils {
         final String domain = lowercaseAddress.substring(index);
 
         String username = lowercaseAddress.substring(0,index);
-        username = username.replace(".", "");
+        final int plusIndex = username.indexOf("+");
+        username = plusIndex != -1 ? username.substring(0, plusIndex) : username;
 
         if (domain.equals(GMAIL_DOMAIN)) {
-            final int plusIndex = username.indexOf("+");
-            username = plusIndex != -1 ? username.substring(0, plusIndex) : username;
+            username = username.replace(".", "");
         }
 
         return username + domain;

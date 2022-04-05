@@ -14,8 +14,7 @@ public class V2CIProtocol implements CredentialsIntelligenceProtocol {
     public UserLoginData generateUserLoginData(LoginCredentials credentials) {
         final String rawUsername = credentials.getUsername();
         final String normalizedUsername = isValid(rawUsername) ?
-                getV2NormalizedEmailAddress(rawUsername) :
-                rawUsername.toLowerCase(Locale.ROOT);
+                getV2NormalizedEmailAddress(rawUsername) : rawUsername;
 
         return new UserLoginData(
                 getEncodedV2Password(normalizedUsername, credentials.getPassword()),
