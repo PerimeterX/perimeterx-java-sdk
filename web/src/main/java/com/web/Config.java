@@ -135,7 +135,7 @@ public class Config {
                     builder.pxCompromisedCredentialsHeader(enforcerConfig.getString(key));
                     break;
                 case "px_send_raw_username_on_additional_s2s_activity":
-                    builder.isAllowToAddRawUserNameOnS2SActivity(enforcerConfig.getBoolean(key));
+                    builder.addRawUsernameOnAdditionalS2SActivity(enforcerConfig.getBoolean(key));
                     break;
                 case "px_additional_s2s_activity_header_enabled":
                     builder.additionalS2SActivityHeaderEnabled(enforcerConfig.getBoolean(key));

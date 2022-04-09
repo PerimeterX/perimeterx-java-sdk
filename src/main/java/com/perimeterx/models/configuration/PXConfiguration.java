@@ -204,7 +204,7 @@ public class PXConfiguration {
     private String pxCompromisedCredentialsHeader = "px-compromised-credentials";
 
     @JsonProperty("px_send_raw_username_on_additional_s2s_activity")
-    private boolean isAllowToAddRawUserNameOnS2SActivity;
+    private boolean addRawUsernameOnAdditionalS2SActivity;
 
     @JsonProperty("px_additional_s2s_activity_header_enabled")
     private boolean additionalS2SActivityHeaderEnabled;
@@ -250,7 +250,7 @@ public class PXConfiguration {
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
                 testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
                 enforcedRoutes, monitoredRoutes, loginCredentialsExtractionEnabled, loginCredentials, ciVersion,
-                pxCompromisedCredentialsHeader, isAllowToAddRawUserNameOnS2SActivity, additionalS2SActivityHeaderEnabled,
+                pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
                 loginResponseValidationReportingMethod, loginResponseValidationRegexBody, loginResponseValidationHeaderName,
                 loginResponseValidationHeaderValue, loginResponseValidationStatusCode, loginResponseValidationCustomCallback,
                 staticFilesExt);

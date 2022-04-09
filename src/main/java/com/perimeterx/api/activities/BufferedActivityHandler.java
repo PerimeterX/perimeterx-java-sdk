@@ -80,7 +80,7 @@ public class BufferedActivityHandler implements ActivityHandler {
 
         return (!loginRequestSentToOrigin || context.getAdditionalS2SContext().getLoginSuccessful())
                 && context.isBreachedAccount()
-                && configuration.isSendRawUsernameOnAdditionalS2SActivity();
+                && configuration.isAddRawUsernameOnAdditionalS2SActivity();
     }
 
     private void handleSendActivities(Activity activity) throws PXException {
