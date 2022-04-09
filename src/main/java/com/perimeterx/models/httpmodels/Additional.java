@@ -10,6 +10,8 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 
+import java.util.UUID;
+
 /**
  * Created by shikloshi on 06/08/2016.
  */
@@ -77,6 +79,9 @@ public class Additional {
     @JsonProperty("sso_step")
     public SSOStep ssoStep;
 
+    @JsonProperty("request_id")
+    public UUID requestId;
+
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
         additional.pxCookie = ctx.getRiskCookie();
@@ -94,6 +99,7 @@ public class Additional {
         additional.pxCookieHmac = ctx.getCookieHmac();
         additional.requestCookieNames = ctx.getRequestCookieNames();
         additional.vidSource = ctx.getVidSource().getValue();
+        additional.requestId = ctx.getRequestId();
 
         setLoginCredentials(ctx, additional);
 
@@ -101,7 +107,7 @@ public class Additional {
     }
 
     private static void setLoginCredentials(PXContext ctx, Additional additional) {
-        if(ctx.isContainCredentialIntelligence()) {
+        if(ctx.isContainCredentialsIntelligence()) {
             final UserLoginData loginCredentials = ctx.getAdditionalS2SContext().getLoginCredentials();
             additional.username = loginCredentials.getUsername();
             additional.password = loginCredentials.getEncodedPassword();

@@ -9,6 +9,8 @@ import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import lombok.Getter;
 
+import java.util.UUID;
+
 /**
  * BlockActivityDetails model
  * <p>
@@ -20,28 +22,42 @@ public class BlockActivityDetails implements ActivityDetails {
 
     @JsonProperty("block_score")
     private int blockScore;
+
     @JsonProperty("block_reason")
     private BlockReason blockReason;
+
     @JsonProperty("block_uuid")
     private String blockUuid;
+
     @JsonProperty("http_method")
     private String httpMethod;
+
     @JsonProperty("http_version")
     private String httpVersion;
+
     @JsonProperty("px_cookie")
     private String pxCookie;
+
     @JsonProperty("risk_rtt")
     private long riskRtt;
+
     @JsonProperty("module_version")
     private String moduleVersion;
+
     @JsonProperty("cookie_origin")
     private String cookieOrigin;
+
     @JsonProperty("simulated_block")
     private Boolean simulatedBlock;
+
     @JsonUnwrapped
     private CustomParameters customParameters;
+
     @JsonProperty("block_action")
     private String blockAction;
+
+    @JsonProperty("request_id")
+    public UUID requestId;
 
     public BlockActivityDetails(PXContext context) {
         this.blockScore = context.getRiskScore();
@@ -55,6 +71,8 @@ public class BlockActivityDetails implements ActivityDetails {
         this.moduleVersion = Constants.SDK_VERSION;
         this.simulatedBlock = context.isMonitoredRequest();
         this.customParameters = context.getCustomParameters();
+        this.requestId = context.getRequestId();
+
         if (context.getBlockAction() != null) {
             this.blockAction = context.getBlockAction().getCode();
         }

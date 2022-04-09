@@ -50,8 +50,6 @@ import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
-import com.perimeterx.models.activities.ActivityFactory;
-import com.perimeterx.models.activities.AdditionalS2SActivity;
 import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
@@ -59,9 +57,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
-import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
-import org.apache.http.HttpResponse;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -176,8 +172,8 @@ public class PerimeterX {
             }
 
             handleCookies(context);
-            context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
             addCustomHeadersToRequest(req, context);
+            context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
             logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
@@ -193,7 +189,7 @@ public class PerimeterX {
         return context;
     }
 
-    private PXContext createContext(HttpServletRequest request) throws PXException, IOException {
+    private PXContext createContext(HttpServletRequest request) throws PXException {
         final PXContext pxContext = new PXContext(request, this.ipProvider, this.hostnameProvider, configuration);
         final AdditionalS2SContext additionalS2SContext = new AdditionalS2SContext(request, this.configuration);
 
@@ -238,7 +234,7 @@ public class PerimeterX {
 
     private void setAdditionalS2SActivityHeaders(HttpServletRequest request, PXContext context) {
         if (configuration.isAdditionalS2SActivityHeaderEnabled()) {
-            final Activity activity = ((BufferedActivityHandler) activityHandler).createAdditionalS2SActivity(context, false);
+            final Activity activity = ((BufferedActivityHandler) activityHandler).createAdditionalS2SActivity(context);
 
             final String stringifyActivity = new Gson().toJson(activity);
             final String urlHeader = configuration.getServerURL() + API_ACTIVITIES;
@@ -250,11 +246,14 @@ public class PerimeterX {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            if (response != null && configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialIntelligence()) {
-                final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
-                final boolean loginFailed = !loginResponseValidator.isSuccessfulLogin(response);
+            if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
+                final LoginResponseValidatorFactory factory = new LoginResponseValidatorFactory();
+                final LoginResponseValidator loginResponseValidator = factory.create(configuration);
 
-                activityHandler.handleAdditionalS2SActivity(context, loginFailed);
+                context.getAdditionalS2SContext().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
+                context.getAdditionalS2SContext().setResponseStatusCode(response.getStatus());
+
+                activityHandler.handleAdditionalS2SActivity(context);
             }
         } catch (Exception e) {
             logger.error("Failed to post verify response. Error :: ", e);

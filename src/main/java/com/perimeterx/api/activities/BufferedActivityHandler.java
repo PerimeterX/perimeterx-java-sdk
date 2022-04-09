@@ -60,22 +60,27 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     @Override
-    public void handleAdditionalS2SActivity(PXContext context, boolean loginFailed) throws PXException {
-        final Activity activity = createAdditionalS2SActivity(context, loginFailed);
+    public void handleAdditionalS2SActivity(PXContext context) throws PXException {
+        final Activity activity = createAdditionalS2SActivity(context);
         handleSendActivities(activity);
     }
 
-    public Activity createAdditionalS2SActivity(PXContext context, boolean loginFailed) {
+    public Activity createAdditionalS2SActivity(PXContext context) {
         final Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_ADDITIONAL_S2S, configuration.getAppId(), context);
 
-        if(isRequireRawUsername(context, loginFailed)) {
-            ((AdditionalS2SActivity) activity.getDetails()).setUsername(context.getAdditionalS2SContext().getLoginCredentials().getUsername());
+        if(isRequireRawUsername(context)) {
+            ((AdditionalS2SActivity) activity.getDetails())
+                    .setUsername(context.getAdditionalS2SContext().getLoginCredentials().getRawUsername());
         }
         return activity;
     }
 
-    private boolean isRequireRawUsername(PXContext context, boolean loginFailed) {
-        return !loginFailed && context.isBreachedAccount() && configuration.isAllowToAddRawUserNameOnS2SActivity();
+    private boolean isRequireRawUsername(PXContext context) {
+        final boolean loginRequestSentToOrigin = context.getAdditionalS2SContext().getLoginSuccessful() != null;
+
+        return (!loginRequestSentToOrigin || context.getAdditionalS2SContext().getLoginSuccessful())
+                && context.isBreachedAccount()
+                && configuration.isSendRawUsernameOnAdditionalS2SActivity();
     }
 
     private void handleSendActivities(Activity activity) throws PXException {

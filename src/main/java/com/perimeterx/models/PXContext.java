@@ -24,10 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -210,6 +207,7 @@ public class PXContext {
     private String responsePxhd;
     private boolean isMonitoredRequest;
     private AdditionalS2SContext additionalS2SContext;
+    private UUID requestId;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -241,6 +239,7 @@ public class PXContext {
         this.riskRtt = 0;
         this.httpMethod = request.getMethod();
         this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
+        this.requestId = UUID.randomUUID();
 
 
         String protocolDetails[] = request.getProtocol().split("/");
@@ -462,7 +461,7 @@ public class PXContext {
         return this.pxde != null && this.pxdeVerified && this.pxde.has(BREACHED_ACCOUNT_KEY_NAME);
     }
 
-    public boolean isContainCredentialIntelligence() {
+    public boolean isContainCredentialsIntelligence() {
         return this.getAdditionalS2SContext() != null && this.getAdditionalS2SContext().getLoginCredentials() != null;
     }
 }

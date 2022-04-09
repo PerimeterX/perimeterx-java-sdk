@@ -41,8 +41,7 @@ public interface ActivityHandler {
      * Sends additional server to server activity in case of login request.
      *
      * @param context
-     * @param loginFailed - whether the login request failed if it was sent.
      * @throws PXException
      */
-    void handleAdditionalS2SActivity(PXContext context, boolean loginFailed) throws PXException;
+    void handleAdditionalS2SActivity(PXContext context) throws PXException;
 }

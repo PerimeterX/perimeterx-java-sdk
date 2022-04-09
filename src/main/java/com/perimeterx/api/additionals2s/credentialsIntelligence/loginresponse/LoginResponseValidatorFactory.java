@@ -6,7 +6,7 @@ import com.perimeterx.models.exceptions.PXException;
 import java.util.Arrays;
 
 public class LoginResponseValidatorFactory {
-    public static LoginResponseValidator create(PXConfiguration config) throws PXException {
+    public LoginResponseValidator create(PXConfiguration config) throws PXException {
         switch (config.getLoginResponseValidationReportingMethod()) {
             case BODY:
                 return new LoginResponseBodyValidator(config);
