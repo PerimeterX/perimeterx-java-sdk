@@ -9,12 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
 public class RequestQueryParamsExtractor implements CredentialsExtractor {
-    private final PXLogger logger = PXLogger.getLogger(RequestQueryParamsExtractor.class);
-    private final HttpServletRequest request;
+    private final static PXLogger logger = PXLogger.getLogger(RequestQueryParamsExtractor.class);
+
     private final ConfigCredentialsFieldPath credentialsFieldPath;
 
     @Override
-    public LoginCredentials extractCredentials() {
+    public LoginCredentials extractCredentials(HttpServletRequest request) {
         try {
             final String username = request.getParameter(credentialsFieldPath.getUsernameFieldPath());
             final String password = request.getParameter(credentialsFieldPath.getPasswordFieldPath());

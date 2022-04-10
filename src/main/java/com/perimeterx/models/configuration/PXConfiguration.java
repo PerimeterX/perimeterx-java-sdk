@@ -2,7 +2,11 @@ package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest.CredentialsExtractor;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest.DefaultCredentialsCustomExtractor;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.DefaultCustomLoginResponseValidator;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidator;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
@@ -18,14 +22,14 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import static com.perimeterx.utils.Constants.DEFAULT_LOGIN_RESPONSE_HEADER_NAME;
-import static com.perimeterx.utils.Constants.DEFAULT_LOGIN_RESPONSE_HEADER_VALUE;
+import static com.perimeterx.utils.Constants.*;
 
 /**
  * PX configuration object
@@ -197,11 +201,11 @@ public class PXConfiguration {
 
     @Builder.Default
     @JsonProperty("px_credentials_intelligence_version")
-    private CIVersion ciVersion = CIVersion.V1;
+    private CIVersion ciVersion = CIVersion.V2;
 
     @Builder.Default
     @JsonProperty("px_compromised_credentials_header")
-    private String pxCompromisedCredentialsHeader = "px-compromised-credentials";
+    private String pxCompromisedCredentialsHeader = DEFAULT_COMPROMISED_CREDENTIALS_HEADER_NAME;
 
     @JsonProperty("px_send_raw_username_on_additional_s2s_activity")
     private boolean addRawUsernameOnAdditionalS2SActivity;
@@ -227,8 +231,11 @@ public class PXConfiguration {
     @JsonProperty("px_login_successful_status")
     private int[] loginResponseValidationStatusCode = {200};
 
-    @JsonProperty("px_login_successful_custom_callback")
-    private Function<HttpServletResponse, Boolean> loginResponseValidationCustomCallback;
+    @Builder.Default
+    private LoginResponseValidator customLoginResponseValidator = new DefaultCustomLoginResponseValidator();
+
+    @Builder.Default
+    private CredentialsExtractor credentialsCustomExtractor = new DefaultCredentialsCustomExtractor();
 
     private static final String[] extensions = {"css", "bmp", "tif", "ttf", "woff2", "docx",
             "js", "pict", "tiff", "eot", "xlsx", "jpg", "csv", "woff", "xls", "jpeg", "doc", "eps",
@@ -252,8 +259,8 @@ public class PXConfiguration {
                 enforcedRoutes, monitoredRoutes, loginCredentialsExtractionEnabled, loginCredentials, ciVersion,
                 pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
                 loginResponseValidationReportingMethod, loginResponseValidationRegexBody, loginResponseValidationHeaderName,
-                loginResponseValidationHeaderValue, loginResponseValidationStatusCode, loginResponseValidationCustomCallback,
-                staticFilesExt);
+                loginResponseValidationHeaderValue, loginResponseValidationStatusCode, customLoginResponseValidator,
+                credentialsCustomExtractor, staticFilesExt);
     }
 
     public void disableModule() {

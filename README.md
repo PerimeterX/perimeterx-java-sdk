@@ -192,7 +192,7 @@ enforcer.setVerificationHandler(new MyVerificationHandler(config));
 
 #### <a name="custom-parameters"></a> Custom Parameters
 
-With the `customParametersProvider` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before seting the payload on every request to PerimetrX servers.
+With the `customParametersProvider` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before setting the payload on every request to PerimetrX servers.
 
 MyCustomParametersProvider.java:
 ```java

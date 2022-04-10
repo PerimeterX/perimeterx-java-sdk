@@ -33,9 +33,9 @@ public class CILoginMap {
     private void setMapValues(Collection<LoginCredentialsConfig> loginCredentials) {
         loginCredentials.forEach(lc -> {
             final String key = generateMapKey(lc.getPath(), lc.getMethod().toString());
-            final ConfigCredentialsFieldPath credentialsFieldNames = new ConfigCredentialsFieldPath(lc.getUserName(), lc.getPassword());
+            final ConfigCredentialsFieldPath credentialsFieldNames = new ConfigCredentialsFieldPath(lc.getUsernameField(), lc.getPasswordField());
             final CredentialsExtractionDetails credentialsExtractionDetails = new CredentialsExtractionDetails(
-                    lc.getCredentialsLocationInRequest(), lc.getCustomCallback(), credentialsFieldNames);
+                    lc.getCredentialsLocationInRequest(), credentialsFieldNames);
 
             if(isRegex(lc)) {
                 regexPathAndMethodToLoginExtractionDetails.put(key, credentialsExtractionDetails);

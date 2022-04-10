@@ -28,7 +28,7 @@ package com.perimeterx.api;
 import com.google.gson.Gson;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalS2SContext;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalContext;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidator;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidatorFactory;
 import com.perimeterx.api.providers.CombinedIPProvider;
@@ -191,9 +191,9 @@ public class PerimeterX {
 
     private PXContext createContext(HttpServletRequest request) throws PXException {
         final PXContext pxContext = new PXContext(request, this.ipProvider, this.hostnameProvider, configuration);
-        final AdditionalS2SContext additionalS2SContext = new AdditionalS2SContext(request, this.configuration);
+        final AdditionalContext additionalContext = new AdditionalContext(request, this.configuration);
 
-        pxContext.setAdditionalS2SContext(additionalS2SContext);
+        pxContext.setAdditionalContext(additionalContext);
 
         return pxContext;
     }
@@ -219,7 +219,7 @@ public class PerimeterX {
     }
 
     private void addCustomHeadersToRequest(HttpServletRequest request, PXContext context) {
-        if (context.getAdditionalS2SContext() != null && context.getAdditionalS2SContext().getLoginCredentials() != null){
+        if (context.getAdditionalContext() != null && context.getAdditionalContext().getLoginCredentials() != null){
             setBreachedAccount(request, context);
             setAdditionalS2SActivityHeaders(request, context);
         }
@@ -247,11 +247,10 @@ public class PerimeterX {
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
             if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
-                final LoginResponseValidatorFactory factory = new LoginResponseValidatorFactory();
-                final LoginResponseValidator loginResponseValidator = factory.create(configuration);
+                final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
 
-                context.getAdditionalS2SContext().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
-                context.getAdditionalS2SContext().setResponseStatusCode(response.getStatus());
+                context.getAdditionalContext().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
+                context.getAdditionalContext().setResponseStatusCode(response.getStatus());
 
                 activityHandler.handleAdditionalS2SActivity(context);
             }

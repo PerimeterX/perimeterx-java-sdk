@@ -4,21 +4,14 @@ import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
-import jdk.nashorn.api.scripting.AbstractJSObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import javax.servlet.http.HttpServletResponse;
-import java.util.function.Function;
-
-import static com.web.Utils.*;
+import static com.web.Utils.getEnforcerConfig;
+import static com.web.Utils.jsonArrayToSet;
 
 public class Config {
     private final JSONObject enforcerConfig;
-    private final String SCRIPT_ENGINE_IMPLEMENTATION_NAME = "nashorn";
 
     public Config() {
         enforcerConfig = getEnforcerConfig();
@@ -155,9 +148,6 @@ public class Config {
                 case "px_login_successful_status":
                     builder.loginResponseValidationStatusCode(extractStatusCode(key));
                     break;
-                case "px_login_successful_custom_callback":
-                    builder.loginResponseValidationCustomCallback(extractCustomCallback(key));
-                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
@@ -180,17 +170,6 @@ public class Config {
             statusCode[i] = jsonField.getInt(i);
         }
         return statusCode;
-    }
-
-    private Function<HttpServletResponse, Boolean> extractCustomCallback(String key) {
-        final ScriptEngine engine = new ScriptEngineManager().getEngineByName(SCRIPT_ENGINE_IMPLEMENTATION_NAME);
-        try {
-            final AbstractJSObject callback = (AbstractJSObject) engine.eval(enforcerConfig.getString(key));
-            return response -> (Boolean) callback.call(null, response);
-        } catch (ScriptException e) {
-            e.printStackTrace();
-            return null;
-        }
     }
 }
 

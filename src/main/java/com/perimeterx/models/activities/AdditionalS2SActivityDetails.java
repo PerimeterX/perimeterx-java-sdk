@@ -2,7 +2,7 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalS2SContext;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalContext;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.SSOStep;
 import com.perimeterx.models.PXContext;
@@ -10,7 +10,7 @@ import com.perimeterx.models.PXContext;
 import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AdditionalS2SActivity implements ActivityDetails {
+public class AdditionalS2SActivityDetails implements ActivityDetails {
 
     @JsonProperty("client_uuid")
     private String clientUuid;
@@ -37,15 +37,15 @@ public class AdditionalS2SActivity implements ActivityDetails {
     public UUID requestId;
 
 
-    public AdditionalS2SActivity(PXContext context) {
-        final AdditionalS2SContext additionalS2SContext = context.getAdditionalS2SContext();
+    public AdditionalS2SActivityDetails(PXContext context) {
+        final AdditionalContext additionalContext = context.getAdditionalContext();
         this.clientUuid = context.getUuid();
         this.username = null;
-        this.ciVersion = additionalS2SContext.getLoginCredentials().getCiVersion();
-        this.ssoStep = additionalS2SContext.getLoginCredentials().getSsoStep();
+        this.ciVersion = additionalContext.getLoginCredentials().getCiVersion();
+        this.ssoStep = additionalContext.getLoginCredentials().getSsoStep();
         this.credentialsCompromised = context.isBreachedAccount();
-        this.loginSuccessful = additionalS2SContext.getLoginSuccessful();
-        this.httpStatusCode = additionalS2SContext.getResponseStatusCode();
+        this.loginSuccessful = additionalContext.getLoginSuccessful();
+        this.httpStatusCode = additionalContext.getResponseStatusCode();
         this.requestId = context.getRequestId();
 
     }

@@ -10,18 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 
 @Getter
 @Setter
-public class AdditionalS2SContext {
+public class AdditionalContext {
 
     private UserLoginData loginCredentials;
     private Boolean loginSuccessful;
     private Integer responseStatusCode;
 
-    public AdditionalS2SContext(HttpServletRequest request, PXConfiguration configuration) throws PXException {
+    public AdditionalContext(HttpServletRequest request, PXConfiguration configuration) throws PXException {
         generateLoginCredentials(request, configuration);
     }
 
     private void generateLoginCredentials(HttpServletRequest request, PXConfiguration configuration) throws PXException {
-        final CredentialsIntelligenceManager credentialsIntelligenceManager = new CredentialsIntelligenceManager(configuration, request);
-        this.loginCredentials = credentialsIntelligenceManager.getUserLoginData();
+        this.loginCredentials = CredentialsIntelligenceManager.getUserLoginData(configuration, request);
     }
 }

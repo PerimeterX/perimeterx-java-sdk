@@ -19,7 +19,7 @@ import static org.apache.commons.lang3.StringUtils.strip;
 
 @AllArgsConstructor
 public class RequestBodyExtractor implements CredentialsExtractor {
-    private final PXLogger logger = PXLogger.getLogger(RequestQueryParamsExtractor.class);
+    private final static PXLogger logger = PXLogger.getLogger(RequestQueryParamsExtractor.class);
 
     private final static String MULTIPART_CONTENT_SEPARATOR = "Content-Disposition: form-data; name=";
     private final static String MULTIPART_DASH_SEPARATOR = "--";
@@ -29,21 +29,20 @@ public class RequestBodyExtractor implements CredentialsExtractor {
     private final static String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
     private final static String MULTIPART_FORM_DATA = "multipart/form-data";
 
-    private final HttpServletRequest request;
     private final ConfigCredentialsFieldPath credentialsFieldPath;
 
     @Override
-    public LoginCredentials extractCredentials() {
+    public LoginCredentials extractCredentials(HttpServletRequest request) {
         try {
             if (request.getHeader(CONTENT_TYPE).equals(X_WWW_FORM_URLENCODED)) {
 
-                return extractFromQueryParamsStructure();
+                return extractFromQueryParamsStructure(request);
             } else if (request.getHeader(CONTENT_TYPE).contains(MULTIPART_FORM_DATA)) {
 
                 return extractFromMultipartHeaderTemplate(((RequestWrapper) request).getBody(), credentialsFieldPath);
             } else {
 
-                return extractRequestBodyFields();
+                return extractRequestBodyFields(request);
             }
         } catch (Exception e) {
             logger.error("Failed to extract credentials from request body. error :: ", e);
@@ -51,7 +50,7 @@ public class RequestBodyExtractor implements CredentialsExtractor {
         }
     }
 
-    private LoginCredentials extractFromQueryParamsStructure() throws UnsupportedEncodingException {
+    private LoginCredentials extractFromQueryParamsStructure(HttpServletRequest request) throws UnsupportedEncodingException {
         final Map<String, String> queryParams = splitQueryParams(((RequestWrapper) request).getBody());
 
         return new LoginCredentials(
@@ -87,7 +86,7 @@ public class RequestBodyExtractor implements CredentialsExtractor {
         return header.substring(keyLength, keyValueIndex);
     }
 
-    private LoginCredentials extractRequestBodyFields() throws IOException {
+    private LoginCredentials extractRequestBodyFields(HttpServletRequest request) throws IOException {
         final String username = extractFromJson(request, credentialsFieldPath.getUsernameFieldPath());
         final String password = extractFromJson(request, credentialsFieldPath.getPasswordFieldPath());
 

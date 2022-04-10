@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.function.Function;
-
 @NoArgsConstructor
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -23,14 +20,11 @@ public class LoginCredentialsConfig {
     private CredentialsLocationInRequest credentialsLocationInRequest;
 
     @JsonProperty("pass_field")
-    private String password;
+    private String passwordField;
 
     @JsonProperty("user_field")
-    private String userName;
+    private String usernameField;
 
     @JsonProperty("path_type")
     private PathType pathType;
-
-    @JsonProperty("callback")
-    private Function<HttpServletRequest,LoginCredentials> customCallback;
 }

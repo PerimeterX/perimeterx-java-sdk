@@ -69,16 +69,16 @@ public class BufferedActivityHandler implements ActivityHandler {
         final Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_ADDITIONAL_S2S, configuration.getAppId(), context);
 
         if(isRequireRawUsername(context)) {
-            ((AdditionalS2SActivity) activity.getDetails())
-                    .setUsername(context.getAdditionalS2SContext().getLoginCredentials().getRawUsername());
+            ((AdditionalS2SActivityDetails) activity.getDetails())
+                    .setUsername(context.getAdditionalContext().getLoginCredentials().getRawUsername());
         }
         return activity;
     }
 
     private boolean isRequireRawUsername(PXContext context) {
-        final boolean loginRequestSentToOrigin = context.getAdditionalS2SContext().getLoginSuccessful() != null;
+        final boolean loginRequestSentToOrigin = context.getAdditionalContext().getLoginSuccessful() != null;
 
-        return (!loginRequestSentToOrigin || context.getAdditionalS2SContext().getLoginSuccessful())
+        return (!loginRequestSentToOrigin || context.getAdditionalContext().getLoginSuccessful())
                 && context.isBreachedAccount()
                 && configuration.isAddRawUsernameOnAdditionalS2SActivity();
     }

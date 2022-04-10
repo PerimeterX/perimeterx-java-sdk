@@ -6,7 +6,7 @@ import com.perimeterx.models.exceptions.PXException;
 import java.util.Arrays;
 
 public class LoginResponseValidatorFactory {
-    public LoginResponseValidator create(PXConfiguration config) throws PXException {
+    public static LoginResponseValidator create(PXConfiguration config) throws PXException {
         switch (config.getLoginResponseValidationReportingMethod()) {
             case BODY:
                 return new LoginResponseBodyValidator(config);
@@ -15,7 +15,7 @@ public class LoginResponseValidatorFactory {
             case STATUS:
                 return new LoginResponseStatusCodeValidator(config);
             case CUSTOM:
-                return new LoginResponseCustomCallbackValidator(config);
+                return new LoginResponseCustomValidator(config);
             case NONE:
             default:
                 throw new PXException(String.format("Unknown Login Response Validation Reporting Method %s , acceptable versions are %s",

@@ -4,6 +4,10 @@ import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCr
 
 import javax.servlet.http.HttpServletRequest;
 
-public interface CredentialsExtractor {
-    LoginCredentials extractCredentials(HttpServletRequest request);
+public class DefaultCredentialsCustomExtractor implements CredentialsExtractor {
+
+    @Override
+    public LoginCredentials extractCredentials(HttpServletRequest request) {
+        return null;
+    }
 }

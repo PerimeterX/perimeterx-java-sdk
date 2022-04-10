@@ -2,7 +2,7 @@ package com.perimeterx.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalS2SContext;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalContext;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -206,7 +206,7 @@ public class PXContext {
     private String pxhd;
     private String responsePxhd;
     private boolean isMonitoredRequest;
-    private AdditionalS2SContext additionalS2SContext;
+    private AdditionalContext additionalContext;
     private UUID requestId;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
@@ -462,6 +462,6 @@ public class PXContext {
     }
 
     public boolean isContainCredentialsIntelligence() {
-        return this.getAdditionalS2SContext() != null && this.getAdditionalS2SContext().getLoginCredentials() != null;
+        return this.getAdditionalContext() != null && this.getAdditionalContext().getLoginCredentials() != null;
     }
 }

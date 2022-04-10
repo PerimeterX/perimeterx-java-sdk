@@ -19,7 +19,7 @@ public class ActivityFactory {
                 details = new PageRequestedActivityDetails(ctx);
                 break;
             case ACTIVITY_ADDITIONAL_S2S:
-                details = new AdditionalS2SActivity(ctx);
+                details = new AdditionalS2SActivityDetails(ctx);
                 break;
             default:
                 throw new IllegalArgumentException("No such activity: " + activityType);

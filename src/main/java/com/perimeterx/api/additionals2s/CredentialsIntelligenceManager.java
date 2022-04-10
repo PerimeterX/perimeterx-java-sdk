@@ -11,60 +11,49 @@ import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCr
 import com.perimeterx.models.exceptions.PXException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.function.Function;
 
 public class CredentialsIntelligenceManager {
-    private final PXConfiguration pxConfiguration;
-    private final HttpServletRequest request;
 
-    public CredentialsIntelligenceManager(PXConfiguration pxConfiguration, HttpServletRequest request) {
-        this.pxConfiguration = pxConfiguration;
-        this.request = request;
-    }
-
-    public UserLoginData getUserLoginData() throws PXException {
+    public static UserLoginData getUserLoginData(PXConfiguration pxConfiguration, HttpServletRequest request) throws PXException {
         if (pxConfiguration.isLoginCredentialsExtractionEnabled()) {
-            final LoginCredentials credentials = extractCredentials();
+            final LoginCredentials credentials = getCredentials(pxConfiguration, request);
 
             if (credentials != null && !credentials.isCredentialEmpty()) {
-                return generateUserLoginData(credentials);
+                return generateUserLoginData(pxConfiguration, credentials);
             }
         }
         return null;
     }
 
-    private LoginCredentials extractCredentials() {
-        final CredentialsExtractionDetails credentialsExtractionDetails = getCredentialsExtractionDetails();
+    private static LoginCredentials getCredentials(PXConfiguration pxConfiguration, HttpServletRequest request) {
+        final CredentialsExtractionDetails credentialsExtractionDetails = getCredentialsExtractionDetails(pxConfiguration, request);
 
-        if (credentialsExtractionDetails != null) {
-            return extractCredentials(credentialsExtractionDetails);
+        if (pxConfiguration.getCredentialsCustomExtractor().extractCredentials(request) != null) {
+
+            return pxConfiguration.getCredentialsCustomExtractor().extractCredentials(request);
+        }
+        else if (credentialsExtractionDetails != null) {
+            return extractCredentials(request, credentialsExtractionDetails);
         }
 
         return null;
     }
 
-    private CredentialsExtractionDetails getCredentialsExtractionDetails() {
+    private static CredentialsExtractionDetails getCredentialsExtractionDetails(PXConfiguration pxConfiguration, HttpServletRequest request) {
         return pxConfiguration
                 .getLoginCredentials()
                 .getCredentialsExtractionDetails(request.getServletPath(), request.getMethod());
     }
 
-    private LoginCredentials extractCredentials(CredentialsExtractionDetails credentialsExtractionDetails) {
-        if (credentialsExtractionDetails.getCustomCallBack() != null) {
-            final Function<HttpServletRequest, LoginCredentials> customCallBack = credentialsExtractionDetails.getCustomCallBack();
+    private static LoginCredentials extractCredentials(HttpServletRequest request, CredentialsExtractionDetails credentialsExtractionDetails) {
+        final CredentialsExtractor credentialsExtractor = CredentialsExtractorFactory.create(credentialsExtractionDetails);
 
-            return customCallBack.apply(request);
-        } else {
-            final CredentialsExtractorFactory credentialsExtractorFactory = new CredentialsExtractorFactory();
-            final CredentialsExtractor credentialsExtractor = credentialsExtractorFactory.create(request, credentialsExtractionDetails);
+        return credentialsExtractor.extractCredentials(request);
 
-            return credentialsExtractor.extractCredentials();
-        }
     }
 
-    private UserLoginData generateUserLoginData(LoginCredentials credentials) throws PXException {
-        final CredentialsIntelligenceProtocolFactory factory = new CredentialsIntelligenceProtocolFactory();
-        final CredentialsIntelligenceProtocol ciProtocol = factory.create(pxConfiguration.getCiVersion());
+    private static UserLoginData generateUserLoginData(PXConfiguration pxConfiguration, LoginCredentials credentials) throws PXException {
+        final CredentialsIntelligenceProtocol ciProtocol = CredentialsIntelligenceProtocolFactory.create(pxConfiguration.getCiVersion());
 
         return ciProtocol.generateUserLoginData(credentials);
     }

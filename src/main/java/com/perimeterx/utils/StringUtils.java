@@ -10,15 +10,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.Constants.*;
-import static com.perimeterx.utils.Constants.UNICODE_TYPE;
-import static com.perimeterx.utils.HashAlgorithm.SHA256;
 
 public final class StringUtils {
     private final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private final static int HEX_BASE = 16;
     private final static int GENERATED_HASH_LENGTH_LIMIT = 64;
-    private final static String OWASP_EMAIL_ADDRESS_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-    private final static String GMAIL_DOMAIN = "@gmail.com";
+    final static Pattern OWASP_EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
 
     public static byte[] hexStringToByteArray(String s) {
         int len = s.length();
@@ -75,30 +72,6 @@ public final class StringUtils {
         if (email == null) {
             return false;
         }
-        final Pattern pattern = Pattern.compile(OWASP_EMAIL_ADDRESS_REGEX);
-        return pattern.matcher(email).matches();
-    }
-
-    public static String getV2NormalizedEmailAddress(String emailAddress) {
-        final String lowercaseAddress = emailAddress.toLowerCase();
-        final int index = lowercaseAddress.indexOf('@');
-        final String domain = lowercaseAddress.substring(index);
-
-        String username = lowercaseAddress.substring(0,index);
-        final int plusIndex = username.indexOf("+");
-        username = plusIndex != -1 ? username.substring(0, plusIndex) : username;
-
-        if (domain.equals(GMAIL_DOMAIN)) {
-            username = username.replace(".", "");
-        }
-
-        return username + domain;
-    }
-
-    public static String getEncodedV2Password(String normalizedUsername, String password) {
-        final String encodedUserName = encodeString(normalizedUsername, SHA256);
-        final String encodedPassword = encodeString(password, SHA256);
-
-        return encodeString(encodedUserName + encodedPassword, SHA256);
+        return OWASP_EMAIL_PATTERN.matcher(email).matches();
     }
 }
