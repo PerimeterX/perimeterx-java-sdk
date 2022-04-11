@@ -1,4 +1,4 @@
-package com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest;
+package com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest;
 
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.ConfigCredentialsFieldPath;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
@@ -8,20 +8,21 @@ import lombok.AllArgsConstructor;
 import javax.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
-public class RequestQueryParamsExtractor implements CredentialsExtractor {
-    private final static PXLogger logger = PXLogger.getLogger(RequestQueryParamsExtractor.class);
+public class RequestHeaderExtractor implements CredentialsExtractor {
+    private static final PXLogger logger = PXLogger.getLogger(RequestHeaderExtractor.class);
 
     private final ConfigCredentialsFieldPath credentialsFieldPath;
 
     @Override
     public LoginCredentials extractCredentials(HttpServletRequest request) {
         try {
-            final String username = request.getParameter(credentialsFieldPath.getUsernameFieldPath());
-            final String password = request.getParameter(credentialsFieldPath.getPasswordFieldPath());
+            final String username = request.getHeader(credentialsFieldPath.getUsernameFieldPath());
+            final String password = request.getHeader(credentialsFieldPath.getPasswordFieldPath());
 
             return new LoginCredentials(username, password);
         } catch (Exception e) {
-            logger.error("Failed to extract credentials from request query params. error :: ", e);
+            logger.error("Failed to extract credentials from request headers. error :: ", e);
+
             return null;
         }
     }

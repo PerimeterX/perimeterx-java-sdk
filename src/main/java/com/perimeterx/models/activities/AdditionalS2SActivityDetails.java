@@ -2,9 +2,9 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalContext;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.SSOStep;
+import com.perimeterx.api.additionalContext.AdditionalContext;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.SSOStep;
 import com.perimeterx.models.PXContext;
 
 import java.util.UUID;

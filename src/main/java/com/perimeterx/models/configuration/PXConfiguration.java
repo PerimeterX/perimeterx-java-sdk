@@ -1,12 +1,12 @@
 package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest.CredentialsExtractor;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest.DefaultCredentialsCustomExtractor;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.DefaultCustomLoginResponseValidator;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidator;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.CredentialsExtractor;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.DefaultCredentialsCustomExtractor;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.DefaultCustomLoginResponseValidator;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidator;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;

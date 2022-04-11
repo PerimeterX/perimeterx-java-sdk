@@ -1,10 +1,10 @@
-package com.perimeterx.api.additionals2s;
+package com.perimeterx.api.additionalContext;
 
-import com.perimeterx.api.additionals2s.credentialsIntelligence.UserLoginData;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest.CredentialsExtractor;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest.CredentialsExtractorFactory;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.protocol.CredentialsIntelligenceProtocol;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.protocol.CredentialsIntelligenceProtocolFactory;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.UserLoginData;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.CredentialsExtractor;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.CredentialsExtractorFactory;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.protocol.CredentialsIntelligenceProtocol;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.protocol.CredentialsIntelligenceProtocolFactory;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CredentialsExtractionDetails;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;

@@ -1,6 +1,6 @@
-package com.perimeterx.api.additionals2s.credentialsIntelligence.protocol;
+package com.perimeterx.api.additionalContext.credentialsIntelligence.protocol;
 
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
 import com.perimeterx.models.exceptions.PXException;
 
 import java.util.Arrays;

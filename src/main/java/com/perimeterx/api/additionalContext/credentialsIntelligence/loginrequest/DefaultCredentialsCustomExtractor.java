@@ -1,4 +1,4 @@
-package com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest;
+package com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest;
 
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
 

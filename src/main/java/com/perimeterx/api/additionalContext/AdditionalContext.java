@@ -1,6 +1,6 @@
-package com.perimeterx.api.additionals2s.credentialsIntelligence;
+package com.perimeterx.api.additionalContext;
 
-import com.perimeterx.api.additionals2s.CredentialsIntelligenceManager;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.UserLoginData;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import lombok.Getter;

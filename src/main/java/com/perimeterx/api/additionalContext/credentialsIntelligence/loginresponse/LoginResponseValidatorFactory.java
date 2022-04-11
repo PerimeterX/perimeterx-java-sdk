@@ -1,4 +1,4 @@
-package com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse;
+package com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse;
 
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;

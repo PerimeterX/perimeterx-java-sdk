@@ -1,4 +1,4 @@
-package com.perimeterx.api.additionals2s.credentialsIntelligence;
+package com.perimeterx.api.additionalContext.credentialsIntelligence;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

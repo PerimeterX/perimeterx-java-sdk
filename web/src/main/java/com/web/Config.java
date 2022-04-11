@@ -1,7 +1,8 @@
 package com.web;
 
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
+import com.google.gson.Gson;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
