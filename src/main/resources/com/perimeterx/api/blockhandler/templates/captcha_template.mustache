@@ -6,7 +6,7 @@
     <meta name="description" content="px-captcha">
     <title>Access to this page has been denied</title>
     {{#cssRef}}
-        <link rel="stylesheet" href="{{cssRef}}">
+        <link rel="stylesheet" type="text/css" href="{{{cssRef}}}">
     {{/cssRef}}
 </head>
 <body>
@@ -14,16 +14,16 @@
         window._pxVid = '{{vid}}';
         window._pxUuid = '{{uuid}}';
         window._pxAppId = '{{appId}}';
-        window._pxHostUrl = '{{hostUrl}}';
-        window._pxCustomLogo = '{{customLogo}}';
-        window._pxJsClientSrc = '{{jsClientSrc}}';
+        window._pxHostUrl = '{{{hostUrl}}}';
+        window._pxCustomLogo = '{{{customLogo}}}';
+        window._pxJsClientSrc = '{{{jsClientSrc}}}';
         window._pxFirstPartyEnabled = {{firstPartyEnabled}};
         var script = document.createElement('script');
-        script.src = '{{blockScript}}';
+        script.src = '{{{blockScript}}}';
         document.head.appendChild(script);
         script.onerror = function () {
             script = document.createElement('script');
-            script.src = '{{altBlockScript}}';
+            script.src = '{{{altBlockScript}}}';
             script.onerror = window._pxDisplayErrorMessage;
             document.head.appendChild(script);
         };
@@ -38,7 +38,7 @@
         };
     </script>
 {{#jsRef}}
-    <script src="{{jsRef}}"></script>
+    <script src="{{{jsRef}}}"></script>
 {{/jsRef}}
 </body>
 </html>
