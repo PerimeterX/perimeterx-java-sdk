@@ -28,21 +28,25 @@ public class RequestBodyExtractor implements CredentialsExtractor {
     private final static String CONTENT_TYPE = "content-type";
     private final static String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
     private final static String MULTIPART_FORM_DATA = "multipart/form-data";
+    private final static String APPLICATION_JSON = "application/json";
 
     private final ConfigCredentialsFieldPath credentialsFieldPath;
 
     @Override
     public LoginCredentials extractCredentials(HttpServletRequest request) {
         try {
-            if (request.getHeader(CONTENT_TYPE).equals(X_WWW_FORM_URLENCODED)) {
+            final String requestContentType = request.getHeader(CONTENT_TYPE);
 
-                return extractFromQueryParamsStructure(request);
-            } else if (request.getHeader(CONTENT_TYPE).contains(MULTIPART_FORM_DATA)) {
-
-                return extractFromMultipartHeaderTemplate(((RequestWrapper) request).getBody(), credentialsFieldPath);
-            } else {
-
-                return extractRequestBodyFields(request);
+            switch (request.getHeader(CONTENT_TYPE)) {
+                case X_WWW_FORM_URLENCODED:
+                    return extractFromFormURLEncoded(request);
+                case MULTIPART_FORM_DATA:
+                    return extractFromMultipartHeaderTemplate(((RequestWrapper) request).getBody(), credentialsFieldPath);
+                case APPLICATION_JSON:
+                    return extractRequestBodyFields(request);
+                default:
+                    logger.error("Failed to extract credentials from request body - unsupported content type :: " + requestContentType);
+                    return null;
             }
         } catch (Exception e) {
             logger.error("Failed to extract credentials from request body. error :: ", e);
@@ -50,7 +54,7 @@ public class RequestBodyExtractor implements CredentialsExtractor {
         }
     }
 
-    private LoginCredentials extractFromQueryParamsStructure(HttpServletRequest request) throws UnsupportedEncodingException {
+    private LoginCredentials extractFromFormURLEncoded(HttpServletRequest request) throws UnsupportedEncodingException {
         final Map<String, String> queryParams = splitQueryParams(((RequestWrapper) request).getBody());
 
         return new LoginCredentials(
