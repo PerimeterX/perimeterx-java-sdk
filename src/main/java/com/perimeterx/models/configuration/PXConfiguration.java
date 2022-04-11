@@ -1,7 +1,7 @@
 package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest.CredentialsExtractor;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.loginrequest.DefaultCredentialsCustomExtractor;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.DefaultCustomLoginResponseValidator;
@@ -197,11 +197,11 @@ public class PXConfiguration {
     private boolean loginCredentialsExtractionEnabled;
 
     @JsonProperty("px_login_credentials_extraction")
-    private CILoginMap loginCredentials;
+    private CILoginMap loginCredentialsExtractionDetails;
 
     @Builder.Default
     @JsonProperty("px_credentials_intelligence_version")
-    private CIVersion ciVersion = CIVersion.V2;
+    private CIProtocol ciProtocol = CIProtocol.V2;
 
     @Builder.Default
     @JsonProperty("px_compromised_credentials_header")
@@ -217,15 +217,15 @@ public class PXConfiguration {
     private LoginResponseValidationReportingMethod loginResponseValidationReportingMethod;
 
     @JsonProperty("px_login_successful_body_regex")
-    private String loginResponseValidationRegexBody;
+    private String regexPatternToValidateLoginResponseBody;
 
     @Builder.Default
     @JsonProperty("px_login_successful_header_name")
-    private String loginResponseValidationHeaderName = DEFAULT_LOGIN_RESPONSE_HEADER_NAME;
+    private String headerNameToValidateLoginResponse = DEFAULT_LOGIN_RESPONSE_HEADER_NAME;
 
     @Builder.Default
     @JsonProperty("px_login_successful_header_value")
-    private String loginResponseValidationHeaderValue = DEFAULT_LOGIN_RESPONSE_HEADER_VALUE;
+    private String headerValueToValidateLoginResponse = DEFAULT_LOGIN_RESPONSE_HEADER_VALUE;
 
     @Builder.Default
     @JsonProperty("px_login_successful_status")
@@ -256,10 +256,10 @@ public class PXConfiguration {
                 maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
                 collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
                 testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
-                enforcedRoutes, monitoredRoutes, loginCredentialsExtractionEnabled, loginCredentials, ciVersion,
+                enforcedRoutes, monitoredRoutes, loginCredentialsExtractionEnabled, loginCredentialsExtractionDetails, ciProtocol,
                 pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
-                loginResponseValidationReportingMethod, loginResponseValidationRegexBody, loginResponseValidationHeaderName,
-                loginResponseValidationHeaderValue, loginResponseValidationStatusCode, customLoginResponseValidator,
+                loginResponseValidationReportingMethod, regexPatternToValidateLoginResponseBody, headerNameToValidateLoginResponse,
+                headerValueToValidateLoginResponse, loginResponseValidationStatusCode, customLoginResponseValidator,
                 credentialsCustomExtractor, staticFilesExt);
     }
 
@@ -318,11 +318,6 @@ public class PXConfiguration {
             if (this.collectorUrl == null) {
                 this.collectorUrl = String.format(Constants.COLLECTOR_URL, appId.toLowerCase());
             }
-            return this;
-        }
-
-        public PXConfigurationBuilder loginCredentials(String jsonLoginCreds) {
-            this.loginCredentials = new CILoginMap(jsonLoginCreds);
             return this;
         }
     }

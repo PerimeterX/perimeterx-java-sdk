@@ -9,14 +9,14 @@ public class UserLoginData {
     private final String encodedPassword;
     private final String username;
     private final String rawUsername;
-    private final CIVersion ciVersion;
+    private final CIProtocol ciProtocol;
     private final SSOStep ssoStep;
 
-    public UserLoginData(String encodedPassword, String username, String rawUsername, CIVersion version, SSOStep ssoStep) {
+    public UserLoginData(String encodedPassword, String username, String rawUsername, CIProtocol version, SSOStep ssoStep) {
         this.encodedPassword = encodedPassword;
         this.username = username;
         this.rawUsername = rawUsername;
-        this.ciVersion = version;
+        this.ciProtocol = version;
         this.ssoStep = ssoStep;
     }
 }

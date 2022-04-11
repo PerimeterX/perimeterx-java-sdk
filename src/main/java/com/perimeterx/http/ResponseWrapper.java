@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.*;
 
+
+/** This wrapper enables reading the response body multiple times **/
 public class ResponseWrapper extends HttpServletResponseWrapper {
     private final static int BUFFER_SIZE = 1024;
 

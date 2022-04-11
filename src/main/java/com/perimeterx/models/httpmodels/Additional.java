@@ -3,7 +3,7 @@ package com.perimeterx.models.httpmodels;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.SSOStep;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.UserLoginData;
 import com.perimeterx.models.PXContext;
@@ -74,7 +74,7 @@ public class Additional {
     public String password;
 
     @JsonProperty("ci_version")
-    public CIVersion ciVersion;
+    public CIProtocol ciProtocol;
 
     @JsonProperty("sso_step")
     public SSOStep ssoStep;
@@ -111,7 +111,7 @@ public class Additional {
             final UserLoginData loginCredentials = ctx.getAdditionalContext().getLoginCredentials();
             additional.username = loginCredentials.getUsername();
             additional.password = loginCredentials.getEncodedPassword();
-            additional.ciVersion = loginCredentials.getCiVersion();
+            additional.ciProtocol = loginCredentials.getCiProtocol();
             additional.ssoStep = loginCredentials.getSsoStep();
         }
     }

@@ -1,6 +1,6 @@
 package com.perimeterx.api.additionals2s.credentialsIntelligence.protocol;
 
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.UserLoginData;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
 
@@ -15,7 +15,7 @@ public class V1CIProtocol implements CredentialsIntelligenceProtocol {
                 encodeString(loginCredentials.getPassword(), SHA256),
                 encodeString(loginCredentials.getUsername(), SHA256),
                 loginCredentials.getUsername(),
-                CIVersion.V1,
+                CIProtocol.V1,
                 null
         );
     }

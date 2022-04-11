@@ -10,6 +10,11 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Reading HttpServletRequest is limited to one time only
+ * This class will read the request and will set its body on the body var
+ * This enables multiple reading of the body request
+ * **/
 public class RequestWrapper extends HttpServletRequestWrapper {
 
     private String body;

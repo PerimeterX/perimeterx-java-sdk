@@ -3,7 +3,7 @@ package com.perimeterx.models.activities;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalContext;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.SSOStep;
 import com.perimeterx.models.PXContext;
 
@@ -19,7 +19,7 @@ public class AdditionalS2SActivityDetails implements ActivityDetails {
     public String username;
 
     @JsonProperty("ci_version")
-    public CIVersion ciVersion;
+    public CIProtocol ciProtocol;
 
     @JsonProperty("sso_step")
     public SSOStep ssoStep;
@@ -41,7 +41,7 @@ public class AdditionalS2SActivityDetails implements ActivityDetails {
         final AdditionalContext additionalContext = context.getAdditionalContext();
         this.clientUuid = context.getUuid();
         this.username = null;
-        this.ciVersion = additionalContext.getLoginCredentials().getCiVersion();
+        this.ciProtocol = additionalContext.getLoginCredentials().getCiProtocol();
         this.ssoStep = additionalContext.getLoginCredentials().getSsoStep();
         this.credentialsCompromised = context.isBreachedAccount();
         this.loginSuccessful = additionalContext.getLoginSuccessful();

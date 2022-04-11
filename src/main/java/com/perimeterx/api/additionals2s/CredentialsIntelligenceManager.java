@@ -41,7 +41,7 @@ public class CredentialsIntelligenceManager {
 
     private static CredentialsExtractionDetails getCredentialsExtractionDetails(PXConfiguration pxConfiguration, HttpServletRequest request) {
         return pxConfiguration
-                .getLoginCredentials()
+                .getLoginCredentialsExtractionDetails()
                 .getCredentialsExtractionDetails(request.getServletPath(), request.getMethod());
     }
 
@@ -53,7 +53,7 @@ public class CredentialsIntelligenceManager {
     }
 
     private static UserLoginData generateUserLoginData(PXConfiguration pxConfiguration, LoginCredentials credentials) throws PXException {
-        final CredentialsIntelligenceProtocol ciProtocol = CredentialsIntelligenceProtocolFactory.create(pxConfiguration.getCiVersion());
+        final CredentialsIntelligenceProtocol ciProtocol = CredentialsIntelligenceProtocolFactory.create(pxConfiguration.getCiProtocol());
 
         return ciProtocol.generateUserLoginData(credentials);
     }

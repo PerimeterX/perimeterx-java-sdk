@@ -1,9 +1,10 @@
 package com.web;
 
-import com.perimeterx.api.additionals2s.credentialsIntelligence.CIVersion;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionals2s.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -119,10 +120,10 @@ public class Config {
                     builder.loginCredentialsExtractionEnabled(enforcerConfig.getBoolean(key));
                     break;
                 case "px_login_credentials_extraction":
-                    builder.loginCredentials(enforcerConfig.getJSONArray(key).toString());
+                    builder.loginCredentialsExtractionDetails(new CILoginMap(enforcerConfig.getJSONArray(key).toString()));
                     break;
                 case "px_credentials_intelligence_version":
-                    builder.ciVersion(CIVersion.getKeyByValue(enforcerConfig.getString(key)));
+                    builder.ciProtocol(CIProtocol.getKeyByValue(enforcerConfig.getString(key)));
                     break;
                 case "px_compromised_credentials_header":
                     builder.pxCompromisedCredentialsHeader(enforcerConfig.getString(key));
@@ -137,13 +138,13 @@ public class Config {
                     builder.loginResponseValidationReportingMethod(LoginResponseValidationReportingMethod.getKeyByValue(enforcerConfig.getString(key)));
                     break;
                 case "px_login_successful_body_regex":
-                    builder.loginResponseValidationRegexBody(enforcerConfig.getString(key));
+                    builder.regexPatternToValidateLoginResponseBody(enforcerConfig.getString(key));
                     break;
                 case "px_login_successful_header_name":
-                    builder.loginResponseValidationHeaderName(enforcerConfig.getString(key));
+                    builder.headerNameToValidateLoginResponse(enforcerConfig.getString(key));
                     break;
                 case "px_login_successful_header_value":
-                    builder.loginResponseValidationHeaderValue(enforcerConfig.getString(key));
+                    builder.headerValueToValidateLoginResponse(enforcerConfig.getString(key));
                     break;
                 case "px_login_successful_status":
                     builder.loginResponseValidationStatusCode(extractStatusCode(key));

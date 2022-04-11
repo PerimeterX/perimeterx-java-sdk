@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Arrays;
 
-public enum CIVersion {
+public enum CIProtocol {
 
     @JsonProperty("v1")
     V1("v1"),
@@ -18,7 +18,7 @@ public enum CIVersion {
 
     private final String value;
 
-    CIVersion(String value) {
+    CIProtocol(String value) {
         this.value = value;
     }
 
@@ -26,7 +26,7 @@ public enum CIVersion {
         return value;
     }
 
-    public static CIVersion getKeyByValue(String searchValue) {
+    public static CIProtocol getKeyByValue(String searchValue) {
         return Arrays.stream(values()).filter(e -> e.value.equals(searchValue))
                 .findFirst()
                 .get();

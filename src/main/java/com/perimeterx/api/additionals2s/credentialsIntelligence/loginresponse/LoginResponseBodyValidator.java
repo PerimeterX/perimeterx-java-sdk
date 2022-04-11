@@ -7,7 +7,7 @@ public class LoginResponseBodyValidator implements LoginResponseValidator{
     private final String configRegexBody;
 
     public LoginResponseBodyValidator(PXConfiguration config) {
-        this.configRegexBody = config.getLoginResponseValidationRegexBody();
+        this.configRegexBody = config.getRegexPatternToValidateLoginResponseBody();
     }
 
     @Override

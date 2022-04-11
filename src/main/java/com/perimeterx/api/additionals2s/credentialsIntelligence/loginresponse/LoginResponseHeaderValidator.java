@@ -8,8 +8,8 @@ public class LoginResponseHeaderValidator implements LoginResponseValidator {
     private final String headerValue;
 
     public LoginResponseHeaderValidator(PXConfiguration configuration) {
-        this.headerName = configuration.getLoginResponseValidationHeaderName();
-        this.headerValue = configuration.getLoginResponseValidationHeaderValue();
+        this.headerName = configuration.getHeaderNameToValidateLoginResponse();
+        this.headerValue = configuration.getHeaderValueToValidateLoginResponse();
     }
 
     @Override
