@@ -37,21 +37,23 @@ public class RequestBodyExtractor implements CredentialsExtractor {
         try {
             final String requestContentType = request.getHeader(CONTENT_TYPE);
 
-            switch (request.getHeader(CONTENT_TYPE)) {
-                case X_WWW_FORM_URLENCODED:
-                    return extractFromFormURLEncoded(request);
-                case MULTIPART_FORM_DATA:
-                    return extractFromMultipartHeaderTemplate(((RequestWrapper) request).getBody(), credentialsFieldPath);
-                case APPLICATION_JSON:
-                    return extractRequestBodyFields(request);
-                default:
-                    logger.error("Failed to extract credentials from request body - unsupported content type :: " + requestContentType);
-                    return null;
+            if (requestContentType.equals(X_WWW_FORM_URLENCODED)) {
+
+                return extractFromFormURLEncoded(request);
+            } else if (requestContentType.contains(MULTIPART_FORM_DATA)) {
+
+                return extractFromMultipartHeaderTemplate(((RequestWrapper) request).getBody(), credentialsFieldPath);
+            } else if (requestContentType.equals(APPLICATION_JSON)){
+
+                return extractRequestBodyFields(request);
+            } else {
+                logger.error("Failed to extract credentials from request body - unsupported content type :: " + requestContentType);
             }
         } catch (Exception e) {
             logger.error("Failed to extract credentials from request body. error :: ", e);
-            return null;
         }
+
+        return null;
     }
 
     private LoginCredentials extractFromFormURLEncoded(HttpServletRequest request) throws UnsupportedEncodingException {
