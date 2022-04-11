@@ -7,7 +7,7 @@
     <name>PerimeterX JAVA SDK</name>
     <groupId>com.perimeterx</groupId>
     <artifactId>perimeterx-sdk</artifactId>
-    <version>6.2.8</version>
+    <version>6.3.0</version>
 
     <packaging>jar</packaging>
     <description>PerimeterX Java SDK</description>
