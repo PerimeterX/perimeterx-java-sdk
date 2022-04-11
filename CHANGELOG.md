@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.3.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.3.0...HEAD) (2022-04-11)
+- Added new block page implementation 
+
 ##[v6.2.8](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.2.8...HEAD) (2022-03-31)
 - Added monitored routes feature. 
 - Added enforced routes feature.
