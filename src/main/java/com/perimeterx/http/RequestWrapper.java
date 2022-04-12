@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Reading HttpServletRequest is limited to one time only
  * This class will read the request and will set its body on the body var
- * This enables multiple reading of the body request
+ * This enables reading the request body multiple times
  * **/
 public class RequestWrapper extends HttpServletRequestWrapper {
 
