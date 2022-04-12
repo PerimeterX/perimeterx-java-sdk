@@ -2,7 +2,7 @@ package com.perimeterx.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalContext;
+import com.perimeterx.api.additionalContext.AdditionalContext;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
