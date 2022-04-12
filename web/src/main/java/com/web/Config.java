@@ -1,9 +1,16 @@
 package com.web;
 
+import com.google.gson.Gson;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
+import org.json.JSONArray;
 import org.json.JSONObject;
-import static com.web.Utils.*;
+
+import static com.web.Utils.getEnforcerConfig;
+import static com.web.Utils.jsonArrayToSet;
 
 public class Config {
     private final JSONObject enforcerConfig;
@@ -110,6 +117,39 @@ public class Config {
                 case "px_bypass_monitor_header":
                     builder.bypassMonitorHeader(enforcerConfig.getString(key));
                     break;
+                case "px_login_credentials_extraction_enabled":
+                    builder.loginCredentialsExtractionEnabled(enforcerConfig.getBoolean(key));
+                    break;
+                case "px_login_credentials_extraction":
+                    builder.loginCredentialsExtractionDetails(new CILoginMap(enforcerConfig.getJSONArray(key).toString()));
+                    break;
+                case "px_credentials_intelligence_version":
+                    builder.ciProtocol(CIProtocol.getKeyByValue(enforcerConfig.getString(key)));
+                    break;
+                case "px_compromised_credentials_header":
+                    builder.pxCompromisedCredentialsHeader(enforcerConfig.getString(key));
+                    break;
+                case "px_send_raw_username_on_additional_s2s_activity":
+                    builder.addRawUsernameOnAdditionalS2SActivity(enforcerConfig.getBoolean(key));
+                    break;
+                case "px_additional_s2s_activity_header_enabled":
+                    builder.additionalS2SActivityHeaderEnabled(enforcerConfig.getBoolean(key));
+                    break;
+                case "px_login_successful_reporting_method":
+                    builder.loginResponseValidationReportingMethod(LoginResponseValidationReportingMethod.getKeyByValue(enforcerConfig.getString(key)));
+                    break;
+                case "px_login_successful_body_regex":
+                    builder.regexPatternToValidateLoginResponseBody(enforcerConfig.getString(key));
+                    break;
+                case "px_login_successful_header_name":
+                    builder.headerNameToValidateLoginResponse(enforcerConfig.getString(key));
+                    break;
+                case "px_login_successful_header_value":
+                    builder.headerValueToValidateLoginResponse(enforcerConfig.getString(key));
+                    break;
+                case "px_login_successful_status":
+                    builder.loginResponseValidationStatusCode(extractStatusCode(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
@@ -122,6 +162,16 @@ public class Config {
         }
 
         return builder.build();
+    }
+
+    private int[] extractStatusCode(String key) {
+        final JSONArray jsonField = enforcerConfig.getJSONArray(key);
+        final int[] statusCode = new int[jsonField.length()];
+
+        for(int i = 0; i < statusCode.length; i ++) {
+            statusCode[i] = jsonField.getInt(i);
+        }
+        return statusCode;
     }
 }
 

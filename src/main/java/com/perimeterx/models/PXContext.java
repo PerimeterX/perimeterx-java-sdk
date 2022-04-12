@@ -2,6 +2,7 @@ package com.perimeterx.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.perimeterx.api.additionals2s.credentialsIntelligence.AdditionalContext;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -23,12 +24,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -204,9 +204,10 @@ public class PXContext {
      */
 
     private String pxhd;
-
     private String responsePxhd;
     private boolean isMonitoredRequest;
+    private AdditionalContext additionalContext;
+    private UUID requestId;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -238,6 +239,7 @@ public class PXContext {
         this.riskRtt = 0;
         this.httpMethod = request.getMethod();
         this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
+        this.requestId = UUID.randomUUID();
 
 
         String protocolDetails[] = request.getProtocol().split("/");
@@ -453,5 +455,13 @@ public class PXContext {
 
     public boolean isAdvancedBlockingResponse() {
         return pxConfiguration.isAdvancedBlockingResponse();
+    }
+
+    public boolean isBreachedAccount() {
+        return this.pxde != null && this.pxdeVerified && this.pxde.has(BREACHED_ACCOUNT_KEY_NAME);
+    }
+
+    public boolean isContainCredentialsIntelligence() {
+        return this.getAdditionalContext() != null && this.getAdditionalContext().getLoginCredentials() != null;
     }
 }

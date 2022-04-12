@@ -59,6 +59,30 @@ public class BufferedActivityHandler implements ActivityHandler {
         }
     }
 
+    @Override
+    public void handleAdditionalS2SActivity(PXContext context) throws PXException {
+        final Activity activity = createAdditionalS2SActivity(context);
+        handleSendActivities(activity);
+    }
+
+    public Activity createAdditionalS2SActivity(PXContext context) {
+        final Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_ADDITIONAL_S2S, configuration.getAppId(), context);
+
+        if(isRequireRawUsername(context)) {
+            ((AdditionalS2SActivityDetails) activity.getDetails())
+                    .setUsername(context.getAdditionalContext().getLoginCredentials().getRawUsername());
+        }
+        return activity;
+    }
+
+    private boolean isRequireRawUsername(PXContext context) {
+        final boolean loginRequestSentToOrigin = context.getAdditionalContext().getLoginSuccessful() != null;
+
+        return (!loginRequestSentToOrigin || context.getAdditionalContext().getLoginSuccessful())
+                && context.isBreachedAccount()
+                && configuration.isAddRawUsernameOnAdditionalS2SActivity();
+    }
+
     private void handleSendActivities(Activity activity) throws PXException {
         bufferedActivities.add(activity);
         int count = counter.incrementAndGet();

@@ -25,8 +25,12 @@
 
 package com.perimeterx.api;
 
+import com.google.gson.Gson;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
+import com.perimeterx.api.additionalContext.AdditionalContext;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidator;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidatorFactory;
 import com.perimeterx.api.providers.CombinedIPProvider;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
@@ -40,9 +44,12 @@ import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.TestVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
 import com.perimeterx.http.PXHttpClient;
+import com.perimeterx.http.RequestWrapper;
+import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.internals.PXS2SValidator;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
@@ -56,6 +63,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import static com.perimeterx.utils.Constants.*;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -150,7 +159,7 @@ public class PerimeterX {
                 return null;
             }
 
-            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
+            context = createContext(req);
 
             if (shouldReverseRequest(req, responseWrapper)) {
                 context.setFirstPartyRequest(true);
@@ -163,6 +172,7 @@ public class PerimeterX {
             }
 
             handleCookies(context);
+            addCustomHeadersToRequest(req, context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
             logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
@@ -179,6 +189,23 @@ public class PerimeterX {
         return context;
     }
 
+    private PXContext createContext(HttpServletRequest request) throws PXException {
+        final PXContext pxContext = new PXContext(request, this.ipProvider, this.hostnameProvider, configuration);
+        final AdditionalContext additionalContext = new AdditionalContext(request, this.configuration);
+
+        pxContext.setAdditionalContext(additionalContext);
+
+        return pxContext;
+    }
+
+    private boolean moduleEnabled() {
+        return this.configuration.isModuleEnabled();
+    }
+
+    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
+        return reverseProxy.reversePxClient(req, res) || reverseProxy.reversePxXhr(req, res) || reverseProxy.reverseCaptcha(req, res);
+    }
+
     private void handleCookies(PXContext context) {
         if (cookieValidator.verify(context)) {
             logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
@@ -191,13 +218,48 @@ public class PerimeterX {
         }
     }
 
-    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
-        return reverseProxy.reversePxClient(req, res) || reverseProxy.reversePxXhr(req, res) || reverseProxy.reverseCaptcha(req, res);
+    private void addCustomHeadersToRequest(HttpServletRequest request, PXContext context) {
+        if (context.getAdditionalContext() != null && context.getAdditionalContext().getLoginCredentials() != null){
+            setBreachedAccount(request, context);
+            setAdditionalS2SActivityHeaders(request, context);
+        }
     }
 
-    private boolean moduleEnabled() {
-        return this.configuration.isModuleEnabled();
+    private void setBreachedAccount(HttpServletRequest request, PXContext context) {
+        if(configuration.isLoginCredentialsExtractionEnabled() && context.isBreachedAccount()) {
+            ((RequestWrapper) request).addHeader(configuration.getPxCompromisedCredentialsHeader(),
+                    String.valueOf(context.getPxde().get(BREACHED_ACCOUNT_KEY_NAME)));
+        }
     }
+
+    private void setAdditionalS2SActivityHeaders(HttpServletRequest request, PXContext context) {
+        if (configuration.isAdditionalS2SActivityHeaderEnabled()) {
+            final Activity activity = ((BufferedActivityHandler) activityHandler).createAdditionalS2SActivity(context);
+
+            final String stringifyActivity = new Gson().toJson(activity);
+            final String urlHeader = configuration.getServerURL() + API_ACTIVITIES;
+
+            ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_HEADER, stringifyActivity);
+            ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_URL_HEADER, urlHeader);
+        }
+    }
+
+    public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
+        try {
+            if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
+                final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
+
+                context.getAdditionalContext().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
+                context.getAdditionalContext().setResponseStatusCode(response.getStatus());
+
+                activityHandler.handleAdditionalS2SActivity(context);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to post verify response. Error :: ", e);
+        }
+    }
+
+
 
     /**
      * Set activity handler

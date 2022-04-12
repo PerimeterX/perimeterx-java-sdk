@@ -1,6 +1,8 @@
 package com.web;
 
 import com.perimeterx.api.PerimeterX;
+import com.perimeterx.http.RequestWrapper;
+import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.exceptions.PXException;
 
@@ -31,14 +33,18 @@ public class PXFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
+            request = new RequestWrapper((HttpServletRequest) request);
 
-            PXContext context = pxFilter.pxVerify((HttpServletRequest) request, new HttpServletResponseWrapper((HttpServletResponse) response));
+            final PXContext context = pxFilter.pxVerify((HttpServletRequest) request, new HttpServletResponseWrapper((HttpServletResponse) response));
+
             setDefaultPageAttributes((HttpServletRequest) request, config);
 
             if (context != null && context.isRequestLowScore()) {
                 filterChain.doFilter(request, response);
             }
 
+            response = new ResponseWrapper((HttpServletResponse) response);
+            pxFilter.pxPostVerify((ResponseWrapper) response, context);
 
         } catch (PXException e) {
             filterChain.doFilter(request, response);

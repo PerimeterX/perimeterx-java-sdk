@@ -32,6 +32,7 @@ public final class Constants {
 
     public final static String ACTIVITY_BLOCKED = "block";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
+    public final static String ACTIVITY_ADDITIONAL_S2S = "additional_s2s";
 
     public static final String REMOTE_CONFIGURATION_SERVER_URL = "https://px-conf.perimeterx.net";
 
@@ -64,6 +65,9 @@ public final class Constants {
     public static final String MOBILE_SDK_TOKENS_HEADER = "x-px-tokens";
     public static final String MOBILE_SDK_ORIGINAL_TOKENS_HEADER = "x-px-original-tokens";
 
+    public static String ADDITIONAL_ACTIVITY_HEADER = "px-additional-activity";
+    public static String ADDITIONAL_ACTIVITY_URL_HEADER = "px-additional-activity-url";
+
     public static final String HEADER_ORIGIN = "header";
     public static final String COOKIE_HEADER_NAME = "cookie";
 
@@ -77,4 +81,14 @@ public final class Constants {
 
     public static final String CAPTCHA_BLOCK_TEMPLATE = "captcha_template";
     public static final String RATELIMIT_TEMPLATE = "ratelimit";
+
+    public static final String BREACHED_ACCOUNT_KEY_NAME = "breached_account";
+
+    public static final String UNICODE_TYPE = "UTF-8";
+    public static final String QUERY_PARAM_PAIRS_SEPARATOR = "&";
+    public static final String QUERY_PARAM_KEY_VALUE_SEPARATOR = "=";
+
+    public static final String DEFAULT_LOGIN_RESPONSE_HEADER_NAME = "x-px-login-successful";
+    public static final String DEFAULT_LOGIN_RESPONSE_HEADER_VALUE = "1";
+    public static final String DEFAULT_COMPROMISED_CREDENTIALS_HEADER_NAME = "px-compromised-credentials";
 }

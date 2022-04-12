@@ -41,14 +41,22 @@ public class PXFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+
+        // The request wrapper enables to read the request multiple times.
+        request = new RequestWrapper((HttpServletRequest) request);
+
         // This will apply PerimeterX SDK logic on each request going through this filter
-        HttpServletRequest httpReq = (HttpServletRequest) servletRequest;
         HttpServletResponse httpRes = (HttpServletResponse) servletResponse;
+
         try {
             PXContext ctx = enforcer.pxVerify(httpReq, new HttpServletResponseWrapper(httpRes));
             if (ctx.isVerified()) {
                 filterChain.doFilter(servletRequest, servletResponse);
             }
+
+            // This enables to read the response, it should happen after the response was already sent to the client
+            response = new ResponseWrapper((HttpServletResponse) response);
+            pxFilter.pxPostVerify((ResponseWrapper) response, context);
         } catch (PXException e) {
             // ignoring error for now and passing the request
             filterChain.doFilter(servletRequest, servletResponse);
