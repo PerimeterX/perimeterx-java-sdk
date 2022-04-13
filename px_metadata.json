@@ -11,6 +11,7 @@
     "bypass_monitor_header",
     "client_ip_extraction",
     "cookie_v3",
+    "credentials_intelligence",
     "css_ref",
     "custom_logo",
     "custom_parameters",
