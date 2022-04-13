@@ -1,6 +1,6 @@
 # Change Log
 
-## [v6.4.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.0...HEAD) (2022-04-11)
+## [v6.4.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.0...HEAD) (2022-04-13)
 - Support for credentials intelligence protocols `v1`, `v2` and `multistep_sso`
 - Support for login successful reporting methods `header`, `status`, `body`, and `custom`
 - Support for manual sending of `additional_s2s` activity via header and function call.
