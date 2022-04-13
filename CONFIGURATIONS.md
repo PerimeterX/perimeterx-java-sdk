@@ -40,6 +40,19 @@ Directives
 |proxyPort|The proxy's port|None - required|int|
 |testingMode|Running the enforcer in dev environment for testing purposes, response returned as a JSON object. When you run the enforer in testing mode, please do not set costume verification handler|false|boolean
 |validateRequestQueueInterval|Interval in seconds of cleaning requests queue. Solves HttpComponent reference leak bug.|5|int|
+|loginCredentialsExtractionEnabled|Flag that enables/disables the extraction of login credentials.|false|boolean
+|loginCredentialsExtractionDetails|Maps the json login credentials configuration array to a dedicate class. The map helps in determine if an incoming request is a login request or not.|null| CILoginMap
+|ciProtocol|Credentials Intelligence protocol determines the strcuture and content of the user login data.|V2|CIProtocol
+|pxCompromisedCredentialsHeader|The name of the header that is sent to the client to mark that the account is breached.|"px-compromised-credentials"|String
+|addRawUsernameOnAdditionalS2SActivity|Flag that determines if raw username will be sent in the additional S2S activity.|false|boolean
+|additionalS2SActivityHeaderEnabled|Flag that determines if additional S2S activity will be sent from the client's origin to PerimeterX.|boolean|false
+|loginResponseValidationReportingMethod|Method name that determines how to validate if the login was successful.|null|LoginResponseValidationReportingMethod
+|loginResponseValidationRegexBody|Regex pattern that checks the response body in order to validate succussful login.|null|String
+|headerNameToValidateLoginResponse|Header name that is used to validate if the login is succesful.|x-px-login-successful|String
+|headerValueToValidateLoginResponse|Header value that is used to validate if the login is successful.|"1"|String
+|loginResponseValidationStatusCode|Array of status codes that is used to validate if the login was successful.|{200}|int[]
+|customLoginResponseValidator|Custom class that validates if the login was successful. LoginResponseValidator must be implemented to be able to use this class.|DefaultCustomLoginResponseValidator|LoginResponseValidator
+|credentialsCustomExtractor|Custom class that extracts the login credentials. CredentialsExtractor must be implemented to be able to use this class.|DefaultCredentialsCustomExtractor|CredentialsExtractor
 
 ## <a name="interfaces"></a> Interfaces
 `perimeterx-java-sdk` can be tuned and set a different type of interface in order to make the module more flexible
@@ -53,6 +66,8 @@ Directives
 | HostnameProvider |Handles hostname extraction from request|DefaultHostnameProvider| setHostnameProvider|
 | VerificationHandler |handling verification after PerimeterX service finished analyzing the request|DefaultVerificationHandler|setVerificationHandler|
 | CustomParametersProvider | Adds to the risk api additional custom parameters | CustomParametersProvider| customParametersProvider|
+| LoginResponseValidator | Validate if Login response was successful | LoginResponseValidator | isSuccessfulLogin|
+| CredentialsExtractor | Extract credentials from login request | LoginCredentials | extractCredentials |
 
 The interfaces should be set after PerimeterX instance has been initialized
 ```java
@@ -165,6 +180,12 @@ Improved detection - Third party content may be blocked by certain browser plugi
 
 
 #### Integration:
+RequestWrapper - Reading HttpServletRequest is limited to one time only.
+This class will read the request and will set its body on the body var.
+This enables multiple reading of the body request.
+
+ResponseWrapper - Using this wrapper enables reading the response body multiple times
+
 ```java
 public class PXFilter implements Filter {
 
@@ -185,6 +206,9 @@ public class PXFilter implements Filter {
     }
 
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        // The request wrapper enables to read the request multiple times.
+        request = new RequestWrapper((HttpServletRequest) request);
+     
         try {
             PXContext pxContext = this.enforcer.pxVerify((HttpServletRequest) servletRequest, new HttpServletResponseWrapper((HttpServletResponse) servletResponse));
 
@@ -194,6 +218,10 @@ public class PXFilter implements Filter {
             }
 
             filterChain.doFilter(servletRequest, servletResponse);
+
+         // This enables to read the response, it should happen after the response was already sent to the client
+            response = new ResponseWrapper((HttpServletResponse) response);
+         pxFilter.pxPostVerify((ResponseWrapper) response, context);
         } catch (Exception e) {
             // Fail open in case of Exception
             filterChain.doFilter(servletRequest, servletResponse);

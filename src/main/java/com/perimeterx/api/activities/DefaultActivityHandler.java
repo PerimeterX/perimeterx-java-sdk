@@ -55,4 +55,9 @@ public class DefaultActivityHandler implements ActivityHandler {
         }
     }
 
+    //TODO - Should be populated when Adding unit tests
+    @Override
+    public void handleAdditionalS2SActivity(PXContext context) throws PXException {
+
+    }
 }

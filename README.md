@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v6.3.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.2.8%7Cjar)
+> Latest stable version: [v6.4.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.4.0%7Cjar)
 
 ## Table of Contents
 
@@ -192,7 +192,7 @@ enforcer.setVerificationHandler(new MyVerificationHandler(config));
 
 #### <a name="custom-parameters"></a> Custom Parameters
 
-With the `customParametersProvider` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before seting the payload on every request to PerimetrX servers.
+With the `customParametersProvider` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before setting the payload on every request to PerimetrX servers.
 
 MyCustomParametersProvider.java:
 ```java
