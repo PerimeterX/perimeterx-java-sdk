@@ -9,13 +9,11 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.utils.Constants;
 
-import java.util.UUID;
-
 /**
  * Created by shikloshi on 07/11/2016.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class PageRequestedActivityDetails implements ActivityDetails {
+public class PageRequestedActivityDetails extends CommonActivityDetails {
 
     @JsonProperty("http_method")
     private String httpMethod;
@@ -56,11 +54,8 @@ public class PageRequestedActivityDetails implements ActivityDetails {
     @JsonUnwrapped
     private CustomParameters customParameters;
 
-    @JsonProperty("request_id")
-    public UUID requestId;
-
-
     public PageRequestedActivityDetails(PXContext context) {
+        super(context);
         this.httpMethod = context.getHttpMethod();
         this.httpVersion = context.getHttpVersion();
         this.riskCookie = context.getRiskCookie();
@@ -74,7 +69,6 @@ public class PageRequestedActivityDetails implements ActivityDetails {
         this.clientUuid = context.getUuid();
         this.cookieOrigin = context.getCookieOrigin();
         this.customParameters = context.getCustomParameters();
-        this.requestId = context.getRequestId();
     }
 
     public String getHttpMethod() {
