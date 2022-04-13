@@ -29,7 +29,7 @@ public class CommonActivityDetails implements ActivityDetails {
     public CommonActivityDetails(PXContext context) {
         final AdditionalContext additionalContext = context.getAdditionalContext();
 
-        if(additionalContext.getLoginCredentials() != null) {
+        if(additionalContext != null && additionalContext.getLoginCredentials() != null) {
             this.ciProtocol = additionalContext.getLoginCredentials().getCiProtocol();
             this.ssoStep = additionalContext.getLoginCredentials().getSsoStep();
             this.credentialsCompromised = context.isBreachedAccount();
