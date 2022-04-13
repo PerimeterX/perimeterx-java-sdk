@@ -16,7 +16,7 @@ import lombok.Getter;
  */
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class BlockActivityDetails extends BaseActivityDetails {
+public class BlockActivityDetails extends CommonActivityDetails {
 
     @JsonProperty("block_score")
     private int blockScore;

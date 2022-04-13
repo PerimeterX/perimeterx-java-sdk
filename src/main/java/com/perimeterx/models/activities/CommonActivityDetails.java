@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BaseActivityDetails implements ActivityDetails {
+public class CommonActivityDetails implements ActivityDetails {
 
     @JsonProperty("ci_version")
     public CIProtocol ciProtocol;
@@ -26,7 +26,7 @@ public class BaseActivityDetails implements ActivityDetails {
     @JsonProperty("request_id")
     public UUID requestId;
 
-    public BaseActivityDetails(PXContext context) {
+    public CommonActivityDetails(PXContext context) {
         final AdditionalContext additionalContext = context.getAdditionalContext();
 
         if(additionalContext.getLoginCredentials() != null) {

@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AdditionalS2SActivityDetails extends BaseActivityDetails {
+public class AdditionalS2SActivityDetails extends CommonActivityDetails {
 
     @JsonProperty("client_uuid")
     private String clientUuid;

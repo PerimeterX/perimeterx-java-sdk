@@ -13,7 +13,7 @@ import com.perimeterx.utils.Constants;
  * Created by shikloshi on 07/11/2016.
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class PageRequestedActivityDetails extends BaseActivityDetails {
+public class PageRequestedActivityDetails extends CommonActivityDetails {
 
     @JsonProperty("http_method")
     private String httpMethod;
