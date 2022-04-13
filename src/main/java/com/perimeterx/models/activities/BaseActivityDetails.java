@@ -28,9 +28,13 @@ public class BaseActivityDetails implements ActivityDetails {
 
     public BaseActivityDetails(PXContext context) {
         final AdditionalContext additionalContext = context.getAdditionalContext();
-        this.ciProtocol = additionalContext.getLoginCredentials().getCiProtocol();
-        this.ssoStep = additionalContext.getLoginCredentials().getSsoStep();
-        this.credentialsCompromised = context.isBreachedAccount();
+
+        if(additionalContext.getLoginCredentials() != null) {
+            this.ciProtocol = additionalContext.getLoginCredentials().getCiProtocol();
+            this.ssoStep = additionalContext.getLoginCredentials().getSsoStep();
+            this.credentialsCompromised = context.isBreachedAccount();
+        }
+
         this.requestId = context.getRequestId();
     }
 }
