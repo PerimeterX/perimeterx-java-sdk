@@ -241,7 +241,6 @@ public class PXContext {
         this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
         this.requestId = UUID.randomUUID();
 
-
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
 
