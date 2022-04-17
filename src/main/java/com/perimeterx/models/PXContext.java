@@ -208,6 +208,7 @@ public class PXContext {
     private boolean isMonitoredRequest;
     private AdditionalContext additionalContext;
     private UUID requestId;
+    private boolean simulatedBlock;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -240,6 +241,7 @@ public class PXContext {
         this.httpMethod = request.getMethod();
         this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
         this.requestId = UUID.randomUUID();
+        this.simulatedBlock = this.isMonitoredRequest;
 
 
         String protocolDetails[] = request.getProtocol().split("/");
