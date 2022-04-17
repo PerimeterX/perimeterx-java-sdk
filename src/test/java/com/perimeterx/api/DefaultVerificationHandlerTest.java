@@ -95,7 +95,7 @@ public class DefaultVerificationHandlerTest {
     }
 
     @Test
-    public void TestIsActivityContainsSimulatedBlockUpdatedValue() throws PXException, IOException {
+    public void TestIsBlockHandlerIsPreviousToActivityHandlers() throws PXException, IOException {
         config = PXConfiguration.builder()
                 .appId("appId")
                 .authToken("token")
