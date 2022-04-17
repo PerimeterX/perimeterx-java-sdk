@@ -32,6 +32,8 @@ public class DefaultVerificationHandlerTest {
     private PXConfiguration config;
     private DefaultVerificationHandler defaultVerificationHandler;
     private BlockHandler blockHandler;
+    private HttpServletRequest request;
+    private HttpServletResponseWrapper response;
 
     @BeforeMethod
     public void setUp() {
@@ -43,7 +45,9 @@ public class DefaultVerificationHandlerTest {
                 .remoteConfigurationEnabled(false)
                 .blockingScore(30)
                 .bypassMonitorHeader("TEST-BYPASS")
-                .build();;
+                .build();
+        this.request = new MockHttpServletRequest();
+        this.response = new HttpServletResponseWrapper(new MockHttpServletResponse());
         PXClient pxClient = TestObjectUtils.blockingPXClient(config.getBlockingScore());
         this.activityHandler = new DefaultActivityHandler(pxClient, config);
         this.hostnameProvider = new DefaultHostnameProvider();
@@ -53,7 +57,6 @@ public class DefaultVerificationHandlerTest {
 
     @Test
     public void TestMonitorModeBypass() throws PXException {
-        HttpServletRequest request = new MockHttpServletRequest();
         ((MockHttpServletRequest) request).addHeader("TEST-BYPASS", "1");
         HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
         PXContext context = new PXContext(request, ipProvider, hostnameProvider, config);
@@ -66,9 +69,7 @@ public class DefaultVerificationHandlerTest {
 
     @Test
     public void TestMonitorModeBypassWrongValueInHeader() throws PXException {
-        HttpServletRequest request = new MockHttpServletRequest();
         ((MockHttpServletRequest) request).addHeader("TEST-BYPASS", "0");
-        HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
         PXContext context = new PXContext(request, ipProvider, hostnameProvider, config);
         context.setRiskScore(100);
         DefaultVerificationHandler defaultVerificationHandler = new DefaultVerificationHandler(config, activityHandler);
@@ -79,7 +80,6 @@ public class DefaultVerificationHandlerTest {
 
     @Test
     public void TestMonitorModeBypassHeaderDefinedAndMissingFromRequest() throws PXException {
-        HttpServletRequest request = new MockHttpServletRequest();
         HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
         PXContext context = new PXContext(request, ipProvider, hostnameProvider, config);
         context.setRiskScore(100);
@@ -88,5 +88,4 @@ public class DefaultVerificationHandlerTest {
         boolean verified = defaultVerificationHandler.handleVerification(context, response);
         Assert.assertTrue(verified);
     }
-
 }
