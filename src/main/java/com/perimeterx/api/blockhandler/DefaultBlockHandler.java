@@ -52,7 +52,7 @@ public class DefaultBlockHandler implements BlockHandler {
         }
     }
 
-    private void sendMessage(String blockPageResponse, HttpServletResponseWrapper responseWrapper, PXContext context, PXConfiguration pxConfig) throws PXException, IOException {
+    protected void sendMessage(String blockPageResponse, HttpServletResponseWrapper responseWrapper, PXContext context, PXConfiguration pxConfig) throws PXException, IOException {
         if (context.getBlockAction() == BlockAction.RATE) {
             responseWrapper.setStatus(429);
         } else {
@@ -126,7 +126,7 @@ public class DefaultBlockHandler implements BlockHandler {
         }
     }
 
-    private String getPage(Map<String, String> props, String filePrefix) throws PXException {
+    protected String getPage(Map<String, String> props, String filePrefix) throws PXException {
 
         String template = filePrefix + Constants.FILE_EXTENSION_MUSTACHE;
         return TemplateFactory.getTemplate(template, props);

@@ -3,7 +3,6 @@ package com.perimeterx.api.verificationhandler;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.models.PXContext;
-import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
@@ -11,13 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponseWrapper;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
@@ -43,6 +37,12 @@ public class DefaultVerificationHandler implements VerificationHandler {
     public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws PXException {
         boolean verified = shouldPassRequest(context);
 
+        setPxhdCookie(context, responseWrapper);
+
+        if (!verified && !context.isMonitoredRequest()) {
+            this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
+        }
+
         if (verified) {
             logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
 
@@ -54,14 +54,8 @@ public class DefaultVerificationHandler implements VerificationHandler {
             logger.debug("Request invalid");
             this.activityHandler.handleBlockActivity(context);
         }
-        setPxhdCookie(context, responseWrapper);
 
-        if (!verified && !context.isMonitoredRequest()) {
-            this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
-            return false;
-        }
-
-        return true;
+        return verified || context.isMonitoredRequest();
     }
 
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
