@@ -38,7 +38,7 @@ public class CustomBlockHandler extends DefaultBlockHandler {
         }
         try {
             sendMessage(blockPageResponse, responseWrapper, context, pxConfig);
-            context.setSimulatedBlock(true); // This row is an example of how a client is used the custom class to modify the context state
+            context.setMonitoredRequest(true); // This row is an example of how a client is used the custom class to modify the context state
         } catch (IOException e) {
             throw new PXException(e);
         }
