@@ -21,7 +21,6 @@ import testutils.TestObjectUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.IOException;
 
 
 @Test
@@ -36,7 +35,15 @@ public class DefaultVerificationHandlerTest {
 
     @BeforeMethod
     public void setUp() {
-        config = TestObjectUtils.generateConfiguration();
+        this.config = PXConfiguration.builder()
+                .appId("appId")
+                .authToken("token")
+                .cookieKey("cookieKey")
+                .moduleMode(ModuleMode.MONITOR)
+                .remoteConfigurationEnabled(false)
+                .blockingScore(30)
+                .bypassMonitorHeader("TEST-BYPASS")
+                .build();;
         PXClient pxClient = TestObjectUtils.blockingPXClient(config.getBlockingScore());
         this.activityHandler = new DefaultActivityHandler(pxClient, config);
         this.hostnameProvider = new DefaultHostnameProvider();
@@ -45,16 +52,7 @@ public class DefaultVerificationHandlerTest {
     }
 
     @Test
-    public void TestMonitorModeBypass() throws IOException, PXException {
-        PXConfiguration config = PXConfiguration.builder()
-                .appId("appId")
-                .authToken("token")
-                .cookieKey("cookieKey")
-                .moduleMode(ModuleMode.MONITOR)
-                .remoteConfigurationEnabled(false)
-                .blockingScore(30)
-                .bypassMonitorHeader("TEST-BYPASS")
-                .build();
+    public void TestMonitorModeBypass() throws PXException {
         HttpServletRequest request = new MockHttpServletRequest();
         ((MockHttpServletRequest) request).addHeader("TEST-BYPASS", "1");
         HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
@@ -67,16 +65,7 @@ public class DefaultVerificationHandlerTest {
     }
 
     @Test
-    public void TestMonitorModeBypassWrongValueInHeader() throws IOException, PXException {
-        PXConfiguration config = PXConfiguration.builder()
-                .appId("appId")
-                .authToken("token")
-                .cookieKey("cookieKey")
-                .moduleMode(ModuleMode.MONITOR)
-                .remoteConfigurationEnabled(false)
-                .blockingScore(30)
-                .bypassMonitorHeader("TEST-BYPASS")
-                .build();
+    public void TestMonitorModeBypassWrongValueInHeader() throws PXException {
         HttpServletRequest request = new MockHttpServletRequest();
         ((MockHttpServletRequest) request).addHeader("TEST-BYPASS", "0");
         HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
@@ -89,16 +78,7 @@ public class DefaultVerificationHandlerTest {
     }
 
     @Test
-    public void TestMonitorModeBypassHeaderDefinedAndMissingFromRequest() throws IOException, PXException {
-        PXConfiguration config = PXConfiguration.builder()
-                .appId("appId")
-                .authToken("token")
-                .cookieKey("cookieKey")
-                .moduleMode(ModuleMode.MONITOR)
-                .remoteConfigurationEnabled(false)
-                .blockingScore(30)
-                .bypassMonitorHeader("TEST-BYPASS")
-                .build();
+    public void TestMonitorModeBypassHeaderDefinedAndMissingFromRequest() throws PXException {
         HttpServletRequest request = new MockHttpServletRequest();
         HttpServletResponseWrapper response = new HttpServletResponseWrapper(new MockHttpServletResponse());
         PXContext context = new PXContext(request, ipProvider, hostnameProvider, config);
