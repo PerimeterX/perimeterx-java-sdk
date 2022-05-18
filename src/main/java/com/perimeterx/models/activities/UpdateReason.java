@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * Created by nitzangoldfeder on 01/11/2017.
  */
 public enum UpdateReason {
-    INIT("initial_config"), REMOTE_CONFIG("remote_config");
+    TELEMETRY("telemetry"), REMOTE_CONFIG("remote_config");
 
     String reason;
 
