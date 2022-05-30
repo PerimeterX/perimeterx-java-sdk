@@ -161,8 +161,8 @@ public class PerimeterX {
         logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
         try {
-            if (isTelemetryRequest(req)) {
-                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.TELEMETRY);
+            if (isValidTelemetryRequest(req)) {
+                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND);
                 return null;
             }
 
@@ -270,7 +270,7 @@ public class PerimeterX {
         }
     }
 
-    public boolean isTelemetryRequest(HttpServletRequest request) {
+    public boolean isValidTelemetryRequest(HttpServletRequest request) {
         final String telemetryHeader = getTelemetryHeader(request);
 
         if (isNull(telemetryHeader)) {
@@ -312,11 +312,8 @@ public class PerimeterX {
 
     private String getTelemetryHeader(HttpServletRequest request) {
         Map<String, String> headers = PXCommonUtils.getHeadersFromRequest(request);
-        if (headers.containsKey(DEFAULT_TELEMETRY_REQUEST_HEADER_NAME)) {
-            return headers.get(DEFAULT_TELEMETRY_REQUEST_HEADER_NAME);
-        }
 
-        return null;
+        return headers.get(DEFAULT_TELEMETRY_REQUEST_HEADER_NAME);
     }
 
     /**
