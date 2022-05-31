@@ -271,7 +271,7 @@ public class PerimeterX {
     }
 
     public boolean isValidTelemetryRequest(HttpServletRequest request) {
-        final String telemetryHeader = getTelemetryHeader(request);
+        final String telemetryHeader = request.getHeader(DEFAULT_TELEMETRY_REQUEST_HEADER_NAME);
 
         if (isNull(telemetryHeader)) {
             return false;
@@ -308,12 +308,6 @@ public class PerimeterX {
         }
 
         return true;
-    }
-
-    private String getTelemetryHeader(HttpServletRequest request) {
-        Map<String, String> headers = PXCommonUtils.getHeadersFromRequest(request);
-
-        return headers.get(DEFAULT_TELEMETRY_REQUEST_HEADER_NAME);
     }
 
     /**
