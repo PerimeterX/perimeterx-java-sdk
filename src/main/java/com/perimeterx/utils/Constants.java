@@ -91,4 +91,6 @@ public final class Constants {
     public static final String DEFAULT_LOGIN_RESPONSE_HEADER_NAME = "x-px-login-successful";
     public static final String DEFAULT_LOGIN_RESPONSE_HEADER_VALUE = "1";
     public static final String DEFAULT_COMPROMISED_CREDENTIALS_HEADER_NAME = "px-compromised-credentials";
+
+    public static final String DEFAULT_TELEMETRY_REQUEST_HEADER_NAME = "x-px-enforcer-telemetry";
 }

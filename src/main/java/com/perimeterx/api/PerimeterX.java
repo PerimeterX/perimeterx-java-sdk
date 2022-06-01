@@ -57,14 +57,22 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
+import com.perimeterx.utils.HMACUtils;
+import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
+import java.util.Map;
 
 import static com.perimeterx.utils.Constants.*;
+import static java.util.Objects.isNull;
 
 /**
  * Facade object for - configuring, validating and blocking requests
@@ -109,7 +117,6 @@ public class PerimeterX {
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.cookieValidator = new PXCookieValidator(this.configuration);
         setVerificationHandler();
-        this.activityHandler.handleEnforcerTelemetryActivity(configuration, UpdateReason.INIT);
         this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
     }
 
@@ -154,6 +161,11 @@ public class PerimeterX {
         logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
         try {
+            if (isValidTelemetryRequest(req)) {
+                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND);
+                return null;
+            }
+
             if (!moduleEnabled()) {
                 logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
                 return null;
@@ -167,7 +179,7 @@ public class PerimeterX {
             }
 
             //if path ext is defined at whitelist, let the request pass
-            if(configuration.isExtWhiteListed(req.getRequestURI())) {
+            if (configuration.isExtWhiteListed(req.getRequestURI())) {
                 return null;
             }
 
@@ -219,16 +231,15 @@ public class PerimeterX {
     }
 
     private void addCustomHeadersToRequest(HttpServletRequest request, PXContext context) {
-        if (context.getAdditionalContext() != null && context.getAdditionalContext().getLoginCredentials() != null){
+        if (context.getAdditionalContext() != null && context.getAdditionalContext().getLoginCredentials() != null) {
             setBreachedAccount(request, context);
             setAdditionalS2SActivityHeaders(request, context);
         }
     }
 
     private void setBreachedAccount(HttpServletRequest request, PXContext context) {
-        if(configuration.isLoginCredentialsExtractionEnabled() && context.isBreachedAccount()) {
-            ((RequestWrapper) request).addHeader(configuration.getPxCompromisedCredentialsHeader(),
-                    String.valueOf(context.getPxde().get(BREACHED_ACCOUNT_KEY_NAME)));
+        if (configuration.isLoginCredentialsExtractionEnabled() && context.isBreachedAccount()) {
+            ((RequestWrapper) request).addHeader(configuration.getPxCompromisedCredentialsHeader(), String.valueOf(context.getPxde().get(BREACHED_ACCOUNT_KEY_NAME)));
         }
     }
 
@@ -259,7 +270,45 @@ public class PerimeterX {
         }
     }
 
+    public boolean isValidTelemetryRequest(HttpServletRequest request) {
+        final String telemetryHeader = request.getHeader(DEFAULT_TELEMETRY_REQUEST_HEADER_NAME);
 
+        if (isNull(telemetryHeader)) {
+            return false;
+        }
+
+        logger.debug("Received command to send enforcer telemetry");
+
+        final String decodedString = new String(Base64.getDecoder().decode(telemetryHeader));
+        final String[] splitTimestampAndHmac = decodedString.split(":");
+
+        if (splitTimestampAndHmac.length != 2) {
+            return false;
+        }
+
+        final String timestamp = splitTimestampAndHmac[0];
+        final String hmac = splitTimestampAndHmac[1];
+
+        if (Long.parseLong(timestamp) < System.currentTimeMillis()) {
+            logger.error("Telemetry command has expired.");
+            return false;
+        }
+
+        try {
+            byte[] hmacBytes = HMACUtils.HMACString(timestamp, configuration.getCookieKey());
+            String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
+
+            if (!generatedHmac.equals(hmac)) {
+                logger.error("hmac validation failed, original=" + hmac + ", generated=" + generatedHmac);
+                return false;
+            }
+        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            logger.error("hmac validation failed.");
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Set activity handler
