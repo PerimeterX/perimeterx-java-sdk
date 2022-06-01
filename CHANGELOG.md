@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.4.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.2...HEAD) (2022-06-01)
+- Added sending telemetry by Slack command
+
 ## [v6.4.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.1...HEAD) (2022-04-17)
 - Support creating block activity after block handler invocation
 
