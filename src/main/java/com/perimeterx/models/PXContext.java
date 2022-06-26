@@ -247,8 +247,12 @@ public class PXContext {
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
 
-        this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
-                || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri);
+        if(this.isContainCredentialsIntelligence()) {
+            this.sensitiveRoute = true;
+        } else {
+            this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
+                    || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri);
+        }
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
