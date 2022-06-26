@@ -7,7 +7,6 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.models.exceptions.PXException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -30,7 +29,7 @@ public class CookieErrorsTest {
     private HostnameProvider hostnameProvider;
 
     @BeforeMethod
-    public void setUp() throws PXException {
+    public void setUp() {
         request = new MockHttpServletRequest();
         ipProvider = new RemoteAddressIPProvider();
         hostnameProvider = new DefaultHostnameProvider();
@@ -43,7 +42,7 @@ public class CookieErrorsTest {
     }
 
     @Test
-    public void testMobileError1() throws PXException {
+    public void testMobileError1() {
         String pxCookie = "1";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -54,7 +53,7 @@ public class CookieErrorsTest {
     }
 
     @Test
-    public void testMobileError2() throws PXException {
+    public void testMobileError2() {
         String pxCookie = "2";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -65,7 +64,7 @@ public class CookieErrorsTest {
     }
 
     @Test
-    public void testMobileError3() throws PXException {
+    public void testMobileError3() {
         String pxCookie = "3";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);

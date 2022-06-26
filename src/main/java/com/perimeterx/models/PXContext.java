@@ -210,7 +210,7 @@ public class PXContext {
     private LoginData loginData;
     private UUID requestId;
 
-    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) throws PXException {
+    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
@@ -220,7 +220,7 @@ public class PXContext {
         initContext(request, pxConfiguration);
     }
 
-    private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) throws PXException {
+    private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
         this.headers = PXCommonUtils.getHeadersFromRequest(request);
 
         if (headers.containsKey(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) || headers.containsKey(Constants.MOBILE_SDK_TOKENS_HEADER)) {
@@ -389,10 +389,15 @@ public class PXContext {
         }
     }
 
-    private void generateLoginData(HttpServletRequest request, PXConfiguration pxConfiguration) throws PXException {
-        final LoginData loginData = new LoginData(request, pxConfiguration);
+    private void generateLoginData(HttpServletRequest request, PXConfiguration pxConfiguration) {
+        final LoginData loginData;
 
-        this.setLoginData(loginData);
+        try {
+            loginData = new LoginData(request, pxConfiguration);
+            this.setLoginData(loginData);
+        } catch (PXException pxe) {
+            logger.error("Failed to generate login data. Error :: ", pxe);
+        }
     }
 
     /**

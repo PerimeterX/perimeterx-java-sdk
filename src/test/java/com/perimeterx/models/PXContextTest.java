@@ -6,7 +6,6 @@ import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.CustomParameters;
 import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -33,7 +32,7 @@ public class PXContextTest {
     }
 
     @Test
-    public void customParamsTest() throws PXException {
+    public void customParamsTest() {
         CustomParameters customParameters = new CustomParameters();
         customParameters.setCustomParam1("number1");
         customParameters.setCustomParam2("number2");
