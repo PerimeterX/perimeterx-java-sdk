@@ -2,7 +2,7 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.api.additionalContext.AdditionalContext;
+import com.perimeterx.api.additionalContext.LoginData;
 import com.perimeterx.models.PXContext;
 import lombok.Getter;
 
@@ -26,11 +26,11 @@ public class AdditionalS2SActivityDetails extends CommonActivityDetails {
     public AdditionalS2SActivityDetails(PXContext context) {
         super(context);
 
-        final AdditionalContext additionalContext = context.getAdditionalContext();
+        final LoginData loginData = context.getLoginData();
         this.clientUuid = context.getUuid();
         this.username = null;
-        this.loginSuccessful = additionalContext.getLoginSuccessful();
-        this.httpStatusCode = additionalContext.getResponseStatusCode();
+        this.loginSuccessful = loginData.getLoginSuccessful();
+        this.httpStatusCode = loginData.getResponseStatusCode();
     }
 
     public void setUsername(String username) {

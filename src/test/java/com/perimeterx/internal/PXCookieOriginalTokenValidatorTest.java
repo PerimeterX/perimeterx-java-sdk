@@ -5,6 +5,7 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.internals.PXCookieOriginalTokenValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
 import org.junit.Assert;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -41,7 +42,7 @@ public class PXCookieOriginalTokenValidatorTest {
     }
 
     @Test
-    public void testPxCookieOriginalTokenValidatorWithOriginalToken() {
+    public void testPxCookieOriginalTokenValidatorWithOriginalToken() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, "2");
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, encodedPayload);
@@ -53,7 +54,7 @@ public class PXCookieOriginalTokenValidatorTest {
     }
 
     @Test
-    public void testPxCookieOriginalTokenValidatorBadOriginalToken() {
+    public void testPxCookieOriginalTokenValidatorBadOriginalToken() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, "2");
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER, badXAuthorizationToken);

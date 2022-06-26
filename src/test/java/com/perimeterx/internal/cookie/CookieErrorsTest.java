@@ -43,7 +43,7 @@ public class CookieErrorsTest {
     }
 
     @Test
-    public void testMobileError1() {
+    public void testMobileError1() throws PXException {
         String pxCookie = "1";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -54,7 +54,7 @@ public class CookieErrorsTest {
     }
 
     @Test
-    public void testMobileError2() {
+    public void testMobileError2() throws PXException {
         String pxCookie = "2";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -65,7 +65,7 @@ public class CookieErrorsTest {
     }
 
     @Test
-    public void testMobileError3() {
+    public void testMobileError3() throws PXException {
         String pxCookie = "3";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);

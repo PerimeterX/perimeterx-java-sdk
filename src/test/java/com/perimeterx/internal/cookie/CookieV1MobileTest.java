@@ -46,7 +46,7 @@ public class CookieV1MobileTest {
     }
 
     @Test
-    public void testCookieV1MobileToken() {
+    public void testCookieV1MobileToken() throws PXException {
         String pxCookie = "1:eGPYisZ+3qU=:1000:645M2JJ5rYzdSh0T3S6fgtBcHATlIx+A021RUKQpMdr/csetstQJ0/LmAv7HU+gi2Jzd9L47sGGnaCzzcBxbgVd3bwE1dOpKraxwW7iOJ9MGVtlndG8TY5Yvx5mOJFF6Z7Kif1XoicYwNFdPht+KuOoQY8LO51TR4r7b2+OycfvlIKQSVgh41p4SARDbKbFtUM+3VLCoLrYKJT+qq/8a993aZnXlfSc9kqKj89EqS9mz4b7CRhoeVGpMfvDxTFcMicV3AEPlQCdFGUkZonr+yQ==";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -54,7 +54,7 @@ public class CookieV1MobileTest {
     }
 
     @Test
-    public void testCookieV1MobilePass() {
+    public void testCookieV1MobilePass() throws PXException {
         String pxCookie = "1:eGPYisZ+3qU=:1000:645M2JJ5rYzdSh0T3S6fgtBcHATlIx+A021RUKQpMdr/csetstQJ0/LmAv7HU+gi2Jzd9L47sGGnaCzzcBxbgVd3bwE1dOpKraxwW7iOJ9MGVtlndG8TY5Yvx5mOJFF6Z7Kif1XoicYwNFdPht+KuOoQY8LO51TR4r7b2+OycfvlIKQSVgh41p4SARDbKbFtUM+3VLCoLrYKJT+qq/8a993aZnXlfSc9kqKj89EqS9mz4b7CRhoeVGpMfvDxTFcMicV3AEPlQCdFGUkZonr+yQ==";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -63,7 +63,7 @@ public class CookieV1MobileTest {
     }
 
     @Test
-    public void testCookieV1MobileFailOnSensitiveRoute() {
+    public void testCookieV1MobileFailOnSensitiveRoute() throws PXException {
         PXConfiguration configuration = PXConfiguration.builder()
                 .cookieKey("COOKIE_KEY_STRING_MOBILE")
                 .appId("APP_ID")
@@ -81,7 +81,7 @@ public class CookieV1MobileTest {
     }
 
     @Test
-    public void testCookieV1MobileFailOnDecryption() {
+    public void testCookieV1MobileFailOnDecryption() throws PXException {
         String pxCookie = "1:eGPYisZ+3qU=:1000:645M2JJ5rYzdSh0T3S6fgtBcHATlIx+A021RUKQpMdr/csetstQJ0/LmAv7HU+gi2Jzd9L47sGGnaCzzcBxbgVd3bwE1dOpKraxwW7iOJ9MGVtlndG8TY5Yvx5mOJFF6Z7Kif1XoicYwNFdPht+KuOoQY8LO51TR4r7b2+OycfvlIKQSVgh41p4SARDbKbFtUM+3VLCoLrYKJT+qq/8a993aZnXlfSc9kqKj89EqS9mz4b7CRhoeVGpMfvDxTFcMicV3AEPlQCdFGUkZonr+yQ==";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.pxConfiguration = PXConfiguration.builder()
@@ -97,7 +97,7 @@ public class CookieV1MobileTest {
     }
 
     @Test
-    public void testCookieV1MobileMobileFailOnFakeCookie() {
+    public void testCookieV1MobileMobileFailOnFakeCookie() throws PXException {
         String pxCookie = "1:bavs";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -108,7 +108,7 @@ public class CookieV1MobileTest {
     }
 
     @Test
-    public void testCookieV1MobileFailOnCookieExpired() {
+    public void testCookieV1MobileFailOnCookieExpired() throws PXException {
         String pxCookie = "1:JpFP+MkTy7Y=:1000:Fp0bg1yaTaJ+X1ztkFNF+J7WpDsfCl594WwtQixoRitLQ5PsqIPcjBiIpSoOgGZ+dpvPUJEjy+NbBM9JFrPyVUGIdZ394YKp/yo+UH6gvf42XAlI5Ci/53YB2UGyD9s5UkAYeJ462dw0eKMDY3I5hOaF6l9LVP5wivx/30yngJ1vqNH74EkqnpJF7kcqbtmcTldhvZpaSOeNGVNH8UJNeCIAZJjQPYJTAOKirICGXUPsxp38ZwFNBE+sMvVBHd+QpXz9zRcqGi3/Pk3/ctGyIg==";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -119,7 +119,7 @@ public class CookieV1MobileTest {
     }
 
     @Test
-    public void testCookieV1MobilePassAndHighScore() {
+    public void testCookieV1MobilePassAndHighScore() throws PXException {
         String pxCookie = "1:qfYWqbWVWzw=:1000:WKxzNJtR1/dUWseaCQlheLlWLZzH1WTY/hGM52jQZf9qrIKXW5yhcc91QuZhipokMM3XJlj3FRQpK+9XVSsYyLOKY0P7k6HVW6auMp/2dub7/cFQqz+o3yLW7b5zRL7tuilGqMPD+EQfDcLOXusJWjdRqN4iV5AK4jSbW7iet9WLiG78t9JBNGCmVvHTgtcwM9hm7MfCBs99LWi0UiZVOZHQ8sasf/+vSydezOPS/SVpKxBIe8TFOf/ZY64ASEg46nVd1Cy62Vqfy+S0KFzXjpnv1cbVIwkruwRixldXobQ=";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);
@@ -130,7 +130,7 @@ public class CookieV1MobileTest {
     }
 
     @Test
-    public void testCookieV1MobilePassLowScore() {
+    public void testCookieV1MobilePassLowScore() throws PXException {
         String pxCookie = "1:fdQwDG0g0Kk=:1000:Y0mJ7iyek/dManEwojI0uhPBO+8+jA0ntJ4VfKpvjXV65TPL30KS//hs237UWKxxFKZBQdClZcXRDmpgK29HDG7XyVHOUk5/s2ojQwg4pGU17UaXsJxE8TGv5o0b4SsrwoBgT9MKT1feE2bPlWqB+j9UIu/4LRh0OIakiUDAZy32qCAFlS2ZpoEEQLOpSi7Q7VSVf1r9fodtlmMxdF//7eUjkBkHr79kzEJF1Z5VD8zLd3tDv0Lwlv97xVMXlYlo0/dDJOlg8FZ837aKxC+BgQ==";
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, pxConfiguration);

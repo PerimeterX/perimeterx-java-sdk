@@ -34,7 +34,7 @@ public class BufferedActivitiesTest {
     private PXConfiguration config;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws PXException {
         config = PXConfiguration.builder()
                 .appId("APP_ID")
                 .authToken("AUTH_123")

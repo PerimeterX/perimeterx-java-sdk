@@ -38,7 +38,7 @@ public class BufferedActivityHandlerTest {
     }
 
     @Test
-    public void testHandleBlockActivity() {
+    public void testHandleBlockActivity() throws PXException {
         boolean thrown = false;
         MockHttpServletRequest request = new MockHttpServletRequest();
         PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, config);

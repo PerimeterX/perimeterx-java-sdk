@@ -2,7 +2,7 @@ package com.perimeterx.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.api.additionalContext.AdditionalContext;
+import com.perimeterx.api.additionalContext.LoginData;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -14,6 +14,7 @@ import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.*;
 import com.perimeterx.utils.*;
 import lombok.Data;
@@ -206,10 +207,10 @@ public class PXContext {
     private String pxhd;
     private String responsePxhd;
     private boolean isMonitoredRequest;
-    private AdditionalContext additionalContext;
+    private LoginData loginData;
     private UUID requestId;
 
-    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
+    public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) throws PXException {
         this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
@@ -219,7 +220,7 @@ public class PXContext {
         initContext(request, pxConfiguration);
     }
 
-    private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
+    private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) throws PXException {
         this.headers = PXCommonUtils.getHeadersFromRequest(request);
 
         if (headers.containsKey(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) || headers.containsKey(Constants.MOBILE_SDK_TOKENS_HEADER)) {
@@ -228,6 +229,8 @@ public class PXContext {
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
         parseCookies(request, isMobileToken);
+        generateLoginData(request, pxConfiguration);
+
         this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
@@ -385,6 +388,12 @@ public class PXContext {
         }
     }
 
+    private void generateLoginData(HttpServletRequest request, PXConfiguration pxConfiguration) throws PXException {
+        final LoginData loginData = new LoginData(request, pxConfiguration);
+
+        this.setLoginData(loginData);
+    }
+
     /**
      * Check if request is verified or not
      *
@@ -461,6 +470,6 @@ public class PXContext {
     }
 
     public boolean isContainCredentialsIntelligence() {
-        return this.getAdditionalContext() != null && this.getAdditionalContext().getLoginCredentials() != null;
+        return this.getLoginData() != null && this.getLoginData().getLoginCredentials() != null;
     }
 }

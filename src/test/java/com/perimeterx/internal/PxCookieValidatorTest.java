@@ -5,6 +5,7 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,7 +37,7 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerify() {
+    public void testVerify() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = Constants.COOKIE_V3_KEY + ":" + CookieV3 + "," + Constants.COOKIE_V1_KEY + ":" + CookieV1;
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, CookieV1);
@@ -51,7 +52,7 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerifyFromTokensFirstCorrupted() {
+    public void testVerifyFromTokensFirstCorrupted() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = "@$@#%" + "," + Constants.COOKIE_V1_KEY + ":" + CookieV1;
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, Constants.COOKIE_V3_KEY + ":" + CookieV3);
@@ -66,7 +67,7 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerifyFromTokensBothCorruptedSelectAuthHeaderCookie() {
+    public void testVerifyFromTokensBothCorruptedSelectAuthHeaderCookie() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = "@$@#%" + "," + "@%@%@#";
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_AUTHORIZATION_HEADER, Constants.COOKIE_V3_KEY + ":" + CookieV3);
@@ -81,7 +82,7 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerifyFromTokensBothCorruptedSelectOriginalTokenDecryptionError() {
+    public void testVerifyFromTokensBothCorruptedSelectOriginalTokenDecryptionError() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = "3:@$@#%" + "," + "1:@%@%@#";
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER, Constants.COOKIE_V3_KEY + ":" + CookieV3);
@@ -98,7 +99,7 @@ public class PxCookieValidatorTest {
     }
 
     @Test
-    public void testVerifyFromTokensNoneSelectOriginalTokenDecryptionError() {
+    public void testVerifyFromTokensNoneSelectOriginalTokenDecryptionError() throws PXException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         String cookies = "";
         enrichHttpRequestWithPxHeaders(request, Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER, Constants.COOKIE_V3_KEY + ":" + CookieV3);
