@@ -1,6 +1,6 @@
 # Change Log
 
-## [v6.4.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.2...HEAD) (2022-06-28)
+## [v6.4.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.3...HEAD) (2022-06-28)
 - Fixed `s2s_call_reason` as `sensitive_route` in case of Credentials Intelligence request.
 
 ## [v6.4.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.2...HEAD) (2022-06-01)
