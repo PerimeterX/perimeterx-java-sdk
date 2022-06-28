@@ -108,7 +108,7 @@ public class Additional {
 
     private static void setLoginCredentials(PXContext ctx, Additional additional) {
         if(ctx.isContainCredentialsIntelligence()) {
-            final UserLoginData loginCredentials = ctx.getAdditionalContext().getLoginCredentials();
+            final UserLoginData loginCredentials = ctx.getLoginData().getLoginCredentials();
             additional.username = loginCredentials.getUsername();
             additional.password = loginCredentials.getEncodedPassword();
             additional.ciProtocol = loginCredentials.getCiProtocol();
