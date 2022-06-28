@@ -7,7 +7,6 @@ import com.perimeterx.api.providers.RemoteAddressIPProvider;
 import com.perimeterx.internals.PXCookieValidator;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,7 +31,7 @@ public class CookieV3Test {
     private HostnameProvider hostnameProvider;
 
     @BeforeMethod
-    public void setUp() throws PXException {
+    public void setUp() {
         request = new MockHttpServletRequest();
         ipProvider = new RemoteAddressIPProvider();
         hostnameProvider = new DefaultHostnameProvider();

@@ -2,7 +2,7 @@ package com.perimeterx.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.api.additionalContext.AdditionalContext;
+import com.perimeterx.api.additionalContext.LoginData;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -14,6 +14,7 @@ import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.*;
 import com.perimeterx.utils.*;
 import lombok.Data;
@@ -206,7 +207,7 @@ public class PXContext {
     private String pxhd;
     private String responsePxhd;
     private boolean isMonitoredRequest;
-    private AdditionalContext additionalContext;
+    private LoginData loginData;
     private UUID requestId;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
@@ -228,6 +229,8 @@ public class PXContext {
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
         parseCookies(request, isMobileToken);
+        generateLoginData(request, pxConfiguration);
+
         this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
@@ -244,7 +247,8 @@ public class PXContext {
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
 
-        this.sensitiveRoute = checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
+        this.sensitiveRoute = this.isContainCredentialsIntelligence()
+                || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
                 || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri);
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
@@ -385,6 +389,17 @@ public class PXContext {
         }
     }
 
+    private void generateLoginData(HttpServletRequest request, PXConfiguration pxConfiguration) {
+        final LoginData loginData;
+
+        try {
+            loginData = new LoginData(request, pxConfiguration);
+            this.setLoginData(loginData);
+        } catch (PXException pxe) {
+            logger.error("Failed to generate login data. Error :: ", pxe);
+        }
+    }
+
     /**
      * Check if request is verified or not
      *
@@ -461,6 +476,6 @@ public class PXContext {
     }
 
     public boolean isContainCredentialsIntelligence() {
-        return this.getAdditionalContext() != null && this.getAdditionalContext().getLoginCredentials() != null;
+        return this.getLoginData() != null && this.getLoginData().getLoginCredentials() != null;
     }
 }

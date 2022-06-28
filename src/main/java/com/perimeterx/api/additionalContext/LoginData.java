@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletRequest;
 
 @Getter
 @Setter
-public class AdditionalContext {
+public class LoginData {
 
     private UserLoginData loginCredentials;
     private Boolean loginSuccessful;
     private Integer responseStatusCode;
 
-    public AdditionalContext(HttpServletRequest request, PXConfiguration configuration) throws PXException {
+    public LoginData(HttpServletRequest request, PXConfiguration configuration) throws PXException {
         generateLoginCredentials(request, configuration);
     }
 

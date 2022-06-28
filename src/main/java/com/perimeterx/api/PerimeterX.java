@@ -28,7 +28,6 @@ package com.perimeterx.api;
 import com.google.gson.Gson;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.activities.BufferedActivityHandler;
-import com.perimeterx.api.additionalContext.AdditionalContext;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidator;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidatorFactory;
 import com.perimeterx.api.providers.CombinedIPProvider;
@@ -58,7 +57,6 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.HMACUtils;
-import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
 import com.perimeterx.utils.StringUtils;
 
@@ -69,7 +67,6 @@ import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.Map;
 
 import static com.perimeterx.utils.Constants.*;
 import static java.util.Objects.isNull;
@@ -171,7 +168,7 @@ public class PerimeterX {
                 return null;
             }
 
-            context = createContext(req);
+            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
             if (shouldReverseRequest(req, responseWrapper)) {
                 context.setFirstPartyRequest(true);
@@ -201,15 +198,6 @@ public class PerimeterX {
         return context;
     }
 
-    private PXContext createContext(HttpServletRequest request) throws PXException {
-        final PXContext pxContext = new PXContext(request, this.ipProvider, this.hostnameProvider, configuration);
-        final AdditionalContext additionalContext = new AdditionalContext(request, this.configuration);
-
-        pxContext.setAdditionalContext(additionalContext);
-
-        return pxContext;
-    }
-
     private boolean moduleEnabled() {
         return this.configuration.isModuleEnabled();
     }
@@ -231,7 +219,7 @@ public class PerimeterX {
     }
 
     private void addCustomHeadersToRequest(HttpServletRequest request, PXContext context) {
-        if (context.getAdditionalContext() != null && context.getAdditionalContext().getLoginCredentials() != null) {
+        if (context.getLoginData() != null && context.getLoginData().getLoginCredentials() != null) {
             setBreachedAccount(request, context);
             setAdditionalS2SActivityHeaders(request, context);
         }
@@ -260,8 +248,8 @@ public class PerimeterX {
             if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                 final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
 
-                context.getAdditionalContext().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
-                context.getAdditionalContext().setResponseStatusCode(response.getStatus());
+                context.getLoginData().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
+                context.getLoginData().setResponseStatusCode(response.getStatus());
 
                 activityHandler.handleAdditionalS2SActivity(context);
             }

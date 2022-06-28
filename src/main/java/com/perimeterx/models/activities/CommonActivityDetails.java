@@ -2,7 +2,7 @@ package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.perimeterx.api.additionalContext.AdditionalContext;
+import com.perimeterx.api.additionalContext.LoginData;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.SSOStep;
 import com.perimeterx.models.PXContext;
@@ -27,11 +27,11 @@ public class CommonActivityDetails implements ActivityDetails {
     public UUID requestId;
 
     public CommonActivityDetails(PXContext context) {
-        final AdditionalContext additionalContext = context.getAdditionalContext();
+        final LoginData loginData = context.getLoginData();
 
-        if(additionalContext != null && additionalContext.getLoginCredentials() != null) {
-            this.ciProtocol = additionalContext.getLoginCredentials().getCiProtocol();
-            this.ssoStep = additionalContext.getLoginCredentials().getSsoStep();
+        if(loginData != null && loginData.getLoginCredentials() != null) {
+            this.ciProtocol = loginData.getLoginCredentials().getCiProtocol();
+            this.ssoStep = loginData.getLoginCredentials().getSsoStep();
             this.credentialsCompromised = context.isBreachedAccount();
         }
 
