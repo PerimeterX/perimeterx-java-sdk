@@ -51,6 +51,9 @@ public class PageRequestedActivityDetails extends CommonActivityDetails {
     @JsonProperty("cookie_origin")
     private String cookieOrigin;
 
+    @JsonProperty("enforcer_error_message")
+    private String enforcerErrorMessage;
+
     @JsonUnwrapped
     private CustomParameters customParameters;
 
@@ -69,6 +72,7 @@ public class PageRequestedActivityDetails extends CommonActivityDetails {
         this.clientUuid = context.getUuid();
         this.cookieOrigin = context.getCookieOrigin();
         this.customParameters = context.getCustomParameters();
+        this.enforcerErrorMessage = context.getEnforcerErrorReasonInfo();
     }
 
     public String getHttpMethod() {

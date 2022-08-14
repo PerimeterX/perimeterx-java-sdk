@@ -63,6 +63,8 @@ import com.perimeterx.utils.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -187,9 +189,11 @@ public class PerimeterX {
             logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
-                context.setPassReason(PassReason.S2S_ERROR);
                 if (!context.getS2sErrorReasonInfo().isErrorSet()) {
-                    context.setS2sErrorReasonInfo(new S2SErrorReasonInfo(S2SErrorReason.UNKNOWN_ERROR, e.toString()));
+                    context.setPassReason(PassReason.ENFORCER_ERROR);
+                    StringWriter error = new StringWriter();
+                    e.printStackTrace(new PrintWriter(error));
+                    context.setEnforcerErrorReasonInfo(error.toString());
                 }
                 activityHandler.handlePageRequestedActivity(context);
                 context.setVerified(true);
