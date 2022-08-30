@@ -64,7 +64,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Optional;
 
 import static com.perimeterx.utils.Constants.*;
 import static java.util.Objects.isNull;
@@ -183,7 +185,12 @@ public class PerimeterX {
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
             // If any general exception is being thrown, notify in page_request activity
-            handleEnforcerErrorField(context, e.getMessage());
+            String errorMessage = "Error: "+ e.getMessage() + ". At: ";
+            Optional<StackTraceElement> firstStackTraceCause = Arrays.stream((e.getStackTrace())).findFirst();
+            if (firstStackTraceCause.isPresent()) {
+                errorMessage += firstStackTraceCause.get().toString();
+            }
+            handleEnforcerErrorField(context, errorMessage);
         }
 
         return context;
