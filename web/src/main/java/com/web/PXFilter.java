@@ -39,13 +39,16 @@ public class PXFilter implements Filter {
 
             setDefaultPageAttributes((HttpServletRequest) request, config);
 
-            if (context != null && context.isRequestLowScore()) {
+            if (context == null) {
                 filterChain.doFilter(request, response);
+                return;
             }
 
-            response = new ResponseWrapper((HttpServletResponse) response);
-            pxFilter.pxPostVerify((ResponseWrapper) response, context);
-
+            if (context.isRequestLowScore()) {
+                filterChain.doFilter(request, response);
+                response = new ResponseWrapper((HttpServletResponse) response);
+                pxFilter.pxPostVerify((ResponseWrapper) response, context);
+            }
         } catch (PXException e) {
             filterChain.doFilter(request, response);
         }

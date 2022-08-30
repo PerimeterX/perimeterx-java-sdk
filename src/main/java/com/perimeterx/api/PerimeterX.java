@@ -54,8 +54,6 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.models.risk.S2SErrorReason;
-import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.HMACUtils;
 import com.perimeterx.utils.PXLogger;
 import com.perimeterx.utils.StringUtils;
@@ -63,8 +61,6 @@ import com.perimeterx.utils.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -186,20 +182,24 @@ public class PerimeterX {
             addCustomHeadersToRequest(req, context);
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
-            logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
-            if (context != null) {
-                if (!context.getS2sErrorReasonInfo().isErrorSet()) {
-                    context.setPassReason(PassReason.ENFORCER_ERROR);
-                    StringWriter error = new StringWriter();
-                    e.printStackTrace(new PrintWriter(error));
-                    context.setEnforcerErrorReasonInfo(error.toString());
-                }
-                activityHandler.handlePageRequestedActivity(context);
-                context.setVerified(true);
-            }
+            handleEnforcerErrorField(context, e.getMessage());
         }
+
         return context;
+    }
+
+    private void handleEnforcerErrorField(PXContext context, String errorMessage) throws PXException {
+        if (context != null) {
+            if (!context.getS2sErrorReasonInfo().isErrorSet()) {
+                context.setPassReason(PassReason.ENFORCER_ERROR);
+                context.setEnforcerErrorReasonInfo(errorMessage);
+                logger.error(errorMessage);
+            }
+
+            activityHandler.handlePageRequestedActivity(context);
+            context.setVerified(true);
+        }
     }
 
     private boolean moduleEnabled() {

@@ -9,6 +9,8 @@ import com.perimeterx.utils.Constants;
 
 import java.io.IOException;
 
+import static com.perimeterx.utils.PXLogger.LogReason.*;
+
 /**
  * Simple activity send per server request
  * <p>
@@ -30,7 +32,7 @@ public class DefaultActivityHandler implements ActivityHandler {
         try {
             this.client.sendActivity(activity);
         } catch (IOException e) {
-            throw new PXException(e);
+            throw new PXException(ERROR_HANDLE_BLOCK_ACTIVITY + ". reason: " + e.getMessage(), e);
         }
     }
 
@@ -40,7 +42,7 @@ public class DefaultActivityHandler implements ActivityHandler {
         try {
             this.client.sendActivity(activity);
         } catch (IOException e) {
-            throw new PXException(e);
+            throw new PXException(ERROR_HANDLE_PAGE_REQUESTED + ". reason: " + e.getMessage(), e);
         }
     }
 
@@ -51,7 +53,7 @@ public class DefaultActivityHandler implements ActivityHandler {
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfiguration.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry);
         } catch (Exception e) {
-            throw new PXException(e);
+            throw new PXException(ERROR_TELEMETRY_EXCEPTION + ". reason: " + e.getMessage(), e);
         }
     }
 

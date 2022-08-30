@@ -12,10 +12,7 @@ import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import org.apache.http.conn.ConnectTimeoutException;
 
 /**
  * High level Abstracted interface for calling PerimeterX servers
@@ -49,7 +46,7 @@ public class PXS2SValidator implements PXValidator {
 
         try {
             response = pxClient.riskApiCall(pxContext);
-        } catch (IOException e) {
+        } catch (ConnectTimeoutException e) {
             // Timeout handling - report pass reason and proceed with request
             pxContext.setPassReason(PassReason.S2S_TIMEOUT);
             return true;
@@ -82,7 +79,9 @@ public class PXS2SValidator implements PXValidator {
             logger.debug(PXLogger.LogReason.DEBUG_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
             return false;
         } catch (Exception e) {
-            handleEnforcerError(pxContext, System.currentTimeMillis() - startRiskRtt, e);
+            if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
+                handleEnforcerError(pxContext, System.currentTimeMillis() - startRiskRtt, e.getMessage(), PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION);
+            }
             logger.error("Error {}: {}", e.toString(), e.getStackTrace());
             return true;
         } finally {
@@ -115,15 +114,11 @@ public class PXS2SValidator implements PXValidator {
         }
     }
 
-    private void handleEnforcerError(PXContext pxContext, long rtt, Exception exception) {
+    private void handleEnforcerError(PXContext pxContext, long rtt, String errorMessage, PXLogger.LogReason debugMessage) {
         pxContext.setRiskRtt(rtt);
-        StringWriter error = new StringWriter();
-
-        if (!pxContext.getS2sErrorReasonInfo().isErrorSet() && exception != null) {
-            pxContext.setPassReason(PassReason.ENFORCER_ERROR);
-            exception.printStackTrace(new PrintWriter(error));
-            pxContext.setEnforcerErrorReasonInfo(error.toString());
-        }
+        pxContext.setPassReason(PassReason.ENFORCER_ERROR);
+        pxContext.setEnforcerErrorReasonInfo(debugMessage.toString() + ". reason: " + errorMessage);
+        logger.error(errorMessage, debugMessage);
     }
 
     private S2SErrorReason getS2SErrorReason(PXContext pxContext, RiskResponse response) {
