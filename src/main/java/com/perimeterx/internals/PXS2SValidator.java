@@ -81,7 +81,7 @@ public class PXS2SValidator implements PXValidator {
             return false;
         } catch (Exception e) {
             if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
-                String errorMessage = PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION + ". reason: " + e.getMessage();
+                String errorMessage = PXLogger.LogReason.ERROR_RISK_EVALUATION_EXCEPTION.toString();
                 EnforcerErrorUtils.handleEnforcerError(pxContext, errorMessage, e);
             }
             logger.error("Error {}: {}", e.toString(), e.getStackTrace());

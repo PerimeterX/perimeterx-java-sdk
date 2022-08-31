@@ -32,7 +32,7 @@ public class DefaultActivityHandler implements ActivityHandler {
         try {
             this.client.sendActivity(activity);
         } catch (IOException e) {
-            throw new PXException(ERROR_HANDLE_BLOCK_ACTIVITY + ". reason: " + e.getMessage(), e);
+            throw new PXException(ERROR_HANDLE_BLOCK_ACTIVITY + ". Reason: " + e.getMessage(), e);
         }
     }
 
@@ -42,7 +42,7 @@ public class DefaultActivityHandler implements ActivityHandler {
         try {
             this.client.sendActivity(activity);
         } catch (IOException e) {
-            throw new PXException(ERROR_HANDLE_PAGE_REQUESTED + ". reason: " + e.getMessage(), e);
+            throw new PXException(ERROR_HANDLE_PAGE_REQUESTED + ". Reason: " + e.getMessage(), e);
         }
     }
 
@@ -53,7 +53,7 @@ public class DefaultActivityHandler implements ActivityHandler {
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfiguration.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry);
         } catch (Exception e) {
-            throw new PXException(ERROR_TELEMETRY_EXCEPTION + ". reason: " + e.getMessage(), e);
+            throw new PXException(ERROR_TELEMETRY_EXCEPTION + ". Reason: " + e.getMessage(), e);
         }
     }
 

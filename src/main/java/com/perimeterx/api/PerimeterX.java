@@ -183,17 +183,17 @@ public class PerimeterX {
 
             handleCookies(context);
             addCustomHeadersToRequest(req, context);
+
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
             // If any general exception is being thrown, notify in page_request activity
-            String errorMessage = e.getMessage();
-
             if (context != null) {
                 if (!context.getS2sErrorReasonInfo().isErrorSet()) {
-                    EnforcerErrorUtils.handleEnforcerError(context, errorMessage, e);
+                    EnforcerErrorUtils.handleEnforcerError(context, "Unexpected error", e);
                 }
 
                 activityHandler.handlePageRequestedActivity(context);
+                context.setVerified(true);
             }
         }
 

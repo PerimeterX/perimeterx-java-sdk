@@ -14,6 +14,7 @@ import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.models.enforcererror.EnforcerErrorReasonInfo;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.*;
 import com.perimeterx.utils.*;
@@ -122,7 +123,7 @@ public class PXContext {
      *
      * @see com.perimeterx.models.risk.S2SErrorReasonInfo
      */
-    private String enforcerErrorReasonInfo;
+    private EnforcerErrorReasonInfo enforcerErrorReasonInfo;
 
     /**
      * Risk api timing
@@ -250,7 +251,7 @@ public class PXContext {
         this.httpMethod = request.getMethod();
         this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
         this.requestId = UUID.randomUUID();
-        this.enforcerErrorReasonInfo = StringUtils.EMPTY;
+        this.enforcerErrorReasonInfo = new EnforcerErrorReasonInfo();
 
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;

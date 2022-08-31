@@ -30,8 +30,8 @@ public class PageRequestedActivityDetails extends CommonActivityDetails {
     @JsonProperty("s2s_error_reason")
     private S2SErrorReason s2SErrorReason;
 
-    @JsonProperty("s2s_error_message")
-    private String s2sErrorMessage;
+    @JsonProperty("error_message")
+    private String errorMessage;
 
     @JsonProperty("s2s_error_http_status")
     private int s2sErrorHttpStatus;
@@ -51,9 +51,6 @@ public class PageRequestedActivityDetails extends CommonActivityDetails {
     @JsonProperty("cookie_origin")
     private String cookieOrigin;
 
-    @JsonProperty("enforcer_error_message")
-    private String enforcerErrorMessage;
-
     @JsonUnwrapped
     private CustomParameters customParameters;
 
@@ -63,16 +60,21 @@ public class PageRequestedActivityDetails extends CommonActivityDetails {
         this.httpVersion = context.getHttpVersion();
         this.riskCookie = context.getRiskCookie();
         this.passReason = context.getPassReason();
-        this.s2SErrorReason = context.getS2sErrorReasonInfo().getReason();
-        this.s2sErrorMessage = context.getS2sErrorReasonInfo().getMessage();
-        this.s2sErrorHttpStatus = context.getS2sErrorReasonInfo().getHttpStatus();
-        this.s2sErrorHttpMessage = context.getS2sErrorReasonInfo().getHttpMessage();
+
+        if (this.passReason == PassReason.ENFORCER_ERROR) {
+            this.errorMessage = context.getEnforcerErrorReasonInfo().getErrorMessage() + ". " + context.getEnforcerErrorReasonInfo().getStackTraceMessage();
+        } else {
+            this.errorMessage = context.getS2sErrorReasonInfo().getMessage();
+            this.s2SErrorReason = context.getS2sErrorReasonInfo().getReason();
+            this.s2sErrorHttpStatus = context.getS2sErrorReasonInfo().getHttpStatus();
+            this.s2sErrorHttpMessage = context.getS2sErrorReasonInfo().getHttpMessage();
+        }
+
         this.riskRtt = context.getRiskRtt();
         this.moduleVersion = Constants.SDK_VERSION;
         this.clientUuid = context.getUuid();
         this.cookieOrigin = context.getCookieOrigin();
         this.customParameters = context.getCustomParameters();
-        this.enforcerErrorMessage = context.getEnforcerErrorReasonInfo();
     }
 
     public String getHttpMethod() {

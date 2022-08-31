@@ -35,7 +35,7 @@ public class PXLogger {
         DEBUG_MOBILE_SDK_DETECTED("Mobile SDK token detected"),
 
         ERROR_CONFIGURATION_MISSING_MANDATORY_CONFIGURATION("Unable to initialize module, missing mandatory configuration. {}"), //config name
-        ERROR_COOKIE_EVALUATION_EXCEPTION("Unexpected exception while evaluating Risk cookie. {}"),//error
+        ERROR_RISK_EVALUATION_EXCEPTION("Unexpected exception while evaluating Risk response."),
         ERROR_DATA_ENRICHMENT_JSON_PARSING_FAILED("Data enrichment payload parsing as json failed"),
         ERROR_TELEMETRY_EXCEPTION("Error occurred while sending telememtry command"),
         ERROR_HANDLE_PAGE_REQUESTED("Error occurred while handle page requested activity"),

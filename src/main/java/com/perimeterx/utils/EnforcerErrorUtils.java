@@ -2,6 +2,7 @@ package com.perimeterx.utils;
 
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.enforcererror.EnforcerErrorReasonInfo;
 import com.perimeterx.models.risk.PassReason;
 
 import java.util.Arrays;
@@ -12,12 +13,13 @@ public class EnforcerErrorUtils {
 
     public static void handleEnforcerError(PXContext pxContext, String errorMessage, Exception e) {
         Optional<StackTraceElement> firstStackTraceCause = Arrays.stream((e.getStackTrace())).findFirst();
+        String stackTrace = null;
         if (firstStackTraceCause.isPresent()) {
-            errorMessage += ". At: " + firstStackTraceCause.get().toString();
+            stackTrace = "At: " + firstStackTraceCause.get();
         }
 
         pxContext.setPassReason(PassReason.ENFORCER_ERROR);
-        pxContext.setEnforcerErrorReasonInfo(errorMessage);
+        pxContext.setEnforcerErrorReasonInfo(new EnforcerErrorReasonInfo(errorMessage + ":" + e, stackTrace));
         logger.error(errorMessage);
     }
 }
