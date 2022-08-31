@@ -54,6 +54,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
+import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.HMACUtils;
 import com.perimeterx.utils.PXLogger;
 import com.perimeterx.utils.StringUtils;
@@ -185,28 +186,18 @@ public class PerimeterX {
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
             // If any general exception is being thrown, notify in page_request activity
-            String errorMessage = "Error: "+ e.getMessage() + ". At: ";
-            Optional<StackTraceElement> firstStackTraceCause = Arrays.stream((e.getStackTrace())).findFirst();
-            if (firstStackTraceCause.isPresent()) {
-                errorMessage += firstStackTraceCause.get().toString();
+            String errorMessage = e.getMessage();
+
+            if (context != null) {
+                if (!context.getS2sErrorReasonInfo().isErrorSet()) {
+                    EnforcerErrorUtils.handleEnforcerError(context, errorMessage, e);
+                }
+
+                activityHandler.handlePageRequestedActivity(context);
             }
-            handleEnforcerErrorField(context, errorMessage);
         }
 
         return context;
-    }
-
-    private void handleEnforcerErrorField(PXContext context, String errorMessage) throws PXException {
-        if (context != null) {
-            if (!context.getS2sErrorReasonInfo().isErrorSet()) {
-                context.setPassReason(PassReason.ENFORCER_ERROR);
-                context.setEnforcerErrorReasonInfo(errorMessage);
-                logger.error(errorMessage);
-            }
-
-            activityHandler.handlePageRequestedActivity(context);
-            context.setVerified(true);
-        }
     }
 
     private boolean moduleEnabled() {
@@ -256,7 +247,7 @@ public class PerimeterX {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
+            if (context != null && response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                 final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
 
                 context.getLoginData().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));

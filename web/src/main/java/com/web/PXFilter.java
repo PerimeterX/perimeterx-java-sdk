@@ -33,22 +33,19 @@ public class PXFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         try {
-            request = new RequestWrapper((HttpServletRequest) request);
+             request = new RequestWrapper((HttpServletRequest) request);
 
             final PXContext context = pxFilter.pxVerify((HttpServletRequest) request, new HttpServletResponseWrapper((HttpServletResponse) response));
 
             setDefaultPageAttributes((HttpServletRequest) request, config);
 
-            if (context == null) {
+            if (context != null && context.isRequestLowScore()) {
                 filterChain.doFilter(request, response);
-                return;
             }
 
-            if (context.isRequestLowScore()) {
-                filterChain.doFilter(request, response);
-                response = new ResponseWrapper((HttpServletResponse) response);
-                pxFilter.pxPostVerify((ResponseWrapper) response, context);
-            }
+            response = new ResponseWrapper((HttpServletResponse) response);
+            pxFilter.pxPostVerify((ResponseWrapper) response, context);
+
         } catch (PXException e) {
             filterChain.doFilter(request, response);
         }

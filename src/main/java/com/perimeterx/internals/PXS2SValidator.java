@@ -11,6 +11,7 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
 
@@ -80,7 +81,8 @@ public class PXS2SValidator implements PXValidator {
             return false;
         } catch (Exception e) {
             if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
-                handleEnforcerError(pxContext, System.currentTimeMillis() - startRiskRtt, e.getMessage(), PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION);
+                String errorMessage = PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION + ". reason: " + e.getMessage();
+                EnforcerErrorUtils.handleEnforcerError(pxContext, errorMessage, e);
             }
             logger.error("Error {}: {}", e.toString(), e.getStackTrace());
             return true;
@@ -112,13 +114,6 @@ public class PXS2SValidator implements PXValidator {
             String errorMessage = getS2SErrorMessage(response, exception);
             pxContext.setS2sErrorReasonInfo(new S2SErrorReasonInfo(errorReason, errorMessage));
         }
-    }
-
-    private void handleEnforcerError(PXContext pxContext, long rtt, String errorMessage, PXLogger.LogReason debugMessage) {
-        pxContext.setRiskRtt(rtt);
-        pxContext.setPassReason(PassReason.ENFORCER_ERROR);
-        pxContext.setEnforcerErrorReasonInfo(debugMessage.toString() + ". reason: " + errorMessage);
-        logger.error(errorMessage, debugMessage);
     }
 
     private S2SErrorReason getS2SErrorReason(PXContext pxContext, RiskResponse response) {
