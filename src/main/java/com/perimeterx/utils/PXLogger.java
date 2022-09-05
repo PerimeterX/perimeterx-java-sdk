@@ -37,9 +37,9 @@ public class PXLogger {
         ERROR_CONFIGURATION_MISSING_MANDATORY_CONFIGURATION("Unable to initialize module, missing mandatory configuration. {}"), //config name
         ERROR_RISK_EVALUATION_EXCEPTION("Unexpected exception while evaluating Risk response."),
         ERROR_DATA_ENRICHMENT_JSON_PARSING_FAILED("Data enrichment payload parsing as json failed"),
-        ERROR_TELEMETRY_EXCEPTION("Error occurred while sending telemetry command"),
-        ERROR_HANDLE_PAGE_REQUESTED("Error occurred while handle page requested activity"),
-        ERROR_HANDLE_BLOCK_ACTIVITY("Error occurred while handle block activity");
+        ERROR_TELEMETRY_EXCEPTION("An error occurred while sending telemetry command"),
+        ERROR_HANDLE_PAGE_REQUESTED("An error occurred while handling page requested activity"),
+        ERROR_HANDLE_BLOCK_ACTIVITY("An error occurred while handling block activity");
 
 
         String reason;
