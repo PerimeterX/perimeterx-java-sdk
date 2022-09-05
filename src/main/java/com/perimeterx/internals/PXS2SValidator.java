@@ -11,6 +11,7 @@ import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
 
@@ -46,6 +47,17 @@ public class PXS2SValidator implements PXValidator {
 
         try {
             response = pxClient.riskApiCall(pxContext);
+        } catch (ConnectTimeoutException e) {
+            // Timeout handling - report pass reason and proceed with request
+            pxContext.setPassReason(PassReason.S2S_TIMEOUT);
+            return true;
+        } catch (Exception e) {
+            handleS2SError(pxContext, System.currentTimeMillis() - startRiskRtt, response, e);
+            logger.error("Error {}: {}", e.toString(), e.getStackTrace());
+            return true;
+        }
+
+        try {
             rtt = System.currentTimeMillis() - startRiskRtt;
             logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null) ? "" : response.getScore(), rtt);
 
@@ -67,12 +79,11 @@ public class PXS2SValidator implements PXValidator {
             }
             logger.debug(PXLogger.LogReason.DEBUG_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
             return false;
-        } catch (ConnectTimeoutException e) {
-            // Timeout handling - report pass reason and proceed with request
-            pxContext.setPassReason(PassReason.S2S_TIMEOUT);
-            return true;
         } catch (Exception e) {
-            handleS2SError(pxContext, System.currentTimeMillis() - startRiskRtt, response, e);
+            if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
+                String errorMessage = PXLogger.LogReason.ERROR_RISK_EVALUATION_EXCEPTION.toString();
+                EnforcerErrorUtils.handleEnforcerError(pxContext, errorMessage, e);
+            }
             logger.error("Error {}: {}", e.toString(), e.getStackTrace());
             return true;
         } finally {

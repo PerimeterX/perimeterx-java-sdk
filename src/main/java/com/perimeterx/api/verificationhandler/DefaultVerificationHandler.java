@@ -43,16 +43,20 @@ public class DefaultVerificationHandler implements VerificationHandler {
             this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
         }
 
-        if (verified) {
-            logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
+        try {
+            if (verified) {
+                logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
 
-            // Not blocking request and sending page_requested activity to px if configured as true
-            if (this.pxConfiguration.isSendPageActivities()) {
-                this.activityHandler.handlePageRequestedActivity(context);
+                // Not blocking request and sending page_requested activity to px if configured as true
+                if (this.pxConfiguration.isSendPageActivities()) {
+                    this.activityHandler.handlePageRequestedActivity(context);
+                }
+            } else {
+                logger.debug("Request invalid");
+                this.activityHandler.handleBlockActivity(context);
             }
-        } else {
-            logger.debug("Request invalid");
-            this.activityHandler.handleBlockActivity(context);
+        } catch (PXException pxException) {
+            logger.error("Error occurred while handle activities", pxException);
         }
 
         return verified || context.isMonitoredRequest();

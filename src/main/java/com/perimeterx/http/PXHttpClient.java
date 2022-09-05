@@ -156,7 +156,7 @@ public class PXHttpClient implements PXClient {
             throw e;
         } catch (SocketTimeoutException e) {
             throw new ConnectTimeoutException(e.getMessage());
-        }  catch (IOException e) {
+        } catch (IOException e) {
             handleException(pxContext, e, S2SErrorReason.UNABLE_TO_SEND_REQUEST, null);
         }
         return null;

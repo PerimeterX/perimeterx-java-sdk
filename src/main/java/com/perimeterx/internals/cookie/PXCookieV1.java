@@ -39,7 +39,7 @@ public class PXCookieV1 extends AbstractPXCookie {
     }
 
     @Override
-    public boolean isSecured() throws PXException {
+    public boolean isSecured() {
         String baseHmacStr = new StringBuilder()
                 .append(this.getTimestamp())
                 .append(this.getDecodedCookie().get("s").get("a").asInt())
