@@ -2,7 +2,7 @@
 
 ## [v6.4.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.4...HEAD) (2022-09-05)
 - Added pass reason `enforcer_error`
-- Change s2s_error_reason to error_reason
+- Changed s2s_error_reason to error_reason
 
 ## [v6.4.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.3...HEAD) (2022-06-28)
 - Fixed `s2s_call_reason` as `sensitive_route` in case of Credentials Intelligence request.
