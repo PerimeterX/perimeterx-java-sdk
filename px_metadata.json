@@ -1,5 +1,5 @@
 {
-  "version": "6.4.3",
+  "version": "6.4.4",
   "supported_features": [
     "additional_activity_handler",
     "advanced_blocking_response",
@@ -31,6 +31,7 @@
     "vid_extraction",
     "risk_api",
     "sensitive_routes",
-    "telemetry_command"
+    "telemetry_command",
+    "enforcer_error"
   ]
 }

@@ -59,6 +59,5 @@ public interface PXClient {
      *
      * @param enforcerTelemetry
      */
-    void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws PXException, IOException;
-
+    void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException;
 }

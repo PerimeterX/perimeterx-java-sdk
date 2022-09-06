@@ -14,6 +14,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.perimeterx.utils.PXLogger.LogReason.ERROR_TELEMETRY_EXCEPTION;
+
 
 /**
  * Buffered activities and sends them to PX servers when buffer is full
@@ -28,7 +30,6 @@ public class BufferedActivityHandler implements ActivityHandler {
     private PXConfiguration configuration;
     private PXClient client;
     private ReentrantLock lock = new ReentrantLock();
-
 
     public BufferedActivityHandler(PXClient client, PXConfiguration configuration) {
         this.configuration = configuration;
@@ -55,7 +56,7 @@ public class BufferedActivityHandler implements ActivityHandler {
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfig.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry);
         } catch (IOException e) {
-            throw new PXException(e);
+            throw new PXException(ERROR_TELEMETRY_EXCEPTION.toString(), e);
         }
     }
 

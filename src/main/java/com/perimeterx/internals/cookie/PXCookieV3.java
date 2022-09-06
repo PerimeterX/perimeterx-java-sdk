@@ -45,7 +45,7 @@ public class PXCookieV3 extends AbstractPXCookie {
     }
 
     @Override
-    public boolean isSecured() throws PXException {
+    public boolean isSecured() {
         String hmacString = new StringBuilder()
                 .append(this.getPxCookie())
                 .append(userAgent)

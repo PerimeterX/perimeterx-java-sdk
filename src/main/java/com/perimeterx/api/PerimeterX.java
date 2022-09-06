@@ -54,8 +54,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.PassReason;
-import com.perimeterx.models.risk.S2SErrorReason;
-import com.perimeterx.models.risk.S2SErrorReasonInfo;
+import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.HMACUtils;
 import com.perimeterx.utils.PXLogger;
 import com.perimeterx.utils.StringUtils;
@@ -66,7 +65,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Optional;
 
 import static com.perimeterx.utils.Constants.*;
 import static java.util.Objects.isNull;
@@ -182,19 +183,20 @@ public class PerimeterX {
 
             handleCookies(context);
             addCustomHeadersToRequest(req, context);
+
             context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
         } catch (Exception e) {
-            logger.debug(PXLogger.LogReason.ERROR_COOKIE_EVALUATION_EXCEPTION, e.getMessage());
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
-                context.setPassReason(PassReason.S2S_ERROR);
                 if (!context.getS2sErrorReasonInfo().isErrorSet()) {
-                    context.setS2sErrorReasonInfo(new S2SErrorReasonInfo(S2SErrorReason.UNKNOWN_ERROR, e.toString()));
+                    EnforcerErrorUtils.handleEnforcerError(context, "Unexpected error", e);
                 }
+
                 activityHandler.handlePageRequestedActivity(context);
                 context.setVerified(true);
             }
         }
+
         return context;
     }
 
@@ -245,7 +247,7 @@ public class PerimeterX {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
+            if (context != null && response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                 final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
 
                 context.getLoginData().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
