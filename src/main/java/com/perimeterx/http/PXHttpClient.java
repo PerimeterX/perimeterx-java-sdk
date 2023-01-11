@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Low level HTTP client
@@ -50,6 +51,8 @@ import java.util.List;
  * Created by shikloshi on 04/07/2016.
  */
 public class PXHttpClient implements PXClient {
+    private static final int INACTIVITY_PERIOD_TIME_MS = 1000;
+    private static final long MAX_IDLE_TIME_SEC = 30L;
 
     private static final PXLogger logger = PXLogger.getLogger(PXHttpClient.class);
 
@@ -78,7 +81,11 @@ public class PXHttpClient implements PXClient {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(this.pxConfiguration.getMaxConnections());
         cm.setDefaultMaxPerRoute(this.pxConfiguration.getMaxConnectionsPerRoute());
+        cm.setValidateAfterInactivity(INACTIVITY_PERIOD_TIME_MS);
+
         httpClient = HttpClients.custom()
+                .evictExpiredConnections()
+                .evictIdleConnections(MAX_IDLE_TIME_SEC, TimeUnit.SECONDS)
                 .setConnectionManager(cm)
                 .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken()))
                 .build();
