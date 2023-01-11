@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.4.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.5...HEAD) (2023-01-11)
+- Fixed invalid http connections for risk requests bug.
+
 ## [v6.4.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.4...HEAD) (2022-09-05)
 - Added pass reason `enforcer_error`
 - Changed s2s_error_reason to error_reason
