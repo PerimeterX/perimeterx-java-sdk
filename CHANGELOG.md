@@ -1,5 +1,9 @@
 # Change Log
 
+## [v6.5.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.5.0...HEAD) (2023-03-XX)
+- Adding custom is sensitive configuration option
+- Lazy read the request body
+
 ## [v6.4.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.4.5...HEAD) (2023-01-11)
 - Fixed invalid http connections for risk requests bug.
 

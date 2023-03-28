@@ -11,6 +11,8 @@ import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
+import com.perimeterx.api.providers.DefaultIsSensitivePredicate;
+import com.perimeterx.api.providers.IsSensitivePredicate;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
@@ -22,12 +24,14 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import static com.perimeterx.utils.Constants.*;
 
@@ -245,6 +249,8 @@ public class PXConfiguration {
     @Builder.Default
     private Set<String> staticFilesExt = new HashSet<>(Arrays.asList(extensions));
 
+    @Builder.Default
+    private IsSensitivePredicate isSensitiveRequest = new DefaultIsSensitivePredicate();
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
@@ -260,7 +266,7 @@ public class PXConfiguration {
                 pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
                 loginResponseValidationReportingMethod, regexPatternToValidateLoginResponseBody, headerNameToValidateLoginResponse,
                 headerValueToValidateLoginResponse, loginResponseValidationStatusCode, customLoginResponseValidator,
-                credentialsCustomExtractor, staticFilesExt);
+                credentialsCustomExtractor, staticFilesExt, null);
     }
 
     public void disableModule() {

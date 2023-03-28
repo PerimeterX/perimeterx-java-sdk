@@ -16,6 +16,7 @@
     "custom_logo",
     "custom_parameters",
     "custom_proxy",
+    "custom_sensitive_request",
     "enforced_routes",
     "logger",
     "filter_by_extension",

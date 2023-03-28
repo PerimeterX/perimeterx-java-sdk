@@ -20,17 +20,9 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     private String body;
     private final Map<String, String> customHeaders;
 
-    public RequestWrapper(HttpServletRequest request) throws IOException {
+    public RequestWrapper(HttpServletRequest request) {
         super(request);
         this.customHeaders = new HashMap<>();
-        this.body = "";
-
-        final BufferedReader bufferedReader = request.getReader();
-        String line;
-
-        while ((line = bufferedReader.readLine()) != null){
-            this.body += line;
-        }
     }
 
     @Override
@@ -62,7 +54,17 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         this.customHeaders.put(name, value);
     }
 
-    public String getBody() {
+    public synchronized String getBody() throws IOException {
+        if(body == null) {
+            this.body = "";
+
+            final BufferedReader bufferedReader = this.getRequest().getReader();
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                this.body += line;
+            }
+        }
         return body;
     }
 }

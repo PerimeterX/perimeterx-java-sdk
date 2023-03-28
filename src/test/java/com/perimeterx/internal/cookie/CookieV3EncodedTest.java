@@ -74,7 +74,7 @@ public class CookieV3EncodedTest {
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, configuration);
-        assertTrue(this.context.isSensitiveRoute());
+        assertTrue(this.context.getIsSensitiveRequest().get());
         PXCookieValidator pxCookieValidator = new PXCookieValidator(pxConfiguration);
         boolean verify = pxCookieValidator.verify(context);
         assertFalse(verify);

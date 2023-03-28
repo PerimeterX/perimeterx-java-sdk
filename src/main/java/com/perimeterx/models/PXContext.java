@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -102,7 +103,7 @@ public class PXContext {
     /**
      * if true - calling risk_api to verified request even if cookie data is valid
      */
-    private boolean sensitiveRoute;
+    private Supplier<Boolean> isSensitiveRequest;
 
     /**
      * Reason for request being verified
@@ -256,12 +257,31 @@ public class PXContext {
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
 
-        this.sensitiveRoute = this.isContainCredentialsIntelligence()
-                || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
-                || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri);
+        this.isSensitiveRequest = this::isSensitive;
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
+    }
+
+
+    private boolean isSensitive() {
+        return this.isContainCredentialsIntelligence()
+                || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
+                || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri)
+                || isCustomSensitive();
+    }
+
+    private boolean isCustomSensitive() {
+        try {
+            final boolean test = this.pxConfiguration.getIsSensitiveRequest().test(this.request);
+            if (test) {
+                logger.debug("custom sensitive request");
+            }
+            return test;
+        } catch (Exception e) {
+            logger.debug("exception in custom sensitive function", e);
+        }
+        return false;
     }
 
     private boolean isRoutesContainUri(Set<String> routes, String uri) {
