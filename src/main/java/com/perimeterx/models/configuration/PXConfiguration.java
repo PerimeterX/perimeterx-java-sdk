@@ -14,6 +14,7 @@ import com.perimeterx.api.providers.DefaultCustomParametersProvider;
 import com.perimeterx.api.providers.DefaultIsSensitivePredicate;
 import com.perimeterx.api.providers.IsSensitivePredicate;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
 import com.perimeterx.utils.PXLogger;
@@ -31,7 +32,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import static com.perimeterx.utils.Constants.*;
 
@@ -146,7 +147,11 @@ public class PXConfiguration {
     @JsonProperty("px_remote_configuration_url")
     private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
 
+    /**
+     * @deprecated use customParametersExtraction
+     */
     @Builder.Default
+    @Deprecated
     private CustomParametersProvider customParametersProvider = new DefaultCustomParametersProvider();
 
     @Builder.Default
@@ -251,6 +256,10 @@ public class PXConfiguration {
 
     @Builder.Default
     private IsSensitivePredicate isSensitiveRequest = new DefaultIsSensitivePredicate();
+
+    @Builder.Default
+    private Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = null;
+
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
@@ -266,7 +275,7 @@ public class PXConfiguration {
                 pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
                 loginResponseValidationReportingMethod, regexPatternToValidateLoginResponseBody, headerNameToValidateLoginResponse,
                 headerValueToValidateLoginResponse, loginResponseValidationStatusCode, customLoginResponseValidator,
-                credentialsCustomExtractor, staticFilesExt, null);
+                credentialsCustomExtractor, staticFilesExt, null, null);
     }
 
     public void disableModule() {

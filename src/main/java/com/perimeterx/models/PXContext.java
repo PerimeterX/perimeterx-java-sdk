@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -260,7 +261,16 @@ public class PXContext {
         this.isSensitiveRequest = this::isSensitive;
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
-        this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
+        Function<HttpServletRequest, CustomParameters> customParametersExtraction = pxConfiguration.getCustomParametersExtraction();
+        try {
+            if (customParametersExtraction != null) {
+                this.customParameters = customParametersExtraction.apply(this.request);
+            } else {
+                this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
+            }
+        } catch (Exception e) {
+            logger.debug("failed to extract custom parameters from custom function", e);
+        }
     }
 
 
