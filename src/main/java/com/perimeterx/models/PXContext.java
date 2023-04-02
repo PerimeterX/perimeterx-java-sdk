@@ -261,7 +261,7 @@ public class PXContext {
         this.isSensitiveRequest = this::isSensitive;
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
-        Function<HttpServletRequest, CustomParameters> customParametersExtraction = pxConfiguration.getCustomParametersExtraction();
+        Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = pxConfiguration.getCustomParametersExtraction();
         try {
             if (customParametersExtraction != null) {
                 this.customParameters = customParametersExtraction.apply(this.request);

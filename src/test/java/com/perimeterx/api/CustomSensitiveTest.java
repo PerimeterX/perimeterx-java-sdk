@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
 
@@ -75,7 +76,7 @@ public class CustomSensitiveTest {
 
     @Test
     public void testDefaultCustomFunctionShouldReturnFalseAlways() {
-        IsSensitivePredicate isSensitiveRequest = PXConfiguration.builder().build().getIsSensitiveRequest();
+        Predicate<? super HttpServletRequest> isSensitiveRequest = PXConfiguration.builder().build().getIsSensitiveRequest();
         assertFalse(isSensitiveRequest.test(null));
         assertFalse(isSensitiveRequest.test(new MockHttpServletRequest()));
     }

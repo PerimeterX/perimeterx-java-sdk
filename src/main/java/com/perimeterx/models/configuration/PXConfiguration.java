@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.perimeterx.utils.Constants.*;
 
@@ -255,7 +256,7 @@ public class PXConfiguration {
     private Set<String> staticFilesExt = new HashSet<>(Arrays.asList(extensions));
 
     @Builder.Default
-    private IsSensitivePredicate isSensitiveRequest = new DefaultIsSensitivePredicate();
+    private Predicate<? super HttpServletRequest> isSensitiveRequest = new DefaultIsSensitivePredicate();
 
     @Builder.Default
     private Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = null;
@@ -275,7 +276,7 @@ public class PXConfiguration {
                 pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
                 loginResponseValidationReportingMethod, regexPatternToValidateLoginResponseBody, headerNameToValidateLoginResponse,
                 headerValueToValidateLoginResponse, loginResponseValidationStatusCode, customLoginResponseValidator,
-                credentialsCustomExtractor, staticFilesExt, null, null);
+                credentialsCustomExtractor, staticFilesExt, (req) -> false, null);
     }
 
     public void disableModule() {
