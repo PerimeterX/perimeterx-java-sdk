@@ -39,10 +39,10 @@ public class CustomSensitiveTest {
                 .appId("PX1234")
                 .isSensitiveRequest((req) -> {
                     try {
-                        req.getReader().readLine();
-                        req.getReader().readLine();
-                        req.getReader().readLine();
-                        return true;
+                        return req.getReader().readLine().equals("hello") &&
+                                req.getReader().readLine().equals("hello") &&
+                                req.getReader().readLine().equals("hello") &&
+                                req.getReader().readLine().equals("hello");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
