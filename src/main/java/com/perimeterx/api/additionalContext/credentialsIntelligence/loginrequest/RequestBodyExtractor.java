@@ -56,7 +56,7 @@ public class RequestBodyExtractor implements CredentialsExtractor {
         return null;
     }
 
-    private LoginCredentials extractFromFormURLEncoded(HttpServletRequest request) throws UnsupportedEncodingException {
+    private LoginCredentials extractFromFormURLEncoded(HttpServletRequest request) throws IOException {
         final Map<String, String> queryParams = splitQueryParams(((RequestWrapper) request).getBody());
 
         return new LoginCredentials(
