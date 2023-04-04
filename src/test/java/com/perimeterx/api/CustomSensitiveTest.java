@@ -1,6 +1,5 @@
 package com.perimeterx.api;
 
-import com.perimeterx.api.providers.IsSensitivePredicate;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
