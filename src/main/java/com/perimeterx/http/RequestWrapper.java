@@ -1,5 +1,7 @@
 package com.perimeterx.http;
 
+import com.perimeterx.utils.PXLogger;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -16,7 +18,7 @@ import java.util.Map;
  * This enables reading the request body multiple times
  * **/
 public class RequestWrapper extends HttpServletRequestWrapper {
-
+    private final PXLogger logger = PXLogger.getLogger(RequestWrapper.class);
     private String body;
     private final Map<String, String> customHeaders;
 
@@ -27,6 +29,12 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public ServletInputStream getInputStream() {
+        String body = "";
+        try {
+            body = getBody();
+        } catch (IOException e) {
+            logger.debug("failed to get body", e);
+        }
         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes());
         return new ServletInputStream() {
             public int read() {
