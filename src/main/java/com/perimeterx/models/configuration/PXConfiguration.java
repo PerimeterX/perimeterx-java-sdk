@@ -254,7 +254,7 @@ public class PXConfiguration {
     private Set<String> staticFilesExt = new HashSet<>(Arrays.asList(extensions));
 
     @Builder.Default
-    private Predicate<? super HttpServletRequest> isSensitiveRequest = (req) -> false;
+    private Predicate<? super HttpServletRequest> customIsSensitiveRequest = (req) -> false;
 
     @Builder.Default
     private Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = null;

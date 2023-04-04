@@ -23,7 +23,7 @@ public class CustomSensitiveTest {
     public void testSensitiveByCustomFunction() throws Exception {
         PXConfiguration pxConfiguration = PXConfiguration.builder()
                 .appId("PX1234")
-                .isSensitiveRequest((req) -> true).build();
+                .customIsSensitiveRequest((req) -> true).build();
         PXClient client = TestObjectUtils.blockingPXClient(pxConfiguration.getBlockingScore());
         PerimeterX perimeterx = TestObjectUtils.testablePerimeterXObject(pxConfiguration, client);
         HttpServletRequest request = new MockHttpServletRequest();
@@ -37,7 +37,7 @@ public class CustomSensitiveTest {
     public void testReadingTheBodyManyTimesAndStillOK() throws Exception {
         PXConfiguration pxConfiguration = PXConfiguration.builder()
                 .appId("PX1234")
-                .isSensitiveRequest((req) -> {
+                .customIsSensitiveRequest((req) -> {
                     try {
                         return req.getReader().readLine().equals("hello") &&
                                 req.getReader().readLine().equals("hello") &&
@@ -61,7 +61,7 @@ public class CustomSensitiveTest {
     public void testCustomFunctionThrowsExceptionShouldNotBeConsideredSensitive() throws Exception {
         PXConfiguration pxConfiguration = PXConfiguration.builder()
                 .appId("PX1234")
-                .isSensitiveRequest((req) -> {
+                .customIsSensitiveRequest((req) -> {
                     throw new RuntimeException();
                 }).build();
         PXClient client = TestObjectUtils.blockingPXClient(pxConfiguration.getBlockingScore());
@@ -75,7 +75,7 @@ public class CustomSensitiveTest {
 
     @Test
     public void testDefaultCustomFunctionShouldReturnFalseAlways() {
-        Predicate<? super HttpServletRequest> isSensitiveRequest = PXConfiguration.builder().build().getIsSensitiveRequest();
+        Predicate<? super HttpServletRequest> isSensitiveRequest = PXConfiguration.builder().build().getCustomIsSensitiveRequest();
         assertFalse(isSensitiveRequest.test(null));
         assertFalse(isSensitiveRequest.test(new MockHttpServletRequest()));
     }

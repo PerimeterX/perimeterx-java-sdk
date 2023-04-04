@@ -274,7 +274,7 @@ public class PXContext {
 
     private boolean isCustomSensitive() {
         try {
-            final boolean test = this.pxConfiguration.getIsSensitiveRequest().test(this.request);
+            final boolean test = this.pxConfiguration.getCustomIsSensitiveRequest().test(this.request);
             if (test) {
                 logger.debug("custom sensitive request");
             }
