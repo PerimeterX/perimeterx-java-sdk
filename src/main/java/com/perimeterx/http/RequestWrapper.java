@@ -28,14 +28,8 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public ServletInputStream getInputStream() {
-        String body = "";
-        try {
-            body = getBody();
-        } catch (IOException e) {
-            logger.debug("failed to get body", e);
-        }
-        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(body.getBytes());
+    public ServletInputStream getInputStream() throws IOException {
+        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(getBody().getBytes());
         return new ServletInputStream() {
             public int read() {
                 return byteArrayInputStream.read();
@@ -65,13 +59,14 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     public synchronized String getBody() throws IOException {
         if(body == null) {
             this.body = "";
-
-            final BufferedReader bufferedReader = this.getRequest().getReader();
-            String line;
-
-            while ((line = bufferedReader.readLine()) != null) {
-                this.body += line;
+            char[] buffer = new char[4096];
+            final BufferedReader reader = this.getRequest().getReader();
+            StringBuilder builder = new StringBuilder();
+            int numChars;
+            while ((numChars = reader.read(buffer)) >= 0) {
+                builder.append(buffer, 0, numChars);
             }
+            body = builder.toString();
         }
         return body;
     }
