@@ -20,7 +20,6 @@
     "enforced_routes",
     "logger",
     "filter_by_extension",
-    "filter_by_route",
     "first_party",
     "js_ref",
     "mobile_support",
