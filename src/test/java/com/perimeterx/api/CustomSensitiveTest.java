@@ -30,7 +30,7 @@ public class CustomSensitiveTest {
         HttpServletResponse response = new MockHttpServletResponse();
         PXContext pxContext = perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
 
-        assertTrue(pxContext.getIsSensitiveRequest().get());
+        assertTrue(pxContext.isSensitiveRequest());
     }
 
     @Test
@@ -54,7 +54,7 @@ public class CustomSensitiveTest {
         HttpServletResponse response = new MockHttpServletResponse();
         PXContext pxContext = perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
 
-        assertTrue(pxContext.getIsSensitiveRequest().get());
+        assertTrue(pxContext.isSensitiveRequest());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class CustomSensitiveTest {
         HttpServletResponse response = new MockHttpServletResponse();
         PXContext pxContext = perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
 
-        assertFalse(pxContext.getIsSensitiveRequest().get());
+        assertFalse(pxContext.isSensitiveRequest());
     }
 
     @Test

@@ -28,7 +28,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,11 +99,6 @@ public class PXContext {
      * Which action to take after being blocked
      */
     private BlockAction blockAction;
-
-    /**
-     * if true - calling risk_api to verified request even if cookie data is valid
-     */
-    private Supplier<Boolean> isSensitiveRequest;
 
     /**
      * Reason for request being verified
@@ -258,8 +252,6 @@ public class PXContext {
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
 
-        this.isSensitiveRequest = this::isSensitive;
-
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = pxConfiguration.getCustomParametersExtraction();
         try {
@@ -273,8 +265,7 @@ public class PXContext {
         }
     }
 
-
-    private boolean isSensitive() {
+    public boolean isSensitiveRequest() {
         return this.isContainCredentialsIntelligence()
                 || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
                 || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri)
