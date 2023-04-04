@@ -52,7 +52,7 @@ public class TestVerificationHandler implements VerificationHandler {
         jsonObject.addProperty("is_made_s2s_api_call", pxContext.isMadeS2SApiCall());
         jsonObject.addProperty("block_action", pxContext.getBlockAction().name());
         jsonObject.addProperty("block_data", pxContext.getBlockActionData());
-        jsonObject.addProperty("sensitive_route", pxContext.isSensitiveRoute());
+        jsonObject.addProperty("sensitive_route", pxContext.isSensitiveRequest());
         jsonObject.addProperty("sensitive_route_list", gson.toJson(pxConfig.getSensitiveRoutes()));
         jsonObject.addProperty("pxde", pxContext.getPxde().toString());
         jsonObject.addProperty("pxde_verified", pxContext.isPxdeVerified());

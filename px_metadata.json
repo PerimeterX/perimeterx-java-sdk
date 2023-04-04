@@ -1,5 +1,5 @@
 {
-  "version": "6.4.5",
+  "version": "6.5.0",
   "supported_features": [
     "additional_activity_handler",
     "advanced_blocking_response",
@@ -16,10 +16,10 @@
     "custom_logo",
     "custom_parameters",
     "custom_proxy",
+    "custom_sensitive_request",
     "enforced_routes",
     "logger",
     "filter_by_extension",
-    "filter_by_route",
     "first_party",
     "js_ref",
     "mobile_support",

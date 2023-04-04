@@ -12,6 +12,7 @@ import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
+import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
 import com.perimeterx.utils.PXLogger;
@@ -22,12 +23,15 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static com.perimeterx.utils.Constants.*;
 
@@ -142,7 +146,11 @@ public class PXConfiguration {
     @JsonProperty("px_remote_configuration_url")
     private String remoteConfigurationUrl = Constants.REMOTE_CONFIGURATION_SERVER_URL;
 
+    /**
+     * @deprecated use customParametersExtraction
+     */
     @Builder.Default
+    @Deprecated
     private CustomParametersProvider customParametersProvider = new DefaultCustomParametersProvider();
 
     @Builder.Default
@@ -245,6 +253,12 @@ public class PXConfiguration {
     @Builder.Default
     private Set<String> staticFilesExt = new HashSet<>(Arrays.asList(extensions));
 
+    @Builder.Default
+    private Predicate<? super HttpServletRequest> customIsSensitiveRequest = (req) -> false;
+
+    @Builder.Default
+    private Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = null;
+
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
@@ -260,7 +274,7 @@ public class PXConfiguration {
                 pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
                 loginResponseValidationReportingMethod, regexPatternToValidateLoginResponseBody, headerNameToValidateLoginResponse,
                 headerValueToValidateLoginResponse, loginResponseValidationStatusCode, customLoginResponseValidator,
-                credentialsCustomExtractor, staticFilesExt);
+                credentialsCustomExtractor, staticFilesExt, (req) -> false, null);
     }
 
     public void disableModule() {

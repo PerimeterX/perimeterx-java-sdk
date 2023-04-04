@@ -73,7 +73,7 @@ public class CookieV1MobileTest {
         ((MockHttpServletRequest) request).setRequestURI("/login/user");
         ((MockHttpServletRequest) request).addHeader("x-px-authorization", pxCookie);
         this.context = new PXContext(request, ipProvider, hostnameProvider, configuration);
-        assertTrue(this.context.isSensitiveRoute());
+        assertTrue(this.context.isSensitiveRequest());
         boolean verify = cookieValidator.verify(context);
         assertFalse(verify);
         assertEquals(S2SCallReason.SENSITIVE_ROUTE.getValue(), context.getS2sCallReason());
