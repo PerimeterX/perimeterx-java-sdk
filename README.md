@@ -199,7 +199,8 @@ In your filter:
 ...
 PXConfiguration pxConfiguration = new PXConfiguration.Builder()
         ...
-        .customIsSensitiveRequest(req -> req.getHeader("example-header") == "example-value");
+        .customIsSensitiveRequest((req) -> req.getHeader("example-header") == "example-value")
+        .build();
 
 ```
 
