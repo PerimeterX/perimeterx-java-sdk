@@ -16,6 +16,7 @@
 - [Advanced Usage Examples](#advanced-usage)
   - [Data Enrichment](#data-enrichment)
   - [Custom Parameters](#custom-parameters)
+  - [Custom Sensitive Request](#custom-sensitive-request)
   - [Multiple Application Support](#multi-app-support)
 - [Configuration](CONFIGURATIONS.md)
 - [Logging and Troubleshooting](#loggin-troubleshoot)
@@ -190,31 +191,34 @@ enforcer.setVerificationHandler(new MyVerificationHandler(config));
 ...
 ```
 
-#### <a name="custom-parameters"></a> Custom Parameters
+#### s<a name="custom-sensitive-request"></a> Custom Sensitive Request
+With the  `customIsSensitive` predicate you can force the request to be sensitive.
 
-With the `customParametersProvider` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before setting the payload on every request to PerimetrX servers.
-
-MyCustomParametersProvider.java:
+In your filter: 
 ```java
 ...
-public class MyCustomParametersProvider implements CustomParametersProvider {
-    public CustomParameters buildCustomParameters(PXConfiguration pxConfiguration, PXContext pxContext) {
-        CustomParameters customParameters = new CustomParameters();
-        customParameters.setCustomParam1("my_custom_param_1");
-        customParameters.setCustomParam2("my_custom_param_2");
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
         ...
-        customParameters.setCustomParam10("my_custom_param_10");
-        return customParameters;
-    }
-}
+        .customIsSensitiveRequest((req) -> req.getHeader("example-header") == "example-value")
+        .build();
+
 ```
 
-Then, in your filter:
+#### <a name="custom-parameters"></a> Custom Parameters
+
+With the `customParametersExtraction` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before setting the payload on every request to PerimetrX servers.
+
+In your filter:
 ```java
 ...
 PXConfiguration pxConfiguration = new PXConfiguration.Builder()
      ...
-     .customParametersProvider(new MyCustomParametersProvider())
+     .customParametersExtraction((req) -> {
+          CustomParameters customParameters = new CustomParameters();
+          customParameters.setCustomParam1("example-value");
+          customParameters.setCustomParam2(req.getHeader("example-header"));
+          return customParameters;
+        })
      .build();
 ...
 ```
