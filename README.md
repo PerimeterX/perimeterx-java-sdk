@@ -191,8 +191,16 @@ enforcer.setVerificationHandler(new MyVerificationHandler(config));
 ...
 ```
 
-#### s<a name="custom-sensitive-request"></a> Custom Sensitive Request
+#### <a name="custom-sensitive-request"></a> Custom Sensitive Request
 With the  `customIsSensitive` predicate you can force the request to be sensitive.
+The input of the function is the same request that sent to the method `pxVerify`.
+If the function throws exception, it is equivalent to returning `false`.
+Implementing this configuration does NOT override other `sensitive` configurations, like `sensitive_routes`.
+
+> **Note**
+> The request body can only be read once default. If your function requires reading the body
+> consider using RequestWrapper which caches the body. Send the wrapped request to
+> `pxVerify` instead of the native one.
 
 In your filter: 
 ```java
@@ -206,7 +214,16 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
 
 #### <a name="custom-parameters"></a> Custom Parameters
 
-With the `customParametersExtraction` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before setting the payload on every request to PerimetrX servers.
+With the `customParametersExtraction` function you can add up to 10 custom parameters to be sent back to PerimeterX servers.
+When set, the function is called before setting the payload on every request to PerimetrX servers.
+The input of the function is the same request that sent to the method `pxVerify`. 
+If the function throws exception, it is equivalent to returning empty custom params.
+Implementing this configuration overrides the deprecated configuration `customParameterProvider`.
+
+> **Note**
+> The request body can only be read once default. If your function requires reading the body 
+> consider using RequestWrapper which caches the body. Send the wrapped request to
+> `pxVerify` instead of the native one.
 
 In your filter:
 ```java
