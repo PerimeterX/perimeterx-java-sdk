@@ -198,7 +198,7 @@ If the function throws exception, it is equivalent to returning `false`.
 Implementing this configuration does NOT override other `sensitive` configurations, like `sensitive_routes`.
 
 > **Note**
-> The request body can only be read once default. If your function requires reading the body
+> The request body can only be read once by default. If your function requires reading the body
 > consider using RequestWrapper which caches the body. Send the wrapped request to
 > `pxVerify` instead of the native one.
 
@@ -221,7 +221,7 @@ If the function throws exception, it is equivalent to returning empty custom par
 Implementing this configuration overrides the deprecated configuration `customParameterProvider`.
 
 > **Note**
-> The request body can only be read once default. If your function requires reading the body 
+> The request body can only be read once by default. If your function requires reading the body 
 > consider using RequestWrapper which caches the body. Send the wrapped request to
 > `pxVerify` instead of the native one.
 
