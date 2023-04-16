@@ -1,14 +1,10 @@
 package com.perimeterx.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.perimeterx.models.configuration.PXConfiguration;
 
-public class PXLogger {
-
-    private Logger logger;
-
-    private final String DEBUG_PREFIX = "[PerimeterX - DEBUG] ";
-    private final String ERROR_PREFIX = "[PerimeterX - ERROR] ";
+public interface PXLogger {
+    String DEBUG_PREFIX = "[PerimeterX - DEBUG] ";
+    String ERROR_PREFIX = "[PerimeterX - ERROR] ";
 
     public enum LogReason {
         DEBUG_INITIALIZING_MODULE("Initializing PerimeterX enforcer"),
@@ -48,32 +44,25 @@ public class PXLogger {
             this.reason = reason;
         }
 
+        @Override
         public String toString() {
             return this.reason;
         }
     }
 
-    public static PXLogger getLogger(Class<?> clazz) {
-        return new PXLogger(clazz);
+    static PXLogger getLogger(Class<?> clazz) {
+        LoggerSeverity pxLoggerSeverity = PXConfiguration.getPxLoggerSeverity();
+        if (pxLoggerSeverity == null) {
+            return Slf4JLogger.getLogger(clazz);
+        } else {
+            return new ConsoleLogger(pxLoggerSeverity);
+        }
     }
+    void debug(LogReason reason, Object... args);
 
-    private PXLogger(Class<?> clazz) {
-        logger = LoggerFactory.getLogger(clazz);
-    }
+    void debug(String msg, Object... args);
 
-    public void debug(LogReason reason, Object... args) {
-        logger.debug(DEBUG_PREFIX + reason, args);
-    }
+    void error(LogReason reason, Object... args);
 
-    public void debug(String msg, Object... args) {
-        logger.debug(DEBUG_PREFIX + msg, args);
-    }
-
-    public void error(LogReason reason, Object... args) {
-        logger.error(ERROR_PREFIX + reason, args);
-    }
-
-    public void error(String msg, Object... args) {
-        logger.error(ERROR_PREFIX + msg, args);
-    }
+    void error(String msg, Object... args);
 }

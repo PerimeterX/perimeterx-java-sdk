@@ -1,6 +1,7 @@
 # Change Log
 ## [vX.X.X](...)
 - Updating readme with `customIsSensitve`, `customParametersExtraction`
+- Added an option to configure logger without slf4j using `PXConfiguration.setPxLoggerSeverity(<loggerSeverity>)` 
 
 ## [v6.5.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.5.0...HEAD) (2023-03-04)
 - Adding custom is sensitive configuration option

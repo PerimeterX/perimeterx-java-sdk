@@ -15,6 +15,7 @@ import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILogin
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
+import com.perimeterx.utils.LoggerSeverity;
 import com.perimeterx.utils.PXLogger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,6 +47,15 @@ import static com.perimeterx.utils.Constants.*;
 @Getter
 public class PXConfiguration {
     private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
+    private static volatile LoggerSeverity loggerSeverity = null;
+
+    public static synchronized LoggerSeverity getPxLoggerSeverity() {
+        return loggerSeverity;
+    }
+
+    public static synchronized void setPxLoggerSeverity(LoggerSeverity severity) {
+        loggerSeverity = severity;
+    }
 
     @JsonProperty("px_app_id")
     private String appId;
