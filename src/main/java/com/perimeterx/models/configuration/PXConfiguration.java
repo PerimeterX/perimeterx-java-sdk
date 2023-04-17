@@ -47,13 +47,13 @@ import static com.perimeterx.utils.Constants.*;
 @Getter
 public class PXConfiguration {
     private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
-    private static volatile LoggerSeverity loggerSeverity = null;
+    private static LoggerSeverity loggerSeverity = null;
 
-    public static synchronized LoggerSeverity getPxLoggerSeverity() {
+    public static LoggerSeverity getPxLoggerSeverity() {
         return loggerSeverity;
     }
 
-    public static synchronized void setPxLoggerSeverity(LoggerSeverity severity) {
+    public static void setPxLoggerSeverity(LoggerSeverity severity) {
         loggerSeverity = severity;
     }
 
