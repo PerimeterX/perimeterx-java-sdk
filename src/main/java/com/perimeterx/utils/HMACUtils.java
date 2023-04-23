@@ -26,7 +26,7 @@ public final class HMACUtils {
             byte[] bCookieHmac = StringUtils.hexStringToByteArray(hmac);
             isValid = Arrays.equals(bHMAC, bCookieHmac);
         } catch (Exception e) {
-            logger.error(PXLogger.LogReason.DEBUG_COOKIE_HMAC_VALIDATION_FAILED, e.getMessage());
+            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_HMAC_VALIDATION_FAILED, e.getMessage());
             isValid = false;
         }
 

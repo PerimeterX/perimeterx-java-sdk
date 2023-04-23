@@ -272,6 +272,20 @@ protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws Se
 
 For further information please visit [SLF4J](https://www.slf4j.org/manual.html) and [Logback](https://logback.qos.ch).
 
+If you wish to use a basic logger which uses `System.out` and `System.err` to print debug and error accordingly,
+Change the value of the static variable to your desired level.
+```java
+import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.LoggerSeverity;
+
+PXConfiguration.setPxLoggerSeverity(LoggerSeverity.DEBUG);
+```
+> **Note**
+> This method can be executed once, no need to execute it every request.
+ 
+
+---
+
 The following steps are welcome when contributing to our project.
 
 #### Fork/Clone
