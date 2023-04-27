@@ -4,13 +4,15 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 
+import java.io.Closeable;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TimerValidateRequestsQueue extends TimerTask {
+public class TimerValidateRequestsQueue extends TimerTask implements Closeable {
 
     private static final PXLogger logger = PXLogger.getLogger(TimerValidateRequestsQueue.class);
 
+    private Timer timer = null;
     private PoolingNHttpClientConnectionManager nHttpConnectionManager;
     private PXConfiguration pxConfiguration;
 
@@ -29,7 +31,16 @@ public class TimerValidateRequestsQueue extends TimerTask {
      * Sets a new timer object and runs its execution method
      */
     public void schedule() {
-        Timer timer = new Timer();
+        this.close();
+        timer = new Timer();
         timer.schedule(this, 0, pxConfiguration.getValidateRequestQueueInterval());
+    }
+
+    @Override
+    public void close() {
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 }
