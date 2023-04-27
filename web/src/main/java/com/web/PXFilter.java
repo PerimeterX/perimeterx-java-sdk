@@ -54,6 +54,10 @@ public class PXFilter implements Filter {
 
     @Override
     public void destroy() {
-
+        try {
+            pxFilter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
