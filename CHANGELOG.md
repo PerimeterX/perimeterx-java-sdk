@@ -1,5 +1,5 @@
 # Change Log
-## [vX.X.X](...)
+## [v6.6.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.6.0...HEAD) (2023-27-04)
 - Updating readme with `customIsSensitve`, `customParametersExtraction`
 - Added an option to configure logger without slf4j using `PXConfiguration.setPxLoggerSeverity(<loggerSeverity>)`
 - Added an option to close PerimeterX [SDKNEW-2781](https://perimeterx.atlassian.net/browse/SDKNEW-2781)
