@@ -61,13 +61,12 @@ import com.perimeterx.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.Optional;
 
 import static com.perimeterx.utils.Constants.*;
 import static java.util.Objects.isNull;
@@ -78,7 +77,7 @@ import static java.util.Objects.isNull;
  * Created by shikloshi on 03/07/2016.
  */
 
-public class PerimeterX {
+public class PerimeterX implements Closeable {
 
     private static final PXLogger logger = PXLogger.getLogger(PerimeterX.class);
 
@@ -90,6 +89,7 @@ public class PerimeterX {
     private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
     private ReverseProxy reverseProxy;
+    private PXHttpClient pxClient = null;
 
     private void init(PXConfiguration configuration) throws PXException {
         logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
@@ -97,7 +97,7 @@ public class PerimeterX {
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new CombinedIPProvider(configuration);
-        PXHttpClient pxClient = new PXHttpClient(configuration);
+        this.pxClient = new PXHttpClient(configuration);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
@@ -337,4 +337,10 @@ public class PerimeterX {
         this.verificationHandler = verificationHandler;
     }
 
+    @Override
+    public void close() throws IOException {
+        if(this.pxClient != null) {
+            this.pxClient.close();
+        }
+    }
 }

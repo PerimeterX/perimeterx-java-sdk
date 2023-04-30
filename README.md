@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v6.5.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.4.5%7Cjar)
+> Latest stable version: [v6.6.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.6.0%7Cjar)
 
 ## Table of Contents
 
@@ -16,6 +16,7 @@
 - [Advanced Usage Examples](#advanced-usage)
   - [Data Enrichment](#data-enrichment)
   - [Custom Parameters](#custom-parameters)
+  - [Custom Sensitive Request](#custom-sensitive-request)
   - [Multiple Application Support](#multi-app-support)
 - [Configuration](CONFIGURATIONS.md)
 - [Logging and Troubleshooting](#loggin-troubleshoot)
@@ -190,31 +191,51 @@ enforcer.setVerificationHandler(new MyVerificationHandler(config));
 ...
 ```
 
-#### <a name="custom-parameters"></a> Custom Parameters
+#### <a name="custom-sensitive-request"></a> Custom Sensitive Request
+With the  `customIsSensitive` predicate you can force the request to be sensitive.
+The input of the function is the same request that sent to the method `pxVerify`.
+If the function throws exception, it is equivalent to returning `false`.
+Implementing this configuration does NOT override other `sensitive` configurations, like `sensitive_routes`.
 
-With the `customParametersProvider` function you can add up to 10 custom parameters to be sent back to PerimeterX servers. When set, the function is called before setting the payload on every request to PerimetrX servers.
+> **Note**
+> The request body can only be read once by default. If your function requires reading the body
+> consider using RequestWrapper which caches the body. Send the wrapped request to
+> `pxVerify` instead of the native one.
 
-MyCustomParametersProvider.java:
+In your filter: 
 ```java
 ...
-public class MyCustomParametersProvider implements CustomParametersProvider {
-    public CustomParameters buildCustomParameters(PXConfiguration pxConfiguration, PXContext pxContext) {
-        CustomParameters customParameters = new CustomParameters();
-        customParameters.setCustomParam1("my_custom_param_1");
-        customParameters.setCustomParam2("my_custom_param_2");
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
         ...
-        customParameters.setCustomParam10("my_custom_param_10");
-        return customParameters;
-    }
-}
+        .customIsSensitiveRequest((req) -> req.getHeader("example-header") == "example-value")
+        .build();
+
 ```
 
-Then, in your filter:
+#### <a name="custom-parameters"></a> Custom Parameters
+
+With the `customParametersExtraction` function you can add up to 10 custom parameters to be sent back to PerimeterX servers.
+When set, the function is called before setting the payload on every request to PerimetrX servers.
+The input of the function is the same request that sent to the method `pxVerify`. 
+If the function throws exception, it is equivalent to returning empty custom params.
+Implementing this configuration overrides the deprecated configuration `customParameterProvider`.
+
+> **Note**
+> The request body can only be read once by default. If your function requires reading the body 
+> consider using RequestWrapper which caches the body. Send the wrapped request to
+> `pxVerify` instead of the native one.
+
+In your filter:
 ```java
 ...
 PXConfiguration pxConfiguration = new PXConfiguration.Builder()
      ...
-     .customParametersProvider(new MyCustomParametersProvider())
+     .customParametersExtraction((req) -> {
+          CustomParameters customParameters = new CustomParameters();
+          customParameters.setCustomParam1("example-value");
+          customParameters.setCustomParam2(req.getHeader("example-header"));
+          return customParameters;
+        })
      .build();
 ...
 ```
@@ -250,6 +271,20 @@ protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws Se
 `perimeterx-java-sdk` is using SLF4J and Logback for logs.
 
 For further information please visit [SLF4J](https://www.slf4j.org/manual.html) and [Logback](https://logback.qos.ch).
+
+If you wish to use a basic logger which uses `System.out` and `System.err` to print debug and error accordingly,
+Change the value of the static variable to your desired level.
+```java
+import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.LoggerSeverity;
+
+PXConfiguration.setPxLoggerSeverity(LoggerSeverity.DEBUG);
+```
+> **Note**
+> This method can be executed once, no need to execute it every request.
+ 
+
+---
 
 The following steps are welcome when contributing to our project.
 
