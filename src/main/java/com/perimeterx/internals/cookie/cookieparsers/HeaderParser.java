@@ -11,9 +11,10 @@ import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public abstract class HeaderParser {
 
@@ -29,19 +30,15 @@ public abstract class HeaderParser {
      * @param cookieHeader Should contain the cookie(or cookies) that needs to be parsed into RawCookieData, can be null or empty
      * @return All px cookies available from the header.
      */
-    public List<RawCookieData> createRawCookieDataList(String cookieHeader) {
-        List<RawCookieData> cookieList = new ArrayList<>();
-        if (!StringUtils.isEmpty(cookieHeader)) {
-            String[] cookies = splitHeader(cookieHeader);
-            for (String cookie : cookies) {
-                RawCookieData rawCookie = createCookie(cookie);
-                if (rawCookie != null) {
-                    cookieList.add(rawCookie);
-                }
-            }
-        }
-        Collections.sort(cookieList);
-        return cookieList;
+    public List<RawCookieData> createRawCookieDataList(String... cookieHeaders) {
+        return Stream.of(cookieHeaders)
+                .filter(StringUtils::isNoneEmpty)
+                .map(this::splitHeader)
+                .flatMap(Stream::of)
+                .map(this::createCookie)
+                .filter(Objects::nonNull)
+                .sorted()
+                .collect(toList());
     }
 
     public DataEnrichmentCookie getRawDataEnrichmentCookie(List<RawCookieData> rawCookies, String cookieKey) {

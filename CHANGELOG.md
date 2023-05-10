@@ -1,4 +1,6 @@
 # Change Log
+## [v6.7.0](...)
+- Added feature custom cookie header
 ## [v6.6.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.6.0...HEAD) (2023-27-04)
 - Updating readme with `customIsSensitve`, `customParametersExtraction`
 - Added an option to configure logger without slf4j using `PXConfiguration.setPxLoggerSeverity(<loggerSeverity>)`

@@ -10,6 +10,9 @@ import org.apache.http.message.BasicHeader;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+import static com.perimeterx.utils.Constants.COOKIE_HEADER_NAME;
+import static org.apache.commons.lang3.StringUtils.isNoneEmpty;
+
 /**
  * Created by nitzangoldfeder on 16/07/2017.
  */
@@ -44,5 +47,14 @@ public class PXCommonUtils {
             headers.put(name.toLowerCase(), request.getHeader(name));
         }
         return headers;
+    }
+
+    public static List<String> cookieHeaders(PXConfiguration configuration) {
+        List<String> lst = new LinkedList<>();
+        lst.add(COOKIE_HEADER_NAME);
+        if(isNoneEmpty(configuration.getCustomCookieHeader())) {
+            lst.add(configuration.getCustomCookieHeader());
+        }
+        return lst;
     }
 }

@@ -269,6 +269,9 @@ public class PXConfiguration {
     @Builder.Default
     private Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = null;
 
+    @Builder.Default
+    private String customCookieHeader = "x-px-cookies";
+
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
@@ -284,7 +287,8 @@ public class PXConfiguration {
                 pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
                 loginResponseValidationReportingMethod, regexPatternToValidateLoginResponseBody, headerNameToValidateLoginResponse,
                 headerValueToValidateLoginResponse, loginResponseValidationStatusCode, customLoginResponseValidator,
-                credentialsCustomExtractor, staticFilesExt, (req) -> false, null);
+                credentialsCustomExtractor, staticFilesExt, (req) -> false, null,
+                "x-px-cookies");
     }
 
     public void disableModule() {

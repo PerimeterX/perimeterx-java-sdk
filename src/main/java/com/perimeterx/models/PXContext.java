@@ -32,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
+import static com.perimeterx.utils.PXCommonUtils.*;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -350,10 +351,13 @@ public class PXContext {
             this.pxdeVerified = true;
         } else {
             Cookie[] cookies = request.getCookies();
-            String cookieHeader = request.getHeader(Constants.COOKIE_HEADER_NAME);
+            String[] cookieHeaders = cookieHeaders(getPxConfiguration())
+                    .stream()
+                    .map(request::getHeader)
+                    .toArray(String[]::new);
             this.requestCookieNames = CookieNamesExtractor.extractCookieNames(cookies);
             setVidAndPxhd(cookies);
-            tokens.addAll(headerParser.createRawCookieDataList(cookieHeader));
+            tokens.addAll(headerParser.createRawCookieDataList(cookieHeaders));
             this.tokens = tokens;
             DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
             this.pxde = deCookie.getJsonPayload();
