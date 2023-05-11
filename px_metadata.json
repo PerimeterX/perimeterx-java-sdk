@@ -30,6 +30,7 @@
     "pxde",
     "vid_extraction",
     "risk_api",
+    "custom_cookie_header",
     "sensitive_routes",
     "telemetry_command",
     "enforcer_error"

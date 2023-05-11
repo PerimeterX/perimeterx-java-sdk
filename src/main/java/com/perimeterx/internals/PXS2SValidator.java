@@ -15,6 +15,8 @@ import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
 
+import static org.apache.commons.lang3.StringUtils.*;
+
 /**
  * High level Abstracted interface for calling PerimeterX servers
  * <p>
@@ -99,6 +101,9 @@ public class PXS2SValidator implements PXValidator {
         DataEnrichmentCookie dataEnrichment = new DataEnrichmentCookie(response.getDataEnrichment(), true);
         pxContext.setPxde(dataEnrichment.getJsonPayload());
         pxContext.setPxdeVerified(dataEnrichment.isValid());
+        if(isNoneBlank(response.getPxhd())) {
+            pxContext.setPxhd(response.getPxhd());
+        }
     }
 
     private boolean isResponseValid(RiskResponse response) {
