@@ -13,7 +13,7 @@ public class ConsoleLogger implements PXLogger {
         builder.append(prefix);
         builder.append(msg);
         for (Object arg : additional) {
-            builder.append(" ").append(arg.toString());
+            builder.append(" ").append(arg);
         }
         out.println(builder);
     }
