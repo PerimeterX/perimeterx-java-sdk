@@ -32,7 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
-import static com.perimeterx.utils.PXCommonUtils.*;
+import static com.perimeterx.utils.PXCommonUtils.cookieHeadersNames;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -351,7 +351,7 @@ public class PXContext {
             this.pxdeVerified = true;
         } else {
             Cookie[] cookies = request.getCookies();
-            String[] cookieHeaders = cookieHeaders(getPxConfiguration())
+            String[] cookieHeaders = cookieHeadersNames(getPxConfiguration())
                     .stream()
                     .map(request::getHeader)
                     .toArray(String[]::new);
