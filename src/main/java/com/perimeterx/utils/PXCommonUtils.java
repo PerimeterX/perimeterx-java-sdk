@@ -51,11 +51,12 @@ public class PXCommonUtils {
 
     public static List<String> cookieHeadersNames(PXConfiguration configuration) {
         List<String> lst = new LinkedList<>();
-        lst.add(COOKIE_HEADER_NAME);
 
         if (isNoneEmpty(configuration.getCustomCookieHeader())) {
             lst.add(configuration.getCustomCookieHeader());
         }
+        lst.add(COOKIE_HEADER_NAME);
+
         return lst;
     }
 }
