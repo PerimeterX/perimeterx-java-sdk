@@ -41,7 +41,7 @@ import static com.perimeterx.utils.Constants.*;
  * <p>
  * Created by shikloshi on 03/07/2016.
  */
-@Builder
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -276,19 +276,7 @@ public class PXConfiguration {
      * @return Configuration Object clone without cookieKey and authToken
      **/
     public PXConfiguration getTelemetryConfig() {
-        return new PXConfiguration(appId, null, null, moduleEnabled, encryptionEnabled,
-                blockingScore, sensitiveHeaders, maxBufferLen, apiTimeout, connectionTimeout, sendPageActivities,
-                signedWithIP, serverURL, customLogo, cssRef, jsRef, sensitiveRoutes, sensitiveRoutesRegex, ipHeaders, checksum,
-                remoteConfigurationEnabled, moduleMode, remoteConfigurationInterval, remoteConfigurationDelay,
-                maxConnections, maxConnectionsPerRoute, remoteConfigurationUrl, customParametersProvider, blockHandler,
-                collectorUrl, clientHost, firstPartyEnabled, xhrFirstPartyEnabled, useProxy, proxyHost, proxyPort,
-                testingMode, validateRequestQueueInterval, bypassMonitorHeader, configFilePath, advancedBlockingResponse,
-                enforcedRoutes, monitoredRoutes, loginCredentialsExtractionEnabled, loginCredentialsExtractionDetails, ciProtocol,
-                pxCompromisedCredentialsHeader, addRawUsernameOnAdditionalS2SActivity, additionalS2SActivityHeaderEnabled,
-                loginResponseValidationReportingMethod, regexPatternToValidateLoginResponseBody, headerNameToValidateLoginResponse,
-                headerValueToValidateLoginResponse, loginResponseValidationStatusCode, customLoginResponseValidator,
-                credentialsCustomExtractor, staticFilesExt, (req) -> false, null,
-                "x-px-cookies");
+        return this.toBuilder().cookieKey(null).authToken(null).build();
     }
 
     public void disableModule() {
