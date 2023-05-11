@@ -1,5 +1,5 @@
 {
-  "version": "6.6.0",
+  "version": "6.7.0",
   "supported_features": [
     "additional_activity_handler",
     "advanced_blocking_response",
@@ -30,6 +30,7 @@
     "pxde",
     "vid_extraction",
     "risk_api",
+    "custom_cookie_header",
     "sensitive_routes",
     "telemetry_command",
     "enforcer_error"
