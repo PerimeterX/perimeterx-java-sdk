@@ -15,6 +15,7 @@ import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
 
+import static com.perimeterx.utils.PXCommonUtils.logTime;
 import static org.apache.commons.lang3.StringUtils.*;
 
 /**
@@ -48,7 +49,7 @@ public class PXS2SValidator implements PXValidator {
         long rtt;
 
         try {
-            response = pxClient.riskApiCall(pxContext);
+            response = logTime("pxClient.riskApiCall", () -> pxClient.riskApiCall(pxContext));
         } catch (ConnectTimeoutException e) {
             // Timeout handling - report pass reason and proceed with request
             pxContext.setPassReason(PassReason.S2S_TIMEOUT);

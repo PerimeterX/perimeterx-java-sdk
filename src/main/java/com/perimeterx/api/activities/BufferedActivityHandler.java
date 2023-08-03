@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.perimeterx.utils.PXCommonUtils.logTime;
 import static com.perimeterx.utils.PXLogger.LogReason.ERROR_TELEMETRY_EXCEPTION;
 
 
@@ -39,41 +40,53 @@ public class BufferedActivityHandler implements ActivityHandler {
 
     @Override
     public void handleBlockActivity(PXContext context) throws PXException {
-        Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
-        handleSendActivities(activity);
+        logTime("handleBlockActivity", () -> {
+            Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
+            handleSendActivities(activity);
+        });
+
     }
 
     @Override
     public void handlePageRequestedActivity(PXContext context) throws PXException {
-        Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_PAGE_REQUESTED, configuration.getAppId(), context);
-        handleSendActivities(activity);
+        logTime("handlePageRequestedActivity", () -> {
+            Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_PAGE_REQUESTED, configuration.getAppId(), context);
+            handleSendActivities(activity);
+        });
+
     }
 
     @Override
     public void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason) throws PXException {
-        try {
-            EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfig, updateReason);
-            EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfig.getAppId(), details);
-            this.client.sendEnforcerTelemetry(enforcerTelemetry);
-        } catch (IOException e) {
-            throw new PXException(ERROR_TELEMETRY_EXCEPTION.toString(), e);
-        }
+        logTime("handleEnforcerTelemetryActivity", () -> {
+            try {
+                EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfig, updateReason);
+                EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfig.getAppId(), details);
+                this.client.sendEnforcerTelemetry(enforcerTelemetry);
+            } catch (IOException e) {
+                throw new PXException(ERROR_TELEMETRY_EXCEPTION.toString(), e);
+            }
+        });
     }
 
     @Override
     public void handleAdditionalS2SActivity(PXContext context) throws PXException {
-        final Activity activity = createAdditionalS2SActivity(context);
-        handleSendActivities(activity);
+        logTime("handleAdditionalS2SActivity", () -> {
+            final Activity activity = createAdditionalS2SActivity(context);
+            handleSendActivities(activity);
+        });
     }
 
     public Activity createAdditionalS2SActivity(PXContext context) {
-        final Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_ADDITIONAL_S2S, configuration.getAppId(), context);
+        return logTime("createAdditionalS2SActivity", () -> {
+            final Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_ADDITIONAL_S2S, configuration.getAppId(), context);
 
-        if(isRequireRawUsername(context)) {
-            ((AdditionalS2SActivityDetails) activity.getDetails())
-                    .setUsername(context.getLoginData().getLoginCredentials().getRawUsername());
-        }
-        return activity;
+            if (isRequireRawUsername(context)) {
+                ((AdditionalS2SActivityDetails) activity.getDetails())
+                        .setUsername(context.getLoginData().getLoginCredentials().getRawUsername());
+            }
+            return activity;
+        });
     }
 
     private boolean isRequireRawUsername(PXContext context) {
@@ -85,37 +98,42 @@ public class BufferedActivityHandler implements ActivityHandler {
     }
 
     private void handleSendActivities(Activity activity) throws PXException {
-        bufferedActivities.add(activity);
-        int count = counter.incrementAndGet();
-        if (count > maxBufferLength) {
-            handleOverflow();
-        }
+        logTime("handleSendActivities", () -> {
+            bufferedActivities.add(activity);
+            int count = counter.incrementAndGet();
+            if (count > maxBufferLength) {
+                handleOverflow();
+            }
+        });
     }
 
     private void handleOverflow() throws PXException {
-        ConcurrentLinkedQueue<Activity> activitiesToSend;
-        if (lock.tryLock()) {
-            try {
-                activitiesToSend = flush();
-            } finally {
-                lock.unlock();
+        logTime("handleOverflow", () -> {
+            ConcurrentLinkedQueue<Activity> activitiesToSend;
+            if (lock.tryLock()) {
+                try {
+                    activitiesToSend = flush();
+                } finally {
+                    lock.unlock();
+                }
+                sendAsync(activitiesToSend);
             }
-            sendAsync(activitiesToSend);
-        }
+        });
     }
 
     private void sendAsync(ConcurrentLinkedQueue<Activity> activitiesToSend) throws PXException {
-        if (activitiesToSend == null) {
-            return;
-        }
-        
-        List<Activity> activitiesLocal = activitiesAsList(activitiesToSend);
-        try {
-            client.sendBatchActivities(activitiesLocal);
-        } catch (Exception e) {
-            throw new PXException(e);
-        }
+        logTime("sendAsync", () -> {
+            if (activitiesToSend == null) {
+                return;
+            }
 
+            List<Activity> activitiesLocal = activitiesAsList(activitiesToSend);
+            try {
+                client.sendBatchActivities(activitiesLocal);
+            } catch (Exception e) {
+                throw new PXException(e);
+            }
+        });
     }
 
     private List<Activity> activitiesAsList(ConcurrentLinkedQueue<Activity> activityQueue) {
