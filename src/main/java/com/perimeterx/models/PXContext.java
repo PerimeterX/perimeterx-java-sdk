@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
 import static com.perimeterx.utils.PXCommonUtils.cookieHeadersNames;
+import static com.perimeterx.utils.PXCommonUtils.logTime;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -226,20 +227,20 @@ public class PXContext {
     }
 
     private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
-        this.headers = PXCommonUtils.getHeadersFromRequest(request);
+        this.headers = logTime("PXCommonUtils.getHeadersFromRequest", () -> PXCommonUtils.getHeadersFromRequest(request));
 
         if (headers.containsKey(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) || headers.containsKey(Constants.MOBILE_SDK_TOKENS_HEADER)) {
             logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
             this.isMobileToken = true;
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
-        parseCookies(request, isMobileToken);
-        generateLoginData(request, pxConfiguration);
+        logTime("parseCookies", () -> parseCookies(request, isMobileToken));
+        logTime("generateLoginData", () -> generateLoginData(request, pxConfiguration));
 
         this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
         this.uri = request.getRequestURI();
-        this.fullUrl = extractURL(request); //full URL with query string
+        this.fullUrl = logTime("extractURL", () ->extractURL(request)); //full URL with query string
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
         this.s2sErrorReasonInfo = new S2SErrorReasonInfo();
@@ -257,9 +258,9 @@ public class PXContext {
         Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = pxConfiguration.getCustomParametersExtraction();
         try {
             if (customParametersExtraction != null) {
-                this.customParameters = customParametersExtraction.apply(this.request);
+                this.customParameters = logTime("customParametersExtraction.apply", () -> customParametersExtraction.apply(this.request));
             } else {
-                this.customParameters = customParametersProvider.buildCustomParameters(pxConfiguration, this);
+                this.customParameters = logTime("customParametersProvider.buildCustomParameters", () -> customParametersProvider.buildCustomParameters(pxConfiguration, this));
             }
         } catch (Exception e) {
             logger.debug("failed to extract custom parameters from custom function", e);
@@ -327,41 +328,46 @@ public class PXContext {
         List<RawCookieData> tokens = new ArrayList<>();
         List<RawCookieData> originalTokens = new ArrayList<>();
         if (isMobileToken) {
-            headerParser = new MobileCookieHeaderParser();
+            logTime("anonymousParseCookiesMobile", () -> {
+                // This was changed because it is not possible to override a value inside a function.
+                HeaderParser hp = new MobileCookieHeaderParser();
 
-            String tokensHeader = request.getHeader(Constants.MOBILE_SDK_TOKENS_HEADER);
-            tokens.addAll(headerParser.createRawCookieDataList(tokensHeader));
+                String tokensHeader = request.getHeader(Constants.MOBILE_SDK_TOKENS_HEADER);
+                tokens.addAll(hp.createRawCookieDataList(tokensHeader));
 
-            String authCookieHeader = request.getHeader(Constants.MOBILE_SDK_AUTHORIZATION_HEADER);
-            tokens.addAll(headerParser.createRawCookieDataList(authCookieHeader));
+                String authCookieHeader = request.getHeader(Constants.MOBILE_SDK_AUTHORIZATION_HEADER);
+                tokens.addAll(hp.createRawCookieDataList(authCookieHeader));
 
-            String originalTokensHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER);
-            originalTokens.addAll(headerParser.createRawCookieDataList(originalTokensHeader));
+                String originalTokensHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKENS_HEADER);
+                originalTokens.addAll(hp.createRawCookieDataList(originalTokensHeader));
 
-            String originalTokenHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
-            originalTokens.addAll(headerParser.createRawCookieDataList(originalTokenHeader));
+                String originalTokenHeader = request.getHeader(Constants.MOBILE_SDK_ORIGINAL_TOKEN_HEADER);
+                originalTokens.addAll(hp.createRawCookieDataList(originalTokenHeader));
 
-            this.tokens = tokens;
-            if (!originalTokens.isEmpty()) {
-                this.originalTokens = originalTokens;
-            }
+                this.tokens = tokens;
+                if (!originalTokens.isEmpty()) {
+                    this.originalTokens = originalTokens;
+                }
 
-            ObjectMapper mapper = new ObjectMapper();
-            this.pxde = mapper.createObjectNode();
-            this.pxdeVerified = true;
+                ObjectMapper mapper = new ObjectMapper();
+                this.pxde = mapper.createObjectNode();
+                this.pxdeVerified = true;
+            });
         } else {
-            Cookie[] cookies = request.getCookies();
-            String[] cookieHeaders = cookieHeadersNames(getPxConfiguration())
-                    .stream()
-                    .map(request::getHeader)
-                    .toArray(String[]::new);
-            this.requestCookieNames = CookieNamesExtractor.extractCookieNames(cookies);
-            setVidAndPxhd(cookies);
-            tokens.addAll(headerParser.createRawCookieDataList(cookieHeaders));
-            this.tokens = tokens;
-            DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
-            this.pxde = deCookie.getJsonPayload();
-            this.pxdeVerified = deCookie.isValid();
+            logTime("anonymousParseCookiesElse", () -> {
+                Cookie[] cookies = request.getCookies();
+                String[] cookieHeaders = cookieHeadersNames(getPxConfiguration())
+                        .stream()
+                        .map(request::getHeader)
+                        .toArray(String[]::new);
+                this.requestCookieNames = CookieNamesExtractor.extractCookieNames(cookies);
+                setVidAndPxhd(cookies);
+                tokens.addAll(headerParser.createRawCookieDataList(cookieHeaders));
+                this.tokens = tokens;
+                DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
+                this.pxde = deCookie.getJsonPayload();
+                this.pxdeVerified = deCookie.isValid();
+            });
         }
     }
 

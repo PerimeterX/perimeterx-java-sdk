@@ -69,6 +69,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 import static com.perimeterx.utils.Constants.*;
+import static com.perimeterx.utils.PXCommonUtils.logTime;
 import static java.util.Objects.isNull;
 
 /**
@@ -155,49 +156,53 @@ public class PerimeterX implements Closeable {
      * @throws PXException - PXException
      */
     public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
-        PXContext context = null;
-        logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
+        return logTime("pxVerify", () -> {
+            PXContext context = null;
+            logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
-        try {
-            if (isValidTelemetryRequest(req)) {
-                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND);
-                return null;
-            }
-
-            if (!moduleEnabled()) {
-                logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
-                return null;
-            }
-
-            context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
-
-            if (shouldReverseRequest(req, responseWrapper)) {
-                context.setFirstPartyRequest(true);
-                return context;
-            }
-
-            //if path ext is defined at whitelist, let the request pass
-            if (configuration.isExtWhiteListed(req.getRequestURI())) {
-                return null;
-            }
-
-            handleCookies(context);
-            addCustomHeadersToRequest(req, context);
-
-            context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
-        } catch (Exception e) {
-            // If any general exception is being thrown, notify in page_request activity
-            if (context != null) {
-                if (!context.getS2sErrorReasonInfo().isErrorSet()) {
-                    EnforcerErrorUtils.handleEnforcerError(context, "Unexpected error", e);
+            try {
+                if (logTime("isValidTelemetryRequest", () -> isValidTelemetryRequest(req))) {
+                    logTime("activityHandler.handleEnforcerTelemetryActivity", () -> activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND));
+                    return null;
                 }
 
-                activityHandler.handlePageRequestedActivity(context);
-                context.setVerified(true);
-            }
-        }
+                if (!moduleEnabled()) {
+                    logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
+                    return null;
+                }
 
-        return context;
+                context = logTime("new PXContext", () -> new PXContext(req, this.ipProvider, this.hostnameProvider, configuration));
+
+                if (logTime("shouldReverseRequest", () -> shouldReverseRequest(req, responseWrapper))) {
+                    context.setFirstPartyRequest(true);
+                    return context;
+                }
+
+                //if path ext is defined at whitelist, let the request pass
+                if (configuration.isExtWhiteListed(req.getRequestURI())) {
+                    return null;
+                }
+
+                final PXContext finalContext = context;
+                logTime("handleCookies", () -> handleCookies(finalContext));
+                logTime("addCustomHeadersToRequest", () -> addCustomHeadersToRequest(req, finalContext));
+
+                context.setVerified(logTime("verificationHandler.handleVerification", () -> verificationHandler.handleVerification(finalContext, responseWrapper)));
+            } catch (Exception e) {
+                final PXContext finalContext = context;
+                // If any general exception is being thrown, notify in page_request activity
+                if (context != null) {
+                    if (!context.getS2sErrorReasonInfo().isErrorSet()) {
+                        logTime("EnforcerErrorUtils.handleEnforcerError", () -> EnforcerErrorUtils.handleEnforcerError(finalContext, "Unexpected error", e));
+                    }
+
+                    logTime("activityHandler.handlePageRequestedActivity", () -> activityHandler.handlePageRequestedActivity(finalContext));
+                    context.setVerified(true);
+                }
+            }
+
+            return context;
+        });
     }
 
     private boolean moduleEnabled() {
@@ -339,7 +344,7 @@ public class PerimeterX implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if(this.pxClient != null) {
+        if (this.pxClient != null) {
             this.pxClient.close();
         }
     }

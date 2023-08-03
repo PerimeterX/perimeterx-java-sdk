@@ -11,6 +11,8 @@ import com.perimeterx.models.risk.VidSource;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
+import static com.perimeterx.utils.PXCommonUtils.logTime;
+
 /**
  * PXCookieValidator
  * <p>
@@ -40,7 +42,7 @@ public class PXCookieValidator implements PXValidator {
             if (context.isMobileToken()) {
                 PXCookieOriginalTokenValidator mobileVerifier = new PXCookieOriginalTokenValidator(pxConfiguration);
                 mobileError = mobileVerifier.getMobileError(context);
-                mobileVerifier.verify(context);
+                logTime("mobileVerifier.verify", () -> mobileVerifier.verify(context));
                 if (!StringUtils.isEmpty(mobileError)) {
                     context.setS2sCallReason("mobile_error_" + mobileError);
                     return false;

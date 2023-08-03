@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import static com.perimeterx.utils.PXCommonUtils.logTime;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
 
@@ -35,29 +36,31 @@ public class DefaultVerificationHandler implements VerificationHandler {
 
     @Override
     public boolean handleVerification(PXContext context, HttpServletResponseWrapper responseWrapper) throws PXException {
-        boolean verified = shouldPassRequest(context);
+        boolean verified = logTime("shouldPassRequest", () -> shouldPassRequest(context));
 
-        setPxhdCookie(context, responseWrapper);
+        logTime("setPxhdCookie", () -> setPxhdCookie(context, responseWrapper));
 
         if (!verified && !context.isMonitoredRequest()) {
-            this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper);
+            logTime("blockHandler.handleBlocking",() -> this.blockHandler.handleBlocking(context, this.pxConfiguration, responseWrapper));
         }
 
-        try {
-            if (verified) {
-                logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
+        logTime("anonymousAsyncActivitiesSender" , () -> {
+            try {
+                if (verified) {
+                    logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
 
-                // Not blocking request and sending page_requested activity to px if configured as true
-                if (this.pxConfiguration.isSendPageActivities()) {
-                    this.activityHandler.handlePageRequestedActivity(context);
+                    // Not blocking request and sending page_requested activity to px if configured as true
+                    if (this.pxConfiguration.isSendPageActivities()) {
+                        this.activityHandler.handlePageRequestedActivity(context);
+                    }
+                } else {
+                    logger.debug("Request invalid");
+                    this.activityHandler.handleBlockActivity(context);
                 }
-            } else {
-                logger.debug("Request invalid");
-                this.activityHandler.handleBlockActivity(context);
+            } catch (PXException pxException) {
+                logger.error("Error occurred while handle activities", pxException);
             }
-        } catch (PXException pxException) {
-            logger.error("Error occurred while handle activities", pxException);
-        }
+        });
 
         return verified || context.isMonitoredRequest();
     }
