@@ -6,11 +6,14 @@ import com.perimeterx.models.activities.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXLogger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,6 +28,8 @@ import static com.perimeterx.utils.PXLogger.LogReason.ERROR_TELEMETRY_EXCEPTION;
  */
 public class BufferedActivityHandler implements ActivityHandler {
 
+    private static final ExecutorService es = Executors.newFixedThreadPool(8);
+    private static final PXLogger logger = PXLogger.getLogger(BufferedActivityHandler.class);
     private final int maxBufferLength;
     private volatile ConcurrentLinkedQueue<Activity> bufferedActivities = new ConcurrentLinkedQueue<>();
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -107,17 +112,22 @@ public class BufferedActivityHandler implements ActivityHandler {
         });
     }
 
-    private void handleOverflow() throws PXException {
+    private void handleOverflow() {
         logTime("handleOverflow", () -> {
-            ConcurrentLinkedQueue<Activity> activitiesToSend;
-            if (lock.tryLock()) {
+            es.execute(() -> {
+                ConcurrentLinkedQueue<Activity> activitiesToSend;
                 try {
+                    lock.lock();
                     activitiesToSend = flush();
                 } finally {
                     lock.unlock();
                 }
-                sendAsync(activitiesToSend);
-            }
+                try {
+                    sendAsync(activitiesToSend);
+                } catch (Exception e) {
+                    logger.debug("failed to send async activities", e);
+                }
+            });
         });
     }
 
