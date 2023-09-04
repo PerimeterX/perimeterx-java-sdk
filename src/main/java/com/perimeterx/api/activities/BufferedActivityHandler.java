@@ -99,17 +99,17 @@ public class BufferedActivityHandler implements ActivityHandler {
 
     private void handleOverflow() {
         es.execute(() -> {
-            ConcurrentLinkedQueue<Activity> activitiesToSend;
             try {
-                lock.lock();
-                activitiesToSend = flush();
-            } finally {
-                lock.unlock();
-            }
-            try {
-                sendAsync(activitiesToSend);
+                if (lock.tryLock()) {
+                    if (this.bufferedActivities.size() > this.maxBufferLength) {
+                        ConcurrentLinkedQueue<Activity> activitiesToSend = flush();
+                        sendAsync(activitiesToSend);
+                    }
+                }
             } catch (Exception e) {
                 logger.debug("failed to send async activities", e);
+            } finally {
+                lock.unlock();
             }
         });
     }
