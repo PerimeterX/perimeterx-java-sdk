@@ -161,8 +161,10 @@ public class PXHttpClient implements PXClient, Closeable {
             return httpClient.execute(post);
 
         } catch (ConnectTimeoutException e) {
+            logger.debug("ConnectTimeoutException", e);
             throw e;
         } catch (SocketTimeoutException e) {
+            logger.debug("SocketTimeoutException", e);
             throw new ConnectTimeoutException(e.getMessage());
         } catch (IOException e) {
             handleException(pxContext, e, S2SErrorReason.UNABLE_TO_SEND_REQUEST, null);

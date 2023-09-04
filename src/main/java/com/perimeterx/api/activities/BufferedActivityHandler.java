@@ -6,11 +6,14 @@ import com.perimeterx.models.activities.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXLogger;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -23,6 +26,8 @@ import static com.perimeterx.utils.PXLogger.LogReason.ERROR_TELEMETRY_EXCEPTION;
  * Created by nitzangoldfeder on 05/03/2017.
  */
 public class BufferedActivityHandler implements ActivityHandler {
+    private static final ExecutorService es = Executors.newFixedThreadPool(8);
+    private static final PXLogger logger = PXLogger.getLogger(BufferedActivityHandler.class);
 
     private final int maxBufferLength;
     private volatile ConcurrentLinkedQueue<Activity> bufferedActivities = new ConcurrentLinkedQueue<>();
@@ -69,7 +74,7 @@ public class BufferedActivityHandler implements ActivityHandler {
     public Activity createAdditionalS2SActivity(PXContext context) {
         final Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_ADDITIONAL_S2S, configuration.getAppId(), context);
 
-        if(isRequireRawUsername(context)) {
+        if (isRequireRawUsername(context)) {
             ((AdditionalS2SActivityDetails) activity.getDetails())
                     .setUsername(context.getLoginData().getLoginCredentials().getRawUsername());
         }
@@ -92,23 +97,28 @@ public class BufferedActivityHandler implements ActivityHandler {
         }
     }
 
-    private void handleOverflow() throws PXException {
-        ConcurrentLinkedQueue<Activity> activitiesToSend;
-        if (lock.tryLock()) {
+    private void handleOverflow() {
+        es.execute(() -> {
+            ConcurrentLinkedQueue<Activity> activitiesToSend;
             try {
+                lock.lock();
                 activitiesToSend = flush();
             } finally {
                 lock.unlock();
             }
-            sendAsync(activitiesToSend);
-        }
+            try {
+                sendAsync(activitiesToSend);
+            } catch (Exception e) {
+                logger.debug("failed to send async activities", e);
+            }
+        });
     }
 
     private void sendAsync(ConcurrentLinkedQueue<Activity> activitiesToSend) throws PXException {
         if (activitiesToSend == null) {
             return;
         }
-        
+
         List<Activity> activitiesLocal = activitiesAsList(activitiesToSend);
         try {
             client.sendBatchActivities(activitiesLocal);
