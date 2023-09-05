@@ -1,4 +1,8 @@
 # Change Log
+## [vX.X.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/vX.X.X...HEAD) (YYYY-MM-DD)
+- Added logs for timeouts
+- Running async activities via ExecutorService
+
 ## [v6.7.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.7.0...HEAD) (2023-11-05)
 - Added feature custom cookie header
 - Changed `getTelemetryConfig` is now using builder.

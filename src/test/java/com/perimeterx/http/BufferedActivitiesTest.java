@@ -52,11 +52,11 @@ public class BufferedActivitiesTest {
     }
 
     @Test
-    public void testSendActivityOnMaxBuffer() throws IOException, PXException {
+    public void testSendActivityOnMaxBuffer() throws IOException, PXException, InterruptedException {
         for (int i = 0; i <= this.configuration.getMaxBufferLen(); i++) {
             bufferedActivityHandler.handleBlockActivity(context);
         }
-
+        Thread.sleep(100);
         verify(pxClient, atLeastOnce()).sendBatchActivities(any(List.class));
     }
 
