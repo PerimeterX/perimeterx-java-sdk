@@ -11,6 +11,7 @@ import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
+import com.perimeterx.http.IPXHttpClient;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
@@ -272,6 +273,8 @@ public class PXConfiguration {
     @Builder.Default
     private String customCookieHeader = "x-px-cookies";
 
+    @Builder.Default
+    private IPXHttpClient httpClient = null;
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
