@@ -91,7 +91,7 @@ public class RemoteServer {
             requestBuilder.body(
                     new PXRequestBody(
                             req.getInputStream(),
-                            Integer.parseInt(req.getHeader(HttpHeaders.CONTENT_LENGTH))
+                            getContentLength(req)
                     )
             );
         }
@@ -322,7 +322,13 @@ public class RemoteServer {
     }
 
     // Get the header value as a long in order to more correctly proxy very large requests
-
+    private long getContentLength(HttpServletRequest request) {
+        String contentLengthHeader = request.getHeader(CONTENT_LENGTH_HEADER);
+        if (contentLengthHeader != null) {
+            return Long.parseLong(contentLengthHeader);
+        }
+        return -1L;
+    }
     protected String rewriteUrlFromRequest(HttpServletRequest servletRequest) {
         logger.debug("Rewiring url from request");
         StringBuilder uri = new StringBuilder(this.maxUrlLength);
