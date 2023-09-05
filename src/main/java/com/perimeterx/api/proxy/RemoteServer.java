@@ -10,6 +10,7 @@ import org.apache.http.client.utils.URIUtils;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.HeaderGroup;
 
+import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,7 +85,7 @@ public class RemoteServer {
         String method = req.getMethod();
         String proxyRequestUri = rewriteUrlFromRequest(req);
 
-        PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder requestBuilder = PXOutgoingRequestImpl.builder();
+        PXOutgoingRequestImplBuilder requestBuilder = PXOutgoingRequestImpl.builder();
         // Copy the body if content-length exists
         if (req.getHeader(HttpHeaders.CONTENT_LENGTH) != null) {
             requestBuilder.body(
@@ -256,7 +257,7 @@ public class RemoteServer {
      * Copy request headers from the servlet client to the proxy request.
      * This is easily overridden to add your own.
      */
-    protected void copyRequestHeaders(HttpServletRequest servletRequest, PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder requestBuilder) {
+    protected void copyRequestHeaders(HttpServletRequest servletRequest, PXOutgoingRequestImplBuilder requestBuilder) {
         // Get an Enumeration of all of the header names sent by the client
         Enumeration<String> enumerationOfHeaderNames = servletRequest.getHeaderNames();
         while (enumerationOfHeaderNames.hasMoreElements()) {
@@ -268,12 +269,12 @@ public class RemoteServer {
     /**
      * Append request headers related to PerimeterX
      */
-    protected void handlePXHeaders(PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder proxyRequest) {
+    protected void handlePXHeaders(PXOutgoingRequestImplBuilder proxyRequest) {
         proxyRequest.header(new PXHttpHeader("X-PX-ENFORCER-TRUE-IP", this.ipProvider.getRequestIP(this.req)));
         proxyRequest.header(new PXHttpHeader("X-PX-FIRST-PARTY", "1"));
     }
 
-    private void handleXForwardedForHeader(HttpServletRequest servletRequest, PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder proxyRequest) {
+    private void handleXForwardedForHeader(HttpServletRequest servletRequest, PXOutgoingRequestImplBuilder proxyRequest) {
         String forHeaderName = "X-Forwarded-For";
         String forHeader = servletRequest.getRemoteAddr();
         String existingForHeader = servletRequest.getHeader(forHeaderName);
@@ -291,7 +292,7 @@ public class RemoteServer {
      * Copy a request header from the servlet client to the proxy request.
      * This is easily overridden to filter out certain headers if desired.
      */
-    protected void copyRequestHeader(HttpServletRequest servletRequest, PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder proxyRequest,
+    protected void copyRequestHeader(HttpServletRequest servletRequest, PXOutgoingRequestImplBuilder proxyRequest,
                                      String headerName) {
         //Instead the content-length is effectively set via InputStreamEntity
         if (headerName.equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH)) {
