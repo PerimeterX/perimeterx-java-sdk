@@ -1,5 +1,5 @@
 # Change Log
-## [vX.X.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/vX.X.X...HEAD) (YYYY-MM-DD)
+## [v6.7.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.7.1...HEAD) (2023-09-05)
 - Added logs for timeouts
 - Running async activities via ExecutorService
 
