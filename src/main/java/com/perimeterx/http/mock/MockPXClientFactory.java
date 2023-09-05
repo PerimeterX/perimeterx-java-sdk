@@ -8,13 +8,13 @@ public final class MockPXClientFactory {
     }
 
     public static PXClient createPassAllPXClient() {
-        return MockPxClient.builder()
+        return MockPXClient.builder()
                 .riskResponse(new RiskResponse("uuid", 0, 0, "c", null, null, "", ""))
                 .build();
     }
 
     public static PXClient createBlockAllPXClient() {
-        return MockPxClient.builder()
+        return MockPXClient.builder()
                 .riskResponse(new RiskResponse("uuid", 0, 100, "c", null, null, "", ""))
                 .build();
     }

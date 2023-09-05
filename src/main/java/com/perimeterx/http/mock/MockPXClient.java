@@ -13,8 +13,8 @@ import java.util.List;
 
 @Builder
 @AllArgsConstructor
-public class MockPxClient implements PXClient {
-    private static final PXLogger logger = PXLogger.getLogger(MockPxClient.class);
+public class MockPXClient implements PXClient {
+    private static final PXLogger logger = PXLogger.getLogger(MockPXClient.class);
     protected RiskResponse riskResponse;
     protected PXDynamicConfiguration pxDynamicConfiguration;
     @Override
