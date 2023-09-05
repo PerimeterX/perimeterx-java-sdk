@@ -42,6 +42,7 @@ import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
 import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.TestVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
+import com.perimeterx.http.PXClient;
 import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.http.ResponseWrapper;
@@ -88,7 +89,7 @@ public class PerimeterX implements Closeable {
     private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
     private ReverseProxy reverseProxy;
-    private PXHttpClient pxClient = null;
+    private PXClient pxClient = null;
 
     private void init(PXConfiguration configuration) throws PXException {
         logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
@@ -96,7 +97,7 @@ public class PerimeterX implements Closeable {
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new CombinedIPProvider(configuration);
-        this.pxClient = new PXHttpClient(configuration);
+        setPxClient(configuration);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
@@ -115,6 +116,14 @@ public class PerimeterX implements Closeable {
         this.cookieValidator = new PXCookieValidator(this.configuration);
         setVerificationHandler();
         this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
+    }
+
+    private void setPxClient(PXConfiguration configuration) throws PXException {
+        if(configuration.getPxClient() == null) {
+            this.pxClient = new PXHttpClient(configuration);
+        } else {
+            this.pxClient = configuration.getPxClient();
+        }
     }
 
     private void setVerificationHandler() {

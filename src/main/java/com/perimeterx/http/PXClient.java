@@ -5,9 +5,9 @@ import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
  * <p>
  * Created by Shikloshi on 03/07/2016.
  */
-public interface PXClient {
+public interface PXClient extends Closeable {
 
     /**
      * Calling PX Server with Risk API call
@@ -60,4 +60,9 @@ public interface PXClient {
      * @param enforcerTelemetry
      */
     void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException;
+
+    @Override
+    default void close() throws IOException {
+        // by default do nothing
+    }
 }

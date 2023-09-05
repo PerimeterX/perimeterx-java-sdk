@@ -1,6 +1,7 @@
 # Change Log
 ## [vX.X.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.7.1...HEAD) (YYYY-MM-DD)
-- configurable HttpClient
+- configurable IPXHttpClient
+- configurable PXClient
 
 ## [v6.7.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.7.1...HEAD) (2023-09-05)
 - Added logs for timeouts
