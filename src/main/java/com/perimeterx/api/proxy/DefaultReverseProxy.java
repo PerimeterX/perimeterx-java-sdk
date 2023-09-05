@@ -1,13 +1,13 @@
 package com.perimeterx.api.proxy;
 
 import com.perimeterx.api.providers.IPProvider;
+import com.perimeterx.http.IPXHttpClient;
+import com.perimeterx.http.IPXOutgoingRequest;
+import com.perimeterx.http.PXApacheHttpClient;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXLogger;
-import org.apache.http.HttpRequest;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +43,7 @@ public class DefaultReverseProxy implements ReverseProxy {
     private String xhrReversePrefix;
     private String captchaReversePrefix;
     private String collectorUrl;
-    private CloseableHttpClient proxyClient;
+    private IPXHttpClient proxyClient;
     private PredefinedResponseHelper predefinedResponseHelper;
 
     private PXConfiguration pxConfiguration;
@@ -62,9 +62,11 @@ public class DefaultReverseProxy implements ReverseProxy {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(pxConfiguration.getMaxConnections());
         cm.setDefaultMaxPerRoute(pxConfiguration.getMaxConnectionsPerRoute());
-        this.proxyClient = HttpClients.custom()
-                .setConnectionManager(cm)
-                .build();
+        if (pxConfiguration.getHttpClient() == null) {
+            this.proxyClient = new PXApacheHttpClient(pxConfiguration);
+        } else {
+            this.proxyClient = pxConfiguration.getHttpClient();
+        }
     }
 
     public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
@@ -82,7 +84,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         String url = "https://" + pxConfiguration.getClientHost();
 
         RemoteServer remoteServer = new RemoteServer(url, clientPath, req, res, ipProvider, proxyClient, null, null, pxConfiguration);
-        HttpRequest proxyRequest = remoteServer.prepareProxyRequest();
+        IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
         remoteServer.handleResponse(proxyRequest, false);
         return true;
     }
@@ -112,7 +114,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         String originalUrl = req.getRequestURI().substring(xhrReversePrefix.length());
 
         RemoteServer remoteServer = new RemoteServer(collectorUrl, originalUrl, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
-        HttpRequest proxyRequest = remoteServer.prepareProxyRequest();
+        IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
         remoteServer.handleResponse(proxyRequest, true);
 
         return true;
@@ -135,7 +137,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         logger.debug("Forwarding request from " + captchaReversePrefix + "/" + originalRequest + "to xhr at " + url);
 
         RemoteServer remoteServer = new RemoteServer("", url, req, res, ipProvider, proxyClient, null, predefinedResponseHelper, pxConfiguration);
-        HttpRequest proxyRequest = remoteServer.prepareProxyRequest();
+        IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
         remoteServer.handleResponse(proxyRequest, true);
         return true;
 
@@ -149,7 +151,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         this.predefinedResponseHelper = predefinedResponseHelper;
     }
 
-    public void setProxyClient(CloseableHttpClient proxyClient) {
+    public void setProxyClient(IPXHttpClient proxyClient) {
         this.proxyClient = proxyClient;
     }
 

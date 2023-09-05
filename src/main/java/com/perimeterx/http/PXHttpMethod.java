@@ -1,6 +1,11 @@
 package com.perimeterx.http;
 
 public enum PXHttpMethod {
+    GET,
     POST,
-    GET
+    PUT,
+    PATCH,
+    DELETE,
+    HEAD,
+    OPTIONS
 }

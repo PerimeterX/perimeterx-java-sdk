@@ -14,14 +14,18 @@ import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PXLogger;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.ConnectTimeoutException;
 
+import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 
 /**
@@ -44,7 +48,6 @@ public class PXHttpClient implements PXClient, Closeable {
             } else {
                 this.client = pxConfiguration.getHttpClient();
             }
-            client.init();
         } catch (Exception e) {
             throw new PXException(e);
         }
@@ -90,7 +93,7 @@ public class PXHttpClient implements PXClient, Closeable {
         IPXOutgoingRequest request = PXOutgoingRequestImpl.builder()
                 .url(this.pxConfiguration.getServerURL() + Constants.API_RISK)
                 .httpMethod(PXHttpMethod.POST)
-                .body(requestBody)
+                .body(new ByteArrayInputStream(requestBody.getBytes()))
                 .build();
 
         try {
@@ -117,7 +120,7 @@ public class PXHttpClient implements PXClient, Closeable {
         }
 
         try {
-            String s = httpResponse.body();
+            String s = IOUtils.toString(httpResponse.body(), UTF_8);
             if (s.equals("null")) {
                 throw new PXException("Risk API returned null JSON");
             }
@@ -158,7 +161,7 @@ public class PXHttpClient implements PXClient, Closeable {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
             logger.debug("Sending Activity: {}", requestBody);
             IPXOutgoingRequest request = PXOutgoingRequestImpl.builder()
-                    .body(requestBody)
+                    .body(new ByteArrayInputStream(requestBody.getBytes()))
                     .url(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES)
                     .build();
             httpResponse = client.send(request);
@@ -178,7 +181,7 @@ public class PXHttpClient implements PXClient, Closeable {
         IPXOutgoingRequest request = PXOutgoingRequestImpl.builder()
                 .url(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES)
                 .httpMethod(PXHttpMethod.POST)
-                .body(requestBody)
+                .body(new ByteArrayInputStream(requestBody.getBytes()))
                 .header(new PXHttpHeader(HttpHeaders.CONTENT_TYPE, "application/json"))
                 .header(new PXHttpHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken()))
                 .build();
@@ -201,7 +204,7 @@ public class PXHttpClient implements PXClient, Closeable {
         try (IPXIncomingResponse httpResponse = client.send(request)) {
             int httpCode = httpResponse.status().getStatusCode();
             if (httpCode == HttpStatus.SC_OK) {
-                String bodyContent = httpResponse.body();
+                String bodyContent = IOUtils.toString(httpResponse.body(), UTF_8);
                 stub = JsonUtils.pxConfigurationStubReader.readValue(bodyContent);
                 logger.debug("[getConfiguration] GET request successfully executed");
             } else if (httpResponse.status().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
@@ -223,7 +226,7 @@ public class PXHttpClient implements PXClient, Closeable {
         IPXOutgoingRequest request = PXOutgoingRequestImpl.builder()
                 .url(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY)
                 .httpMethod(PXHttpMethod.POST)
-                .body(requestBody)
+                .body(new ByteArrayInputStream(requestBody.getBytes()))
                 .header(new PXHttpHeader(HttpHeaders.CONTENT_TYPE, "application/json"))
                 .header((new PXHttpHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken())))
                 .build();

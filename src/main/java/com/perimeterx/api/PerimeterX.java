@@ -115,7 +115,15 @@ public class PerimeterX implements Closeable {
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.cookieValidator = new PXCookieValidator(this.configuration);
         setVerificationHandler();
-        this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
+        setReverseProxy(configuration);
+    }
+
+    private void setReverseProxy(PXConfiguration configuration) {
+        if(this.configuration.getPxReverseProxy() == null) {
+            this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
+        } else {
+            this.reverseProxy = configuration.getPxReverseProxy();
+        }
     }
 
     private void setPxClient(PXConfiguration configuration) throws PXException {

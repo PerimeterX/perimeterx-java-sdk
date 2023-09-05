@@ -11,6 +11,7 @@ import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
+import com.perimeterx.api.proxy.ReverseProxy;
 import com.perimeterx.http.IPXHttpClient;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
@@ -279,6 +280,9 @@ public class PXConfiguration {
 
     @Builder.Default
     private PXClient pxClient = null;
+
+    @Builder.Default
+    private ReverseProxy pxReverseProxy = null;
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/

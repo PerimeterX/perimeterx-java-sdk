@@ -5,7 +5,6 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.client.methods.*;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -20,9 +19,11 @@ import org.apache.http.nio.reactor.IOReactorException;
 import org.apache.http.nio.reactor.IOReactorExceptionHandler;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class PXApacheHttpClient implements IPXHttpClient {
     private static final PXLogger logger = PXLogger.getLogger(PXApacheHttpClient.class);
@@ -34,13 +35,21 @@ public class PXApacheHttpClient implements IPXHttpClient {
     private TimerValidateRequestsQueue timerConfigUpdater;
 
     public PXApacheHttpClient(PXConfiguration pxConfiguration) {
-        this.pxConfiguration = pxConfiguration;
+        this(pxConfiguration, null, null);
     }
 
-    @Override
-    public void init() throws IOException {
-        initHttpClient();
-        initAsyncHttpClient();
+    public PXApacheHttpClient(PXConfiguration pxConfiguration,
+                              CloseableHttpClient httpClient,
+                              CloseableHttpAsyncClient asyncHttpClient) {
+        this.pxConfiguration = pxConfiguration;
+        this.httpClient = httpClient;
+        this.asyncHttpClient = asyncHttpClient;
+        if (this.httpClient == null) {
+            initHttpClient();
+        }
+        if (this.asyncHttpClient == null) {
+            initAsyncHttpClient();
+        }
     }
 
     @Override
@@ -100,17 +109,20 @@ public class PXApacheHttpClient implements IPXHttpClient {
                 .build();
     }
 
-    private void initAsyncHttpClient() throws IOReactorException {
-        DefaultConnectingIOReactor ioReactor = getDefaultConnectingIOReactor();
-
-        PoolingNHttpClientConnectionManager nHttpConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
-        CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.custom()
-                .setConnectionManager(nHttpConnectionManager)
-                .build();
-        closeableHttpAsyncClient.start();
-        asyncHttpClient = closeableHttpAsyncClient;
-        this.timerConfigUpdater = new TimerValidateRequestsQueue(nHttpConnectionManager, pxConfiguration);
-        timerConfigUpdater.schedule();
+    private void initAsyncHttpClient() {
+        try {
+            DefaultConnectingIOReactor ioReactor = getDefaultConnectingIOReactor();
+            PoolingNHttpClientConnectionManager nHttpConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
+            CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.custom()
+                    .setConnectionManager(nHttpConnectionManager)
+                    .build();
+            closeableHttpAsyncClient.start();
+            asyncHttpClient = closeableHttpAsyncClient;
+            this.timerConfigUpdater = new TimerValidateRequestsQueue(nHttpConnectionManager, pxConfiguration);
+            timerConfigUpdater.schedule();
+        } catch (IOReactorException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static DefaultConnectingIOReactor getDefaultConnectingIOReactor() throws IOReactorException {
@@ -136,7 +148,11 @@ public class PXApacheHttpClient implements IPXHttpClient {
     private HttpRequestBase createRequest(IPXOutgoingRequest request) {
         HttpRequestBase req = buildBaseRequest(request);
 
-
+        try {
+            req.setURI(new URI(request.getUrl()));
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
         for (PXHttpHeader header : request.getHeaders()) {
             req.addHeader(header.getName(), header.getValue());
         }
@@ -144,25 +160,22 @@ public class PXApacheHttpClient implements IPXHttpClient {
         return req;
     }
 
-    private HttpRequestBase createGetRequest(IPXOutgoingRequest request) {
-        return new HttpGet(request.getUrl());
-
-    }
-
-    private HttpRequestBase createPostRequest(IPXOutgoingRequest request) {
-        HttpPost post = new HttpPost(request.getUrl());
-        post.setEntity(new StringEntity(request.getBody(), UTF_8));
-        return post;
-    }
-
     private HttpRequestBase buildBaseRequest(IPXOutgoingRequest request) {
-        switch (request.getHttpMethod()) {
-            case POST:
-                return createPostRequest(request);
-            case GET:
-                return createGetRequest(request);
-            default:
-                throw new IllegalArgumentException("unsupported method " + request.getHttpMethod());
+        InputStream body = request.getBody();
+        if (body != null) {
+            return new HttpEntityEnclosingRequestBase() {
+                @Override
+                public String getMethod() {
+                    return request.getHttpMethod().name();
+                }
+            };
+        } else {
+            return new HttpRequestBase() {
+                @Override
+                public String getMethod() {
+                    return request.getHttpMethod().name();
+                }
+            };
         }
     }
 

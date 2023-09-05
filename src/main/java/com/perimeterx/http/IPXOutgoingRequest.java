@@ -1,5 +1,6 @@
 package com.perimeterx.http;
 
+import java.io.InputStream;
 import java.util.List;
 
 public interface IPXOutgoingRequest {
@@ -7,7 +8,7 @@ public interface IPXOutgoingRequest {
 
     PXHttpMethod getHttpMethod();
 
-    String getBody();
+    InputStream getBody();
 
     List<PXHttpHeader> getHeaders();
 

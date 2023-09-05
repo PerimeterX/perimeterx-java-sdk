@@ -2,6 +2,7 @@ package com.perimeterx.http;
 
 import lombok.*;
 
+import java.io.InputStream;
 import java.util.List;
 
 @Getter
@@ -16,7 +17,7 @@ public class PXOutgoingRequestImpl implements IPXOutgoingRequest {
     private final PXHttpMethod httpMethod = PXHttpMethod.GET;
 
     @Builder.Default
-    private final String body = null;
+    private final InputStream body = null;
 
     @Singular
     private final List<PXHttpHeader> headers;
