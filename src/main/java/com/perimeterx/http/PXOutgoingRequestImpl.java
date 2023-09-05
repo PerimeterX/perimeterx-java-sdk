@@ -26,8 +26,7 @@ public class PXOutgoingRequestImpl implements IPXOutgoingRequest {
     public static class PXOutgoingRequestImplBuilder {
         public PXOutgoingRequestImplBuilder stringBody(String body) {
             if (body == null) {
-                this.body(null);
-                return this;
+                return this.body(null);
             }
 
             PXRequestBody b = new PXRequestBody(
