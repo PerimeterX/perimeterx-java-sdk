@@ -93,7 +93,7 @@ public class PXHttpClient implements PXClient, Closeable {
         IPXOutgoingRequest request = PXOutgoingRequestImpl.builder()
                 .url(this.pxConfiguration.getServerURL() + Constants.API_RISK)
                 .httpMethod(PXHttpMethod.POST)
-                .body(new ByteArrayInputStream(requestBody.getBytes()))
+                .stringBody(requestBody)
                 .build();
 
         try {
@@ -161,7 +161,7 @@ public class PXHttpClient implements PXClient, Closeable {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
             logger.debug("Sending Activity: {}", requestBody);
             IPXOutgoingRequest request = PXOutgoingRequestImpl.builder()
-                    .body(new ByteArrayInputStream(requestBody.getBytes()))
+                    .stringBody(requestBody)
                     .url(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES)
                     .build();
             httpResponse = client.send(request);
@@ -181,7 +181,7 @@ public class PXHttpClient implements PXClient, Closeable {
         IPXOutgoingRequest request = PXOutgoingRequestImpl.builder()
                 .url(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES)
                 .httpMethod(PXHttpMethod.POST)
-                .body(new ByteArrayInputStream(requestBody.getBytes()))
+                .stringBody(requestBody)
                 .header(new PXHttpHeader(HttpHeaders.CONTENT_TYPE, "application/json"))
                 .header(new PXHttpHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken()))
                 .build();
@@ -226,7 +226,7 @@ public class PXHttpClient implements PXClient, Closeable {
         IPXOutgoingRequest request = PXOutgoingRequestImpl.builder()
                 .url(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY)
                 .httpMethod(PXHttpMethod.POST)
-                .body(new ByteArrayInputStream(requestBody.getBytes()))
+                .stringBody(requestBody)
                 .header(new PXHttpHeader(HttpHeaders.CONTENT_TYPE, "application/json"))
                 .header((new PXHttpHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken())))
                 .build();

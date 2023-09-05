@@ -85,9 +85,14 @@ public class RemoteServer {
         String proxyRequestUri = rewriteUrlFromRequest(req);
 
         PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder requestBuilder = PXOutgoingRequestImpl.builder();
-        // Copy the body if content-length exists or transfer encoding
-        if (req.getHeader(HttpHeaders.CONTENT_LENGTH) != null || req.getHeader(HttpHeaders.TRANSFER_ENCODING) != null) {
-            requestBuilder.body(req.getInputStream());
+        // Copy the body if content-length exists
+        if (req.getHeader(HttpHeaders.CONTENT_LENGTH) != null) {
+            requestBuilder.body(
+                    new PXRequestBody(
+                            req.getInputStream(),
+                            Integer.parseInt(req.getHeader(HttpHeaders.CONTENT_LENGTH))
+                    )
+            );
         }
 
         if (!Objects.equals(method, "")) {

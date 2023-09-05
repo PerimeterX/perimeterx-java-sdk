@@ -8,7 +8,7 @@ public interface IPXOutgoingRequest {
 
     PXHttpMethod getHttpMethod();
 
-    InputStream getBody();
+    PXRequestBody getBody();
 
     List<PXHttpHeader> getHeaders();
 

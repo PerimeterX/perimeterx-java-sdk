@@ -5,6 +5,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.client.methods.*;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -161,14 +162,16 @@ public class PXApacheHttpClient implements IPXHttpClient {
     }
 
     private HttpRequestBase buildBaseRequest(IPXOutgoingRequest request) {
-        InputStream body = request.getBody();
+        PXRequestBody body = request.getBody();
         if (body != null) {
-            return new HttpEntityEnclosingRequestBase() {
+            HttpEntityEnclosingRequestBase req = new HttpEntityEnclosingRequestBase() {
                 @Override
                 public String getMethod() {
                     return request.getHttpMethod().name();
                 }
             };
+            req.setEntity(new InputStreamEntity(body.getInputStream(), body.getLength()));
+            return req;
         } else {
             return new HttpRequestBase() {
                 @Override
