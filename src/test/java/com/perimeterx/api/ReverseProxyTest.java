@@ -3,10 +3,12 @@ package com.perimeterx.api;
 import com.perimeterx.api.providers.CombinedIPProvider;
 import com.perimeterx.api.proxy.DefaultReverseProxy;
 import com.perimeterx.api.proxy.ReverseProxy;
+import com.perimeterx.http.PXApacheHttpClient;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.configuration.PXConfiguration;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.BasicHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicHeader;
@@ -105,17 +107,17 @@ public class ReverseProxyTest {
 
         CloseableHttpClient mockProxyHttpClient = mock(CloseableHttpClient.class);
         CloseableHttpResponse mockedHttpResponse = getMockedHttpResponse("function()", "application/javascript");
-        when(mockProxyHttpClient.execute(any(HttpHost.class), any(HttpRequest.class))).thenReturn(mockedHttpResponse);
+        when(mockProxyHttpClient.execute(any(HttpUriRequest.class))).thenReturn(mockedHttpResponse);
 
         ReverseProxy reverseProxy = new DefaultReverseProxy(pxConfiguration, new CombinedIPProvider(pxConfiguration));
-        ((DefaultReverseProxy) reverseProxy).setProxyClient(mockProxyHttpClient);
+        ((DefaultReverseProxy) reverseProxy).setProxyClient(new PXApacheHttpClient(pxConfiguration, mockProxyHttpClient, null));
 
         HttpServletRequest request = new MockHttpServletRequest();
         ((MockHttpServletRequest) request).setRequestURI("/12345678/init.js");
         HttpServletResponse response = new MockHttpServletResponse();
 
         reverseProxy.reversePxClient(request, response);
-        verify(mockProxyHttpClient, times(1)).execute(any(HttpHost.class), any(HttpRequest.class));
+        verify(mockProxyHttpClient, times(1)).execute(any(HttpUriRequest.class));
         Assert.assertEquals("function()", ((MockHttpServletResponse) response).getContentAsString());
         Assert.assertEquals(response.getHeaderNames().size(), mockedHttpResponse.getAllHeaders().length);
     }
@@ -131,17 +133,17 @@ public class ReverseProxyTest {
 
         CloseableHttpClient mockProxyHttpClient = mock(CloseableHttpClient.class);
         CloseableHttpResponse mockedHttpResponse = getMockedHttpResponse("{\"some\": '\"answer\"}", "application/json");
-        when(mockProxyHttpClient.execute(any(HttpHost.class), any(HttpRequest.class))).thenReturn(mockedHttpResponse);
+        when(mockProxyHttpClient.execute(any())).thenReturn(mockedHttpResponse);
 
         ReverseProxy reverseProxy = new DefaultReverseProxy(pxConfiguration, new CombinedIPProvider(pxConfiguration));
-        ((DefaultReverseProxy) reverseProxy).setProxyClient(mockProxyHttpClient);
+        ((DefaultReverseProxy) reverseProxy).setProxyClient(new PXApacheHttpClient(pxConfiguration, mockProxyHttpClient, null));
 
         HttpServletRequest request = new MockHttpServletRequest();
         ((MockHttpServletRequest) request).setRequestURI("/12345678/xhr/api/v1/collector");
         HttpServletResponse response = new MockHttpServletResponse();
 
         reverseProxy.reversePxXhr(request, response);
-        verify(mockProxyHttpClient, times(1)).execute(any(HttpHost.class), any(HttpRequest.class));
+        verify(mockProxyHttpClient, times(1)).execute(any());
         Assert.assertEquals("{\"some\": '\"answer\"}", ((MockHttpServletResponse) response).getContentAsString());
         Assert.assertEquals(response.getHeaderNames().size(), mockedHttpResponse.getAllHeaders().length);
     }

@@ -1,29 +1,30 @@
 package com.perimeterx.api.proxy;
 
 import com.perimeterx.api.providers.IPProvider;
+import com.perimeterx.http.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
 import com.perimeterx.utils.PXLogger;
 import org.apache.http.*;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.utils.URIUtils;
-import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicHttpEntityEnclosingRequest;
-import org.apache.http.message.BasicHttpRequest;
 import org.apache.http.message.HeaderGroup;
 
+import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.net.HttpCookie;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.BitSet;
 import java.util.Enumeration;
 import java.util.Formatter;
+import java.util.Objects;
+
+import static com.perimeterx.utils.PXIOUtils.copy;
 
 /**
  * Created by nitzangoldfeder on 14/05/2018.
@@ -35,7 +36,7 @@ public class RemoteServer {
 
     private HttpServletResponse res;
     private HttpServletRequest req;
-    private HttpClient proxyClient;
+    private IPXHttpClient proxyClient;
     private IPProvider ipProvider;
     private int maxUrlLength = 1000;
     private PredefinedResponse predefinedResponse;
@@ -65,7 +66,7 @@ public class RemoteServer {
     }
 
     public RemoteServer(String serverUrl, String uri, HttpServletRequest req, HttpServletResponse res,
-                        IPProvider ipProvider, HttpClient httpClient, PredefinedResponse predefinedResponse,
+                        IPProvider ipProvider, IPXHttpClient httpClient, PredefinedResponse predefinedResponse,
                         PredefinedResponseHelper predefinedResponseHelper, PXConfiguration pxConfiguration) throws URISyntaxException {
         this.req = req;
         this.res = res;
@@ -79,36 +80,42 @@ public class RemoteServer {
         this.pxConfiguration = pxConfiguration;
     }
 
-    public HttpRequest prepareProxyRequest() throws IOException {
+    public IPXOutgoingRequest prepareProxyRequest() throws IOException {
         logger.debug("Preparing proxy request");
         String method = req.getMethod();
         String proxyRequestUri = rewriteUrlFromRequest(req);
 
-        HttpRequest proxyRequest;
-        // Copy the body if content-length exists or transfer encoding
-        if (req.getHeader(HttpHeaders.CONTENT_LENGTH) != null || req.getHeader(HttpHeaders.TRANSFER_ENCODING) != null) {
-            proxyRequest = newProxyRequestWithEntity(method, proxyRequestUri, req);
-        } else {
-            // case not, BasicHttpRequest
-            proxyRequest = new BasicHttpRequest(method, proxyRequestUri);
+        PXOutgoingRequestImplBuilder requestBuilder = PXOutgoingRequestImpl.builder();
+        // Copy the body if content-length exists
+        if (getContentLength(req) != -1) {
+            requestBuilder.body(
+                    new PXRequestBody(
+                            req.getInputStream(),
+                            getContentLength(req)
+                    )
+            );
         }
 
+        if (!Objects.equals(method, "")) {
+            requestBuilder.httpMethod(PXHttpMethod.valueOf(method));
+        }
+        requestBuilder.url(proxyRequestUri);
         // Reverse proxy
-        copyRequestHeaders(req, proxyRequest);
-        handleXForwardedForHeader(req, proxyRequest);
+        copyRequestHeaders(req, requestBuilder);
+        handleXForwardedForHeader(req, requestBuilder);
 
         // PX Logic
-        handlePXHeaders(proxyRequest);
+        handlePXHeaders(requestBuilder);
 
-        return proxyRequest;
+        return requestBuilder.build();
     }
 
-    public HttpResponse handleResponse(HttpRequest proxyRequest, boolean allowPredefinedHandler) {
-        HttpResponse proxyResponse = null;
+    public IPXIncomingResponse handleResponse(IPXOutgoingRequest proxyRequest, boolean allowPredefinedHandler) {
+        IPXIncomingResponse proxyResponse = null;
         try {
             // Execute the request
             proxyResponse = doExecute(proxyRequest);
-            int statusCode = proxyResponse.getStatusLine().getStatusCode();
+            int statusCode = proxyResponse.status().getStatusCode();
 
             // In failure we can check if we enable predefined request or proxy the original response
             if (allowPredefinedHandler && statusCode >= HttpStatus.SC_BAD_REQUEST) {
@@ -144,20 +151,19 @@ public class RemoteServer {
     /**
      * Copy response body data (the entity) from the proxy to the servlet client.
      */
-    protected void copyResponseEntity(HttpResponse proxyResponse) throws IOException {
-        HttpEntity entity = proxyResponse.getEntity();
-        if (entity != null) {
-            OutputStream servletOutputStream = res.getOutputStream();
-            entity.writeTo(servletOutputStream);
+    protected void copyResponseEntity(IPXIncomingResponse proxyResponse) throws IOException {
+        InputStream body = proxyResponse.body();
+        if (body != null) {
+            copy(body, res.getOutputStream());
         }
     }
 
     /**
      * Copy proxied response headers back to the servlet client.
      */
-    protected void copyResponseHeaders(HttpResponse proxyResponse, HttpServletRequest servletRequest,
+    protected void copyResponseHeaders(IPXIncomingResponse proxyResponse, HttpServletRequest servletRequest,
                                        HttpServletResponse servletResponse) {
-        for (Header header : proxyResponse.getAllHeaders()) {
+        for (PXHttpHeader header : proxyResponse.headers()) {
             copyResponseHeader(servletRequest, servletResponse, header);
         }
     }
@@ -167,7 +173,7 @@ public class RemoteServer {
      * This is easily overwritten to filter out certain headers if desired.
      */
     protected void copyResponseHeader(HttpServletRequest servletRequest,
-                                      HttpServletResponse servletResponse, Header header) {
+                                      HttpServletResponse servletResponse, PXHttpHeader header) {
         String headerName = header.getName();
         if (hopByHopHeaders.containsHeader(headerName))
             return;
@@ -251,43 +257,42 @@ public class RemoteServer {
      * Copy request headers from the servlet client to the proxy request.
      * This is easily overridden to add your own.
      */
-    protected void copyRequestHeaders(HttpServletRequest servletRequest, HttpRequest proxyRequest) {
+    protected void copyRequestHeaders(HttpServletRequest servletRequest, PXOutgoingRequestImplBuilder requestBuilder) {
         // Get an Enumeration of all of the header names sent by the client
-        @SuppressWarnings("unchecked")
         Enumeration<String> enumerationOfHeaderNames = servletRequest.getHeaderNames();
         while (enumerationOfHeaderNames.hasMoreElements()) {
             String headerName = enumerationOfHeaderNames.nextElement();
-            copyRequestHeader(servletRequest, proxyRequest, headerName);
+            copyRequestHeader(servletRequest, requestBuilder, headerName);
         }
     }
 
     /**
      * Append request headers related to PerimeterX
      */
-    protected void handlePXHeaders(HttpRequest proxyRequest) {
-        proxyRequest.addHeader("X-PX-ENFORCER-TRUE-IP", this.ipProvider.getRequestIP(this.req));
-        proxyRequest.addHeader("X-PX-FIRST-PARTY", "1");
+    protected void handlePXHeaders(PXOutgoingRequestImplBuilder proxyRequest) {
+        proxyRequest.header(new PXHttpHeader("X-PX-ENFORCER-TRUE-IP", this.ipProvider.getRequestIP(this.req)));
+        proxyRequest.header(new PXHttpHeader("X-PX-FIRST-PARTY", "1"));
     }
 
-    private void handleXForwardedForHeader(HttpServletRequest servletRequest, HttpRequest proxyRequest) {
+    private void handleXForwardedForHeader(HttpServletRequest servletRequest, PXOutgoingRequestImplBuilder proxyRequest) {
         String forHeaderName = "X-Forwarded-For";
         String forHeader = servletRequest.getRemoteAddr();
         String existingForHeader = servletRequest.getHeader(forHeaderName);
         if (existingForHeader != null) {
             forHeader = existingForHeader + ", " + forHeader;
         }
-        proxyRequest.setHeader(forHeaderName, forHeader);
+        proxyRequest.header(new PXHttpHeader(forHeaderName, forHeader));
 
         String protoHeaderName = "X-Forwarded-Proto";
         String protoHeader = servletRequest.getScheme();
-        proxyRequest.setHeader(protoHeaderName, protoHeader);
+        proxyRequest.header(new PXHttpHeader(protoHeaderName, protoHeader));
     }
 
     /**
      * Copy a request header from the servlet client to the proxy request.
      * This is easily overridden to filter out certain headers if desired.
      */
-    protected void copyRequestHeader(HttpServletRequest servletRequest, HttpRequest proxyRequest,
+    protected void copyRequestHeader(HttpServletRequest servletRequest, PXOutgoingRequestImplBuilder proxyRequest,
                                      String headerName) {
         //Instead the content-length is effectively set via InputStreamEntity
         if (headerName.equalsIgnoreCase(HttpHeaders.CONTENT_LENGTH)) {
@@ -302,7 +307,6 @@ public class RemoteServer {
             return;
         }
 
-        @SuppressWarnings("unchecked")
         Enumeration<String> headers = servletRequest.getHeaders(headerName);
         while (headers.hasMoreElements()) {//sometimes more than one value
             String headerValue = headers.nextElement();
@@ -313,27 +317,14 @@ public class RemoteServer {
                     headerValue += ":" + host.getPort();
                 }
             }
-            proxyRequest.addHeader(headerName, headerValue);
+            proxyRequest.header(new PXHttpHeader(headerName, headerValue));
         }
-    }
-
-    protected HttpRequest newProxyRequestWithEntity(String method, String proxyRequestUri, HttpServletRequest servletRequest) throws IOException {
-        HttpEntityEnclosingRequest eProxyRequest = new BasicHttpEntityEnclosingRequest(method, proxyRequestUri);
-        // Add the input entity (streamed)
-        //  note: we don't bother ensuring we close the servletInputStream since the container handles it
-        eProxyRequest.setEntity(new InputStreamEntity(servletRequest.getInputStream(), getContentLength(servletRequest)));
-        return eProxyRequest;
     }
 
     // Get the header value as a long in order to more correctly proxy very large requests
     private long getContentLength(HttpServletRequest request) {
-        String contentLengthHeader = request.getHeader(CONTENT_LENGTH_HEADER);
-        if (contentLengthHeader != null) {
-            return Long.parseLong(contentLengthHeader);
-        }
-        return -1L;
+        return request.getContentLength();
     }
-
     protected String rewriteUrlFromRequest(HttpServletRequest servletRequest) {
         logger.debug("Rewiring url from request");
         StringBuilder uri = new StringBuilder(this.maxUrlLength);
@@ -427,7 +418,7 @@ public class RemoteServer {
         asciiQueryChars.set((int) '%');//leave existing percent escapes in place
     }
 
-    protected HttpResponse doExecute(HttpRequest proxyRequest) throws IOException {
-        return proxyClient.execute(targetHost, proxyRequest);
+    protected IPXIncomingResponse doExecute(IPXOutgoingRequest proxyRequest) throws IOException {
+        return proxyClient.send(proxyRequest);
     }
 }
