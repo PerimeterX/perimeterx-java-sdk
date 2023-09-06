@@ -119,19 +119,11 @@ public class PerimeterX implements Closeable {
     }
 
     private void setReverseProxy(PXConfiguration configuration) {
-        if(this.configuration.getPxReverseProxy() == null) {
-            this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
-        } else {
-            this.reverseProxy = configuration.getPxReverseProxy();
-        }
+        this.reverseProxy = configuration.getReverseProxyInstance();
     }
 
     private void setPxClient(PXConfiguration configuration) throws PXException {
-        if(configuration.getPxClient() == null) {
-            this.pxClient = new PXHttpClient(configuration);
-        } else {
-            this.pxClient = configuration.getPxClient();
-        }
+        this.pxClient = configuration.getPxClientInstance();
     }
 
     private void setVerificationHandler() {
@@ -355,7 +347,7 @@ public class PerimeterX implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if(this.pxClient != null) {
+        if (this.pxClient != null) {
             this.pxClient.close();
         }
     }

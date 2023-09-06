@@ -19,7 +19,6 @@ import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.ConnectTimeoutException;
 
-import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -43,11 +42,7 @@ public class PXHttpClient implements PXClient, Closeable {
     public PXHttpClient(PXConfiguration pxConfiguration) throws PXException {
         try {
             this.pxConfiguration = pxConfiguration;
-            if (pxConfiguration.getHttpClient() == null) {
-                this.client = new PXApacheHttpClient(pxConfiguration);
-            } else {
-                this.client = pxConfiguration.getHttpClient();
-            }
+            this.client = pxConfiguration.getIPXHttpClientInstance();
         } catch (Exception e) {
             throw new PXException(e);
         }

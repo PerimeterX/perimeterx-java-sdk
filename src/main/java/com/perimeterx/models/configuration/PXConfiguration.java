@@ -9,21 +9,23 @@ import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrespons
 import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidator;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.api.blockhandler.DefaultBlockHandler;
+import com.perimeterx.api.providers.CombinedIPProvider;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.DefaultCustomParametersProvider;
+import com.perimeterx.api.proxy.DefaultReverseProxy;
 import com.perimeterx.api.proxy.ReverseProxy;
 import com.perimeterx.http.IPXHttpClient;
+import com.perimeterx.http.PXApacheHttpClient;
 import com.perimeterx.http.PXClient;
+import com.perimeterx.http.PXHttpClient;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
+import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
 import com.perimeterx.utils.LoggerSeverity;
 import com.perimeterx.utils.PXLogger;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -276,13 +278,30 @@ public class PXConfiguration {
     private String customCookieHeader = "x-px-cookies";
 
     @Builder.Default
+    @Getter(AccessLevel.PRIVATE)
     private IPXHttpClient httpClient = null;
 
     @Builder.Default
+    @Getter(AccessLevel.PRIVATE)
     private PXClient pxClient = null;
 
     @Builder.Default
+    @Getter(AccessLevel.PRIVATE)
     private ReverseProxy pxReverseProxy = null;
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private volatile PXClient pxClientInstance = null;
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private volatile IPXHttpClient ipxHttpClientInstance = null;
+
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private volatile ReverseProxy reverseProxyInstance = null;
+
+
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
@@ -293,6 +312,52 @@ public class PXConfiguration {
     public void disableModule() {
         this.moduleEnabled = false;
     }
+
+    public PXClient getPxClientInstance() throws PXException {
+        if (pxClientInstance == null) {
+            synchronized (this) {
+                if (pxClientInstance == null) {
+                    if (this.getPxClient() == null) {
+                        pxClientInstance = new PXHttpClient(this);
+                    } else {
+                        pxClientInstance = this.getPxClient();
+                    }
+                }
+            }
+        }
+        return pxClientInstance;
+    }
+
+    public IPXHttpClient getIPXHttpClientInstance() {
+        if (ipxHttpClientInstance == null) {
+            synchronized (this) {
+                if (ipxHttpClientInstance == null) {
+                    if (this.getHttpClient() == null) {
+                        ipxHttpClientInstance = new PXApacheHttpClient(this);
+                    } else {
+                        ipxHttpClientInstance = this.getHttpClient();
+                    }
+                }
+            }
+        }
+        return ipxHttpClientInstance;
+    }
+
+    public ReverseProxy getReverseProxyInstance() {
+        if (reverseProxyInstance == null) {
+            synchronized (this) {
+                if (reverseProxyInstance == null) {
+                    if (this.getPxReverseProxy() == null) {
+                        reverseProxyInstance = new DefaultReverseProxy(this, new CombinedIPProvider(this));
+                    } else {
+                        reverseProxyInstance = this.getPxReverseProxy();
+                    }
+                }
+            }
+        }
+        return reverseProxyInstance;
+    }
+
 
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         logger.debug("Updating PXConfiguration file");

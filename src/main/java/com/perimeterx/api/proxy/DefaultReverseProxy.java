@@ -62,11 +62,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setMaxTotal(pxConfiguration.getMaxConnections());
         cm.setDefaultMaxPerRoute(pxConfiguration.getMaxConnectionsPerRoute());
-        if (pxConfiguration.getHttpClient() == null) {
-            this.proxyClient = new PXApacheHttpClient(pxConfiguration);
-        } else {
-            this.proxyClient = pxConfiguration.getHttpClient();
-        }
+        this.proxyClient = pxConfiguration.getIPXHttpClientInstance();
     }
 
     public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
