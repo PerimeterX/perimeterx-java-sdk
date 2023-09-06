@@ -64,7 +64,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
 
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
         try {
-            if (!StringUtils.isEmpty(context.getResponsePxhd()) && !context.getResponsePxhd().equals(context.getPxhd())) {
+            if (!StringUtils.isEmpty(context.getResponsePxhd())) {
                 String pxhdCookieValue = context.getResponsePxhd();
                 Cookie cookie = new Cookie("_pxhd", URLEncoder.encode(pxhdCookieValue, "UTF-8"));
                 cookie.setPath("/");
