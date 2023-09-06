@@ -163,7 +163,7 @@ public class PXApacheHttpClient implements IPXHttpClient {
 
     private HttpRequestBase buildBaseRequest(IPXOutgoingRequest request) {
         PXRequestBody body = request.getBody();
-        if (body != null) {
+        if (body != null && body.getInputStream() != null) {
             HttpEntityEnclosingRequestBase req = new HttpEntityEnclosingRequestBase() {
                 @Override
                 public String getMethod() {

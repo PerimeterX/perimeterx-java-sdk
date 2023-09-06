@@ -87,7 +87,7 @@ public class RemoteServer {
 
         PXOutgoingRequestImplBuilder requestBuilder = PXOutgoingRequestImpl.builder();
         // Copy the body if content-length exists
-        if (req.getHeader(HttpHeaders.CONTENT_LENGTH) != null) {
+        if (getContentLength(req) != -1) {
             requestBuilder.body(
                     new PXRequestBody(
                             req.getInputStream(),
@@ -323,11 +323,7 @@ public class RemoteServer {
 
     // Get the header value as a long in order to more correctly proxy very large requests
     private long getContentLength(HttpServletRequest request) {
-        String contentLengthHeader = request.getHeader(CONTENT_LENGTH_HEADER);
-        if (contentLengthHeader != null) {
-            return Long.parseLong(contentLengthHeader);
-        }
-        return -1L;
+        return request.getContentLength();
     }
     protected String rewriteUrlFromRequest(HttpServletRequest servletRequest) {
         logger.debug("Rewiring url from request");
