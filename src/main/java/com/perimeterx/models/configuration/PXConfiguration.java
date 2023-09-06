@@ -291,15 +291,15 @@ public class PXConfiguration {
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private volatile PXClient pxClientInstance = null;
+    private transient volatile PXClient pxClientInstance = null;
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private volatile IPXHttpClient ipxHttpClientInstance = null;
+    private transient volatile IPXHttpClient ipxHttpClientInstance = null;
 
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
-    private volatile ReverseProxy reverseProxyInstance = null;
+    private transient volatile ReverseProxy reverseProxyInstance = null;
 
 
     /**
