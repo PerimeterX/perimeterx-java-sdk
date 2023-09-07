@@ -20,7 +20,6 @@ import org.apache.http.nio.reactor.IOReactorException;
 import org.apache.http.nio.reactor.IOReactorExceptionHandler;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
@@ -106,7 +105,6 @@ public class PXApacheHttpClient implements IPXHttpClient {
                 .evictExpiredConnections()
                 .evictIdleConnections(MAX_IDLE_TIME_SEC, TimeUnit.SECONDS)
                 .setConnectionManager(cm)
-                .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken()))
                 .build();
     }
 
