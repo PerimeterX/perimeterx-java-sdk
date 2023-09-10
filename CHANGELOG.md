@@ -1,5 +1,5 @@
 # Change Log
-## [vX.X.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.7.1...HEAD) (YYYY-MM-DD)
+## [v6.7.2-rc](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.7.2-rc...HEAD) (2023-09-10)
 - configurable IPXHttpClient
 - configurable PXClient
 - PXHD doesn't set cookie after risk_api
