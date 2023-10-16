@@ -1,5 +1,6 @@
 # Change Log
 ## [vX.X.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.7.1...HEAD) (YYYY-MM-DD)
+- Fixed unhandled Telemetry error
 - configurable IPXHttpClient
 - configurable PXClient
 - PXHD doesn't set cookie after risk_api
