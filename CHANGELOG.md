@@ -1,5 +1,5 @@
 # Change Log
-## [vX.X.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.7.1...HEAD) (YYYY-MM-DD)
+## [v6.8.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.0...HEAD) (2023-10-18)
 - Fixed unhandled Telemetry error
 - configurable IPXHttpClient
 - configurable PXClient
