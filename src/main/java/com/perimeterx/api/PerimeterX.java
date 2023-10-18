@@ -34,7 +34,6 @@ import com.perimeterx.api.providers.CombinedIPProvider;
 import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
-import com.perimeterx.api.proxy.DefaultReverseProxy;
 import com.perimeterx.api.proxy.ReverseProxy;
 import com.perimeterx.api.remoteconfigurations.DefaultRemoteConfigManager;
 import com.perimeterx.api.remoteconfigurations.RemoteConfigurationManager;
@@ -42,7 +41,7 @@ import com.perimeterx.api.remoteconfigurations.TimerConfigUpdater;
 import com.perimeterx.api.verificationhandler.DefaultVerificationHandler;
 import com.perimeterx.api.verificationhandler.TestVerificationHandler;
 import com.perimeterx.api.verificationhandler.VerificationHandler;
-import com.perimeterx.http.PXHttpClient;
+import com.perimeterx.http.PXClient;
 import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.internals.PXCookieValidator;
@@ -53,7 +52,6 @@ import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.HMACUtils;
 import com.perimeterx.utils.PXLogger;
@@ -65,6 +63,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
@@ -89,7 +88,7 @@ public class PerimeterX implements Closeable {
     private HostnameProvider hostnameProvider;
     private VerificationHandler verificationHandler;
     private ReverseProxy reverseProxy;
-    private PXHttpClient pxClient = null;
+    private PXClient pxClient = null;
 
     private void init(PXConfiguration configuration) throws PXException {
         logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
@@ -97,7 +96,7 @@ public class PerimeterX implements Closeable {
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
         ipProvider = new CombinedIPProvider(configuration);
-        this.pxClient = new PXHttpClient(configuration);
+        setPxClient(configuration);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
@@ -115,7 +114,15 @@ public class PerimeterX implements Closeable {
         this.serverValidator = new PXS2SValidator(pxClient, this.configuration);
         this.cookieValidator = new PXCookieValidator(this.configuration);
         setVerificationHandler();
-        this.reverseProxy = new DefaultReverseProxy(configuration, ipProvider);
+        setReverseProxy(configuration);
+    }
+
+    private void setReverseProxy(PXConfiguration configuration) {
+        this.reverseProxy = configuration.getReverseProxyInstance();
+    }
+
+    private void setPxClient(PXConfiguration configuration) throws PXException {
+        this.pxClient = configuration.getPxClientInstance();
     }
 
     private void setVerificationHandler() {
@@ -177,7 +184,7 @@ public class PerimeterX implements Closeable {
             }
 
             //if path ext is defined at whitelist, let the request pass
-            if (configuration.isExtWhiteListed(req.getRequestURI())) {
+            if (req.getMethod().equalsIgnoreCase("GET") && configuration.isExtWhiteListed(req.getRequestURI())) {
                 return null;
             }
 
@@ -266,34 +273,33 @@ public class PerimeterX implements Closeable {
         if (isNull(telemetryHeader)) {
             return false;
         }
-
-        logger.debug("Received command to send enforcer telemetry");
-
-        final String decodedString = new String(Base64.getDecoder().decode(telemetryHeader));
-        final String[] splitTimestampAndHmac = decodedString.split(":");
-
-        if (splitTimestampAndHmac.length != 2) {
-            return false;
-        }
-
-        final String timestamp = splitTimestampAndHmac[0];
-        final String hmac = splitTimestampAndHmac[1];
-
-        if (Long.parseLong(timestamp) < System.currentTimeMillis()) {
-            logger.error("Telemetry command has expired.");
-            return false;
-        }
-
         try {
-            byte[] hmacBytes = HMACUtils.HMACString(timestamp, configuration.getCookieKey());
-            String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
+            logger.debug("Received command to send enforcer telemetry");
 
-            if (!generatedHmac.equals(hmac)) {
+            final String decodedString = new String(Base64.getDecoder().decode(telemetryHeader));
+            final String[] splitTimestampAndHmac = decodedString.split(":");
+
+            if (splitTimestampAndHmac.length != 2) {
+                return false;
+            }
+
+            final String timestamp = splitTimestampAndHmac[0];
+            final String hmac = splitTimestampAndHmac[1];
+
+            if (Long.parseLong(timestamp) < System.currentTimeMillis()) {
+                logger.error("Telemetry command has expired.");
+                return false;
+            }
+
+            final byte[] hmacBytes = HMACUtils.HMACString(timestamp, configuration.getCookieKey());
+            final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
+
+            if (!MessageDigest.isEqual(generatedHmac.getBytes(), hmac.getBytes())) {
                 logger.error("hmac validation failed, original=" + hmac + ", generated=" + generatedHmac);
                 return false;
             }
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
-            logger.error("hmac validation failed.");
+        } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalArgumentException e) {
+            logger.error("Telemetry validation failed.");
             return false;
         }
 
@@ -339,7 +345,7 @@ public class PerimeterX implements Closeable {
 
     @Override
     public void close() throws IOException {
-        if(this.pxClient != null) {
+        if (this.pxClient != null) {
             this.pxClient.close();
         }
     }

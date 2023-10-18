@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * Risk API server Response POJO
@@ -14,6 +15,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RiskResponse {
     private String uuid;

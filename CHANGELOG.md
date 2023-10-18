@@ -1,4 +1,11 @@
 # Change Log
+## [v6.8.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.0...HEAD) (2023-10-18)
+- Fixed unhandled Telemetry error
+- configurable IPXHttpClient
+- configurable PXClient
+- PXHD doesn't set cookie after risk_api
+- Added http method check for static content extensions
+
 ## [v6.7.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.7.1...HEAD) (2023-09-05)
 - Added logs for timeouts
 - Running async activities via ExecutorService

@@ -1,7 +1,7 @@
 package com.perimeterx.http;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.perimeterx.http.async.PxClientAsyncHandler;
+import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
@@ -17,34 +17,17 @@ import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpHeaders;
+import org.apache.http.Header;
 import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
-import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
-import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
-import org.apache.http.nio.client.methods.HttpAsyncMethods;
-import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
-import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
-import org.apache.http.nio.reactor.IOReactorException;
-import org.apache.http.nio.reactor.IOReactorExceptionHandler;
-import org.apache.http.util.EntityUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.nio.charset.Charset;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 
 /**
  * Low level HTTP client
@@ -52,74 +35,25 @@ import java.util.concurrent.TimeUnit;
  * Created by shikloshi on 04/07/2016.
  */
 public class PXHttpClient implements PXClient, Closeable {
-    private static final int INACTIVITY_PERIOD_TIME_MS = 1000;
-    private static final long MAX_IDLE_TIME_SEC = 30L;
 
     private static final PXLogger logger = PXLogger.getLogger(PXHttpClient.class);
+    private final IPXHttpClient client;
+    private final PXConfiguration pxConfiguration;
 
-    private static final Charset UTF_8 = Charset.forName("utf-8");
-
-    private CloseableHttpClient httpClient;
-    private CloseableHttpAsyncClient asyncHttpClient;
-    private PoolingNHttpClientConnectionManager nHttpConnectionManager;
-    private final TimerValidateRequestsQueue timerConfigUpdater;
-    private PXConfiguration pxConfiguration;
 
     public PXHttpClient(PXConfiguration pxConfiguration) throws PXException {
-        this.pxConfiguration = pxConfiguration;
-        initHttpClient();
         try {
-            initAsyncHttpClient();
-        } catch (IOReactorException e) {
+            this.pxConfiguration = pxConfiguration;
+            this.client = pxConfiguration.getIPXHttpClientInstance();
+        } catch (Exception e) {
             throw new PXException(e);
         }
-
-        this.timerConfigUpdater = new TimerValidateRequestsQueue(nHttpConnectionManager, pxConfiguration);
-        timerConfigUpdater.schedule();
     }
 
-    private void initHttpClient() {
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
-        cm.setMaxTotal(this.pxConfiguration.getMaxConnections());
-        cm.setDefaultMaxPerRoute(this.pxConfiguration.getMaxConnectionsPerRoute());
-        cm.setValidateAfterInactivity(INACTIVITY_PERIOD_TIME_MS);
-
-        httpClient = HttpClients.custom()
-                .evictExpiredConnections()
-                .evictIdleConnections(MAX_IDLE_TIME_SEC, TimeUnit.SECONDS)
-                .setConnectionManager(cm)
-                .setDefaultHeaders(PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken()))
-                .build();
-    }
-
-    private void initAsyncHttpClient() throws IOReactorException {
-        DefaultConnectingIOReactor ioReactor = new DefaultConnectingIOReactor();
-
-        ioReactor.setExceptionHandler(new IOReactorExceptionHandler() {
-            @Override
-            public boolean handle(IOException ex) {
-                logger.error("IO Reactor encountered an IOException, shutting down reactor. {}", ex);
-                return false;
-            }
-
-            @Override
-            public boolean handle(RuntimeException ex) {
-                logger.error("IO Reactor encountered a RuntimeException, shutting down reactor. {}", ex);
-                return false;
-            }
-        });
-
-        nHttpConnectionManager = new PoolingNHttpClientConnectionManager(ioReactor);
-        CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.custom()
-                .setConnectionManager(nHttpConnectionManager)
-                .build();
-        closeableHttpAsyncClient.start();
-        asyncHttpClient = closeableHttpAsyncClient;
-    }
 
     @Override
     public RiskResponse riskApiCall(PXContext pxContext) throws IOException {
-        CloseableHttpResponse httpResponse = null;
+        IPXIncomingResponse httpResponse = null;
         try {
             String requestBody = createRequestBody(pxContext);
             if (requestBody == null) {
@@ -152,13 +86,15 @@ public class PXHttpClient implements PXClient, Closeable {
         }
     }
 
-    private CloseableHttpResponse executeRiskAPICall(String requestBody, PXContext pxContext) throws ConnectTimeoutException {
-        HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_RISK);
-        post.setEntity(new StringEntity(requestBody, UTF_8));
-        post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
+    private IPXIncomingResponse executeRiskAPICall(String requestBody, PXContext pxContext) throws ConnectTimeoutException {
+        IPXOutgoingRequest request = requestBuilder()
+                .url(this.pxConfiguration.getServerURL() + Constants.API_RISK)
+                .httpMethod(PXHttpMethod.POST)
+                .stringBody(requestBody)
+                .build();
 
         try {
-            return httpClient.execute(post);
+            return client.send(request);
 
         } catch (ConnectTimeoutException e) {
             logger.debug("ConnectTimeoutException", e);
@@ -172,8 +108,8 @@ public class PXHttpClient implements PXClient, Closeable {
         return null;
     }
 
-    private RiskResponse validateRiskAPIResponse(CloseableHttpResponse httpResponse, PXContext pxContext) {
-        StatusLine httpStatus = httpResponse.getStatusLine();
+    private RiskResponse validateRiskAPIResponse(IPXIncomingResponse httpResponse, PXContext pxContext) {
+        PXHttpStatus httpStatus = httpResponse.status();
 
         if (httpStatus.getStatusCode() != 200) {
             handleUnexpectedHttpStatusError(pxContext, httpStatus);
@@ -181,19 +117,19 @@ public class PXHttpClient implements PXClient, Closeable {
         }
 
         try {
-            String s = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
+            String s = IOUtils.toString(httpResponse.body(), UTF_8);
             if (s.equals("null")) {
                 throw new PXException("Risk API returned null JSON");
             }
             logger.debug("Risk API Response: {}", s);
             return JsonUtils.riskResponseReader.readValue(s);
         } catch (Exception e) {
-            handleException(pxContext, e, S2SErrorReason.INVALID_RESPONSE, httpResponse.getStatusLine());
+            handleException(pxContext, e, S2SErrorReason.INVALID_RESPONSE, httpResponse.status());
         }
         return null;
     }
 
-    private void handleUnexpectedHttpStatusError(PXContext pxContext, StatusLine httpStatus) {
+    private void handleUnexpectedHttpStatusError(PXContext pxContext, PXHttpStatus httpStatus) {
         S2SErrorReason errorReason = S2SErrorReason.UNKNOWN_ERROR;
 
         int statusCode = httpStatus.getStatusCode();
@@ -208,7 +144,7 @@ public class PXHttpClient implements PXClient, Closeable {
         pxContext.setS2sErrorReasonInfo(new S2SErrorReasonInfo(errorReason, message, statusCode, statusMessage));
     }
 
-    private void handleException(PXContext pxContext, Exception e, S2SErrorReason errorReason, StatusLine httpStatusLine) {
+    private void handleException(PXContext pxContext, Exception e, S2SErrorReason errorReason, PXHttpStatus httpStatusLine) {
         S2SErrorReasonInfo errorReasonInfo = httpStatusLine == null ? new S2SErrorReasonInfo(errorReason, e.toString()) :
                 new S2SErrorReasonInfo(errorReason, e.toString(), httpStatusLine.getStatusCode(), httpStatusLine.getReasonPhrase());
         pxContext.setS2sErrorReasonInfo(errorReasonInfo);
@@ -217,16 +153,15 @@ public class PXHttpClient implements PXClient, Closeable {
 
     @Override
     public void sendActivity(Activity activity) throws IOException {
-        CloseableHttpResponse httpResponse = null;
+        IPXIncomingResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
             logger.debug("Sending Activity: {}", requestBody);
-            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
-            post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
-
-            httpResponse = httpClient.execute(post);
-            EntityUtils.consume(httpResponse.getEntity());
+            IPXOutgoingRequest request = requestBuilder()
+                    .stringBody(requestBody)
+                    .url(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES)
+                    .build();
+            httpResponse = client.send(request);
         } catch (Exception e) {
             logger.debug("Sending activity failed. Error: {}", e.getMessage());
         } finally {
@@ -238,29 +173,14 @@ public class PXHttpClient implements PXClient, Closeable {
 
     @Override
     public void sendBatchActivities(List<Activity> activities) throws IOException {
-        HttpAsyncRequestProducer producer = null;
-        BasicAsyncResponseConsumer basicAsyncResponseConsumer = null;
-        try {
-            String requestBody = JsonUtils.writer.writeValueAsString(activities);
-            logger.debug("Sending Activities: {}", requestBody);
-            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES);
-            post.setEntity(new StringEntity(requestBody, UTF_8));
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
-            post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
-            producer = HttpAsyncMethods.create(post);
-            basicAsyncResponseConsumer = new BasicAsyncResponseConsumer();
-            asyncHttpClient.execute(producer, basicAsyncResponseConsumer, new PxClientAsyncHandler());
-        } catch (Exception e) {
-            logger.debug("Sending batch activities failed. Error: {}", e.getMessage());
-        } finally {
-            if (producer != null) {
-                producer.close();
-            }
-            if (basicAsyncResponseConsumer != null) {
-                basicAsyncResponseConsumer.close();
-            }
-        }
+        String requestBody = JsonUtils.writer.writeValueAsString(activities);
+        logger.debug("Sending Activities: {}", requestBody);
+        IPXOutgoingRequest request = requestBuilder()
+                .url(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES)
+                .httpMethod(PXHttpMethod.POST)
+                .stringBody(requestBody)
+                .build();
+        client.sendAsync(request);
     }
 
     @Override
@@ -272,15 +192,17 @@ public class PXHttpClient implements PXClient, Closeable {
             queryParams = "?checksum=" + pxConfiguration.getChecksum();
         }
         PXDynamicConfiguration stub = null;
-        HttpGet get = new HttpGet(pxConfiguration.getRemoteConfigurationUrl() + Constants.API_REMOTE_CONFIGURATION + queryParams);
-
-        try (CloseableHttpResponse httpResponse = httpClient.execute(get)) {
-            int httpCode = httpResponse.getStatusLine().getStatusCode();
+        IPXOutgoingRequest request = requestBuilder()
+                .url(pxConfiguration.getRemoteConfigurationUrl() + Constants.API_REMOTE_CONFIGURATION + queryParams)
+                .httpMethod(PXHttpMethod.GET)
+                .build();
+        try (IPXIncomingResponse httpResponse = client.send(request)) {
+            int httpCode = httpResponse.status().getStatusCode();
             if (httpCode == HttpStatus.SC_OK) {
-                String bodyContent = IOUtils.toString(httpResponse.getEntity().getContent(), UTF_8);
+                String bodyContent = IOUtils.toString(httpResponse.body(), UTF_8);
                 stub = JsonUtils.pxConfigurationStubReader.readValue(bodyContent);
                 logger.debug("[getConfiguration] GET request successfully executed");
-            } else if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
+            } else if (httpResponse.status().getStatusCode() == HttpStatus.SC_NO_CONTENT) {
                 logger.debug("[getConfiguration] No updates found");
             } else {
                 logger.debug("[getConfiguration] Failed to get remote configuration, status code {}", httpCode);
@@ -294,42 +216,29 @@ public class PXHttpClient implements PXClient, Closeable {
 
     @Override
     public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException {
-        HttpAsyncRequestProducer producer = null;
-        BasicAsyncResponseConsumer basicAsyncResponseConsumer = null;
-        try {
-            String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
-            logger.debug("Sending enforcer telemetry: {}", requestBody);
-            HttpPost post = new HttpPost(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY);
-            post.setEntity(new StringEntity(requestBody, UTF_8));
-            PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());
-            post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-            post.setHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
-            post.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
-            producer = HttpAsyncMethods.create(post);
-            basicAsyncResponseConsumer = new BasicAsyncResponseConsumer();
-            asyncHttpClient.execute(producer, basicAsyncResponseConsumer, new PxClientAsyncHandler());
-        } catch (Exception e) {
-            logger.debug("Sending telemetry failed. Error: {}", e.getMessage());
-        } finally {
-            if (producer != null) {
-                producer.close();
-            }
-            if (basicAsyncResponseConsumer != null) {
-                basicAsyncResponseConsumer.close();
-            }
-        }
+        String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
+        logger.debug("Sending enforcer telemetry: {}", requestBody);
+        IPXOutgoingRequest request = requestBuilder()
+                .url(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY)
+                .httpMethod(PXHttpMethod.POST)
+                .stringBody(requestBody)
+                .build();
+        client.send(request);
     }
 
     @Override
     public void close() throws IOException {
-        this.timerConfigUpdater.close();
-
-        if (this.asyncHttpClient != null) {
-            this.asyncHttpClient.close();
+        if (this.client != null) {
+            this.client.close();
         }
+    }
 
-        if (this.httpClient != null) {
-            this.httpClient.close();
+    private PXOutgoingRequestImplBuilder requestBuilder() {
+        List<Header> defaultHeaders = PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());
+        PXOutgoingRequestImplBuilder builder = PXOutgoingRequestImpl.builder();
+        for (Header defaultHeader : defaultHeaders) {
+            builder.header(new PXHttpHeader(defaultHeader.getName(), defaultHeader.getValue()));
         }
+        return builder;
     }
 }
