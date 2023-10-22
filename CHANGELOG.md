@@ -1,4 +1,8 @@
 # Change Log
+## [v6.8.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.1...HEAD) (2023-10-22)
+- Fixed handling of cookies with illegal arguments.
+
+# Change Log
 ## [v6.8.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.0...HEAD) (2023-10-18)
 - Fixed unhandled Telemetry error
 - configurable IPXHttpClient
