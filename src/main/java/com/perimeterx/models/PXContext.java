@@ -376,7 +376,7 @@ public class PXContext {
                     try {
                         this.pxhd = URLDecoder.decode(cookie.getValue(), "UTF-8");
                     } catch (UnsupportedEncodingException | IllegalArgumentException e) {
-                        logger.error("setVidAndPxhd- failed while decoding the pxhd value", e);
+                        logger.error("setVidAndPxhd - failed while decoding the pxhd value", e);
                     }
                 }
             }
