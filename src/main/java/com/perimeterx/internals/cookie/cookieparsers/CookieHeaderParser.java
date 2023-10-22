@@ -22,7 +22,8 @@ public class CookieHeaderParser extends HeaderParser {
             String version = splitCookie[0];
             try {
                 cookiePayload = URLDecoder.decode(splitCookie[1], "UTF-8").replaceAll(" ", "+");
-            } catch (UnsupportedEncodingException e) {
+            } catch (UnsupportedEncodingException | IllegalArgumentException e) {
+                logger.error("createCookie - failed while decoding cookie", e);
                 cookiePayload = splitCookie[1];
             }
             CookieVersion standardVersion = getCookieVersion(version);
