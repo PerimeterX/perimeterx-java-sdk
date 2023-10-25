@@ -6,7 +6,10 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.utils.Constants;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Activity model
@@ -20,7 +23,7 @@ public class Activity {
     private String type;
 
     @JsonProperty("headers")
-    private Map<String, String> headers;
+    private List<ActivityHeader> headers;
 
     private long timestamp;
     @JsonProperty("socket_ip")
@@ -34,7 +37,7 @@ public class Activity {
 
     public Activity(String activityType, String appId, PXContext context, ActivityDetails details) {
         this.type = activityType;
-        this.headers = !activityType.equals(Constants.ACTIVITY_ADDITIONAL_S2S) ? context.getHeaders() : null;
+        this.headers = !activityType.equals(Constants.ACTIVITY_ADDITIONAL_S2S) ? getActivityHeaders(context.getHeaders(), context.getSensitiveHeaders()) : null;
         this.timestamp = System.currentTimeMillis();
         this.socketIp = context.getIp();
         this.pxAppId = appId;
@@ -45,5 +48,14 @@ public class Activity {
         if ((activityType.equals(Constants.ACTIVITY_PAGE_REQUESTED) || activityType.equals(Constants.ACTIVITY_BLOCKED)) && context.getPxhd() != null) {
             this.pxhd = context.getPxhd();
         }
+    }
+
+    private List<ActivityHeader> getActivityHeaders(Map<String, String> headers, Set<String> sensitiveHeaders) {
+        if (headers == null || headers.isEmpty()) {
+            return null;
+        }
+        return headers.entrySet().stream()
+                .filter(entry -> !sensitiveHeaders.contains(entry.getKey()))
+                .map(entry -> new ActivityHeader(entry.getKey(), entry.getValue())).collect(Collectors.toList());
     }
 }

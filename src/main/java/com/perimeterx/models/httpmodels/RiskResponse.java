@@ -22,12 +22,17 @@ public class RiskResponse {
     private int status;
     private int score;
     private String action;
+
     @JsonProperty("action_data")
     private RiskResponseBody actionData;
+
     @JsonProperty("data_enrichment")
     private JsonNode dataEnrichment;
     private String pxhd;
     private String message;
+
+    @JsonProperty("additional_risk_info")
+    private String additionalRiskInfo;
 
     @JsonCreator
     public RiskResponse(@JsonProperty(value = "uuid", required = true) String uuid) {

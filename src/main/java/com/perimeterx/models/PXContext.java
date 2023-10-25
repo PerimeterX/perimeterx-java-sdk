@@ -214,6 +214,8 @@ public class PXContext {
     private boolean isMonitoredRequest;
     private LoginData loginData;
     private UUID requestId;
+    private Set<String> sensitiveHeaders;
+    private String additionalRiskInfo;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -249,6 +251,7 @@ public class PXContext {
         this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
         this.requestId = UUID.randomUUID();
         this.enforcerErrorReasonInfo = new EnforcerErrorReasonInfo();
+        this.sensitiveHeaders = pxConfiguration.getSensitiveHeaders();
 
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;

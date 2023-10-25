@@ -18,13 +18,6 @@ import java.util.Map;
  * Created by shikloshi on 05/07/2016.
  */
 public class Request {
-
-    @JsonProperty("ip")
-    public String IP;
-
-    @JsonProperty("uri")
-    public String URI;
-
     @JsonProperty("url")
     public String URL;
 
@@ -32,10 +25,13 @@ public class Request {
     @JsonSerialize(using = HeadersSerializer.class)
     public List<Map.Entry<String, String>> Headers;
 
+    @JsonProperty("socket_ip")
+    private String socketIp;
+
     public static Request fromContext(PXContext context) {
+
         Request request = new Request();
-        request.IP = context.getIp();
-        request.URI = context.getUri();
+        request.socketIp = context.getIp();
         request.URL = context.getFullUrl();
         request.Headers = new ArrayList<>(context.getHeaders().entrySet());
         return request;

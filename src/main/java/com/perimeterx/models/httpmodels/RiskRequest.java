@@ -1,5 +1,6 @@
 package com.perimeterx.models.httpmodels;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.Request;
@@ -14,12 +15,15 @@ public class RiskRequest {
 
     @JsonProperty("request")
     public Request request;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("vid")
     public String vid;
+
     @JsonProperty("additional")
     public Additional additional;
-    @JsonProperty("firstParty")
-    public boolean firstParty;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("pxhd")
     public String pxhd;
 
@@ -30,7 +34,7 @@ public class RiskRequest {
         riskRequest.vid = context.getVid();
         riskRequest.pxhd = context.getPxhd();
         riskRequest.additional = com.perimeterx.models.httpmodels.Additional.fromContext(context);
-        riskRequest.firstParty = context.getPxConfiguration().isFirstPartyEnabled();
+
         if (riskRequest.pxhd != null && "no_cookie".equals(riskRequest.additional.callReason)) {
             riskRequest.additional.callReason = S2SCallReason.NO_COOKIE_W_VID.getValue();
         }

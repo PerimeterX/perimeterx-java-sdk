@@ -21,10 +21,13 @@ public class CommonActivityDetails implements ActivityDetails {
     public SSOStep ssoStep;
 
     @JsonProperty("credentials_compromised")
-    public boolean credentialsCompromised;
+    public Boolean credentialsCompromised;
 
     @JsonProperty("request_id")
     public UUID requestId;
+
+    @JsonProperty("additional_risk_info")
+    public String additionalRiskInfo;
 
     public CommonActivityDetails(PXContext context) {
         final LoginData loginData = context.getLoginData();
@@ -35,6 +38,7 @@ public class CommonActivityDetails implements ActivityDetails {
             this.credentialsCompromised = context.isBreachedAccount();
         }
 
+        this.additionalRiskInfo = context.getAdditionalRiskInfo() != null ? context.getAdditionalRiskInfo() : null;
         this.requestId = context.getRequestId();
     }
 }

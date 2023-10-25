@@ -15,6 +15,7 @@ import java.util.UUID;
 /**
  * Created by shikloshi on 06/08/2016.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Additional {
 
     @JsonProperty("px_cookie")

@@ -9,7 +9,6 @@ import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.models.httpmodels.RiskRequest;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.httpmodels.RiskResponseBody;
 
@@ -46,7 +45,7 @@ public class PXClientMock implements PXClient {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode dataEnrichment = mapper.createObjectNode();
         dataEnrichment.put("cookieMonster", "ilai");
-        RiskResponse riskResponse = new RiskResponse("uuid", 0, this.score, "c", null, dataEnrichment, "", "");
+        RiskResponse riskResponse = new RiskResponse("uuid", 0, this.score, "c", null, dataEnrichment, "", "", "");
         if (forceChallenge) {
             riskResponse.setAction("j");
             riskResponse.setActionData(new RiskResponseBody());
