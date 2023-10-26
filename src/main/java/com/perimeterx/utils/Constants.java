@@ -80,6 +80,7 @@ public final class Constants {
     public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
     public static final String CAPTCHA_BLOCK_TEMPLATE = "captcha_template";
+    public static final String BLOCK_TEMPLATE_NAME = "block_template";
     public static final String RATELIMIT_TEMPLATE = "ratelimit";
 
     public static final String BREACHED_ACCOUNT_KEY_NAME = "breached_account";
