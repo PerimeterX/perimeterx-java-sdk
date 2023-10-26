@@ -117,6 +117,10 @@ public class PXS2SValidator implements PXValidator {
         pxContext.setRiskRtt(rtt);
         pxContext.setPassReason(PassReason.S2S_ERROR);
 
+        if (response != null && response.getUuid() != null) {
+            pxContext.setUuid(response.getUuid());
+        }
+
         if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
             S2SErrorReason errorReason = getS2SErrorReason(pxContext, response);
             String errorMessage = getS2SErrorMessage(response, exception);
