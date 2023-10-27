@@ -13,6 +13,10 @@ import com.perimeterx.models.risk.S2SCallReason;
  */
 public class RiskRequest {
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("client_uuid")
+    private String clientUuid;
+
     @JsonProperty("request")
     public Request request;
 
@@ -33,6 +37,8 @@ public class RiskRequest {
         riskRequest.request = com.perimeterx.models.risk.Request.fromContext(context);
         riskRequest.vid = context.getVid();
         riskRequest.pxhd = context.getPxhd();
+        riskRequest.pxhd = context.getPxhd();
+        riskRequest.clientUuid = context.getUuid();
         riskRequest.additional = com.perimeterx.models.httpmodels.Additional.fromContext(context);
 
         if (riskRequest.pxhd != null && "no_cookie".equals(riskRequest.additional.callReason)) {
