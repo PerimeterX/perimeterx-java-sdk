@@ -184,7 +184,7 @@ public class PerimeterX implements Closeable {
             }
 
             //if path ext is defined at whitelist, let the request pass
-            if (req.getMethod().equalsIgnoreCase("GET") && configuration.isExtWhiteListed(req.getRequestURI())) {
+            if (req.getMethod().equalsIgnoreCase("GET") && configuration.isExtWhiteListed(context.getServletPath())) {
                 return null;
             }
 
