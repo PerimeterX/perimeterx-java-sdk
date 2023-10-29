@@ -301,7 +301,8 @@ public class PXConfiguration {
     @Getter(AccessLevel.NONE)
     private transient volatile ReverseProxy reverseProxyInstance = null;
 
-
+    @Builder.Default
+    private Predicate<HttpServletRequest> filterByCustomFunction = req -> false;
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
