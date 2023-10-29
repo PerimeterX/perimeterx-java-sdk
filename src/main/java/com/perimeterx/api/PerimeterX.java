@@ -89,6 +89,7 @@ public class PerimeterX implements Closeable {
     private VerificationHandler verificationHandler;
     private ReverseProxy reverseProxy;
     private PXClient pxClient = null;
+    private RequestFilter requestFilter;
 
     private void init(PXConfiguration configuration) throws PXException {
         logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
@@ -98,6 +99,7 @@ public class PerimeterX implements Closeable {
         ipProvider = new CombinedIPProvider(configuration);
         setPxClient(configuration);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
+        this.requestFilter = new RequestFilter(configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
             RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(configuration, pxClient);
@@ -171,8 +173,7 @@ public class PerimeterX implements Closeable {
                 return null;
             }
 
-            if (!moduleEnabled()) {
-                logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
+            if (requestFilter.isFilteredRequest(req)) {
                 return null;
             }
 
@@ -181,11 +182,6 @@ public class PerimeterX implements Closeable {
             if (shouldReverseRequest(req, responseWrapper)) {
                 context.setFirstPartyRequest(true);
                 return context;
-            }
-
-            //if path ext is defined at whitelist, let the request pass
-            if (req.getMethod().equalsIgnoreCase("GET") && configuration.isExtWhiteListed(context.getServletPath())) {
-                return null;
             }
 
             handleCookies(context);
@@ -205,10 +201,6 @@ public class PerimeterX implements Closeable {
         }
 
         return context;
-    }
-
-    private boolean moduleEnabled() {
-        return this.configuration.isModuleEnabled();
     }
 
     private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {

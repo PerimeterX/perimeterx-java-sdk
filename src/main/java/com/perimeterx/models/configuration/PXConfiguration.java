@@ -26,7 +26,6 @@ import com.perimeterx.utils.FilesUtils;
 import com.perimeterx.utils.LoggerSeverity;
 import com.perimeterx.utils.PXLogger;
 import lombok.*;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -413,13 +412,5 @@ public class PXConfiguration {
             }
             return this;
         }
-    }
-
-    /**
-     * @param path the path to check against the white list extension
-     * @return true if path is to static file defined at the white list
-     */
-    public boolean isExtWhiteListed(String path) {
-        return staticFilesExt.contains(FilenameUtils.getExtension(path));
     }
 }
