@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Map;
 
 import static com.perimeterx.utils.StringUtils.splitQueryParams;
@@ -17,7 +16,27 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final Map<String, String> queryParams = splitQueryParams(((RequestWrapper) request).getBody());
+        handleLoginRequest(request, response);
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        handleLoginRequest(request, response);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        handleLoginRequest(request, response);
+    }
+
+    public void handleLoginRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, String> queryParams;
+        try {
+            queryParams = splitQueryParams(((RequestWrapper) request).getBody());
+        } catch (Exception e) {
+            response.sendRedirect(request.getContextPath() + "/index");
+            return;
+        }
         final String username = queryParams.get("username");
         final String password = queryParams.get("password");
 
