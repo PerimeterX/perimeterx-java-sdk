@@ -36,21 +36,21 @@ public class FilterByExtensionTest {
     }
 
     @Test
-    public void testRequestIsNotFilteredOnMethod() {
+    public void testRequestIsNotFilteredByMethod() {
         MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.POST.name(), VALID_PATH_WITH_EXTENSION);
 
         assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod()));
     }
 
     @Test
-    public void testRequestIsNotFilteredOnPath() {
+    public void testRequestIsNotFilteredByPath() {
         MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.GET.name(), "test");
 
         assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod()));
     }
 
     @Test
-    public void testRequestIsFilteredOnDefaultValue() {
+    public void testRequestIsFilteredByDefaultValue() {
         final PXConfiguration config = PXConfiguration.builder().build();
         final RequestFilter reqFilter = new RequestFilter(config);
         final MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.GET.name(), VALID_PATH_WITH_EXTENSION);
