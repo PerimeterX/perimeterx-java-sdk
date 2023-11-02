@@ -7,9 +7,8 @@ import com.perimeterx.utils.Constants;
 import lombok.Getter;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.perimeterx.utils.ActivityUtil.getActivityHeaders;
 
 /**
  * Activity model
@@ -48,14 +47,5 @@ public class Activity {
         if ((activityType.equals(Constants.ACTIVITY_PAGE_REQUESTED) || activityType.equals(Constants.ACTIVITY_BLOCKED)) && context.getPxhd() != null) {
             this.pxhd = context.getPxhd();
         }
-    }
-
-    private List<ActivityHeader> getActivityHeaders(Map<String, String> headers, Set<String> sensitiveHeaders) {
-        if (headers == null || headers.isEmpty()) {
-            return null;
-        }
-        return headers.entrySet().stream()
-                .filter(entry -> !sensitiveHeaders.contains(entry.getKey()))
-                .map(entry -> new ActivityHeader(entry.getKey(), entry.getValue())).collect(Collectors.toList());
     }
 }

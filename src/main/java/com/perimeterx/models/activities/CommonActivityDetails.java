@@ -29,6 +29,12 @@ public class CommonActivityDetails implements ActivityDetails {
     @JsonProperty("additional_risk_info")
     public String additionalRiskInfo;
 
+    @JsonProperty("user")
+    public String username;
+
+    @JsonProperty("pass")
+    public String password;
+
     public CommonActivityDetails(PXContext context) {
         final LoginData loginData = context.getLoginData();
 
@@ -36,6 +42,8 @@ public class CommonActivityDetails implements ActivityDetails {
             this.ciProtocol = loginData.getLoginCredentials().getCiProtocol();
             this.ssoStep = loginData.getLoginCredentials().getSsoStep();
             this.credentialsCompromised = context.isBreachedAccount();
+            this.username = loginData.getLoginCredentials().getUsername();
+            this.password = loginData.getLoginCredentials().getEncodedPassword();
         }
 
         this.additionalRiskInfo = context.getAdditionalRiskInfo() != null ? context.getAdditionalRiskInfo() : null;
