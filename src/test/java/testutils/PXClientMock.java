@@ -45,7 +45,7 @@ public class PXClientMock implements PXClient {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode dataEnrichment = mapper.createObjectNode();
         dataEnrichment.put("cookieMonster", "ilai");
-        RiskResponse riskResponse = new RiskResponse("uuid", 0, this.score, "c", null, dataEnrichment, "", "", "");
+        RiskResponse riskResponse = new RiskResponse("uuid", 0, this.score, "c", null, dataEnrichment, "", "", "", "");
         if (forceChallenge) {
             riskResponse.setAction("j");
             riskResponse.setActionData(new RiskResponseBody());

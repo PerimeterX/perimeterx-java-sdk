@@ -28,7 +28,9 @@ public class RiskResponse {
 
     @JsonProperty("data_enrichment")
     private JsonNode dataEnrichment;
+
     private String pxhd;
+    private String pxhdDomain;
     private String message;
 
     @JsonProperty("additional_risk_info")
