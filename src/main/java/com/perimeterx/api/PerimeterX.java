@@ -173,10 +173,6 @@ public class PerimeterX implements Closeable {
                 return null;
             }
 
-            if (requestFilter.isFilteredRequest(req)) {
-                return null;
-            }
-
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
             if (shouldReverseRequest(req, responseWrapper)) {
@@ -184,6 +180,10 @@ public class PerimeterX implements Closeable {
                 return context;
             }
 
+            if (requestFilter.isFilteredRequest(req)) {
+                return null;
+            }
+            
             handleCookies(context);
             addCustomHeadersToRequest(req, context);
 
