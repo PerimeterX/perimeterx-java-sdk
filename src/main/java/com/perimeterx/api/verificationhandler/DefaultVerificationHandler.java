@@ -8,24 +8,32 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
+import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
 /**
  * Created by nitzangoldfeder on 28/05/2017.
  */
 public class DefaultVerificationHandler implements VerificationHandler {
+    final String SET_COOKIE_KEY_HEADER = "Set-Cookie";
+    final String PXHD_COOKIE_KEY = "_pxhd=";
+    final String COOKIE_SEPARATOR = ";";
+    final int  ONE_YEAR_IN_SECONDS = 3600 * 24 * 365;
+    final String COOKIE_MAX_AGE = "Max-Age=" + ONE_YEAR_IN_SECONDS + COOKIE_SEPARATOR;
+    final String PXHD_COOKIE_PATH = "Path=/";
+    final String COOKIE_SAME_SITE = "SameSite=Lax" + COOKIE_SEPARATOR;
+    final String COOKIE_DOMAIN_KEY = "Domain=";
 
     private static final PXLogger logger = PXLogger.getLogger(DefaultVerificationHandler.class);
 
-    private PXConfiguration pxConfiguration;
-    private ActivityHandler activityHandler;
-    private BlockHandler blockHandler;
+    private final PXConfiguration pxConfiguration;
+    private final ActivityHandler activityHandler;
+    private final BlockHandler blockHandler;
 
     public DefaultVerificationHandler(PXConfiguration pxConfiguration, ActivityHandler activityHandler) {
         this.pxConfiguration = pxConfiguration;
@@ -65,11 +73,19 @@ public class DefaultVerificationHandler implements VerificationHandler {
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
         try {
             if (!StringUtils.isEmpty(context.getResponsePxhd())) {
-                String pxhdCookieValue = context.getResponsePxhd();
-                Cookie cookie = new Cookie("_pxhd", URLEncoder.encode(pxhdCookieValue, "UTF-8"));
-                cookie.setPath("/");
-                cookie.setMaxAge(3600 * 24 * 365);
-                responseWrapper.addCookie(cookie);
+                final String pxhdCookieValue = context.getResponsePxhd();
+                final String pxHDEntry = PXHD_COOKIE_KEY + URLEncoder.encode(pxhdCookieValue, "UTF-8") + COOKIE_SEPARATOR;
+
+                String cookieValue =  pxHDEntry
+                        + COOKIE_MAX_AGE
+                        + COOKIE_SAME_SITE
+                        + PXHD_COOKIE_PATH;
+
+                        if (isNoneBlank(context.getPxhdDomain())) {
+                            cookieValue += COOKIE_SEPARATOR + COOKIE_DOMAIN_KEY + context.getPxhdDomain();
+                        }
+
+                responseWrapper.addHeader(SET_COOKIE_KEY_HEADER, cookieValue);
             }
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());

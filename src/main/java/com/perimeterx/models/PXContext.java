@@ -216,6 +216,7 @@ public class PXContext {
     private Set<String> sensitiveHeaders;
     private String additionalRiskInfo;
     private String servletPath;
+    private String pxhdDomain;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;

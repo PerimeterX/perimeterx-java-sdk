@@ -101,8 +101,12 @@ public class PXS2SValidator implements PXValidator {
         DataEnrichmentCookie dataEnrichment = new DataEnrichmentCookie(response.getDataEnrichment(), true);
         pxContext.setPxde(dataEnrichment.getJsonPayload());
         pxContext.setPxdeVerified(dataEnrichment.isValid());
+
         if(isNoneBlank(response.getPxhd())) {
             pxContext.setPxhd(response.getPxhd());
+        }
+        if(isNoneBlank(response.getPxhdDomain())) {
+            pxContext.setPxhdDomain(response.getPxhdDomain());
         }
         if (response.getAdditionalRiskInfo() != null) {
             pxContext.setAdditionalRiskInfo(response.getAdditionalRiskInfo());
