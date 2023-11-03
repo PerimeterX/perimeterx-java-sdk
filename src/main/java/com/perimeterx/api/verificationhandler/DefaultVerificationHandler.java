@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
 import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
@@ -73,23 +74,29 @@ public class DefaultVerificationHandler implements VerificationHandler {
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
         try {
             if (!StringUtils.isEmpty(context.getResponsePxhd())) {
-                final String pxhdCookieValue = context.getResponsePxhd();
-                final String pxHDEntry = PXHD_COOKIE_KEY + URLEncoder.encode(pxhdCookieValue, "UTF-8") + COOKIE_SEPARATOR;
-
-                String cookieValue =  pxHDEntry
-                        + COOKIE_MAX_AGE
-                        + COOKIE_SAME_SITE
-                        + PXHD_COOKIE_PATH;
-
-                        if (isNoneBlank(context.getPxhdDomain())) {
-                            cookieValue += COOKIE_SEPARATOR + COOKIE_DOMAIN_KEY + context.getPxhdDomain();
-                        }
+                final String cookieValue = getCookieValue(context);
 
                 responseWrapper.addHeader(SET_COOKIE_KEY_HEADER, cookieValue);
             }
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private String getCookieValue(PXContext context) throws UnsupportedEncodingException {
+        final String pxHDCookieValue = context.getResponsePxhd();
+        final String pxHDEntry = PXHD_COOKIE_KEY + URLEncoder.encode(pxHDCookieValue, StandardCharsets.UTF_8.name()) + COOKIE_SEPARATOR;
+
+        String cookieValue =  pxHDEntry
+                + COOKIE_MAX_AGE
+                + COOKIE_SAME_SITE
+                + PXHD_COOKIE_PATH;
+
+        if (isNoneBlank(context.getPxhdDomain())) {
+            cookieValue += COOKIE_SEPARATOR + COOKIE_DOMAIN_KEY + context.getPxhdDomain();
+        }
+
+        return cookieValue;
     }
 
     private boolean shouldPassRequest(PXContext context) {
