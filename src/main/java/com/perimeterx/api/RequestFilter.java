@@ -16,18 +16,8 @@ public class RequestFilter {
     }
 
     public boolean isFilteredRequest(HttpServletRequest req) {
-        return !moduleEnabled() ||
-                isExtensionWhiteListed(req.getServletPath(), req.getMethod())
+        return isExtensionWhiteListed(req.getServletPath(), req.getMethod())
                 || isFilteredByCustomFunction(req);
-    }
-
-    protected boolean moduleEnabled() {
-        final boolean isModuleEnabled = this.configuration.isModuleEnabled();
-
-        if (isModuleEnabled) {
-            logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
-        }
-        return this.configuration.isModuleEnabled();
     }
 
     protected boolean isExtensionWhiteListed(String path, String method) {
@@ -48,7 +38,7 @@ public class RequestFilter {
 
             return test;
         } catch (Exception e) {
-            logger.error("isFilteredByCustomFunction - exception during filter");
+            logger.error("isFilteredByCustomFunction - exception during filter", e);
         }
         return false;
     }

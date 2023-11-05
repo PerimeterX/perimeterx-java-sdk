@@ -173,6 +173,11 @@ public class PerimeterX implements Closeable {
                 return null;
             }
 
+            if (!moduleEnabled()) {
+                logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
+                return null;
+            }
+
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
             if (shouldReverseRequest(req, responseWrapper)) {
@@ -183,7 +188,7 @@ public class PerimeterX implements Closeable {
             if (requestFilter.isFilteredRequest(req)) {
                 return null;
             }
-            
+
             handleCookies(context);
             addCustomHeadersToRequest(req, context);
 
@@ -201,6 +206,10 @@ public class PerimeterX implements Closeable {
         }
 
         return context;
+    }
+
+    private boolean moduleEnabled() {
+        return this.configuration.isModuleEnabled();
     }
 
     private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {

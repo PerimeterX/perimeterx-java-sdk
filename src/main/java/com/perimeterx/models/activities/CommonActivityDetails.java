@@ -46,7 +46,7 @@ public class CommonActivityDetails implements ActivityDetails {
             this.password = loginData.getLoginCredentials().getEncodedPassword();
         }
 
-        this.additionalRiskInfo = context.getAdditionalRiskInfo() != null ? context.getAdditionalRiskInfo() : null;
+        this.additionalRiskInfo = context.getAdditionalRiskInfo();
         this.requestId = context.getRequestId();
     }
 }
