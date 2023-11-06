@@ -34,7 +34,6 @@
     "enforcer_error",
     "pxhd",
     "batched_activities",
-    "header_based_logger",
     "sensitive_headers"
   ]
 }
