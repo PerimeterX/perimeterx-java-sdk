@@ -88,6 +88,7 @@ public final class StringUtils {
                 data.get(credentialsFieldPath.getUsernameFieldPath()),
                 data.get(credentialsFieldPath.getPasswordFieldPath()));
     }
+
     private static Map<String, String> extractFieldsFromMultipart(String body) {
         final Map<String, String> fieldMap = new HashMap<>();
         final Matcher matcher = MULTIPART_PATTERN.matcher(body);

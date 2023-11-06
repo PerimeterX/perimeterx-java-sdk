@@ -27,8 +27,7 @@ public final class Constants {
         }
     }
 
-    public final static String SDK_VERSION = new StringBuilder().append("Java SDK v").append(String.valueOf(Constants.prop.get("sdkVersion"))).toString();
-    public final static String[] SUPPORTED_FEATURES = Constants.prop.get("supportedFeatures").toString().split(",");
+    public final static String SDK_VERSION = "Java SDK v" + Constants.prop.get("sdkVersion");
 
     public final static String ACTIVITY_BLOCKED = "block";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
