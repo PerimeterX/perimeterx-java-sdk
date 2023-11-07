@@ -46,6 +46,7 @@ public abstract class TemplateFactory {
         props.put("customLogo", pxConfig.getCustomLogo());
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
+        props.put("isMobile", pxContext.isMobileToken() ? "true" : "false");
 
         String captchaSrcParams = getCaptchaSrcParams(pxContext);
         String blockScript = getCaptchaUrl(Constants.CAPTCHA_HOST, pxConfig.getAppId(), captchaSrcParams);
@@ -65,6 +66,7 @@ public abstract class TemplateFactory {
         props.put("altBlockScript", altBlockScript);
         props.put("jsClientSrc", jsClientSrc);
         props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : "false");
+        props.put("blockedUrl", pxContext.getFullUrl());
 
         return props;
     }

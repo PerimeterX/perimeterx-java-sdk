@@ -1,4 +1,9 @@
 # Change Log
+## [v6.X.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.1...HEAD) (2023-XX-XX)
+- Added new block page implementation
+- Added the blocked request full url on block page and ABR json the blocked url
+
+
 ## [v6.8.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.1...HEAD) (2023-10-22)
 - Fixed handling of cookies with illegal arguments.
 

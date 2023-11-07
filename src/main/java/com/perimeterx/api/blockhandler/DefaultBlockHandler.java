@@ -78,8 +78,8 @@ public class DefaultBlockHandler implements BlockHandler {
                         props.get("vid"),
                         props.get("uuid"),
                         props.get("hostUrl"),
-                        props.get("blockScript"),
-                        props.get("altBlockScript"),
+                        props.get("blockScript") + "&b=" + Base64.encodeToString(props.get("blockedUrl").getBytes(), false),
+                        props.get("altBlockScript") + "&b=" + Base64.encodeToString(props.get("blockedUrl").getBytes(), false),
                         props.get("customLogo"));
 
                 blockPageResponse = new ObjectMapper().writeValueAsString(advancedBlockingResponse);
