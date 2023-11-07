@@ -39,7 +39,7 @@ public class TestVerificationHandler implements VerificationHandler {
         jsonObject.addProperty("http_method", pxContext.getHttpMethod());
         jsonObject.add("headers", gson.toJsonTree(pxContext.getHeaders()));
         jsonObject.addProperty("hostname", pxContext.getHostname());
-        jsonObject.addProperty("uri", pxContext.getUri());
+        jsonObject.addProperty("servletPath", pxContext.getServletPath());
         jsonObject.addProperty("user_agent", pxContext.getUserAgent());
         jsonObject.addProperty("full_url", pxContext.getFullUrl());
         jsonObject.addProperty("s2s_call_reason", pxContext.getS2sCallReason());

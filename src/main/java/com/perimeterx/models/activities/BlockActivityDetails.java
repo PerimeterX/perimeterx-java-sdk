@@ -24,7 +24,7 @@ public class BlockActivityDetails extends CommonActivityDetails {
     @JsonProperty("block_reason")
     private BlockReason blockReason;
 
-    @JsonProperty("block_uuid")
+    @JsonProperty("client_uuid")
     private String blockUuid;
 
     @JsonProperty("http_method")

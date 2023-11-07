@@ -6,7 +6,9 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.utils.Constants;
 import lombok.Getter;
 
-import java.util.Map;
+import java.util.List;
+
+import static com.perimeterx.utils.ActivityUtil.getActivityHeaders;
 
 /**
  * Activity model
@@ -20,7 +22,7 @@ public class Activity {
     private String type;
 
     @JsonProperty("headers")
-    private Map<String, String> headers;
+    private List<ActivityHeader> headers;
 
     private long timestamp;
     @JsonProperty("socket_ip")
@@ -34,7 +36,7 @@ public class Activity {
 
     public Activity(String activityType, String appId, PXContext context, ActivityDetails details) {
         this.type = activityType;
-        this.headers = !activityType.equals(Constants.ACTIVITY_ADDITIONAL_S2S) ? context.getHeaders() : null;
+        this.headers = !activityType.equals(Constants.ACTIVITY_ADDITIONAL_S2S) ? getActivityHeaders(context.getHeaders(), context.getSensitiveHeaders()) : null;
         this.timestamp = System.currentTimeMillis();
         this.socketIp = context.getIp();
         this.pxAppId = appId;

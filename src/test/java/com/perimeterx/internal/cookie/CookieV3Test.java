@@ -70,7 +70,7 @@ public class CookieV3Test {
                 .sensitiveRoutes(new HashSet(Arrays.asList("/login")))
                 .build();
         String pxCookie = "_px3=74c096e83d72f304bcae6d91b8017bb1e4a7c270f876ebc08977653c1b724714:LE+3eusyK6vE1d1pvI4t8HDnGQ0NCyr6aPLOIXXwT5Kr9WW1Ficr9WohnPZLdtZn/dHOsEz0fbk0YRYiKP+81g==:1000:GCTf15dR7qk+h8B+G7n3iI+1JCxiUajyAn+OJ4IRnaqMFE69CJ72+vG2m0qqQQhSF+Q13r1oVb0dgFqg0smfyA==";
-        ((MockHttpServletRequest) request).setRequestURI("/login/user");
+        ((MockHttpServletRequest) request).setServletPath("/login/user");
         ((MockHttpServletRequest) request).addHeader("cookie", pxCookie);
         ((MockHttpServletRequest) request).addHeader("user-agent", "test_user_agent");
         this.context = new PXContext(request, ipProvider, hostnameProvider, configuration);

@@ -77,7 +77,7 @@ public class PXCookieValidator implements PXValidator {
             }
 
             if (context.isSensitiveRequest()) {
-                logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getUri());
+                logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getServletPath());
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.getValue());
                 return false;
             }
