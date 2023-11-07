@@ -1,5 +1,5 @@
 # Change Log
-## [v6.8.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.2...HEAD) (2023-10-??)
+## [v6.8.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.2...HEAD) (2023-??-??)
 - Added RequestFilter to consolidate all request filters for improved management and organization.
 - Added CustomFilterByFunction feature to enhance filtering capabilities.
 - Fixed Context URI to Servlet Path for better compatibility.
