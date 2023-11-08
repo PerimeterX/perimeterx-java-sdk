@@ -70,7 +70,6 @@ public class PXContext {
     private String uuid;
     private Map<String, String> headers;
     private String hostname;
-    private String uri;
     private String userAgent;
     private String fullUrl;
     private String httpMethod;
@@ -214,6 +213,10 @@ public class PXContext {
     private boolean isMonitoredRequest;
     private LoginData loginData;
     private UUID requestId;
+    private Set<String> sensitiveHeaders;
+    private String additionalRiskInfo;
+    private String servletPath;
+    private String pxhdDomain;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
@@ -238,7 +241,7 @@ public class PXContext {
 
         this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
-        this.uri = request.getRequestURI();
+        this.servletPath = request.getServletPath();
         this.fullUrl = extractURL(request); //full URL with query string
         this.blockReason = BlockReason.NONE;
         this.passReason = PassReason.NONE;
@@ -249,6 +252,7 @@ public class PXContext {
         this.isMonitoredRequest = !shouldBypassMonitor() && shouldMonitorRequest();
         this.requestId = UUID.randomUUID();
         this.enforcerErrorReasonInfo = new EnforcerErrorReasonInfo();
+        this.sensitiveHeaders = pxConfiguration.getSensitiveHeaders();
 
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
@@ -268,8 +272,8 @@ public class PXContext {
 
     public boolean isSensitiveRequest() {
         return this.isContainCredentialsIntelligence()
-                || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), uri)
-                || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), uri)
+                || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), servletPath)
+                || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), servletPath)
                 || isCustomSensitive();
     }
 
@@ -304,8 +308,8 @@ public class PXContext {
 
     private boolean shouldMonitorRequest() {
         return ((pxConfiguration.getModuleMode().equals(ModuleMode.MONITOR) &&
-                !isRoutesContainUri(this.pxConfiguration.getEnforcedRoutes(), this.getUri())) ||
-                isRoutesContainUri(this.pxConfiguration.getMonitoredRoutes(), this.getUri()));
+                !isRoutesContainUri(this.pxConfiguration.getEnforcedRoutes(), servletPath)) ||
+                isRoutesContainUri(this.pxConfiguration.getMonitoredRoutes(), servletPath));
     }
 
     private boolean shouldBypassMonitor() {

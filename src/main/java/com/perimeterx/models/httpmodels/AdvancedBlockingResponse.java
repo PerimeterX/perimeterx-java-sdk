@@ -11,7 +11,7 @@ public class AdvancedBlockingResponse {
     private String jsClientSrc;
 
     @JsonProperty("firstPartyEnabled")
-    private String firstPartyEnabled;
+    private boolean firstPartyEnabled;
 
     @JsonProperty("vid")
     private String vid;
@@ -36,7 +36,7 @@ public class AdvancedBlockingResponse {
                                     String altBlockScript, String customLogo) {
         this.appId = appId;
         this.jsClientSrc = jsClientSrc;
-        this.firstPartyEnabled = firstPartyEnabled;
+        this.firstPartyEnabled = Boolean.getBoolean(firstPartyEnabled);
         this.vid = vid;
         this.uuid = uuid;
         this.hostUrl = hostUrl;

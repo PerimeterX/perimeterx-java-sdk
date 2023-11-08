@@ -1,5 +1,8 @@
 package com.perimeterx.utils;
 
+import com.perimeterx.models.configuration.credentialsIntelligenceconfig.ConfigCredentialsFieldPath;
+import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLDecoder;
@@ -7,11 +10,14 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.Constants.*;
 
 public final class StringUtils {
+    private final static Pattern MULTIPART_PATTERN = Pattern.compile("name=\"([^\"]+)\"\\s*(?:\n\\s*\\n)*\\s*\\s*\\s*\\s*\\s*(.*?)\\s*(?:\n|$)", Pattern.DOTALL);
+
     private final static char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
     private final static int HEX_BASE = 16;
     private final static int GENERATED_HASH_LENGTH_LIMIT = 64;
@@ -73,5 +79,27 @@ public final class StringUtils {
             return false;
         }
         return OWASP_EMAIL_PATTERN.matcher(email).matches();
+    }
+
+    public static LoginCredentials extractCredentialsFromMultipart(String formData, ConfigCredentialsFieldPath credentialsFieldPath) {
+        final Map<String, String> data = extractFieldsFromMultipart(formData);
+
+        return new LoginCredentials(
+                data.get(credentialsFieldPath.getUsernameFieldPath()),
+                data.get(credentialsFieldPath.getPasswordFieldPath()));
+    }
+
+    private static Map<String, String> extractFieldsFromMultipart(String body) {
+        final Map<String, String> fieldMap = new HashMap<>();
+        final Matcher matcher = MULTIPART_PATTERN.matcher(body);
+
+        while (matcher.find()) {
+            String fieldName = matcher.group(1);
+            String fieldValue = matcher.group(2).trim();
+
+            fieldMap.put(fieldName, fieldValue);
+        }
+
+        return fieldMap;
     }
 }

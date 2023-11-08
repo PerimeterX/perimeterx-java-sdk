@@ -27,8 +27,7 @@ public final class Constants {
         }
     }
 
-    public final static String SDK_VERSION = new StringBuilder().append("Java SDK v").append(String.valueOf(Constants.prop.get("sdkVersion"))).toString();
-    public final static String[] SUPPORTED_FEATURES = Constants.prop.get("supportedFeatures").toString().split(",");
+    public final static String SDK_VERSION = "Java SDK v" + Constants.prop.get("sdkVersion");
 
     public final static String ACTIVITY_BLOCKED = "block";
     public final static String ACTIVITY_PAGE_REQUESTED = "page_requested";
@@ -80,6 +79,7 @@ public final class Constants {
     public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 
     public static final String CAPTCHA_BLOCK_TEMPLATE = "captcha_template";
+    public static final String BLOCK_TEMPLATE_NAME = "block_template";
     public static final String RATELIMIT_TEMPLATE = "ratelimit";
 
     public static final String BREACHED_ACCOUNT_KEY_NAME = "breached_account";

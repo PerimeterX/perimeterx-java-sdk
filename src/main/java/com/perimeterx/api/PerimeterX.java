@@ -89,6 +89,7 @@ public class PerimeterX implements Closeable {
     private VerificationHandler verificationHandler;
     private ReverseProxy reverseProxy;
     private PXClient pxClient = null;
+    private RequestFilter requestFilter;
 
     private void init(PXConfiguration configuration) throws PXException {
         logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
@@ -98,6 +99,7 @@ public class PerimeterX implements Closeable {
         ipProvider = new CombinedIPProvider(configuration);
         setPxClient(configuration);
         this.activityHandler = new BufferedActivityHandler(pxClient, this.configuration);
+        this.requestFilter = new RequestFilter(configuration);
 
         if (configuration.isRemoteConfigurationEnabled()) {
             RemoteConfigurationManager remoteConfigManager = new DefaultRemoteConfigManager(configuration, pxClient);
@@ -183,8 +185,7 @@ public class PerimeterX implements Closeable {
                 return context;
             }
 
-            //if path ext is defined at whitelist, let the request pass
-            if (req.getMethod().equalsIgnoreCase("GET") && configuration.isExtWhiteListed(req.getRequestURI())) {
+            if (requestFilter.isFilteredRequest(req)) {
                 return null;
             }
 

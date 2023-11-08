@@ -89,7 +89,7 @@ public class BufferedActivityHandler implements ActivityHandler {
                 && configuration.isAddRawUsernameOnAdditionalS2SActivity();
     }
 
-    private void handleSendActivities(Activity activity) throws PXException {
+    private void handleSendActivities(Activity activity) {
         bufferedActivities.add(activity);
         int count = counter.incrementAndGet();
         if (count > maxBufferLength) {
@@ -99,17 +99,19 @@ public class BufferedActivityHandler implements ActivityHandler {
 
     private void handleOverflow() {
         es.execute(() -> {
-            try {
-                if (lock.tryLock()) {
+            if (lock.tryLock()) {
+                try {
                     if (this.bufferedActivities.size() > this.maxBufferLength) {
                         ConcurrentLinkedQueue<Activity> activitiesToSend = flush();
                         sendAsync(activitiesToSend);
                     }
+                } catch (Exception e) {
+                    logger.debug("failed to send async activities", e);
+                } finally {
+                    lock.unlock();
                 }
-            } catch (Exception e) {
-                logger.debug("failed to send async activities", e);
-            } finally {
-                lock.unlock();
+            } else {
+                logger.debug("handleOverflow -Lock acquisition failed");
             }
         });
     }

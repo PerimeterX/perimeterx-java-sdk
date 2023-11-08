@@ -8,7 +8,7 @@
     {{cssRef}}
 </head>
 <body>
-<script>
+    <script>
         /* PerimeterX assignments */
         window._pxVid = '{{vid}}';
         window._pxUuid = '{{uuid}}';
@@ -20,7 +20,7 @@
         window._pxFirstPartyEnabled = {{firstPartyEnabled}};
         window._pxBlockedUrl ='{{blockedUrl}}';
         var pxCaptchaSrc = '{{blockScript}}';
-
+        
         var script = document.createElement('script');
         script.src = pxCaptchaSrc;
         script.onerror = function () {
@@ -45,6 +45,6 @@
         };
         document.head.appendChild(script);
     </script>
-{{jsRef}}
+    {{jsRef}}
 </body>
 </html>
