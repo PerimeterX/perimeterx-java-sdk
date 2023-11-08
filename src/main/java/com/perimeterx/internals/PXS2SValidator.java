@@ -101,8 +101,15 @@ public class PXS2SValidator implements PXValidator {
         DataEnrichmentCookie dataEnrichment = new DataEnrichmentCookie(response.getDataEnrichment(), true);
         pxContext.setPxde(dataEnrichment.getJsonPayload());
         pxContext.setPxdeVerified(dataEnrichment.isValid());
+
         if(isNoneBlank(response.getPxhd())) {
             pxContext.setPxhd(response.getPxhd());
+        }
+        if(isNoneBlank(response.getPxhdDomain())) {
+            pxContext.setPxhdDomain(response.getPxhdDomain());
+        }
+        if (response.getAdditionalRiskInfo() != null) {
+            pxContext.setAdditionalRiskInfo(response.getAdditionalRiskInfo());
         }
     }
 
@@ -113,6 +120,10 @@ public class PXS2SValidator implements PXValidator {
     private void handleS2SError(PXContext pxContext, long rtt, RiskResponse response, Exception exception) {
         pxContext.setRiskRtt(rtt);
         pxContext.setPassReason(PassReason.S2S_ERROR);
+
+        if (response != null && response.getUuid() != null) {
+            pxContext.setUuid(response.getUuid());
+        }
 
         if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
             S2SErrorReason errorReason = getS2SErrorReason(pxContext, response);

@@ -6,7 +6,7 @@ public enum VidSource {
 
     RISK_COOKIE("risk_cookie"),
     VID_COOKIE("vid_cookie"),
-    NONE("none");
+    NONE(null);
     private String value;
     VidSource(String value){
         this.value = value;

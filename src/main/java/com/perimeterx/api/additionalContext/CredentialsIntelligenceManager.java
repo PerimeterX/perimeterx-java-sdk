@@ -18,7 +18,7 @@ public class CredentialsIntelligenceManager {
         if (pxConfiguration.isLoginCredentialsExtractionEnabled()) {
             final LoginCredentials credentials = getCredentials(pxConfiguration, request);
 
-            if (credentials != null && !credentials.isCredentialEmpty()) {
+            if (credentials != null && !credentials.isCredentialsEmpty()) {
                 return generateUserLoginData(pxConfiguration, credentials);
             }
         }

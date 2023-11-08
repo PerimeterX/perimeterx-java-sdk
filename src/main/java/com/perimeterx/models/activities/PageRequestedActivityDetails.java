@@ -65,7 +65,7 @@ public class PageRequestedActivityDetails extends CommonActivityDetails {
             this.errorMessage = context.getEnforcerErrorReasonInfo().getErrorMessage() + ". " + context.getEnforcerErrorReasonInfo().getStackTraceMessage();
         } else {
             this.errorMessage = context.getS2sErrorReasonInfo().getMessage();
-            this.s2SErrorReason = context.getS2sErrorReasonInfo().getReason();
+            this.s2SErrorReason = context.getS2sErrorReasonInfo().isErrorSet() ? context.getS2sErrorReasonInfo().getReason() : null;
             this.s2sErrorHttpStatus = context.getS2sErrorReasonInfo().getHttpStatus();
             this.s2sErrorHttpMessage = context.getS2sErrorReasonInfo().getHttpMessage();
         }

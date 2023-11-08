@@ -26,12 +26,12 @@ public class DefaultBlockHandler implements BlockHandler {
 
     public void handleBlocking(PXContext context, PXConfiguration pxConfig, HttpServletResponseWrapper responseWrapper) throws PXException {
         Map<String, String> props = new HashMap<>();
-        String filePrefix;
+        String templateName;
         String blockPageResponse;
         switch (context.getBlockAction()) {
             case RATE:
-                filePrefix = Constants.RATELIMIT_TEMPLATE;
-                blockPageResponse = getPage(props, filePrefix);
+                templateName = Constants.RATELIMIT_TEMPLATE;
+                blockPageResponse = getPage(props, templateName);
                 break;
 
             case CHALLENGE:
@@ -40,10 +40,15 @@ public class DefaultBlockHandler implements BlockHandler {
                     blockPageResponse = actionData;
                     break;
                 }
-            default:
-                filePrefix = Constants.CAPTCHA_BLOCK_TEMPLATE;
+            case BLOCK:
+                templateName = Constants.BLOCK_TEMPLATE_NAME;
                 props = TemplateFactory.getProps(context, pxConfig);
-                blockPageResponse = getPage(props, filePrefix);
+                blockPageResponse = getPage(props, templateName);
+                break;
+            default:
+                templateName = Constants.CAPTCHA_BLOCK_TEMPLATE;
+                props = TemplateFactory.getProps(context, pxConfig);
+                blockPageResponse = getPage(props, templateName);
         }
         try {
             sendMessage(blockPageResponse, responseWrapper, context, pxConfig);

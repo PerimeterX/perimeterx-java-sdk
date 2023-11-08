@@ -10,20 +10,15 @@ import lombok.AllArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 import java.util.Map;
 
+import static com.perimeterx.utils.StringUtils.extractCredentialsFromMultipart;
 import static com.perimeterx.utils.StringUtils.splitQueryParams;
-import static org.apache.commons.lang3.StringUtils.strip;
 
 @AllArgsConstructor
 public class RequestBodyExtractor implements CredentialsExtractor {
     private final static PXLogger logger = PXLogger.getLogger(RequestQueryParamsExtractor.class);
 
-    private final static String MULTIPART_CONTENT_SEPARATOR = "Content-Disposition: form-data; name=";
-    private final static String MULTIPART_DASH_SEPARATOR = "--";
-    private final static int DOUBLE_QUOTES_CHAR_LENGTH = 1;
     private final static String CREDENTIALS_PATH_SEPARATOR = "\\.";
     private final static String CONTENT_TYPE = "content-type";
     private final static String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
@@ -42,7 +37,7 @@ public class RequestBodyExtractor implements CredentialsExtractor {
                 return extractFromFormURLEncoded(request);
             } else if (requestContentType.contains(MULTIPART_FORM_DATA)) {
 
-                return extractFromMultipartHeaderTemplate(((RequestWrapper) request).getBody(), credentialsFieldPath);
+                return extractCredentialsFromMultipart(((RequestWrapper) request).getBody(), credentialsFieldPath);
             } else if (requestContentType.equals(APPLICATION_JSON)){
 
                 return extractRequestBodyFields(request);
@@ -63,33 +58,6 @@ public class RequestBodyExtractor implements CredentialsExtractor {
                 queryParams.get(credentialsFieldPath.getUsernameFieldPath()),
                 queryParams.get(credentialsFieldPath.getPasswordFieldPath())
         );
-    }
-
-    private LoginCredentials extractFromMultipartHeaderTemplate(String body, ConfigCredentialsFieldPath credentialsFieldPath) {
-        final String bodyWithoutEdgeDashes = strip(body, MULTIPART_DASH_SEPARATOR);
-        final String[] arr = bodyWithoutEdgeDashes.split(MULTIPART_CONTENT_SEPARATOR);
-
-        final String usernameKey = credentialsFieldPath.getUsernameFieldPath();
-        final String passwordKey = credentialsFieldPath.getPasswordFieldPath();
-        final int usernameLength = usernameKey.length() + DOUBLE_QUOTES_CHAR_LENGTH;
-        final int passwordLength = passwordKey.length() + DOUBLE_QUOTES_CHAR_LENGTH;
-
-        final LoginCredentials credentials = new LoginCredentials();
-
-        Arrays.stream(arr).forEach(header -> {
-            if (header.substring(1, usernameLength).equals(usernameKey)) {
-                credentials.setUsername(extractSubstring(header, usernameLength + DOUBLE_QUOTES_CHAR_LENGTH));
-            } else if (header.substring(1, passwordLength).equals(passwordKey)) {
-                credentials.setPassword(extractSubstring(header, passwordLength + DOUBLE_QUOTES_CHAR_LENGTH));
-            }
-        });
-
-        return credentials;
-    }
-
-    private String extractSubstring(String header, int keyLength) {
-        int keyValueIndex = header.lastIndexOf(MULTIPART_DASH_SEPARATOR);
-        return header.substring(keyLength, keyValueIndex);
     }
 
     private LoginCredentials extractRequestBodyFields(HttpServletRequest request) throws IOException {
