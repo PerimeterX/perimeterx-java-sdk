@@ -88,12 +88,14 @@ public class RemoteServer {
         PXOutgoingRequestImplBuilder requestBuilder = PXOutgoingRequestImpl.builder();
         // Copy the body if content-length exists
         if (getContentLength(req) != -1) {
-            requestBuilder.body(
-                    new PXRequestBody(
-                            req.getInputStream(),
-                            getContentLength(req)
-                    )
-            );
+            try (InputStream inputStream = req.getInputStream()) {
+                requestBuilder.body(
+                        new PXRequestBody(
+                                inputStream,
+                                getContentLength(req)
+                        )
+                );
+            }
         }
 
         if (!Objects.equals(method, "")) {
