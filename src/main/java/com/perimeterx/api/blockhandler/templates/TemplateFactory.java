@@ -23,6 +23,7 @@ import java.util.Map;
  * Created by nitzangoldfeder on 02/03/2017.
  */
 public abstract class TemplateFactory {
+    private final static String URL_HTTPS_PREFIX = "https://";
 
     public static String getTemplate(String template, Map<String, String> props) throws PXException {
         try {
@@ -52,11 +53,11 @@ public abstract class TemplateFactory {
         String altBlockScript = getCaptchaUrl(Constants.ALT_CAPTCHA_HOST, pxConfig.getAppId(), captchaSrcParams);
 
 
-        String jsClientSrc = "//" + Constants.CLIENT_HOST + "/" + pxConfig.getAppId() + "/main.min.js";
+        String jsClientSrc = URL_HTTPS_PREFIX + Constants.CLIENT_HOST + "/" + pxConfig.getAppId() + "/main.min.js";
         String hostUrl = pxContext.getCollectorURL();
         if (pxConfig.isFirstPartyEnabled() && !pxContext.isMobileToken()) {
             String prefix = pxConfig.getAppId().substring(2);
-            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "/captcha.js?" + captchaSrcParams;
+            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "?" + captchaSrcParams;
             jsClientSrc = "/" + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
             hostUrl = "/" + prefix + Constants.FIRST_PARTY_XHR_PATH;
         }
@@ -65,6 +66,7 @@ public abstract class TemplateFactory {
         props.put("altBlockScript", altBlockScript);
         props.put("jsClientSrc", jsClientSrc);
         props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : "false");
+        props.put("isMobile", Boolean.toString(pxContext.isMobileToken()));
 
         return props;
     }
@@ -86,6 +88,6 @@ public abstract class TemplateFactory {
     }
 
     private static String getCaptchaUrl(String host, String appId, String params) {
-        return "//" + host + "/" + appId + "/captcha.js?" + params;
+        return URL_HTTPS_PREFIX + host + "/" + appId + "/captcha.js?" + params;
     }
 }

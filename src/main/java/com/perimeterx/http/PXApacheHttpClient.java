@@ -168,7 +168,7 @@ public class PXApacheHttpClient implements IPXHttpClient {
                     return request.getHttpMethod().name();
                 }
             };
-            req.setEntity(new InputStreamEntity(body.getInputStream(), body.getLength()));
+            req.setEntity(new InputStreamEntity(body.getInputStream()));
             return req;
         } else {
             return new HttpRequestBase() {
