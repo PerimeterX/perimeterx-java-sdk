@@ -43,6 +43,8 @@
     "test_risk_cookie_valid_cookie_with_user_agent_of_max_length",
     "test_path_parsing_in_(block|page_requested|risk_api|additional_s2s)\\[with_dots",
     "test_path_parsing_in_additional_s2s\\[with_extra_slashes-(/login////|//////login//////)",
-    "test_path_parsing_in_(block|page_requested|risk_api|additional_s2s)\\[with_ascii_encoding_parsable"
+    "test_path_parsing_in_(block|page_requested|risk_api|additional_s2s)\\[with_ascii_encoding_parsable",
+    "test_risk_cookie_valid_cookie_with_user_agent_bigger_than_max_length",
+    "test_block_page_captcha_response_contains_http_reason_phrase"
   ]
 }

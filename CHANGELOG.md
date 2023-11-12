@@ -1,5 +1,9 @@
 # Change Log
 
+## [v6.9.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.2...HEAD) (2023-XX-XX)
+- Added new block page implementation
+- Added the blocked request full url on block page and ABR json the blocked url
+
 ## [v6.8.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.2...HEAD) (2023-??-??)
 - Added RequestFilter to consolidate all request filters for improved management and organization.
 - Added CustomFilterByFunction feature to enhance filtering capabilities.
@@ -9,9 +13,6 @@
 - Fixed the Block and Captcha pages, aligning them with the specified design and adding hard block functionality to align with spec.
 - Fixed Risk UUID to ensure it is set even when encountering a server-to-server error.
 - Fixed Async Activities Schema Addressed issues with the activity schema to ensure data accuracy and integrity.
-- Added new block page implementation
-- Added the blocked request full url on block page and ABR json the blocked url
-
 
 ## [v6.8.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.1...HEAD) (2023-10-22)
 - Fixed handling of cookies with illegal arguments.
