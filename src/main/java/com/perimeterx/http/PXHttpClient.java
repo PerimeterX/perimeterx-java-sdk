@@ -23,6 +23,7 @@ import org.apache.http.conn.ConnectTimeoutException;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.util.List;
 
@@ -116,8 +117,8 @@ public class PXHttpClient implements PXClient, Closeable {
             return null;
         }
 
-        try {
-            String s = IOUtils.toString(httpResponse.body(), UTF_8);
+        try (InputStream inputStream = httpResponse.body()) {
+            String s = IOUtils.toString(inputStream, UTF_8);
             if (s.equals("null")) {
                 throw new PXException("Risk API returned null JSON");
             }
