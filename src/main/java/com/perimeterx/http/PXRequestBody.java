@@ -9,5 +9,4 @@ import java.io.InputStream;
 @AllArgsConstructor
 public class PXRequestBody {
     private InputStream inputStream;
-    private long length;
 }
