@@ -79,7 +79,8 @@ public class DefaultBlockHandler implements BlockHandler {
                 Map<String, String> props = TemplateFactory.getProps(context, pxConfig);
                 final String blockedUrlProperty = props.get("blockedUrl");
                 String blockedUrl = "";
-                if (blockedUrlProperty != null) {
+                final String blockedUrl = blockedUrlProperty != null ? "&b=" + Base64.encodeToString(props.get("blockedUrl").getBytes(), false) : "";
+
                     blockedUrl = "&b=" + Base64.encodeToString(props.get("blockedUrl").getBytes(), false);
                 }
 
