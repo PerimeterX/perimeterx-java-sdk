@@ -1,4 +1,8 @@
 # Change Log
+
+## [v6.10.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.2...HEAD) (2023-XX-XX)
+- Added blocked URL to ABR and captcha template
+
 ## [v6.9.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.0...HEAD) (2023-11-08)
 - Added RequestFilter to consolidate all request filters for improved management and organization.
 - Added CustomFilterByFunction feature to enhance filtering capabilities.
@@ -10,11 +14,9 @@
 - Fixed Async Activities Schema Addressed issues with the activity schema to ensure data accuracy and integrity.
 - Fixed resource management issue  in various code locations.
 
-
 ## [v6.8.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.1...HEAD) (2023-10-22)
 - Fixed handling of cookies with illegal arguments.
 
-# Change Log
 ## [v6.8.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.0...HEAD) (2023-10-18)
 - Fixed unhandled Telemetry error
 - configurable IPXHttpClient

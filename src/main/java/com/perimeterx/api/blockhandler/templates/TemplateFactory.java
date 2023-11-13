@@ -66,6 +66,7 @@ public abstract class TemplateFactory {
         props.put("altBlockScript", altBlockScript);
         props.put("jsClientSrc", jsClientSrc);
         props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : "false");
+        props.put("blockedUrl", pxContext.getFullUrl());
         props.put("isMobile", Boolean.toString(pxContext.isMobileToken()));
 
         return props;
