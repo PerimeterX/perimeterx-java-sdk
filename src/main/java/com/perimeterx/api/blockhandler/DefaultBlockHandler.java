@@ -77,14 +77,17 @@ public class DefaultBlockHandler implements BlockHandler {
                 responseWrapper.setContentType(Constants.CONTENT_TYPE_APPLICATION_JSON);
 
                 Map<String, String> props = TemplateFactory.getProps(context, pxConfig);
+                final String blockedUrlProperty = props.get("blockedUrl");
+                final String blockedUrl = blockedUrlProperty != null ? "&b=" + Base64.encodeToString(blockedUrlProperty.getBytes(), false) : "";
+
                 AdvancedBlockingResponse advancedBlockingResponse = new AdvancedBlockingResponse(props.get("appId"),
                         props.get("jsClientSrc"),
                         props.get("firstPartyEnabled"),
                         props.get("vid"),
                         props.get("uuid"),
                         props.get("hostUrl"),
-                        props.get("blockScript"),
-                        props.get("altBlockScript"),
+                        props.get("blockScript") + blockedUrl,
+                        props.get("altBlockScript") + blockedUrl,
                         props.get("customLogo"));
 
                 blockPageResponse = new ObjectMapper().writeValueAsString(advancedBlockingResponse);
