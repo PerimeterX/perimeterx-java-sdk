@@ -1,6 +1,6 @@
 # Change Log
 
-## [v6.10.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.2...HEAD) (2023-XX-XX)
+## [v6.10.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.10.0...HEAD) (2023-11-13)
 - Added blocked URL to ABR and captcha template
 
 ## [v6.9.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.0...HEAD) (2023-11-08)
