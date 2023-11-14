@@ -3,7 +3,6 @@ package com.perimeterx.api.proxy;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.http.IPXHttpClient;
 import com.perimeterx.http.IPXOutgoingRequest;
-import com.perimeterx.http.PXApacheHttpClient;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
 import com.perimeterx.utils.Constants;
@@ -107,13 +106,28 @@ public class DefaultReverseProxy implements ReverseProxy {
             return true;
         }
 
-        String originalUrl = req.getRequestURI().substring(xhrReversePrefix.length());
+        final String originalUrl = req.getRequestURI().substring(xhrReversePrefix.length());
+        final RemoteServer remoteServer = new RemoteServer(collectorUrl, originalUrl, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
+        IPXOutgoingRequest proxyRequest = null;
 
-        RemoteServer remoteServer = new RemoteServer(collectorUrl, originalUrl, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
-        IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
-        remoteServer.handleResponse(proxyRequest, true);
+        try {
+            proxyRequest = remoteServer.prepareProxyRequest();
+            remoteServer.handleResponse(proxyRequest, true);
+        } catch (Exception e) {
+            logger.error("reversePxXhr - failed to handle xhr request, error :: ", e.getMessage());
+            safelyCloseInputStream(proxyRequest);
+
+            throw e;
+        }
 
         return true;
+    }
+
+    private void safelyCloseInputStream(IPXOutgoingRequest proxyRequest) throws IOException {
+        final boolean inputStream = proxyRequest != null && proxyRequest.getBody() != null && proxyRequest.getBody().getInputStream() != null;
+        if (inputStream) {
+            proxyRequest.getBody().getInputStream().close();
+        }
     }
 
     @Override

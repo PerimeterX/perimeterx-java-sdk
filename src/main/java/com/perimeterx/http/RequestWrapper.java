@@ -18,6 +18,7 @@ import java.util.Map;
 public class RequestWrapper extends HttpServletRequestWrapper {
     private String body;
     private final Map<String, String> customHeaders;
+    private static final int BUFFER_SIZE = 4096;
 
     public RequestWrapper(HttpServletRequest request) {
         super(request);
@@ -27,11 +28,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     @Override
     public ServletInputStream getInputStream() throws IOException {
         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(getBody().getBytes());
-        return new ServletInputStream() {
-            public int read() {
-                return byteArrayInputStream.read();
-            }
-        };
+        return new ServletInputStreamWrapper(byteArrayInputStream);
     }
 
     @Override
@@ -56,7 +53,8 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     public synchronized String getBody() throws IOException {
         if (body == null) {
             this.body = "";
-            char[] buffer = new char[4096];
+            char[] buffer = new char[BUFFER_SIZE];
+
             try (BufferedReader reader = this.getRequest().getReader()) {
                 StringBuilder builder = new StringBuilder();
                 int numChars;
@@ -67,5 +65,24 @@ public class RequestWrapper extends HttpServletRequestWrapper {
             }
         }
         return body;
+    }
+
+    private static class ServletInputStreamWrapper extends ServletInputStream {
+        private final ByteArrayInputStream inputStream;
+
+        public ServletInputStreamWrapper(ByteArrayInputStream inputStream) {
+            this.inputStream = inputStream;
+        }
+
+        @Override
+        public int read() {
+            return inputStream.read();
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            inputStream.close();
+        }
     }
 }
