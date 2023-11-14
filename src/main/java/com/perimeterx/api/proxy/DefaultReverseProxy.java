@@ -124,8 +124,8 @@ public class DefaultReverseProxy implements ReverseProxy {
     }
 
     private void safelyCloseInputStream(IPXOutgoingRequest proxyRequest) throws IOException {
-        final boolean inputStream = proxyRequest != null && proxyRequest.getBody() != null && proxyRequest.getBody().getInputStream() != null;
-        if (inputStream) {
+        final boolean inputStreamExist = proxyRequest != null && proxyRequest.getBody() != null && proxyRequest.getBody().getInputStream() != null;
+        if (inputStreamExist) {
             proxyRequest.getBody().getInputStream().close();
         }
     }

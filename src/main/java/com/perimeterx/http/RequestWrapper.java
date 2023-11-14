@@ -81,7 +81,6 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 
         @Override
         public void close() throws IOException {
-            super.close();
             inputStream.close();
         }
     }
