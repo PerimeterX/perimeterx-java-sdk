@@ -29,10 +29,7 @@ public class PXOutgoingRequestImpl implements IPXOutgoingRequest {
                 return this.body(null);
             }
 
-            PXRequestBody b = new PXRequestBody(
-                    new ByteArrayInputStream(body.getBytes()),
-                    body.length()
-            );
+            PXRequestBody b = new PXRequestBody(new ByteArrayInputStream(body.getBytes()));
             return this.body(b);
         }
     }

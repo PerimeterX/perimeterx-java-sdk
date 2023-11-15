@@ -1,12 +1,12 @@
 package com.perimeterx.api.verificationhandler;
 
 import com.perimeterx.api.activities.ActivityHandler;
+import com.perimeterx.api.additionalContext.PXHDSource;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.PXLogger;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.UnsupportedEncodingException;
@@ -73,18 +73,20 @@ public class DefaultVerificationHandler implements VerificationHandler {
 
     private void setPxhdCookie(PXContext context, HttpServletResponseWrapper responseWrapper) {
         try {
-            if (!StringUtils.isEmpty(context.getResponsePxhd())) {
-                final String cookieValue = getCookieValue(context);
+            final boolean riskSource = context.getPxhdSource() != null && context.getPxhdSource().equals(PXHDSource.RISK);
+
+            if (riskSource) {
+                final String cookieValue = getPxhdCookie(context);
 
                 responseWrapper.addHeader(SET_COOKIE_KEY_HEADER, cookieValue);
             }
         } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
+            logger.error("setPxhdCookie - failed to set PXHD cookie, error :: ",e.getMessage());
         }
     }
 
-    private String getCookieValue(PXContext context) throws UnsupportedEncodingException {
-        final String pxHDCookieValue = context.getResponsePxhd();
+    private String getPxhdCookie(PXContext context) throws UnsupportedEncodingException {
+        final String pxHDCookieValue = context.getPxhd();
         final String pxHDEntry = PXHD_COOKIE_KEY + URLEncoder.encode(pxHDCookieValue, StandardCharsets.UTF_8.name()) + COOKIE_SEPARATOR;
 
         String cookieValue =  pxHDEntry
