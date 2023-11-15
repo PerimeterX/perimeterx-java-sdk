@@ -2,15 +2,17 @@ package com.perimeterx.api.proxy;
 
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.http.*;
+import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
 import com.perimeterx.utils.PXLogger;
-import org.apache.http.*;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.utils.URIUtils;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.HeaderGroup;
 
-import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +34,6 @@ import static com.perimeterx.utils.PXIOUtils.copy;
 public class RemoteServer {
 
     private final PXLogger logger = PXLogger.getLogger(RemoteServer.class);
-    private final String CONTENT_LENGTH_HEADER = "Content-Length";
 
     private HttpServletResponse res;
     private HttpServletRequest req;
@@ -88,14 +89,7 @@ public class RemoteServer {
         PXOutgoingRequestImplBuilder requestBuilder = PXOutgoingRequestImpl.builder();
         // Copy the body if content-length exists
         if (getContentLength(req) != -1) {
-            try (InputStream inputStream = req.getInputStream()) {
-                requestBuilder.body(
-                        new PXRequestBody(
-                                inputStream,
-                                getContentLength(req)
-                        )
-                );
-            }
+            requestBuilder.body(new PXRequestBody(req.getInputStream()));
         }
 
         if (!Objects.equals(method, "")) {

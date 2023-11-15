@@ -1,5 +1,6 @@
 package com.perimeterx.internals;
 
+import com.perimeterx.api.additionalContext.PXHDSource;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.cookie.DataEnrichmentCookie;
 import com.perimeterx.models.PXContext;
@@ -94,7 +95,6 @@ public class PXS2SValidator implements PXValidator {
     }
 
     private void updateContextFromResponse(PXContext pxContext, RiskResponse response) {
-        pxContext.setResponsePxhd(response.getPxhd());
         pxContext.setRiskScore(response.getScore());
         pxContext.setUuid(response.getUuid());
         pxContext.setBlockAction(response.getAction());
@@ -104,6 +104,7 @@ public class PXS2SValidator implements PXValidator {
 
         if(isNoneBlank(response.getPxhd())) {
             pxContext.setPxhd(response.getPxhd());
+            pxContext.setPxhdSource(PXHDSource.RISK);
         }
         if(isNoneBlank(response.getPxhdDomain())) {
             pxContext.setPxhdDomain(response.getPxhdDomain());

@@ -3,6 +3,7 @@ package com.perimeterx.models;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.api.additionalContext.LoginData;
+import com.perimeterx.api.additionalContext.PXHDSource;
 import com.perimeterx.api.providers.CustomParametersProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
@@ -209,7 +210,7 @@ public class PXContext {
      */
 
     private String pxhd;
-    private String responsePxhd;
+    private PXHDSource pxhdSource;
     private boolean isMonitoredRequest;
     private LoginData loginData;
     private UUID requestId;
@@ -379,6 +380,7 @@ public class PXContext {
                 if (cookie.getName().equals("_pxhd")) {
                     try {
                         this.pxhd = URLDecoder.decode(cookie.getValue(), "UTF-8");
+                        this.setPxhdSource(PXHDSource.COOKIE);
                     } catch (UnsupportedEncodingException | IllegalArgumentException e) {
                         logger.error("setVidAndPxhd - failed while decoding the pxhd value", e);
                     }

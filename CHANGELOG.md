@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.9.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.2...HEAD) (2023-11-15)
+- Fixed potential XHR first party issue.
+
 ## [v6.9.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.1...HEAD) (2023-11-13)
 - Added blocked URL to ABR and captcha template
 
@@ -12,7 +15,7 @@
 - Fixed the Block and Captcha pages, aligning them with the specified design and adding hard block functionality to align with spec.
 - Fixed Risk UUID to ensure it is set even when encountering a server-to-server error.
 - Fixed Async Activities Schema Addressed issues with the activity schema to ensure data accuracy and integrity.
-- Fixed resource management issue  in various code locations.
+- Fixed resource management issue in various code locations.
 
 ## [v6.8.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.8.1...HEAD) (2023-10-22)
 - Fixed handling of cookies with illegal arguments.
