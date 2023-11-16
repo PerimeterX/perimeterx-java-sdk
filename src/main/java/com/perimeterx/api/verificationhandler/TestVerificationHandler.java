@@ -30,7 +30,7 @@ public class TestVerificationHandler implements VerificationHandler {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("cookie_origin", pxContext.getCookieOrigin());
         jsonObject.add("px_cookies", gson.toJsonTree(pxContext.getTokens()));
-        jsonObject.addProperty("px_cookie_orig", pxContext.getPxCookieRaw());
+        jsonObject.addProperty("px_orig_cookie", pxContext.getPxCookieRaw());
         jsonObject.addProperty("decoded_px_cookie", pxContext.getRiskCookie());
         jsonObject.addProperty("px_cookie_hmac", pxContext.getCookieHmac());
         jsonObject.addProperty("px_captcha", pxContext.getPxCaptcha());
