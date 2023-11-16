@@ -1,5 +1,9 @@
 # Change Log
 
+## [v6.9.3](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.3...HEAD) (2023-??-??)
+- Fixed risk request schema.
+- Fixed cookie validation.
+
 ## [v6.9.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.2...HEAD) (2023-11-15)
 - Fixed potential XHR first party issue.
 
