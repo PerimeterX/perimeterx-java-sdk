@@ -60,6 +60,11 @@ public class PXCookieValidator implements PXValidator {
             context.setBlockAction(pxCookie.getBlockAction());
             context.setCookieHmac(pxCookie.getHmac());
 
+            if (!pxCookie.isSecured()) {
+                context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.getValue());
+                return false;
+            }
+
             if (pxCookie.isExpired()) {
                 logger.debug(PXLogger.LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
                 context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED.getValue());
@@ -69,11 +74,6 @@ public class PXCookieValidator implements PXValidator {
             if (pxCookie.isHighScore()) {
                 context.setBlockReason(BlockReason.COOKIE);
                 return true;
-            }
-
-            if (!pxCookie.isSecured()) {
-                context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.getValue());
-                return false;
             }
 
             if (context.isSensitiveRequest()) {

@@ -38,7 +38,7 @@ public class CookieSelector {
                     continue;
                 }
 
-                cookieRaw = version + "=" + cookie;
+                cookieRaw = cookie;
                 AbstractPXCookie selectedCookie = buildPxCookie(context, pxConfiguration, cookie, version);
                 s2SCallReason = evaluateCookie(selectedCookie, cookie);
                 if (S2SCallReason.NONE == s2SCallReason) {

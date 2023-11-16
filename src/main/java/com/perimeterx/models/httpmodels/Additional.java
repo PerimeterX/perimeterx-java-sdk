@@ -8,8 +8,10 @@ import com.perimeterx.api.additionalContext.credentialsIntelligence.SSOStep;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.UserLoginData;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.risk.CustomParameters;
+import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -30,7 +32,7 @@ public class Additional {
     @JsonProperty("s2s_call_reason")
     public String callReason;
 
-    @JsonProperty("px_cookie_raw")
+    @JsonProperty("px_orig_cookie")
     public String pxCookieRaw;
 
     @JsonProperty("cookie_origin")
@@ -89,7 +91,7 @@ public class Additional {
         additional.httpMethod = ctx.getHttpMethod();
         additional.httpVersion = ctx.getHttpVersion();
         additional.callReason = ctx.getS2sCallReason();
-        additional.pxCookieRaw = ctx.getPxCookieRaw();
+        additional.pxCookieRaw = Objects.equals(ctx.getS2sCallReason(), S2SCallReason.INVALID_DECRYPTION.getValue()) ? ctx.getPxCookieRaw() : null;
         additional.pxCookieOrigin = ctx.getCookieOrigin();
         additional.customParameters = ctx.getCustomParameters();
         additional.originalUuid = ctx.getOriginalUuid();
