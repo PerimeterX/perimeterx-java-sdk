@@ -80,7 +80,7 @@ public class DefaultReverseProxy implements ReverseProxy {
 
         RemoteServer remoteServer = new RemoteServer(url, clientPath, req, res, ipProvider, proxyClient, null, null, pxConfiguration);
         IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
-        remoteServer.handleResponse(proxyRequest, false);
+        remoteServer.handleResponse(proxyRequest);
         return true;
     }
 
@@ -112,7 +112,7 @@ public class DefaultReverseProxy implements ReverseProxy {
 
         try {
             proxyRequest = remoteServer.prepareProxyRequest();
-            remoteServer.handleResponse(proxyRequest, true);
+            remoteServer.handleResponse(proxyRequest);
         } catch (Exception e) {
             logger.error("reversePxXhr - failed to handle xhr request, error :: ", e.getMessage());
             safelyCloseInputStream(proxyRequest);
@@ -135,20 +135,22 @@ public class DefaultReverseProxy implements ReverseProxy {
         if (!req.getRequestURI().contains(captchaReversePrefix)) {
             return false;
         }
+        final PredefinedResponse predefinedResponse = new PredefinedResponse(CONTENT_TYPE_JAVASCRIPT, DEFAULT_JAVASCRIPT_VALUE);
+
         if (!pxConfiguration.isFirstPartyEnabled()) {
             logger.debug("First party is disabled, rendering default response");
-            PredefinedResponse predefinedResponse = new PredefinedResponse(CONTENT_TYPE_JAVASCRIPT, DEFAULT_JAVASCRIPT_VALUE);
             predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
             return false;
         }
+        
         String query = req.getQueryString();
         String originalRequest = pxConfiguration.getAppId() + "/captcha.js?" + query;
         String url = "https://" + Constants.CAPTCHA_HOST + "/" + originalRequest;
         logger.debug("Forwarding request from " + captchaReversePrefix + "/" + originalRequest + "to xhr at " + url);
 
-        RemoteServer remoteServer = new RemoteServer("", url, req, res, ipProvider, proxyClient, null, predefinedResponseHelper, pxConfiguration);
+        RemoteServer remoteServer = new RemoteServer("", url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
         IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
-        remoteServer.handleResponse(proxyRequest, true);
+        remoteServer.handleResponse(proxyRequest);
         return true;
 
     }

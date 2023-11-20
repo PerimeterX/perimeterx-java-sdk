@@ -106,7 +106,7 @@ public class RemoteServer {
         return requestBuilder.build();
     }
 
-    public IPXIncomingResponse handleResponse(IPXOutgoingRequest proxyRequest, boolean allowPredefinedHandler) {
+    public IPXIncomingResponse handleResponse(IPXOutgoingRequest proxyRequest) {
         IPXIncomingResponse proxyResponse = null;
         try {
             // Execute the request
@@ -114,7 +114,7 @@ public class RemoteServer {
             int statusCode = proxyResponse.status().getStatusCode();
 
             // In failure we can check if we enable predefined request or proxy the original response
-            if (allowPredefinedHandler && statusCode >= HttpStatus.SC_BAD_REQUEST) {
+            if (this.isAllowedPredefinedResponse() && statusCode >= HttpStatus.SC_BAD_REQUEST) {
                 predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
                 return proxyResponse;
             }
@@ -137,7 +137,7 @@ public class RemoteServer {
             }
 
         } catch (Exception e) {
-            if (allowPredefinedHandler) {
+            if (this.isAllowedPredefinedResponse()) {
                 predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
             }
         }
@@ -416,5 +416,9 @@ public class RemoteServer {
 
     protected IPXIncomingResponse doExecute(IPXOutgoingRequest proxyRequest) throws IOException {
         return proxyClient.send(proxyRequest);
+    }
+
+    private boolean isAllowedPredefinedResponse() {
+        return this.predefinedResponse != null && this.predefinedResponseHelper != null;
     }
 }
