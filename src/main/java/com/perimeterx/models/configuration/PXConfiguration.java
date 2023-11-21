@@ -39,6 +39,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import static com.perimeterx.utils.Constants.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * PX configuration object
@@ -412,5 +413,41 @@ public class PXConfiguration {
             }
             return this;
         }
+    }
+
+    public String getCaptchaURL() {
+        return this.getCaptchaURL(null, false);
+    }
+
+    public String getCaptchaURL(String params, boolean alternativeCaptcha) {
+        final String host = alternativeCaptcha ? ALT_CAPTCHA_HOST : CAPTCHA_HOST;
+        String url = URL_HTTPS_PREFIX + host + SLASH + appId + CAPTCHA_FIRST_PARTY_FILE_PATH;
+
+        if (!isBlank(params)) {
+            url += QUESTION_MARK + params;
+        }
+
+        return url;
+    }
+
+    public String getSensorURL() {
+        final String path = String.format("/%s%s", appId, SENSOR_FIRST_PARTY_PATH);
+        return  URL_HTTPS_PREFIX + clientHost + path;
+    }
+
+    public String getXhrUrl(String requestURI, boolean substringRawPath) {
+        if (isBlank(requestURI)) {
+            return null;
+        }
+        final String firstPartyAppIdForm = appId.substring(2);
+        String path = requestURI;
+
+        if (substringRawPath) {
+            final String xhrPrefix = String.format("/%s/%s", firstPartyAppIdForm, XHR_PATH);
+            path = requestURI.substring(xhrPrefix.length());
+        }
+
+
+        return collectorUrl + path;
     }
 }

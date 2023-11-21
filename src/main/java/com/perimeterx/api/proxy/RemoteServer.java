@@ -66,12 +66,12 @@ public class RemoteServer {
         }
     }
 
-    public RemoteServer(String serverUrl, String uri, HttpServletRequest req, HttpServletResponse res,
+    public RemoteServer(String serverUrl, HttpServletRequest req, HttpServletResponse res,
                         IPProvider ipProvider, IPXHttpClient httpClient, PredefinedResponse predefinedResponse,
                         PredefinedResponseHelper predefinedResponseHelper, PXConfiguration pxConfiguration) throws URISyntaxException {
         this.req = req;
         this.res = res;
-        this.targetUri = serverUrl.concat(uri);
+        this.targetUri = serverUrl;
         this.proxyClient = httpClient;
         this.targetUriObj = new URI(targetUri);
         this.targetHost = URIUtils.extractHost(targetUriObj);
