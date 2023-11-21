@@ -25,12 +25,8 @@
 
         var script = document.createElement('script');
         script.src = pxCaptchaSrc;
-        script.onerror = function () {
-            script = document.createElement('script');
-            script.src = '{{{altBlockScript}}}';
-            script.onerror = window._pxOnError;
-            document.head.appendChild(script);
-        };
+        script.onload = onScriptLoad;
+        script.onerror = onScriptError;
         window._pxOnError = function () {
             var style = document.createElement('style');
             style.innerText = '@import url(https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap);body{background-color:#fafbfc}.px-captcha-error-container{position:fixed;height:340px;background-color:#fff;font-family:Roboto,sans-serif}.px-captcha-error-header{color:#f0f1f2;font-size:29px;margin:67px 0 33px;font-weight:500;line-height:.83;text-align:center}.px-captcha-error-message{color:#f0f1f2;font-size:18px;margin:0 0 29px;line-height:1.33;text-align:center}.px-captcha-error-button{text-align:center;line-height:48px;width:253px;margin:auto;border-radius:50px;border:solid 1px #f0f1f2;font-size:20px;color:#f0f1f2}.px-captcha-error-wrapper{margin:18px 0 0}div.px-captcha-error{margin:auto;text-align:center;width:400px;height:30px;font-size:12px;background-color:#fcf0f2;color:#ce0e2d}img.px-captcha-error{margin:6px 8px -2px 0}.px-captcha-error-refid{border-top:solid 1px #f0eeee;height:27px;margin:13px 0 0;border-radius:0 0 3px 3px;background-color:#fafbfc;font-size:10px;line-height:2.5;text-align:center;color:#b1b5b8}@media (min-width:620px){.px-captcha-error-container{width:530px;top:50%;left:50%;margin-top:-170px;margin-left:-265px;border-radius:3px;box-shadow:0 2px 9px -1px rgba(0,0,0,.13)}}@media (min-width:481px) and (max-width:620px){.px-captcha-error-container{width:85%;top:50%;left:50%;margin-top:-170px;margin-left:-42.5%;border-radius:3px;box-shadow:0 2px 9px -1px rgba(0,0,0,.13)}}@media (max-width:480px){body{background-color:#fff}.px-captcha-error-header{color:#f0f1f2;font-size:29px;margin:55px 0 33px}.px-captcha-error-container{width:530px;top:50%;left:50%;margin-top:-170px;margin-left:-265px}.px-captcha-error-refid{position:fixed;width:100%;left:0;bottom:0;border-radius:0;font-size:14px;line-height:2}}@media (max-width:390px){div.px-captcha-error{font-size:10px}.px-captcha-error-refid{font-size:11px;line-height:2.5}}';
@@ -43,9 +39,21 @@
                 setTimeout(function() {
                     location.href = '/px/captcha_close?status=-1';
                 }, 5000);
-            }
+            };
         };
         document.head.appendChild(script);
+        var timeoutID = setTimeout(function() {
+            onScriptError();
+        }, 5000);
+        function onScriptLoad() {
+            clearTimeout(timeoutID);
+        }
+        function onScriptError() {
+            script = document.createElement('script');
+            script.src = '{{{altBlockScript}}}';
+            script.onerror = window._pxOnError;
+            document.head.appendChild(script);
+        }
     </script>
 {{#jsRef}}
     <script src="{{{jsRef}}}"></script>
