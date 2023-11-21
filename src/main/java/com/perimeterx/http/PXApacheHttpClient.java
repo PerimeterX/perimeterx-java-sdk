@@ -27,7 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
-import static com.perimeterx.utils.Constants.URL_HTTPS_PREFIX;
+import static com.perimeterx.utils.FirstPartyUtil.isValidFirstPartyRequest;
 
 
 public class PXApacheHttpClient implements IPXHttpClient {
@@ -161,7 +161,7 @@ public class PXApacheHttpClient implements IPXHttpClient {
             req.addHeader(header.getName(), header.getValue());
         }
 
-        if (!isValidFirstPartyRequest(req.getURI())) {
+        if (!isValidFirstPartyRequest(pxConfiguration, req.getURI())) {
             req.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
         }
 
@@ -187,16 +187,5 @@ public class PXApacheHttpClient implements IPXHttpClient {
                 }
             };
         }
-    }
-
-    private boolean isValidFirstPartyRequest(URI uri) {
-        final String url = URL_HTTPS_PREFIX + uri.getHost() + uri.getPath();
-        final String captchaURL = pxConfiguration.getCaptchaURL();
-        final String sensorURL = pxConfiguration.getSensorURL();
-        final String xhrURL = pxConfiguration.getXhrUrl(uri.getPath(), false);
-
-        return url.equals(captchaURL) ||
-                url.equals(sensorURL) ||
-                url.equals(xhrURL);
     }
 }
