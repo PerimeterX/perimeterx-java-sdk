@@ -100,4 +100,6 @@ public final class Constants {
     public final static char SLASH = '/';
     public final static char QUESTION_MARK = '?';
     public final static String XHR_PATH = "xhr";
+    public final static String FIRST_PARTY_HEADER_NAME = "X-PX-FIRST-PARTY";
+    public final static String FIRST_PARTY_HEADER_VALUE = "1";
 }

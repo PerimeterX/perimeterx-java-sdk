@@ -26,6 +26,8 @@ import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.Objects;
 
+import static com.perimeterx.utils.Constants.FIRST_PARTY_HEADER_NAME;
+import static com.perimeterx.utils.Constants.FIRST_PARTY_HEADER_VALUE;
 import static com.perimeterx.utils.PXIOUtils.copy;
 
 /**
@@ -267,7 +269,7 @@ public class RemoteServer {
      */
     protected void handlePXHeaders(PXOutgoingRequestImplBuilder proxyRequest) {
         proxyRequest.header(new PXHttpHeader("X-PX-ENFORCER-TRUE-IP", this.ipProvider.getRequestIP(this.req)));
-        proxyRequest.header(new PXHttpHeader("X-PX-FIRST-PARTY", "1"));
+        proxyRequest.header(new PXHttpHeader(FIRST_PARTY_HEADER_NAME, FIRST_PARTY_HEADER_VALUE));
     }
 
     private void handleXForwardedForHeader(HttpServletRequest servletRequest, PXOutgoingRequestImplBuilder proxyRequest) {

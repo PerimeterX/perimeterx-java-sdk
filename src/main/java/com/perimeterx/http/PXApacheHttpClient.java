@@ -27,7 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
-import static com.perimeterx.utils.FirstPartyUtil.isValidFirstPartyRequest;
+import static com.perimeterx.utils.PXResourcesUtil.isValidPxThirdPartyRequest;
 
 
 public class PXApacheHttpClient implements IPXHttpClient {
@@ -161,7 +161,7 @@ public class PXApacheHttpClient implements IPXHttpClient {
             req.addHeader(header.getName(), header.getValue());
         }
 
-        if (!isValidFirstPartyRequest(pxConfiguration, req.getURI())) {
+        if (!isValidPxThirdPartyRequest(req)) {
             req.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
         }
 

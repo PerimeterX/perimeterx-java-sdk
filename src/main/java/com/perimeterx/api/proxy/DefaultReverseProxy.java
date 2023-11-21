@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 
 import static com.perimeterx.utils.Constants.CONTENT_TYPE_APPLICATION_JSON;
 import static com.perimeterx.utils.Constants.XHR_PATH;
-import static com.perimeterx.utils.FirstPartyUtil.*;
+import static com.perimeterx.utils.PXResourcesUtil.*;
 
 /**
  * Created by nitzangoldfeder on 14/05/2018.
@@ -72,7 +72,7 @@ public class DefaultReverseProxy implements ReverseProxy {
             return true;
         }
 
-        final RemoteServer remoteServer = new RemoteServer(getFirstPartySensorURL(pxConfiguration), req, res, ipProvider, proxyClient, null, null, pxConfiguration);
+        final RemoteServer remoteServer = new RemoteServer(getPxSensorURL(pxConfiguration), req, res, ipProvider, proxyClient, null, null, pxConfiguration);
         IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
         remoteServer.handleResponse(proxyRequest);
         return true;
@@ -100,7 +100,7 @@ public class DefaultReverseProxy implements ReverseProxy {
             return true;
         }
 
-        final String url = getFirstPartyXhrUrl(pxConfiguration, req.getRequestURI(), true);
+        final String url = getPxXhrUrl(pxConfiguration, req.getRequestURI());
         final RemoteServer remoteServer = new RemoteServer(url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
         IPXOutgoingRequest proxyRequest = null;
 
@@ -137,7 +137,7 @@ public class DefaultReverseProxy implements ReverseProxy {
             return false;
         }
 
-        final String url = getFirstPartyCaptchaURL(pxConfiguration, req.getQueryString(), false);
+        final String url = getPxCaptchaURL(pxConfiguration, req.getQueryString(), false);
         logger.debug("Forwarding request from " + req.getRequestURL() + "to xhr at " + url);
 
         final RemoteServer remoteServer = new RemoteServer(url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);

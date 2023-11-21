@@ -7,6 +7,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXResourcesUtil;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -17,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.perimeterx.utils.Constants.*;
-import static com.perimeterx.utils.FirstPartyUtil.getFirstPartyCaptchaURL;
 
 /**
  * This class is a helper class, in order to get a template the factory receives a name of a template and returns
@@ -50,8 +50,8 @@ public abstract class TemplateFactory {
         props.put("jsRef", pxConfig.getJsRef());
 
         String captchaSrcParams = getCaptchaSrcParams(pxContext);
-        final String altBlockScript = getFirstPartyCaptchaURL(pxConfig, captchaSrcParams, true);
-        String blockScript = getFirstPartyCaptchaURL(pxConfig, captchaSrcParams, false);
+        final String altBlockScript = PXResourcesUtil.getPxCaptchaURL(pxConfig, captchaSrcParams, true);
+        String blockScript = PXResourcesUtil.getPxCaptchaURL(pxConfig, captchaSrcParams, false);
 
 
         String jsClientSrc = URL_HTTPS_PREFIX + Constants.CLIENT_HOST + SLASH + pxConfig.getAppId() + SENSOR_FIRST_PARTY_PATH;
