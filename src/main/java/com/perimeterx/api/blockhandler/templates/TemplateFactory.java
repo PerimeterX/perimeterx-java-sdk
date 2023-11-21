@@ -7,6 +7,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.PXResourcesUtil;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.perimeterx.utils.Constants.*;
+
 /**
  * This class is a helper class, in order to get a template the factory receives a name of a template and returns
  * the template compiled
@@ -23,8 +26,6 @@ import java.util.Map;
  * Created by nitzangoldfeder on 02/03/2017.
  */
 public abstract class TemplateFactory {
-    private final static String URL_HTTPS_PREFIX = "https://";
-
     public static String getTemplate(String template, Map<String, String> props) throws PXException {
         try {
             MustacheFactory mf = new DefaultMustacheFactory();
@@ -49,17 +50,17 @@ public abstract class TemplateFactory {
         props.put("jsRef", pxConfig.getJsRef());
 
         String captchaSrcParams = getCaptchaSrcParams(pxContext);
-        String blockScript = getCaptchaUrl(Constants.CAPTCHA_HOST, pxConfig.getAppId(), captchaSrcParams);
-        String altBlockScript = getCaptchaUrl(Constants.ALT_CAPTCHA_HOST, pxConfig.getAppId(), captchaSrcParams);
+        final String altBlockScript = PXResourcesUtil.getPxCaptchaURL(pxConfig, captchaSrcParams, true);
+        String blockScript = PXResourcesUtil.getPxCaptchaURL(pxConfig, captchaSrcParams, false);
 
 
-        String jsClientSrc = URL_HTTPS_PREFIX + Constants.CLIENT_HOST + "/" + pxConfig.getAppId() + "/main.min.js";
+        String jsClientSrc = URL_HTTPS_PREFIX + Constants.CLIENT_HOST + SLASH + pxConfig.getAppId() + SENSOR_FIRST_PARTY_PATH;
         String hostUrl = pxContext.getCollectorURL();
         if (pxConfig.isFirstPartyEnabled() && !pxContext.isMobileToken()) {
             String prefix = pxConfig.getAppId().substring(2);
-            blockScript = "/" + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + "?" + captchaSrcParams;
-            jsClientSrc = "/" + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
-            hostUrl = "/" + prefix + Constants.FIRST_PARTY_XHR_PATH;
+            blockScript = SLASH + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + QUESTION_MARK + captchaSrcParams;
+            jsClientSrc = SLASH + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
+            hostUrl = SLASH + prefix + Constants.FIRST_PARTY_XHR_PATH;
         }
         props.put("hostUrl", hostUrl);
         props.put("blockScript", blockScript);
@@ -86,9 +87,5 @@ public abstract class TemplateFactory {
     private static String getCaptchaSrcParams(PXContext pxContext) {
         String urlVid = pxContext.getVid() != null ? pxContext.getVid() : "";
         return "a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" : "0");
-    }
-
-    private static String getCaptchaUrl(String host, String appId, String params) {
-        return URL_HTTPS_PREFIX + host + "/" + appId + "/captcha.js?" + params;
     }
 }

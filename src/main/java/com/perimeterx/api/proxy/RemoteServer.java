@@ -26,6 +26,8 @@ import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.Objects;
 
+import static com.perimeterx.utils.Constants.FIRST_PARTY_HEADER_NAME;
+import static com.perimeterx.utils.Constants.FIRST_PARTY_HEADER_VALUE;
 import static com.perimeterx.utils.PXIOUtils.copy;
 
 /**
@@ -66,12 +68,12 @@ public class RemoteServer {
         }
     }
 
-    public RemoteServer(String serverUrl, String uri, HttpServletRequest req, HttpServletResponse res,
+    public RemoteServer(String serverUrl, HttpServletRequest req, HttpServletResponse res,
                         IPProvider ipProvider, IPXHttpClient httpClient, PredefinedResponse predefinedResponse,
                         PredefinedResponseHelper predefinedResponseHelper, PXConfiguration pxConfiguration) throws URISyntaxException {
         this.req = req;
         this.res = res;
-        this.targetUri = serverUrl.concat(uri);
+        this.targetUri = serverUrl;
         this.proxyClient = httpClient;
         this.targetUriObj = new URI(targetUri);
         this.targetHost = URIUtils.extractHost(targetUriObj);
@@ -106,7 +108,7 @@ public class RemoteServer {
         return requestBuilder.build();
     }
 
-    public IPXIncomingResponse handleResponse(IPXOutgoingRequest proxyRequest, boolean allowPredefinedHandler) {
+    public IPXIncomingResponse handleResponse(IPXOutgoingRequest proxyRequest) {
         IPXIncomingResponse proxyResponse = null;
         try {
             // Execute the request
@@ -114,7 +116,7 @@ public class RemoteServer {
             int statusCode = proxyResponse.status().getStatusCode();
 
             // In failure we can check if we enable predefined request or proxy the original response
-            if (allowPredefinedHandler && statusCode >= HttpStatus.SC_BAD_REQUEST) {
+            if (this.isAllowedPredefinedResponse() && statusCode >= HttpStatus.SC_BAD_REQUEST) {
                 predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
                 return proxyResponse;
             }
@@ -137,7 +139,7 @@ public class RemoteServer {
             }
 
         } catch (Exception e) {
-            if (allowPredefinedHandler) {
+            if (this.isAllowedPredefinedResponse()) {
                 predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
             }
         }
@@ -267,7 +269,7 @@ public class RemoteServer {
      */
     protected void handlePXHeaders(PXOutgoingRequestImplBuilder proxyRequest) {
         proxyRequest.header(new PXHttpHeader("X-PX-ENFORCER-TRUE-IP", this.ipProvider.getRequestIP(this.req)));
-        proxyRequest.header(new PXHttpHeader("X-PX-FIRST-PARTY", "1"));
+        proxyRequest.header(new PXHttpHeader(FIRST_PARTY_HEADER_NAME, FIRST_PARTY_HEADER_VALUE));
     }
 
     private void handleXForwardedForHeader(HttpServletRequest servletRequest, PXOutgoingRequestImplBuilder proxyRequest) {
@@ -416,5 +418,9 @@ public class RemoteServer {
 
     protected IPXIncomingResponse doExecute(IPXOutgoingRequest proxyRequest) throws IOException {
         return proxyClient.send(proxyRequest);
+    }
+
+    private boolean isAllowedPredefinedResponse() {
+        return this.predefinedResponse != null && this.predefinedResponseHelper != null;
     }
 }

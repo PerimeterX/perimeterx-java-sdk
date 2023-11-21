@@ -93,4 +93,13 @@ public final class Constants {
     public static final String DEFAULT_COMPROMISED_CREDENTIALS_HEADER_NAME = "px-compromised-credentials";
 
     public static final String DEFAULT_TELEMETRY_REQUEST_HEADER_NAME = "x-px-enforcer-telemetry";
+
+    public final static String URL_HTTPS_PREFIX = "https://";
+    public final static String CAPTCHA_FIRST_PARTY_FILE_PATH = "/captcha.js";
+    public final static String SENSOR_FIRST_PARTY_PATH = "/main.min.js";
+    public final static char SLASH = '/';
+    public final static char QUESTION_MARK = '?';
+    public final static String XHR_PATH = "xhr";
+    public final static String FIRST_PARTY_HEADER_NAME = "X-PX-FIRST-PARTY";
+    public final static String FIRST_PARTY_HEADER_VALUE = "1";
 }

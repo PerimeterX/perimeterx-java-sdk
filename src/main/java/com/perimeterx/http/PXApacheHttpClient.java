@@ -4,7 +4,10 @@ import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.PXLogger;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -23,6 +26,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
+
+import static com.perimeterx.utils.PXResourcesUtil.isValidPxThirdPartyRequest;
 
 
 public class PXApacheHttpClient implements IPXHttpClient {
@@ -155,7 +160,11 @@ public class PXApacheHttpClient implements IPXHttpClient {
         for (PXHttpHeader header : request.getHeaders()) {
             req.addHeader(header.getName(), header.getValue());
         }
-        req.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
+
+        if (!isValidPxThirdPartyRequest(req)) {
+            req.setConfig(PXCommonUtils.getRequestConfig(pxConfiguration));
+        }
+
         return req;
     }
 
@@ -179,5 +188,4 @@ public class PXApacheHttpClient implements IPXHttpClient {
             };
         }
     }
-
 }
