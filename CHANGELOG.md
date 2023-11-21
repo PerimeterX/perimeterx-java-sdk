@@ -1,6 +1,6 @@
 # Change Log
 
-## [v6.9.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.4...HEAD) (2023-??-??)
+## [v6.9.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.4...HEAD) (2023-11-21)
 - Fixed first party connection timeout issue.
 - Updated the captcha template with timeout mechanism addressing scenarios where delays occurred in retrieving the captcha.
 
