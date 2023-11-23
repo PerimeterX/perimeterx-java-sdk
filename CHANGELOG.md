@@ -1,5 +1,9 @@
 # Change Log
 
+## [v6.9.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.5...HEAD) (2023-11-23)
+- Updated the configuration of PX first-party requests to include a connection timeout.
+- Updated the captcha template to handle empty captcha responses.
+
 ## [v6.9.4](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.4...HEAD) (2023-11-21)
 - Fixed first party connection timeout issue.
 - Updated the captcha template with timeout mechanism addressing scenarios where delays occurred in retrieving the captcha.

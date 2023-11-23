@@ -17,6 +17,7 @@ import static org.apache.commons.lang3.StringUtils.isNoneEmpty;
  * Created by nitzangoldfeder on 16/07/2017.
  */
 public class PXCommonUtils {
+    final static int FIRST_PARTY_CONNECTION_TIMEOUT_IN_MSEC = 4000;
 
     public static List<Header> getDefaultHeaders(String authToken) {
         Header contentType = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -58,5 +59,10 @@ public class PXCommonUtils {
         lst.add(COOKIE_HEADER_NAME);
 
         return lst;
+    }
+
+    public static RequestConfig getPXThirdPartyRequestConfig() {
+        return RequestConfig.custom()
+                .setConnectTimeout(FIRST_PARTY_CONNECTION_TIMEOUT_IN_MSEC).build();
     }
 }
