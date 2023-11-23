@@ -1,6 +1,6 @@
 # Change Log
 
-## [v6.9.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.5...HEAD) (2023-??-??)
+## [v6.9.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.5...HEAD) (2023-11-23)
 - Updated the configuration of PX first-party requests to include a connection timeout.
 - Updated the captcha template to handle empty captcha responses.
 

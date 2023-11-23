@@ -1,5 +1,5 @@
 {
-  "version": "6.9.4",
+  "version": "6.9.5",
   "supported_features": [
     "advanced_blocking_response",
     "bypass_monitor_header",
