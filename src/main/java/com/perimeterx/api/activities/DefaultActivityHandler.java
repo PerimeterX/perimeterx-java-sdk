@@ -9,7 +9,7 @@ import com.perimeterx.utils.Constants;
 
 import java.io.IOException;
 
-import static com.perimeterx.utils.PXLogger.LogReason.*;
+import static com.perimeterx.utils.logger.PXLogger.LogReason.*;
 
 /**
  * Simple activity send per server request

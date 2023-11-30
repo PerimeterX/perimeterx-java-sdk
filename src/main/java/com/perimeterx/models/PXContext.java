@@ -19,6 +19,7 @@ import com.perimeterx.models.enforcererror.EnforcerErrorReasonInfo;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.*;
 import com.perimeterx.utils.*;
+import com.perimeterx.utils.logger.PXLogger;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 

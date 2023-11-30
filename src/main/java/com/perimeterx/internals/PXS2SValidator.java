@@ -13,7 +13,7 @@ import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.EnforcerErrorUtils;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.http.conn.ConnectTimeoutException;
 
 import static org.apache.commons.lang3.StringUtils.*;

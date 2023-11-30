@@ -1,7 +1,7 @@
 package com.perimeterx.api.proxy;
 
 import com.perimeterx.models.proxy.PredefinedResponse;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 

@@ -3,7 +3,7 @@ package com.perimeterx.api.remoteconfigurations;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 
 /**
  * Created by nitzangoldfeder on 05/07/2017.

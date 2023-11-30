@@ -5,7 +5,7 @@ import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 
 import java.util.Timer;
 import java.util.TimerTask;

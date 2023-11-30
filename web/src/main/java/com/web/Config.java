@@ -32,6 +32,9 @@ public class Config {
                 case "px_auth_token":
                     builder.authToken(enforcerConfig.getString(key));
                     break;
+                case "px_logger_auth_token":
+                    builder.loggerAuthToken(enforcerConfig.getString(key));
+                    break;
                 case "px_enabled":
                     builder.moduleEnabled(enforcerConfig.getBoolean(key));
                     break;

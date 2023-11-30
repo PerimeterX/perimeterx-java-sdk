@@ -6,15 +6,15 @@ import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
-import static com.perimeterx.utils.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
+import static com.perimeterx.utils.logger.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
+import static com.perimeterx.utils.logger.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
 /**

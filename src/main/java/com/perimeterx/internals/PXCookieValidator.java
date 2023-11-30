@@ -8,7 +8,7 @@ import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.models.risk.VidSource;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 /**

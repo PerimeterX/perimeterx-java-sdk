@@ -6,9 +6,12 @@ import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.LogRecord;
+import com.perimeterx.utils.logger.PXLogger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+
+import java.io.IOException;
 import java.util.List;
 
 @Builder
@@ -32,6 +35,10 @@ public class MockPXClient implements PXClient {
     public void sendBatchActivities(List<Activity> activities) {
         logger.debug("Mocking sendBatchActivities");
 
+    }
+
+    public void sendLogs(List<LogRecord> activities) throws IOException {
+        logger.debug("Mocking sendLoggingServiceLogs");
     }
 
     @Override

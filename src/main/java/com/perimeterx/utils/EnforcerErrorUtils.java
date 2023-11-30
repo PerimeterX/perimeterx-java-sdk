@@ -4,6 +4,7 @@ import com.perimeterx.api.PerimeterX;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.enforcererror.EnforcerErrorReasonInfo;
 import com.perimeterx.models.risk.PassReason;
+import com.perimeterx.utils.logger.PXLogger;
 
 import java.util.Arrays;
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.perimeterx.http.async;
 
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.http.HttpResponse;
 import org.apache.http.concurrent.FutureCallback;
 

@@ -2,7 +2,7 @@ package com.perimeterx.api;
 
 import com.perimeterx.http.PXHttpMethod;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.servlet.http.HttpServletRequest;

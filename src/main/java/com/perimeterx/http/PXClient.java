@@ -6,6 +6,7 @@ import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskResponse;
+import com.perimeterx.utils.logger.LogRecord;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -61,7 +62,10 @@ public interface PXClient extends Closeable {
      */
     void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException;
 
-    @Override
+
+    void sendLogs(List<LogRecord> activities) throws IOException;
+
+        @Override
     default void close() throws IOException {
         // by default do nothing
     }

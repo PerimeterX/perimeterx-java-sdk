@@ -3,7 +3,7 @@ package com.perimeterx.models.configuration.credentialsIntelligenceconfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import lombok.Getter;
 
 import java.util.Collection;

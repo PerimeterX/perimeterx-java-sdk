@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.utils.*;
+import com.perimeterx.utils.logger.PXLogger;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;

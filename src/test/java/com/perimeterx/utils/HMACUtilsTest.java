@@ -1,5 +1,6 @@
 package com.perimeterx.utils;
 
+import com.perimeterx.utils.logger.PXLogger;
 import org.testng.annotations.Test;
 
 import java.security.InvalidKeyException;

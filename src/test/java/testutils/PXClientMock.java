@@ -11,6 +11,7 @@ import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.httpmodels.RiskResponseBody;
+import com.perimeterx.utils.logger.LogRecord;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -62,6 +63,11 @@ public class PXClientMock implements PXClient {
     @Override
     public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
         // noop
+    }
+
+    @Override
+    public void sendLogs(List<LogRecord> activities) throws IOException {
+        //noop
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.perimeterx.api.additionalContext.credentialsIntelligence.loginrespon
 
 import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 
 public class LoginResponseCustomValidator implements LoginResponseValidator {
     final PXLogger logger = PXLogger.getLogger(LoginResponseCustomValidator.class);

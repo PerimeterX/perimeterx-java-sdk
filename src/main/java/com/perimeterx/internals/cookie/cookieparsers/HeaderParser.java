@@ -7,7 +7,7 @@ import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.HMACUtils;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;

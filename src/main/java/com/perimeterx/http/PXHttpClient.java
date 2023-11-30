@@ -14,18 +14,22 @@ import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
-import com.perimeterx.utils.PXCommonUtils;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.LogRecord;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.message.BasicHeader;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -88,12 +92,7 @@ public class PXHttpClient implements PXClient, Closeable {
     }
 
     private IPXIncomingResponse executeRiskAPICall(String requestBody, PXContext pxContext) throws ConnectTimeoutException {
-        IPXOutgoingRequest request = requestBuilder()
-                .url(this.pxConfiguration.getServerURL() + Constants.API_RISK)
-                .httpMethod(PXHttpMethod.POST)
-                .stringBody(requestBody)
-                .build();
-
+        IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_RISK,PXHttpMethod.POST, requestBody);
         try {
             return client.send(request);
 
@@ -158,10 +157,7 @@ public class PXHttpClient implements PXClient, Closeable {
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
             logger.debug("Sending Activity: {}", requestBody);
-            IPXOutgoingRequest request = requestBuilder()
-                    .stringBody(requestBody)
-                    .url(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES)
-                    .build();
+            IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES,PXHttpMethod.POST, requestBody);
             httpResponse = client.send(request);
         } catch (Exception e) {
             logger.debug("Sending activity failed. Error: {}", e.getMessage());
@@ -176,11 +172,16 @@ public class PXHttpClient implements PXClient, Closeable {
     public void sendBatchActivities(List<Activity> activities) throws IOException {
         String requestBody = JsonUtils.writer.writeValueAsString(activities);
         logger.debug("Sending Activities: {}", requestBody);
-        IPXOutgoingRequest request = requestBuilder()
-                .url(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES)
-                .httpMethod(PXHttpMethod.POST)
-                .stringBody(requestBody)
-                .build();
+        IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES,PXHttpMethod.POST, requestBody);
+        client.sendAsync(request);
+    }
+
+    @Override
+    public void sendLogs(List<LogRecord> activities) throws IOException {
+        String requestBody = JsonUtils.writer.writeValueAsString(activities);
+        logger.debug("Sending logs to logging service");
+        BasicHeader loggerAuthTokenHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getLoggerAuthToken());
+        IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_LOGGING_SERVICE_PATH,PXHttpMethod.POST, requestBody,loggerAuthTokenHeader);
         client.sendAsync(request);
     }
 
@@ -193,10 +194,9 @@ public class PXHttpClient implements PXClient, Closeable {
             queryParams = "?checksum=" + pxConfiguration.getChecksum();
         }
         PXDynamicConfiguration stub = null;
-        IPXOutgoingRequest request = requestBuilder()
-                .url(pxConfiguration.getRemoteConfigurationUrl() + Constants.API_REMOTE_CONFIGURATION + queryParams)
-                .httpMethod(PXHttpMethod.GET)
-                .build();
+        IPXOutgoingRequest request = buildOutgoingRequest(pxConfiguration.getRemoteConfigurationUrl() + Constants.API_REMOTE_CONFIGURATION + queryParams
+                ,PXHttpMethod.GET,
+                "");
         try (IPXIncomingResponse httpResponse = client.send(request)) {
             int httpCode = httpResponse.status().getStatusCode();
             if (httpCode == HttpStatus.SC_OK) {
@@ -219,13 +219,24 @@ public class PXHttpClient implements PXClient, Closeable {
     public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException {
         String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
         logger.debug("Sending enforcer telemetry: {}", requestBody);
-        IPXOutgoingRequest request = requestBuilder()
-                .url(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY)
-                .httpMethod(PXHttpMethod.POST)
-                .stringBody(requestBody)
-                .build();
+        IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY,PXHttpMethod.POST, requestBody);
         client.send(request);
     }
+
+    private IPXOutgoingRequest buildOutgoingRequest(String url , PXHttpMethod method, String requestBody, BasicHeader... headers) {
+        List<PXHttpHeader> pxHeaders = getPxHttpHeaders(headers);
+        PXOutgoingRequestImplBuilder requestBuilder = PXOutgoingRequestImpl.builder()
+                .headers(pxHeaders)
+                .url(url)
+                .httpMethod(method)
+                .stringBody(requestBody);
+
+        if (method == PXHttpMethod.POST) {
+            requestBuilder.stringBody(requestBody);
+        }
+        return requestBuilder.build();
+    }
+
 
     @Override
     public void close() throws IOException {
@@ -234,12 +245,22 @@ public class PXHttpClient implements PXClient, Closeable {
         }
     }
 
-    private PXOutgoingRequestImplBuilder requestBuilder() {
-        List<Header> defaultHeaders = PXCommonUtils.getDefaultHeaders(pxConfiguration.getAuthToken());
-        PXOutgoingRequestImplBuilder builder = PXOutgoingRequestImpl.builder();
-        for (Header defaultHeader : defaultHeaders) {
-            builder.header(new PXHttpHeader(defaultHeader.getName(), defaultHeader.getValue()));
+
+    private List<PXHttpHeader> getPxHttpHeaders(BasicHeader... headers) {
+        Map<String,String> headersMap = new HashMap<>();
+        headersMap.put(HttpHeaders.CONTENT_TYPE, "application/json");
+        headersMap.put(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getAuthToken());
+
+        for (BasicHeader header: headers) {
+            headersMap.put(header.getName(),header.getValue());
         }
-        return builder;
+        PXOutgoingRequestImplBuilder builder = PXOutgoingRequestImpl.builder();
+        List<PXHttpHeader> headersList = new ArrayList<>();
+        headersMap.forEach((name, value) ->{
+            headersList.add(new PXHttpHeader(name,value));
+//            builder.header(new PXHttpHeader(name,value));
+        });
+
+        return headersList;
     }
 }

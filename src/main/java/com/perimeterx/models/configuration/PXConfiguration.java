@@ -24,7 +24,7 @@ import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
 import com.perimeterx.utils.LoggerSeverity;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -69,6 +69,9 @@ public class PXConfiguration {
 
     @JsonProperty("px_auth_token")
     private String authToken;
+
+    @JsonProperty("px_logger_auth_token")
+    private String loggerAuthToken;
 
     @Builder.Default
     @JsonProperty("px_enabled")

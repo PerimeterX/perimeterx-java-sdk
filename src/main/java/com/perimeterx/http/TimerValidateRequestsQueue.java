@@ -1,7 +1,7 @@
 package com.perimeterx.http;
 
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 
 import java.io.Closeable;

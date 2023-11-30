@@ -1,5 +1,7 @@
 package com.perimeterx.utils;
 
+import com.perimeterx.utils.logger.PXLogger;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;

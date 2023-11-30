@@ -5,7 +5,7 @@ import com.perimeterx.http.IPXHttpClient;
 import com.perimeterx.http.IPXOutgoingRequest;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import javax.servlet.http.HttpServletRequest;

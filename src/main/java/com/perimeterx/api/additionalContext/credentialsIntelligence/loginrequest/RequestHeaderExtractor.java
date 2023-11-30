@@ -2,7 +2,7 @@ package com.perimeterx.api.additionalContext.credentialsIntelligence.loginreques
 
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.ConfigCredentialsFieldPath;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.PXLogger;
 import lombok.AllArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;

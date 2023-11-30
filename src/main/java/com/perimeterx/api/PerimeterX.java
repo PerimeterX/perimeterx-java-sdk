@@ -54,7 +54,8 @@ import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.HMACUtils;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.LoggerDispatcher;
+import com.perimeterx.utils.logger.PXLogger;
 import com.perimeterx.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -192,7 +193,8 @@ public class PerimeterX implements Closeable {
             handleCookies(context);
             addCustomHeadersToRequest(req, context);
 
-            context.setVerified(verificationHandler.handleVerification(context, responseWrapper));
+            boolean isRequestVerified = verificationHandler.handleVerification(context, responseWrapper);
+            context.setVerified(isRequestVerified);
         } catch (Exception e) {
             // If any general exception is being thrown, notify in page_request activity
             if (context != null) {
@@ -255,6 +257,7 @@ public class PerimeterX implements Closeable {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
+            LoggerDispatcher.getInstance().sendMemoryLogs(this.configuration, context);
             if (context != null && response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                 final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
 

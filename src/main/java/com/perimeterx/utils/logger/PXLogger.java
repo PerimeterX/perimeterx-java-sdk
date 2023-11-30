@@ -1,6 +1,8 @@
-package com.perimeterx.utils;
+package com.perimeterx.utils.logger;
 
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.LoggerSeverity;
+import lombok.Getter;
 
 public interface PXLogger {
     String DEBUG_PREFIX = "[PerimeterX - DEBUG] ";
