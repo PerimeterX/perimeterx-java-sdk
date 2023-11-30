@@ -219,6 +219,11 @@ public class PXContext {
     private String servletPath;
     private String pxhdDomain;
 
+    /**
+     * The base64 encoded request full url
+     */
+    private String encodedBlockedUrl;
+
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
         logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
