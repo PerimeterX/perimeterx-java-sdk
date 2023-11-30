@@ -6,6 +6,7 @@ import com.github.mustachejava.MustacheFactory;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.PXResourcesUtil;
 import org.apache.commons.io.IOUtils;
@@ -48,6 +49,7 @@ public abstract class TemplateFactory {
         props.put("customLogo", pxConfig.getCustomLogo());
         props.put("cssRef", pxConfig.getCssRef());
         props.put("jsRef", pxConfig.getJsRef());
+        pxContext.setEncodedBlockedUrl(Base64.encodeToString(pxContext.getFullUrl().getBytes(), false));
 
         String captchaSrcParams = getCaptchaSrcParams(pxContext);
         final String altBlockScript = PXResourcesUtil.getPxCaptchaURL(pxConfig, captchaSrcParams, true);
@@ -67,7 +69,7 @@ public abstract class TemplateFactory {
         props.put("altBlockScript", altBlockScript);
         props.put("jsClientSrc", jsClientSrc);
         props.put("firstPartyEnabled", pxConfig.isFirstPartyEnabled() ? "true" : "false");
-        props.put("blockedUrl", pxContext.getFullUrl());
+        props.put("blockedUrl", pxContext.getEncodedBlockedUrl());
         props.put("isMobile", Boolean.toString(pxContext.isMobileToken()));
 
         return props;
@@ -86,6 +88,7 @@ public abstract class TemplateFactory {
 
     private static String getCaptchaSrcParams(PXContext pxContext) {
         String urlVid = pxContext.getVid() != null ? pxContext.getVid() : "";
-        return "a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" + (pxContext.isMobileToken() ? "1" : "0");
+        return "a=" + pxContext.getBlockAction().getCode() + "&u=" + pxContext.getUuid() + "&v=" + urlVid + "&m=" +
+                (pxContext.isMobileToken() ? "1" : "0") + "&b=" + pxContext.getEncodedBlockedUrl();
     }
 }
