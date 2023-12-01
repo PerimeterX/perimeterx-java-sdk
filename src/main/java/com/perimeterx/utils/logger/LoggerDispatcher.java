@@ -7,6 +7,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.LoggerSeverity;
+import com.perimeterx.utils.StringUtils;
 import org.sonatype.plexus.components.sec.dispatcher.model.Config;
 
 import java.io.IOException;
@@ -36,10 +37,6 @@ public class LoggerDispatcher {
         memory.add(new LogRecord(msg,severity));
     }
 
-    private String getUrl(String appId){
-        return String.format(Constants.SERVER_URL, appId) + API_LOGGING_SERVICE_PATH;
-    }
-
     public void sendMemoryLogs(PXConfiguration conf, PXContext ctx){
         if (ctx != null){
             String loggerAuthToken = ctx.getHeaders().get(LOGGER_TOKEN_HEADER_NAME);
@@ -51,7 +48,6 @@ public class LoggerDispatcher {
     }
 
     private void dispatchLogs(PXConfiguration conf) {
-        String url = this.getUrl(conf.getAppId());
         try {
             PXClient client = conf.getPxClientInstance();
             client.sendLogs(this.memory);
@@ -68,7 +64,7 @@ public class LoggerDispatcher {
     private void enrichLog(LogRecord logRecord, PXContext context) {
         logRecord.setAppId(context.getAppId());
         logRecord.setHost(context.getHostname());
-        logRecord.setPath(context.getServletPath());
+        logRecord.setPath(StringUtils.getFullPathWithQueryParam(context.getRequest()));
         logRecord.setMethod(context.getHttpMethod());
         logRecord.setRequestId(context.getRequestId().toString());
     }

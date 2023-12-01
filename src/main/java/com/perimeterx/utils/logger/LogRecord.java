@@ -11,16 +11,16 @@ import java.util.Date;
 @Data
 public class LogRecord {
 
-    @JsonProperty @NonNull
+    @JsonProperty("message") @NonNull
     private String msg;
 
     @JsonProperty @NonNull
     private LoggerSeverity severity;
 
-    @JsonProperty @NonNull
+    @JsonProperty("messageTimestamp") @NonNull
     private long timestamp;
 
-    @JsonProperty
+    @JsonProperty("appID")
     private String appId;
 
     @JsonProperty
