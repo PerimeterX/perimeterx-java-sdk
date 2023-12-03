@@ -1,6 +1,7 @@
 package com.perimeterx.http.async;
 
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.api.PerimeterX;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.http.HttpResponse;
 import org.apache.http.concurrent.FutureCallback;
 
@@ -9,7 +10,7 @@ import org.apache.http.concurrent.FutureCallback;
  */
 public class PxClientAsyncHandler implements FutureCallback<HttpResponse> {
 
-    private static final PXLogger logger = PXLogger.getLogger(PxClientAsyncHandler.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     @Override
     public void completed(HttpResponse httpResponse) {

@@ -1,11 +1,12 @@
 package com.perimeterx.api.proxy;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.http.IPXHttpClient;
 import com.perimeterx.http.IPXOutgoingRequest;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +25,7 @@ import static com.perimeterx.utils.PXResourcesUtil.*;
  */
 public class DefaultReverseProxy implements ReverseProxy {
 
-    private final PXLogger logger = PXLogger.getLogger(DefaultReverseProxy.class);
+    private static final IPXLogger logger = PerimeterX.logger;
     private final String DEFAULT_JAVASCRIPT_VALUE = "";
     private final String DEFAULT_JSON_VALUE = "{}";
     private final byte[] DEFAULT_EMPTY_GIF_VALUE = {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, (byte) 0x80, 0x00,

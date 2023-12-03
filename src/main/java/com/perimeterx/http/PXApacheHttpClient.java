@@ -1,9 +1,10 @@
 package com.perimeterx.http;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.async.PxClientAsyncHandler;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.PXCommonUtils;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
@@ -32,7 +33,7 @@ import static com.perimeterx.utils.PXResourcesUtil.isValidPxThirdPartyRequest;
 
 
 public class PXApacheHttpClient implements IPXHttpClient {
-    private static final PXLogger logger = PXLogger.getLogger(PXApacheHttpClient.class);
+    private static final IPXLogger logger = PerimeterX.logger;
     private static final int INACTIVITY_PERIOD_TIME_MS = 1000;
     private static final long MAX_IDLE_TIME_SEC = 30L;
     private final PXConfiguration pxConfiguration;

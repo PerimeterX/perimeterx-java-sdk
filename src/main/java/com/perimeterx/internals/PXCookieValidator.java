@@ -1,5 +1,6 @@
 package com.perimeterx.internals;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -8,7 +9,8 @@ import com.perimeterx.models.risk.BlockReason;
 import com.perimeterx.models.risk.PassReason;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.models.risk.VidSource;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -18,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PXCookieValidator implements PXValidator {
 
-    private static final PXLogger logger = PXLogger.getLogger(PXCookieValidator.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private PXConfiguration pxConfiguration;
 
@@ -66,7 +68,7 @@ public class PXCookieValidator implements PXValidator {
             }
 
             if (pxCookie.isExpired()) {
-                logger.debug(PXLogger.LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
+                logger.debug(LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
                 context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED.getValue());
                 return false;
             }
@@ -77,7 +79,7 @@ public class PXCookieValidator implements PXValidator {
             }
 
             if (context.isSensitiveRequest()) {
-                logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getServletPath());
+                logger.debug(LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getServletPath());
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.getValue());
                 return false;
             }
@@ -86,7 +88,7 @@ public class PXCookieValidator implements PXValidator {
             return true;
 
         } catch (PXException e) {
-            logger.error(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
+            logger.error(LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
             context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.getValue());
             return false;
         }

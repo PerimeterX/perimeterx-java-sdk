@@ -2,6 +2,7 @@ package com.perimeterx.models;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.additionalContext.LoginData;
 import com.perimeterx.api.additionalContext.PXHDSource;
 import com.perimeterx.api.providers.CustomParametersProvider;
@@ -19,7 +20,8 @@ import com.perimeterx.models.enforcererror.EnforcerErrorReasonInfo;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.*;
 import com.perimeterx.utils.*;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
@@ -44,7 +46,7 @@ import static com.perimeterx.utils.PXCommonUtils.cookieHeadersNames;
 @Data
 public class PXContext {
 
-    private static final PXLogger logger = PXLogger.getLogger(PXContext.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     /**
      * Original HTTP request
@@ -228,7 +230,7 @@ public class PXContext {
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
-        logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
+        logger.debug(LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         this.ip = ipProvider.getRequestIP(request);
         this.hostname = hostnameProvider.getHostname(request);
@@ -241,7 +243,7 @@ public class PXContext {
         this.headers = PXCommonUtils.getHeadersFromRequest(request);
 
         if (headers.containsKey(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) || headers.containsKey(Constants.MOBILE_SDK_TOKENS_HEADER)) {
-            logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
+            logger.debug(LogReason.DEBUG_MOBILE_SDK_DETECTED);
             this.isMobileToken = true;
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }

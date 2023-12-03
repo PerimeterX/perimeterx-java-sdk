@@ -1,5 +1,6 @@
 package com.perimeterx.internals;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
 import com.perimeterx.internals.cookie.CookieData;
 import com.perimeterx.internals.cookie.PXCookieFactory;
@@ -8,14 +9,14 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.risk.S2SCallReason;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 public class CookieSelector {
 
-    private static final PXLogger logger = PXLogger.getLogger(CookieSelector.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     /**
      * This function selects the first working pxCookie it can deserialize without any errors.

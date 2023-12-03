@@ -1,6 +1,7 @@
 package com.perimeterx.utils;
 
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.api.PerimeterX;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.testng.annotations.Test;
 
 import java.security.InvalidKeyException;
@@ -13,7 +14,7 @@ public class HMACUtilsTest {
     private String baseString = "hello-from-ilai";
     private String hmac = "8F85769F65278C96695CE9C61B3FDD7C8991CB04F4C42D2A66E5C56FBCA6FDCC";
     private String cookieKey = "ilai's-cookie-dont-touch";
-    private PXLogger logger = PXLogger.getLogger(HMACUtilsTest.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     @Test
     public void testHMACString() throws InvalidKeyException, NoSuchAlgorithmException {

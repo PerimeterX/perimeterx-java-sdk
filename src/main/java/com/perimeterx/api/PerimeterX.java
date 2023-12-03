@@ -54,8 +54,9 @@ import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.HMACUtils;
-import com.perimeterx.utils.logger.LoggerDispatcher;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.LogReason;
+import com.perimeterx.utils.logger.LogMemory;
+import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,8 +80,7 @@ import static java.util.Objects.isNull;
 
 public class PerimeterX implements Closeable {
 
-    private static final PXLogger logger = PXLogger.getLogger(PerimeterX.class);
-
+    public static IPXLogger logger;
     private PXConfiguration configuration;
     private PXS2SValidator serverValidator;
     private PXCookieValidator cookieValidator;
@@ -93,7 +93,8 @@ public class PerimeterX implements Closeable {
     private RequestFilter requestFilter;
 
     private void init(PXConfiguration configuration) throws PXException {
-        logger.debug(PXLogger.LogReason.DEBUG_INITIALIZING_MODULE);
+         logger = LogMemory.getLogger("PerimeterX Logger");
+        logger.debug(LogReason.DEBUG_INITIALIZING_MODULE);
         configuration.mergeConfigurations();
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
@@ -166,7 +167,7 @@ public class PerimeterX implements Closeable {
      */
     public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
-        logger.debug(PXLogger.LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
+        logger.debug(LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
         try {
             if (isValidTelemetryRequest(req)) {
@@ -175,7 +176,7 @@ public class PerimeterX implements Closeable {
             }
 
             if (!moduleEnabled()) {
-                logger.debug(PXLogger.LogReason.DEBUG_MODULE_DISABLED);
+                logger.debug(LogReason.DEBUG_MODULE_DISABLED);
                 return null;
             }
 
@@ -220,13 +221,13 @@ public class PerimeterX implements Closeable {
 
     private void handleCookies(PXContext context) {
         if (cookieValidator.verify(context)) {
-            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
+            logger.debug(LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
             return;
         }
-        logger.debug(PXLogger.LogReason.DEBUG_COOKIE_MISSING);
+        logger.debug(LogReason.DEBUG_COOKIE_MISSING);
         if (serverValidator.verify(context)) {
-            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
+            logger.debug(LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
         }
     }
 
@@ -257,7 +258,7 @@ public class PerimeterX implements Closeable {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            LoggerDispatcher.getInstance().sendMemoryLogs(this.configuration, context);
+            logger.sendMemoryLogs(this.configuration, context);
             if (context != null && response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                 final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
 

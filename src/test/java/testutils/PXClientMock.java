@@ -66,7 +66,7 @@ public class PXClientMock implements PXClient {
     }
 
     @Override
-    public void sendLogs(List<LogRecord> activities) throws IOException {
+    public void sendLogs(String activities) throws IOException {
         //noop
     }
 

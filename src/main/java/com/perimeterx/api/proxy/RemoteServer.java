@@ -1,11 +1,12 @@
 package com.perimeterx.api.proxy;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.http.*;
 import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -35,7 +36,7 @@ import static com.perimeterx.utils.PXIOUtils.copy;
  */
 public class RemoteServer {
 
-    private final PXLogger logger = PXLogger.getLogger(RemoteServer.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private HttpServletResponse res;
     private HttpServletRequest req;
@@ -84,7 +85,7 @@ public class RemoteServer {
     }
 
     public IPXOutgoingRequest prepareProxyRequest() throws IOException {
-        logger.debug("Preparing proxy request");
+        logger.debug("Preparing first party request");
         String method = req.getMethod();
         String proxyRequestUri = rewriteUrlFromRequest(req);
 

@@ -1,15 +1,16 @@
 package com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.ConfigCredentialsFieldPath;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import lombok.AllArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
 public class RequestHeaderExtractor implements CredentialsExtractor {
-    private static final PXLogger logger = PXLogger.getLogger(RequestHeaderExtractor.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private final ConfigCredentialsFieldPath credentialsFieldPath;
 

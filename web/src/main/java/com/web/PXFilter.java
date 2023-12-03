@@ -4,7 +4,9 @@ import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.models.PXContext;
+import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.utils.LoggerSeverity;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;

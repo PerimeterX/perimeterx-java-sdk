@@ -1,5 +1,6 @@
 package com.perimeterx.http.mock;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
@@ -7,7 +8,7 @@ import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.utils.logger.LogRecord;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
@@ -17,7 +18,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class MockPXClient implements PXClient {
-    private static final PXLogger logger = PXLogger.getLogger(MockPXClient.class);
+    private static final IPXLogger logger = PerimeterX.logger;
     protected RiskResponse riskResponse;
     protected PXDynamicConfiguration pxDynamicConfiguration;
     @Override
@@ -37,7 +38,7 @@ public class MockPXClient implements PXClient {
 
     }
 
-    public void sendLogs(List<LogRecord> activities) throws IOException {
+    public void sendLogs(String activities) throws IOException {
         logger.debug("Mocking sendLoggingServiceLogs");
     }
 

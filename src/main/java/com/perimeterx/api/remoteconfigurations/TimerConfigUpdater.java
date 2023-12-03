@@ -1,18 +1,19 @@
 package com.perimeterx.api.remoteconfigurations;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class TimerConfigUpdater extends TimerTask {
 
-    private static final PXLogger logger = PXLogger.getLogger(TimerConfigUpdater.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private RemoteConfigurationManager configManager;
     private PXConfiguration pxConfiguration;

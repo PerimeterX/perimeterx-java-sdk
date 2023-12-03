@@ -2,10 +2,11 @@ package com.perimeterx.api.additionalContext.credentialsIntelligence.loginreques
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.ConfigCredentialsFieldPath;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import lombok.AllArgsConstructor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ import static com.perimeterx.utils.StringUtils.splitQueryParams;
 
 @AllArgsConstructor
 public class RequestBodyExtractor implements CredentialsExtractor {
-    private final static PXLogger logger = PXLogger.getLogger(RequestQueryParamsExtractor.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private final static String CREDENTIALS_PATH_SEPARATOR = "\\.";
     private final static String CONTENT_TYPE = "content-type";

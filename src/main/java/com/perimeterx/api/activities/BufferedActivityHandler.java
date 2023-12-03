@@ -1,12 +1,14 @@
 package com.perimeterx.api.activities;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,8 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.perimeterx.utils.logger.PXLogger.LogReason.ERROR_TELEMETRY_EXCEPTION;
-
 
 /**
  * Buffered activities and sends them to PX servers when buffer is full
@@ -27,7 +27,7 @@ import static com.perimeterx.utils.logger.PXLogger.LogReason.ERROR_TELEMETRY_EXC
  */
 public class BufferedActivityHandler implements ActivityHandler {
     private static final ExecutorService es = Executors.newFixedThreadPool(8);
-    private static final PXLogger logger = PXLogger.getLogger(BufferedActivityHandler.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private final int maxBufferLength;
     private volatile ConcurrentLinkedQueue<Activity> bufferedActivities = new ConcurrentLinkedQueue<>();
@@ -61,7 +61,7 @@ public class BufferedActivityHandler implements ActivityHandler {
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfig.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry);
         } catch (IOException e) {
-            throw new PXException(ERROR_TELEMETRY_EXCEPTION.toString(), e);
+            throw new PXException(LogReason.ERROR_TELEMETRY_EXCEPTION.toString(), e);
         }
     }
 

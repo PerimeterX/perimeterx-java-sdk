@@ -1,5 +1,6 @@
 package com.perimeterx.internals;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.additionalContext.PXHDSource;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.internals.cookie.DataEnrichmentCookie;
@@ -13,7 +14,8 @@ import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.EnforcerErrorUtils;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
 import org.apache.http.conn.ConnectTimeoutException;
 
 import static org.apache.commons.lang3.StringUtils.*;
@@ -25,7 +27,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  */
 public class PXS2SValidator implements PXValidator {
 
-    private static final PXLogger logger = PXLogger.getLogger(PXS2SValidator.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private PXClient pxClient;
     private PXConfiguration pxConfiguration;
@@ -43,7 +45,7 @@ public class PXS2SValidator implements PXValidator {
      * @throws PXException will be thrown when an error occurs
      */
     public boolean verify(PXContext pxContext) {
-        logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
+        logger.debug(LogReason.DEBUG_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
         RiskResponse response = null;
         long startRiskRtt = System.currentTimeMillis();
         long rtt;
@@ -62,7 +64,7 @@ public class PXS2SValidator implements PXValidator {
 
         try {
             rtt = System.currentTimeMillis() - startRiskRtt;
-            logger.debug(PXLogger.LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null) ? "" : response.getScore(), rtt);
+            logger.debug(LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null) ? "" : response.getScore(), rtt);
 
             if (!isResponseValid(response)) {
                 handleS2SError(pxContext, rtt, response, null);
@@ -80,11 +82,11 @@ public class PXS2SValidator implements PXValidator {
             } else {
                 pxContext.setBlockReason(BlockReason.SERVER);
             }
-            logger.debug(PXLogger.LogReason.DEBUG_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
+            logger.debug(LogReason.DEBUG_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
             return false;
         } catch (Exception e) {
             if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
-                String errorMessage = PXLogger.LogReason.ERROR_RISK_EVALUATION_EXCEPTION.toString();
+                String errorMessage = LogReason.ERROR_RISK_EVALUATION_EXCEPTION.toString();
                 EnforcerErrorUtils.handleEnforcerError(pxContext, errorMessage, e);
             }
             logger.error("Error {}: {}", e.toString(), e.getStackTrace());

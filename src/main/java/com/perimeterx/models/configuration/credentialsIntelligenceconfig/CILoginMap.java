@@ -3,7 +3,8 @@ package com.perimeterx.models.configuration.credentialsIntelligenceconfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.api.PerimeterX;
+import com.perimeterx.utils.logger.IPXLogger;
 import lombok.Getter;
 
 import java.util.Collection;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
 
 @Getter
 public class CILoginMap {
-    private static final PXLogger logger = PXLogger.getLogger(CILoginMap.class);
+    private static final IPXLogger logger = PerimeterX.logger;;
     private final static String KEY_DELIMITER = ":";
 
     private final Map<String, CredentialsExtractionDetails> pathAndMethodToLoginExtractionDetails;

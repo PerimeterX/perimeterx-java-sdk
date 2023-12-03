@@ -1,13 +1,15 @@
 package com.perimeterx.internals.cookie.cookieparsers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.DataEnrichmentCookie;
 import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.HMACUtils;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -18,7 +20,7 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class HeaderParser {
 
-    protected static final PXLogger logger = PXLogger.getLogger(HeaderParser.class);
+    protected static final IPXLogger logger = PerimeterX.logger;
 
     protected abstract String[] splitHeader(String header);
 
@@ -27,7 +29,7 @@ public abstract class HeaderParser {
     /**
      * This function receives a cookie from the cookie http header, parses it and returns all the available px cookies in a linked list.
      *
-     * @param cookieHeader Should contain the cookie(or cookies) that needs to be parsed into RawCookieData, can be null or empty
+     * @param cookieHeaders Should contain the cookie(or cookies) that needs to be parsed into RawCookieData, can be null or empty
      * @return All px cookies available from the header.
      */
     public List<RawCookieData> createRawCookieDataList(String... cookieHeaders) {
@@ -68,7 +70,7 @@ public abstract class HeaderParser {
             try {
                 dataEnrichmentCookie.setJsonPayload(mapper.readTree(decodedPayload));
             } catch (IOException e) {
-                logger.error(PXLogger.LogReason.ERROR_DATA_ENRICHMENT_JSON_PARSING_FAILED);
+                logger.error(LogReason.ERROR_DATA_ENRICHMENT_JSON_PARSING_FAILED);
             }
         }
 

@@ -2,13 +2,13 @@ package com.perimeterx.api;
 
 import com.perimeterx.http.PXHttpMethod;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class RequestFilter {
-    private static final PXLogger logger = PXLogger.getLogger(PerimeterX.class);
+    private static final IPXLogger logger = PerimeterX.logger;
     private final PXConfiguration configuration;
 
     public RequestFilter(PXConfiguration configuration) {

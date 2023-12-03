@@ -1,19 +1,20 @@
 package com.perimeterx.internals;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
 import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 public class PXCookieOriginalTokenValidator implements PXValidator {
 
-    private static final PXLogger logger = PXLogger.getLogger(PXCookieOriginalTokenValidator.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private PXConfiguration pxConfiguration;
 

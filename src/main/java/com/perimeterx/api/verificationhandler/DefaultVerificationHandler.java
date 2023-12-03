@@ -1,20 +1,20 @@
 package com.perimeterx.api.verificationhandler;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.additionalContext.PXHDSource;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
 
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import static com.perimeterx.utils.logger.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK;
-import static com.perimeterx.utils.logger.PXLogger.LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK;
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
 
 /**
@@ -30,7 +30,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
     final String COOKIE_SAME_SITE = "SameSite=Lax" + COOKIE_SEPARATOR;
     final String COOKIE_DOMAIN_KEY = "Domain=";
 
-    private static final PXLogger logger = PXLogger.getLogger(DefaultVerificationHandler.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private final PXConfiguration pxConfiguration;
     private final ActivityHandler activityHandler;
@@ -107,7 +107,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
         // If should block this request we will apply our block handle and send the block activity to px
 
         boolean verified = score < blockingScore;
-        logger.debug(verified ? DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK : DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK, score, blockingScore);
+        logger.debug(verified ? LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK : LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK, score, blockingScore);
 
         return verified;
     }

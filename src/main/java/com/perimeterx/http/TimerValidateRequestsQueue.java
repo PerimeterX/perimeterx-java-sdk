@@ -1,7 +1,8 @@
 package com.perimeterx.http;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 
 import java.io.Closeable;
@@ -10,7 +11,7 @@ import java.util.TimerTask;
 
 public class TimerValidateRequestsQueue extends TimerTask implements Closeable {
 
-    private static final PXLogger logger = PXLogger.getLogger(TimerValidateRequestsQueue.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     private Timer timer = null;
     private PoolingNHttpClientConnectionManager nHttpConnectionManager;

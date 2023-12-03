@@ -1,7 +1,8 @@
 package com.perimeterx.api.proxy;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.models.proxy.PredefinedResponse;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 
@@ -9,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class DefaultPredefinedResponseHandler implements PredefinedResponseHelper {
-    PXLogger logger = PXLogger.getLogger(DefaultPredefinedResponseHandler.class);
+    private static final IPXLogger logger = PerimeterX.logger;
 
     @Override
     public void handlePredefinedResponse(HttpServletResponse res, PredefinedResponse predefinedResponse) {

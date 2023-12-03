@@ -63,7 +63,7 @@ public interface PXClient extends Closeable {
     void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException;
 
 
-    void sendLogs(List<LogRecord> activities) throws IOException;
+    void sendLogs(String activities) throws IOException;
 
         @Override
     default void close() throws IOException {

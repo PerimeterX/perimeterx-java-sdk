@@ -1,6 +1,7 @@
 package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.CredentialsExtractor;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.DefaultCredentialsCustomExtractor;
@@ -24,7 +25,6 @@ import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
 import com.perimeterx.utils.LoggerSeverity;
-import com.perimeterx.utils.logger.PXLogger;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,7 +50,6 @@ import static com.perimeterx.utils.Constants.*;
 @NoArgsConstructor
 @Getter
 public class PXConfiguration {
-    private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
     private static LoggerSeverity loggerSeverity = null;
 
     public static LoggerSeverity getPxLoggerSeverity() {
@@ -363,7 +362,7 @@ public class PXConfiguration {
 
 
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
-        logger.debug("Updating PXConfiguration file");
+        PerimeterX.logger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
         this.checksum = pxDynamicConfiguration.getChecksum();
         this.cookieKey = pxDynamicConfiguration.getCookieSecret();
@@ -382,7 +381,7 @@ public class PXConfiguration {
             try {
                 FilesUtils.readFileConfigAsPXConfig(this, filepath);
             } catch (IOException e) {
-                logger.error(e.getMessage());
+                PerimeterX.logger.error(e.getMessage());
             }
         }
     }
@@ -395,7 +394,7 @@ public class PXConfiguration {
                 Object newVal = field.get(loadedConfig);
                 field.set(this, newVal);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                logger.error("Config param " + param + "does not exist in PXConfiguration.");
+                PerimeterX.logger.error("Config param " + param + "does not exist in PXConfiguration.");
             }
 
         }

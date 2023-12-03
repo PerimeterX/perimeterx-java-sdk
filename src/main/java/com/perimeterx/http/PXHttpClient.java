@@ -1,6 +1,7 @@
 package com.perimeterx.http;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.Activity;
@@ -15,7 +16,7 @@ import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.logger.LogRecord;
-import com.perimeterx.utils.logger.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
@@ -41,7 +42,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class PXHttpClient implements PXClient, Closeable {
 
-    private static final PXLogger logger = PXLogger.getLogger(PXHttpClient.class);
+    private static final IPXLogger logger = PerimeterX.logger;
     private final IPXHttpClient client;
     private final PXConfiguration pxConfiguration;
 
@@ -177,11 +178,10 @@ public class PXHttpClient implements PXClient, Closeable {
     }
 
     @Override
-    public void sendLogs(List<LogRecord> activities) throws IOException {
-        String requestBody = JsonUtils.writer.writeValueAsString(activities);
+    public void sendLogs(String activities) throws IOException {
         logger.debug("Sending logs to logging service");
         BasicHeader loggerAuthTokenHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getLoggerAuthToken());
-        IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_LOGGING_SERVICE_PATH,PXHttpMethod.POST, requestBody,loggerAuthTokenHeader);
+        IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_LOGGING_SERVICE_PATH,PXHttpMethod.POST, activities,loggerAuthTokenHeader);
         client.sendAsync(request);
     }
 
