@@ -218,6 +218,7 @@ public class PXContext {
     private String additionalRiskInfo;
     private String servletPath;
     private String pxhdDomain;
+    private long enforcerStartTime;
 
     /**
      * The base64 encoded request full url
@@ -235,6 +236,7 @@ public class PXContext {
     }
 
     private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
+        this.enforcerStartTime = new Date().getTime();
         this.headers = PXCommonUtils.getHeadersFromRequest(request);
 
         if (headers.containsKey(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) || headers.containsKey(Constants.MOBILE_SDK_TOKENS_HEADER)) {

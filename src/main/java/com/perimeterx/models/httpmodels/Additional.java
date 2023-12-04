@@ -11,6 +11,7 @@ import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -84,6 +85,10 @@ public class Additional {
 
     @JsonProperty("request_id")
     public UUID requestId;
+    @JsonProperty("enforcer_start_time")
+    private long enforcerStartTime;
+    @JsonProperty("risk_start_time")
+    private long riskStartTime;
 
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
@@ -103,6 +108,8 @@ public class Additional {
         additional.requestCookieNames = ctx.getRequestCookieNames();
         additional.vidSource = ctx.getVidSource().getValue();
         additional.requestId = ctx.getRequestId();
+        additional.enforcerStartTime = ctx.getEnforcerStartTime();
+        additional.riskStartTime = new Date().getTime();
 
         setLoginCredentials(ctx, additional);
 
