@@ -30,6 +30,8 @@ public class RiskRequest {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("pxhd")
     public String pxhd;
+    @JsonProperty("cookie_origin")
+    private String cookieOrigin;
 
 
     public static RiskRequest fromContext(PXContext context) {
@@ -37,6 +39,7 @@ public class RiskRequest {
         riskRequest.request = com.perimeterx.models.risk.Request.fromContext(context);
         riskRequest.vid = context.getVid();
         riskRequest.pxhd = context.getPxhd();
+        riskRequest.cookieOrigin = context.getCookieOrigin();
         riskRequest.pxhd = context.getPxhd();
         riskRequest.clientUuid = context.getUuid();
         riskRequest.additional = com.perimeterx.models.httpmodels.Additional.fromContext(context);

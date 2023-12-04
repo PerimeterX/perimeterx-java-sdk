@@ -86,9 +86,9 @@ public class Additional {
     @JsonProperty("request_id")
     public UUID requestId;
     @JsonProperty("enforcer_start_time")
-    private long enforcerStartTime;
+    public long enforcerStartTime;
     @JsonProperty("risk_start_time")
-    private long riskStartTime;
+    public long riskStartTime;
 
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
