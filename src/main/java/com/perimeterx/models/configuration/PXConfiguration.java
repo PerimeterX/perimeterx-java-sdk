@@ -24,7 +24,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
-import com.perimeterx.utils.LoggerSeverity;
+import com.perimeterx.utils.logger.LoggerSeverity;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 

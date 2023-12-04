@@ -1,6 +1,5 @@
 package com.perimeterx.utils.logger;
 
-import com.perimeterx.utils.LoggerSeverity;
 import org.slf4j.LoggerFactory;
 
 public class Slf4JLogMemory extends LogMemory {

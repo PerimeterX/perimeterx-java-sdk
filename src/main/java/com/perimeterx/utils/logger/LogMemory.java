@@ -6,7 +6,6 @@ import com.perimeterx.http.*;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.JsonUtils;
-import com.perimeterx.utils.LoggerSeverity;
 import com.perimeterx.utils.StringUtils;
 
 import java.util.ArrayList;

@@ -1,10 +1,8 @@
 package com.perimeterx.utils.logger;
 
-import com.perimeterx.utils.LoggerSeverity;
 import lombok.*;
 import com.fasterxml.jackson.annotation.*;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)

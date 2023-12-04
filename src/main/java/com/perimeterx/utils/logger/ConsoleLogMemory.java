@@ -1,7 +1,5 @@
 package com.perimeterx.utils.logger;
 
-import com.perimeterx.utils.LoggerSeverity;
-
 import java.io.PrintStream;
 public class ConsoleLogMemory extends LogMemory {
     private final LoggerSeverity severity;
