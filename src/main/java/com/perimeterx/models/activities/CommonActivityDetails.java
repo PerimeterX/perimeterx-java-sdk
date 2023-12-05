@@ -56,12 +56,6 @@ public class CommonActivityDetails implements ActivityDetails {
     @JsonProperty("pass")
     public String password;
 
-    @JsonProperty("px_decoded_original_token")
-    public String pxDecodedOriginalToken;
-
-    @JsonProperty("enforcer_vid_source")
-    public String enforcerVidSource;
-
     public CommonActivityDetails(PXContext context) {
         final LoginData loginData = context.getLoginData();
 
