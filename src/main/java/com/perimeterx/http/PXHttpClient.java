@@ -15,7 +15,6 @@ import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JsonUtils;
-import com.perimeterx.utils.logger.LogRecord;
 import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHeaders;
@@ -42,7 +41,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class PXHttpClient implements PXClient, Closeable {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
     private final IPXHttpClient client;
     private final PXConfiguration pxConfiguration;
 

@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 
 @Getter
 public class CILoginMap {
-    private static final IPXLogger logger = PerimeterX.logger;;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
     private final static String KEY_DELIMITER = ":";
 
     private final Map<String, CredentialsExtractionDetails> pathAndMethodToLoginExtractionDetails;

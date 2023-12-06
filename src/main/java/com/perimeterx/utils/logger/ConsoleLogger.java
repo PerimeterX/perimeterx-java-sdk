@@ -1,11 +1,11 @@
 package com.perimeterx.utils.logger;
 
 import java.io.PrintStream;
-public class ConsoleLogMemory extends LogMemory {
+public class ConsoleLogger extends LogMemory {
     private final LoggerSeverity severity;
 
-    public ConsoleLogMemory(LoggerSeverity severity) {
-        super();
+    public ConsoleLogger(LoggerSeverity severity, boolean isMemoryEnabled) {
+        super(isMemoryEnabled);
         this.severity = severity;
     }
 

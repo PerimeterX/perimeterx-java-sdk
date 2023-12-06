@@ -362,7 +362,7 @@ public class PXConfiguration {
 
 
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
-        PerimeterX.logger.debug("Updating PXConfiguration file");
+        PerimeterX.globalLogger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
         this.checksum = pxDynamicConfiguration.getChecksum();
         this.cookieKey = pxDynamicConfiguration.getCookieSecret();
@@ -381,7 +381,7 @@ public class PXConfiguration {
             try {
                 FilesUtils.readFileConfigAsPXConfig(this, filepath);
             } catch (IOException e) {
-                PerimeterX.logger.error(e.getMessage());
+                PerimeterX.globalLogger.error(e.getMessage());
             }
         }
     }
@@ -394,7 +394,7 @@ public class PXConfiguration {
                 Object newVal = field.get(loadedConfig);
                 field.set(this, newVal);
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                PerimeterX.logger.error("Config param " + param + "does not exist in PXConfiguration.");
+                PerimeterX.globalLogger.error("Config param " + param + "does not exist in PXConfiguration.");
             }
 
         }

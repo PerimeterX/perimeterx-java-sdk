@@ -25,7 +25,7 @@ import static com.perimeterx.utils.PXResourcesUtil.*;
  */
 public class DefaultReverseProxy implements ReverseProxy {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
     private final String DEFAULT_JAVASCRIPT_VALUE = "";
     private final String DEFAULT_JSON_VALUE = "{}";
     private final byte[] DEFAULT_EMPTY_GIF_VALUE = {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, (byte) 0x80, 0x00,

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class DefaultPredefinedResponseHandler implements PredefinedResponseHelper {
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     @Override
     public void handlePredefinedResponse(HttpServletResponse res, PredefinedResponse predefinedResponse) {

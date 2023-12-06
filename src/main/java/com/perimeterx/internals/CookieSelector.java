@@ -16,7 +16,7 @@ import java.util.List;
 
 public class CookieSelector {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     /**
      * This function selects the first working pxCookie it can deserialize without any errors.

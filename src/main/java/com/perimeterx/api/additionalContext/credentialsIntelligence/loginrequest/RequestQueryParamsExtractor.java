@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
 public class RequestQueryParamsExtractor implements CredentialsExtractor {
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private final ConfigCredentialsFieldPath credentialsFieldPath;
 

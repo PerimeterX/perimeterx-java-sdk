@@ -18,7 +18,7 @@ import static com.perimeterx.utils.StringUtils.splitQueryParams;
 
 @AllArgsConstructor
 public class RequestBodyExtractor implements CredentialsExtractor {
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private final static String CREDENTIALS_PATH_SEPARATOR = "\\.";
     private final static String CONTENT_TYPE = "content-type";

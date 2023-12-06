@@ -10,7 +10,7 @@ import org.apache.http.concurrent.FutureCallback;
  */
 public class PxClientAsyncHandler implements FutureCallback<HttpResponse> {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     @Override
     public void completed(HttpResponse httpResponse) {

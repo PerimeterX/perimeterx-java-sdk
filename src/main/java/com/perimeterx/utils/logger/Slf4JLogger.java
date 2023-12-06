@@ -2,12 +2,12 @@ package com.perimeterx.utils.logger;
 
 import org.slf4j.LoggerFactory;
 
-public class Slf4JLogMemory extends LogMemory {
+public class Slf4JLogger extends LogMemory {
 
     protected org.slf4j.Logger logger;
-    public Slf4JLogMemory(String name) {
-        super();
-        logger = LoggerFactory.getLogger(name);
+    public Slf4JLogger(boolean isMemoryEnabled) {
+        super(isMemoryEnabled);
+        logger = LoggerFactory.getLogger("PerimeterX");
     }
 
 
@@ -28,7 +28,6 @@ public class Slf4JLogMemory extends LogMemory {
     }
 
     @Override
-    //TODO add function that encapsulates loggerDispatcher
     public void error(String msg, Object... args) {
         addLog(msg , LoggerSeverity.ERROR);
         logger.error(ERROR_PREFIX + msg, args);

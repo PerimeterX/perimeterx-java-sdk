@@ -27,7 +27,7 @@ import static org.apache.commons.lang3.StringUtils.*;
  */
 public class PXS2SValidator implements PXValidator {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private PXClient pxClient;
     private PXConfiguration pxConfiguration;

@@ -20,7 +20,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PXCookieValidator implements PXValidator {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private PXConfiguration pxConfiguration;
 

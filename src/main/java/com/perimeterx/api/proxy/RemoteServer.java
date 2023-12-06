@@ -36,7 +36,7 @@ import static com.perimeterx.utils.PXIOUtils.copy;
  */
 public class RemoteServer {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private HttpServletResponse res;
     private HttpServletRequest req;

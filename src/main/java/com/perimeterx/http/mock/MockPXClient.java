@@ -7,7 +7,6 @@ import com.perimeterx.models.activities.Activity;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.utils.logger.LogRecord;
 import com.perimeterx.utils.logger.IPXLogger;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +17,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class MockPXClient implements PXClient {
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
     protected RiskResponse riskResponse;
     protected PXDynamicConfiguration pxDynamicConfiguration;
     @Override

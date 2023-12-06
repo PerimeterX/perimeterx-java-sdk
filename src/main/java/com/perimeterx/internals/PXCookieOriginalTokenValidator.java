@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PXCookieOriginalTokenValidator implements PXValidator {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private PXConfiguration pxConfiguration;
 

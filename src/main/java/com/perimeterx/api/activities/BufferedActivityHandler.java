@@ -27,8 +27,9 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class BufferedActivityHandler implements ActivityHandler {
     private static final ExecutorService es = Executors.newFixedThreadPool(8);
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
+    public PXContext context;
     private final int maxBufferLength;
     private volatile ConcurrentLinkedQueue<Activity> bufferedActivities = new ConcurrentLinkedQueue<>();
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -45,13 +46,13 @@ public class BufferedActivityHandler implements ActivityHandler {
     @Override
     public void handleBlockActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
-        handleSendActivities(activity);
+        handleSendActivities(activity, context);
     }
 
     @Override
     public void handlePageRequestedActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_PAGE_REQUESTED, configuration.getAppId(), context);
-        handleSendActivities(activity);
+        handleSendActivities(activity, context);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class BufferedActivityHandler implements ActivityHandler {
     @Override
     public void handleAdditionalS2SActivity(PXContext context) throws PXException {
         final Activity activity = createAdditionalS2SActivity(context);
-        handleSendActivities(activity);
+        handleSendActivities(activity, context);
     }
 
     public Activity createAdditionalS2SActivity(PXContext context) {
@@ -89,15 +90,15 @@ public class BufferedActivityHandler implements ActivityHandler {
                 && configuration.isAddRawUsernameOnAdditionalS2SActivity();
     }
 
-    private void handleSendActivities(Activity activity) {
+    private void handleSendActivities(Activity activity, PXContext context) {
         bufferedActivities.add(activity);
         int count = counter.incrementAndGet();
         if (count > maxBufferLength) {
-            handleOverflow();
+            handleOverflow(context);
         }
     }
 
-    private void handleOverflow() {
+    private void handleOverflow(PXContext context) {
         es.execute(() -> {
             if (lock.tryLock()) {
                 try {
@@ -106,12 +107,12 @@ public class BufferedActivityHandler implements ActivityHandler {
                         sendAsync(activitiesToSend);
                     }
                 } catch (Exception e) {
-                    logger.error("failed to send async activities", e);
+                    context.logger.error("failed to send async activities", e);
                 } finally {
                     lock.unlock();
                 }
             } else {
-                logger.debug("handleOverflow -Lock acquisition failed");
+                context.logger.debug("handleOverflow -Lock acquisition failed");
             }
         });
     }

@@ -33,7 +33,7 @@ import static com.perimeterx.utils.PXResourcesUtil.isValidPxThirdPartyRequest;
 
 
 public class PXApacheHttpClient implements IPXHttpClient {
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
     private static final int INACTIVITY_PERIOD_TIME_MS = 1000;
     private static final long MAX_IDLE_TIME_SEC = 30L;
     private final PXConfiguration pxConfiguration;

@@ -14,7 +14,7 @@ public class HMACUtilsTest {
     private String baseString = "hello-from-ilai";
     private String hmac = "8F85769F65278C96695CE9C61B3FDD7C8991CB04F4C42D2A66E5C56FBCA6FDCC";
     private String cookieKey = "ilai's-cookie-dont-touch";
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     @Test
     public void testHMACString() throws InvalidKeyException, NoSuchAlgorithmException {

@@ -11,7 +11,7 @@ import java.util.TimerTask;
 
 public class TimerValidateRequestsQueue extends TimerTask implements Closeable {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private Timer timer = null;
     private PoolingNHttpClientConnectionManager nHttpConnectionManager;

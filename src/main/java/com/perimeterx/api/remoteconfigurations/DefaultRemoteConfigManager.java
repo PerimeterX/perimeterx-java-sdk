@@ -11,7 +11,7 @@ import com.perimeterx.utils.logger.IPXLogger;
  */
 public class DefaultRemoteConfigManager implements RemoteConfigurationManager {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private PXClient pxClient;
     private PXConfiguration pxConfiguration;

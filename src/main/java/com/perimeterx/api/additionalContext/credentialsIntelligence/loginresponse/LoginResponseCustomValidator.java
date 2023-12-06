@@ -6,7 +6,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.logger.IPXLogger;
 
 public class LoginResponseCustomValidator implements LoginResponseValidator {
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private final LoginResponseValidator customValidator;
 

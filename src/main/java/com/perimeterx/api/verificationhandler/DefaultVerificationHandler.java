@@ -30,7 +30,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
     final String COOKIE_SAME_SITE = "SameSite=Lax" + COOKIE_SEPARATOR;
     final String COOKIE_DOMAIN_KEY = "Domain=";
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private final PXConfiguration pxConfiguration;
     private final ActivityHandler activityHandler;

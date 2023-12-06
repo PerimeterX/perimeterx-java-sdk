@@ -55,9 +55,9 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.EnforcerErrorUtils;
 import com.perimeterx.utils.HMACUtils;
 import com.perimeterx.utils.logger.LogReason;
-import com.perimeterx.utils.logger.LogMemory;
 import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.StringUtils;
+import com.perimeterx.utils.logger.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -80,7 +80,7 @@ import static java.util.Objects.isNull;
 
 public class PerimeterX implements Closeable {
 
-    public static IPXLogger logger;
+    public static IPXLogger globalLogger;
     private PXConfiguration configuration;
     private PXS2SValidator serverValidator;
     private PXCookieValidator cookieValidator;
@@ -93,8 +93,8 @@ public class PerimeterX implements Closeable {
     private RequestFilter requestFilter;
 
     private void init(PXConfiguration configuration) throws PXException {
-         logger = LogMemory.getLogger("PerimeterX Logger");
-        logger.debug(LogReason.DEBUG_INITIALIZING_MODULE);
+        globalLogger = LoggerFactory.getLogger(false);
+        globalLogger.debug(LogReason.DEBUG_INITIALIZING_MODULE);
         configuration.mergeConfigurations();
         this.configuration = configuration;
         hostnameProvider = new DefaultHostnameProvider();
@@ -167,7 +167,7 @@ public class PerimeterX implements Closeable {
      */
     public PXContext pxVerify(HttpServletRequest req, HttpServletResponseWrapper responseWrapper) throws PXException {
         PXContext context = null;
-        logger.debug(LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
+        globalLogger.debug(LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
         try {
             if (isValidTelemetryRequest(req)) {
@@ -176,7 +176,7 @@ public class PerimeterX implements Closeable {
             }
 
             if (!moduleEnabled()) {
-                logger.debug(LogReason.DEBUG_MODULE_DISABLED);
+                globalLogger.debug(LogReason.DEBUG_MODULE_DISABLED);
                 return null;
             }
 
@@ -221,13 +221,13 @@ public class PerimeterX implements Closeable {
 
     private void handleCookies(PXContext context) {
         if (cookieValidator.verify(context)) {
-            logger.debug(LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
+            globalLogger.debug(LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
             return;
         }
-        logger.debug(LogReason.DEBUG_COOKIE_MISSING);
+        globalLogger.debug(LogReason.DEBUG_COOKIE_MISSING);
         if (serverValidator.verify(context)) {
-            logger.debug(LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
+            globalLogger.debug(LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
         }
     }
 
@@ -258,7 +258,7 @@ public class PerimeterX implements Closeable {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            logger.sendMemoryLogs(this.configuration, context);
+            globalLogger.sendMemoryLogs(this.configuration, context);
             if (context != null && response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                 final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
 
@@ -268,7 +268,7 @@ public class PerimeterX implements Closeable {
                 activityHandler.handleAdditionalS2SActivity(context);
             }
         } catch (Exception e) {
-            logger.error("Failed to post verify response. Error :: ", e);
+            globalLogger.error("Failed to post verify response. Error :: ", e);
         }
     }
 
@@ -279,7 +279,7 @@ public class PerimeterX implements Closeable {
             return false;
         }
         try {
-            logger.debug("Received command to send enforcer telemetry");
+            globalLogger.debug("Received command to send enforcer telemetry");
 
             final String decodedString = new String(Base64.getDecoder().decode(telemetryHeader));
             final String[] splitTimestampAndHmac = decodedString.split(":");
@@ -292,7 +292,7 @@ public class PerimeterX implements Closeable {
             final String hmac = splitTimestampAndHmac[1];
 
             if (Long.parseLong(timestamp) < System.currentTimeMillis()) {
-                logger.error("Telemetry command has expired.");
+                globalLogger.error("Telemetry command has expired.");
                 return false;
             }
 
@@ -300,11 +300,11 @@ public class PerimeterX implements Closeable {
             final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
 
             if (!MessageDigest.isEqual(generatedHmac.getBytes(), hmac.getBytes())) {
-                logger.error("hmac validation failed, original=" + hmac + ", generated=" + generatedHmac);
+                globalLogger.error("hmac validation failed, original=" + hmac + ", generated=" + generatedHmac);
                 return false;
             }
         } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalArgumentException e) {
-            logger.error("Telemetry validation failed.");
+            globalLogger.error("Telemetry validation failed.");
             return false;
         }
 

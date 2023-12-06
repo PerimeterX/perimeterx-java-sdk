@@ -22,7 +22,7 @@ import java.util.Arrays;
  */
 public abstract class AbstractPXCookie implements PXCookie {
 
-    private static final IPXLogger logger = PerimeterX.logger;
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private static final int KEY_LEN = 32;
     private static final String HMAC_SHA_256 = "HmacSHA256";
