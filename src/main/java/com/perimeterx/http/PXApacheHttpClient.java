@@ -2,6 +2,7 @@ package com.perimeterx.http;
 
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.async.PxClientAsyncHandler;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.PXCommonUtils;
 import com.perimeterx.utils.logger.IPXLogger;
@@ -67,16 +68,16 @@ public class PXApacheHttpClient implements IPXHttpClient {
     }
 
     @Override
-    public void sendAsync(IPXOutgoingRequest request) throws IOException {
+    public void sendAsync(IPXOutgoingRequest request, PXContext context) throws IOException {
         HttpAsyncRequestProducer producer = null;
         BasicAsyncResponseConsumer basicAsyncResponseConsumer = null;
         try {
             HttpUriRequest apacheRequest = createRequest(request);
             producer = HttpAsyncMethods.create(apacheRequest);
             basicAsyncResponseConsumer = new BasicAsyncResponseConsumer();
-            asyncHttpClient.execute(producer, basicAsyncResponseConsumer, new PxClientAsyncHandler());
+            asyncHttpClient.execute(producer, basicAsyncResponseConsumer, new PxClientAsyncHandler(context));
         } catch (Exception e) {
-            logger.debug("Sending batch activities failed. Error: {}", e.getMessage());
+            context.logger.debug("Sending batch activities failed. Error: {}", e.getMessage());
         } finally {
             if (producer != null) {
                 producer.close();

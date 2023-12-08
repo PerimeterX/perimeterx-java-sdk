@@ -18,7 +18,6 @@ import static com.perimeterx.utils.StringUtils.splitQueryParams;
 
 @AllArgsConstructor
 public class RequestBodyExtractor implements CredentialsExtractor {
-    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private final static String CREDENTIALS_PATH_SEPARATOR = "\\.";
     private final static String CONTENT_TYPE = "content-type";
@@ -27,6 +26,8 @@ public class RequestBodyExtractor implements CredentialsExtractor {
     private final static String APPLICATION_JSON = "application/json";
 
     private final ConfigCredentialsFieldPath credentialsFieldPath;
+    private final IPXLogger logger;
+
 
     @Override
     public LoginCredentials extractCredentials(HttpServletRequest request) {

@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
 public class RequestQueryParamsExtractor implements CredentialsExtractor {
-    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private final ConfigCredentialsFieldPath credentialsFieldPath;
+    private final IPXLogger logger;
 
     @Override
     public LoginCredentials extractCredentials(HttpServletRequest request) {
@@ -22,7 +22,7 @@ public class RequestQueryParamsExtractor implements CredentialsExtractor {
 
             return new LoginCredentials(username, password);
         } catch (Exception e) {
-            logger.error("Failed to extract credentials from request query params. error :: ", e);
+            this.logger.error("Failed to extract credentials from request query params. error :: ", e);
             return null;
         }
     }

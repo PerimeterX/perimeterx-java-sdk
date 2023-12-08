@@ -1,7 +1,6 @@
 package com.perimeterx.utils.logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.*;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -41,16 +40,16 @@ public abstract class LogMemory implements IPXLogger {
     public void sendMemoryLogs(PXConfiguration conf, PXContext ctx){
         if (this.isMemoryEnabled){
             enrichLogs(ctx);
-            dispatchLogs(conf);
+            dispatchLogs(conf, ctx);
         }
     }
 
-    private void dispatchLogs(PXConfiguration conf) {
+    private void dispatchLogs(PXConfiguration conf, PXContext ctx) {
         try {
             PXClient client = conf.getPxClientInstance();
-            client.sendLogs(this.stringifyMemory());
+            client.sendLogs(this.stringifyMemory(), ctx);
         } catch (Exception e) {
-            PerimeterX.globalLogger.error("Failed to send logs to logging service. Error :: ", e, ". Logs: ", this.memory.toString());
+            ctx.logger.error("Failed to send logs to logging service. Error :: ", e, ". Logs: ", this.memory.toString());
             throw new RuntimeException(e);
         } finally {
             this.memory = new ArrayList<>();

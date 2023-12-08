@@ -12,4 +12,12 @@ public class LoggerFactory {
             return new ConsoleLogger(pxLoggerSeverity,isMemoryEnabled);
         }
     }
+    public static IPXLogger getLogger() {
+        LoggerSeverity pxLoggerSeverity = PXConfiguration.getPxLoggerSeverity();
+        if (pxLoggerSeverity == null) {
+            return new Slf4JLogger(false);
+        } else {
+            return new ConsoleLogger(pxLoggerSeverity,false);
+        }
+    }
 }

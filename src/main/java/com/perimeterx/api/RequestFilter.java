@@ -1,6 +1,7 @@
 package com.perimeterx.api;
 
 import com.perimeterx.http.PXHttpMethod;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.commons.io.FilenameUtils;
@@ -15,9 +16,9 @@ public class RequestFilter {
         this.configuration = configuration;
     }
 
-    public boolean isFilteredRequest(HttpServletRequest req) {
+    public boolean isFilteredRequest(HttpServletRequest req, PXContext context) {
         return isExtensionWhiteListed(req.getServletPath(), req.getMethod())
-                || isFilteredByCustomFunction(req);
+                || isFilteredByCustomFunction(req,context);
     }
 
     protected boolean isExtensionWhiteListed(String path, String method) {
@@ -29,16 +30,16 @@ public class RequestFilter {
                 .contains(FilenameUtils.getExtension(path));
     }
 
-    protected boolean isFilteredByCustomFunction(HttpServletRequest req) {
+    protected boolean isFilteredByCustomFunction(HttpServletRequest req, PXContext context) {
         try {
             final boolean test = configuration.getFilterByCustomFunction().test(req);
             if (test) {
-                logger.debug("isFilteredByCustomFunction - filter request");
+                context.logger.debug("isFilteredByCustomFunction - filter request");
             }
 
             return test;
         } catch (Exception e) {
-            logger.error("isFilteredByCustomFunction - exception during filter", e);
+            context.logger.error("isFilteredByCustomFunction - exception during filter", e);
         }
         return false;
     }

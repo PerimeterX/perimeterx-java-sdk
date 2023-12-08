@@ -182,12 +182,12 @@ public class PerimeterX implements Closeable {
 
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
-            if (shouldReverseRequest(req, responseWrapper)) {
+            if (shouldReverseRequest(req, responseWrapper, context)) {
                 context.setFirstPartyRequest(true);
                 return context;
             }
 
-            if (requestFilter.isFilteredRequest(req)) {
+            if (requestFilter.isFilteredRequest(req, context)) {
                 return null;
             }
 
@@ -215,19 +215,19 @@ public class PerimeterX implements Closeable {
         return this.configuration.isModuleEnabled();
     }
 
-    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
-        return reverseProxy.reversePxClient(req, res) || reverseProxy.reversePxXhr(req, res) || reverseProxy.reverseCaptcha(req, res);
+    private boolean shouldReverseRequest(HttpServletRequest req, HttpServletResponseWrapper res, PXContext context) throws IOException, URISyntaxException {
+        return reverseProxy.reversePxClient(req, res, context) || reverseProxy.reversePxXhr(req, res, context) || reverseProxy.reverseCaptcha(req, res, context);
     }
 
     private void handleCookies(PXContext context) {
         if (cookieValidator.verify(context)) {
-            globalLogger.debug(LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
+            context.logger.debug(LogReason.DEBUG_COOKIE_EVALUATION_FINISHED, context.getRiskScore());
             // Cookie is valid (exists and not expired) so we can block according to it's score
             return;
         }
-        globalLogger.debug(LogReason.DEBUG_COOKIE_MISSING);
+        context.logger.debug(LogReason.DEBUG_COOKIE_MISSING);
         if (serverValidator.verify(context)) {
-            globalLogger.debug(LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
+            context.logger.debug(LogReason.DEBUG_COOKIE_VERSION_FOUND, context.getCookieVersion());
         }
     }
 
@@ -258,9 +258,9 @@ public class PerimeterX implements Closeable {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            globalLogger.sendMemoryLogs(this.configuration, context);
+            context.logger.sendMemoryLogs(this.configuration, context);
             if (context != null && response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
-                final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration);
+                final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration,context);
 
                 context.getLoginData().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
                 context.getLoginData().setResponseStatusCode(response.getStatus());
@@ -268,7 +268,7 @@ public class PerimeterX implements Closeable {
                 activityHandler.handleAdditionalS2SActivity(context);
             }
         } catch (Exception e) {
-            globalLogger.error("Failed to post verify response. Error :: ", e);
+            context.logger.error("Failed to post verify response. Error :: ", e);
         }
     }
 
@@ -300,7 +300,7 @@ public class PerimeterX implements Closeable {
             final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
 
             if (!MessageDigest.isEqual(generatedHmac.getBytes(), hmac.getBytes())) {
-                globalLogger.error("hmac validation failed, original=" + hmac + ", generated=" + generatedHmac);
+                globalLogger.error("Telemetry validation failed - invalid hmac, original=" + hmac + ", generated=" + generatedHmac);
                 return false;
             }
         } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalArgumentException e) {

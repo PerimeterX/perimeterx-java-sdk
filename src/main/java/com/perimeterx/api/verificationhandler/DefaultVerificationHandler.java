@@ -54,18 +54,18 @@ public class DefaultVerificationHandler implements VerificationHandler {
 
         try {
             if (verified) {
-                logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
+                context.logger.debug("Passing request {} {}", verified, this.pxConfiguration.getModuleMode());
 
                 // Not blocking request and sending page_requested activity to px if configured as true
                 if (this.pxConfiguration.isSendPageActivities()) {
                     this.activityHandler.handlePageRequestedActivity(context);
                 }
             } else {
-                logger.debug("Request invalid");
+                context.logger.debug("Request invalid");
                 this.activityHandler.handleBlockActivity(context);
             }
         } catch (PXException pxException) {
-            logger.error("Error occurred while handle activities", pxException);
+            context.logger.error("Error occurred while handle activities", pxException);
         }
 
         return verified || context.isMonitoredRequest();
@@ -81,7 +81,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
                 responseWrapper.addHeader(SET_COOKIE_KEY_HEADER, cookieValue);
             }
         } catch (UnsupportedEncodingException e) {
-            logger.error("setPxhdCookie - failed to set PXHD cookie, error :: ",e.getMessage());
+            context.logger.error("setPxhdCookie - failed to set PXHD cookie, error :: ",e.getMessage());
         }
     }
 
@@ -107,7 +107,7 @@ public class DefaultVerificationHandler implements VerificationHandler {
         // If should block this request we will apply our block handle and send the block activity to px
 
         boolean verified = score < blockingScore;
-        logger.debug(verified ? LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK : LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK, score, blockingScore);
+        context.logger.debug(verified ? LogReason.DEBUG_S2S_SCORE_IS_LOWER_THAN_BLOCK : LogReason.DEBUG_S2S_SCORE_IS_HIGHER_THAN_BLOCK, score, blockingScore);
 
         return verified;
     }

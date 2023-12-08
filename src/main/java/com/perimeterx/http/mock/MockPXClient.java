@@ -27,17 +27,17 @@ public class MockPXClient implements PXClient {
     }
 
     @Override
-    public void sendActivity(Activity activity) {
+    public void sendActivity(Activity activity, PXContext context) {
         logger.debug("Mocking sendActivity");
     }
 
     @Override
-    public void sendBatchActivities(List<Activity> activities) {
+    public void sendBatchActivities(List<Activity> activities, PXContext context) {
         logger.debug("Mocking sendBatchActivities");
 
     }
 
-    public void sendLogs(String activities) throws IOException {
+    public void sendLogs(String activities, PXContext context) throws IOException {
         logger.debug("Mocking sendLoggingServiceLogs");
     }
 

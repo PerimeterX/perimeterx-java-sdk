@@ -21,6 +21,6 @@ public class EnforcerErrorUtils {
 
         pxContext.setPassReason(PassReason.ENFORCER_ERROR);
         pxContext.setEnforcerErrorReasonInfo(new EnforcerErrorReasonInfo(errorMessage + ":" + e, stackTrace));
-        logger.error(errorMessage);
+        pxContext.logger.error(errorMessage);
     }
 }

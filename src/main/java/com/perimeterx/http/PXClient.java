@@ -6,7 +6,6 @@ import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskResponse;
-import com.perimeterx.utils.logger.LogRecord;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,19 +32,21 @@ public interface PXClient extends Closeable {
      * Calling PX Server to report Activity
      *
      * @param activity - the activity we want to report
+     * @param context
      * @throws PXException
      * @throws IOException
      */
-    void sendActivity(Activity activity) throws PXException, IOException;
+    void sendActivity(Activity activity, PXContext context) throws PXException, IOException;
 
     /**
      * Calling PX Server to report Activity
      *
      * @param activities - the activites we want to report
+     * @param context
      * @throws PXException
      * @throws IOException
      */
-    void sendBatchActivities(List<Activity> activities) throws PXException, IOException;
+    void sendBatchActivities(List<Activity> activities, PXContext context) throws PXException, IOException;
 
     /**
      * Calling remote configuration server and fetching the latest configuration values
@@ -63,7 +64,7 @@ public interface PXClient extends Closeable {
     void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException;
 
 
-    void sendLogs(String activities) throws IOException;
+    void sendLogs(String activities, PXContext context) throws IOException;
 
         @Override
     default void close() throws IOException {

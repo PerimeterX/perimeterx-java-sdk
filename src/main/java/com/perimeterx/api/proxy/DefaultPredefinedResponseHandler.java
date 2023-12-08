@@ -1,6 +1,7 @@
 package com.perimeterx.api.proxy;
 
 import com.perimeterx.api.PerimeterX;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.proxy.PredefinedResponse;
 import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.http.HttpHeaders;
@@ -13,13 +14,13 @@ public class DefaultPredefinedResponseHandler implements PredefinedResponseHelpe
     private static final IPXLogger logger = PerimeterX.globalLogger;
 
     @Override
-    public void handlePredefinedResponse(HttpServletResponse res, PredefinedResponse predefinedResponse) {
+    public void handlePredefinedResponse(HttpServletResponse res, PredefinedResponse predefinedResponse, PXContext context) {
         try {
             res.setHeader(HttpHeaders.CONTENT_TYPE, predefinedResponse.getContentType());
             res.setStatus(HttpStatus.SC_OK);
             res.getWriter().print(predefinedResponse.getContent());
         } catch (IOException e) {
-            logger.error("Failed to render predefined response content {}, content-type: {}", predefinedResponse.getContent(), predefinedResponse.getContentType());
+            context.logger.error("Failed to render predefined response content {}, content-type: {}", predefinedResponse.getContent(), predefinedResponse.getContentType());
         }
 
     }

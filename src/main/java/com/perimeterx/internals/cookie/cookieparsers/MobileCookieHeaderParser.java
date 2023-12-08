@@ -2,8 +2,13 @@ package com.perimeterx.internals.cookie.cookieparsers;
 
 import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.RawCookieData;
+import com.perimeterx.utils.logger.IPXLogger;
 
 public class MobileCookieHeaderParser extends HeaderParser {
+    public MobileCookieHeaderParser(IPXLogger logger) {
+        super(logger);
+    }
+
     @Override
     protected String[] splitHeader(String header) {
         return header.split(",\\s?");

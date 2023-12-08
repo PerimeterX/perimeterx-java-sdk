@@ -2,11 +2,16 @@ package com.perimeterx.internals.cookie.cookieparsers;
 
 import com.perimeterx.internals.cookie.CookieVersion;
 import com.perimeterx.internals.cookie.RawCookieData;
+import com.perimeterx.utils.logger.IPXLogger;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 public class CookieHeaderParser extends HeaderParser {
+
+    public CookieHeaderParser(IPXLogger logger) {
+        super(logger);
+    }
 
     @Override
     protected String[] splitHeader(String header) {

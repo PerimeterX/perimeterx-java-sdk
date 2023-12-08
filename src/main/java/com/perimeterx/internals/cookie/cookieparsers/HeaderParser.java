@@ -20,7 +20,11 @@ import static java.util.stream.Collectors.toList;
 
 public abstract class HeaderParser {
 
-    protected static final IPXLogger logger = PerimeterX.globalLogger;
+    protected final IPXLogger logger;
+
+    public HeaderParser(IPXLogger logger) {
+        this.logger = logger;
+    }
 
     protected abstract String[] splitHeader(String header);
 

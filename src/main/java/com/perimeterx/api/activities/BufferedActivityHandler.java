@@ -29,7 +29,6 @@ public class BufferedActivityHandler implements ActivityHandler {
     private static final ExecutorService es = Executors.newFixedThreadPool(8);
     private static final IPXLogger logger = PerimeterX.globalLogger;
 
-    public PXContext context;
     private final int maxBufferLength;
     private volatile ConcurrentLinkedQueue<Activity> bufferedActivities = new ConcurrentLinkedQueue<>();
     private final AtomicInteger counter = new AtomicInteger(0);
@@ -104,7 +103,7 @@ public class BufferedActivityHandler implements ActivityHandler {
                 try {
                     if (this.bufferedActivities.size() > this.maxBufferLength) {
                         ConcurrentLinkedQueue<Activity> activitiesToSend = flush();
-                        sendAsync(activitiesToSend);
+                        sendAsync(activitiesToSend, context);
                     }
                 } catch (Exception e) {
                     context.logger.error("failed to send async activities", e);
@@ -117,14 +116,14 @@ public class BufferedActivityHandler implements ActivityHandler {
         });
     }
 
-    private void sendAsync(ConcurrentLinkedQueue<Activity> activitiesToSend) throws PXException {
+    private void sendAsync(ConcurrentLinkedQueue<Activity> activitiesToSend, PXContext context) throws PXException {
         if (activitiesToSend == null) {
             return;
         }
 
         List<Activity> activitiesLocal = activitiesAsList(activitiesToSend);
         try {
-            client.sendBatchActivities(activitiesLocal);
+            client.sendBatchActivities(activitiesLocal, context);
         } catch (Exception e) {
             throw new PXException(e);
         }

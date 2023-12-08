@@ -83,7 +83,7 @@ public class PXHttpClient implements PXClient, Closeable {
         try {
             RiskRequest riskRequest = RiskRequest.fromContext(pxContext);
             String requestBody = JsonUtils.writer.writeValueAsString(riskRequest);
-            logger.debug("Risk API Request: {}", requestBody);
+            pxContext.logger.debug("Risk API Request: {}", requestBody);
             return requestBody;
         } catch (JsonProcessingException e) {
             handleException(pxContext, e, S2SErrorReason.UNABLE_TO_SEND_REQUEST, null);
@@ -97,10 +97,10 @@ public class PXHttpClient implements PXClient, Closeable {
             return client.send(request);
 
         } catch (ConnectTimeoutException e) {
-            logger.debug("ConnectTimeoutException", e);
+            pxContext.logger.debug("ConnectTimeoutException", e);
             throw e;
         } catch (SocketTimeoutException e) {
-            logger.debug("SocketTimeoutException", e);
+            pxContext.logger.debug("SocketTimeoutException", e);
             throw new ConnectTimeoutException(e.getMessage());
         } catch (IOException e) {
             handleException(pxContext, e, S2SErrorReason.UNABLE_TO_SEND_REQUEST, null);
@@ -121,7 +121,7 @@ public class PXHttpClient implements PXClient, Closeable {
             if (s.equals("null")) {
                 throw new PXException("Risk API returned null JSON");
             }
-            logger.debug("Risk API Response: {}", s);
+            pxContext.logger.debug("Risk API Response: {}", s);
             return JsonUtils.riskResponseReader.readValue(s);
         } catch (Exception e) {
             handleException(pxContext, e, S2SErrorReason.INVALID_RESPONSE, httpResponse.status());
@@ -148,19 +148,19 @@ public class PXHttpClient implements PXClient, Closeable {
         S2SErrorReasonInfo errorReasonInfo = httpStatusLine == null ? new S2SErrorReasonInfo(errorReason, e.toString()) :
                 new S2SErrorReasonInfo(errorReason, e.toString(), httpStatusLine.getStatusCode(), httpStatusLine.getReasonPhrase());
         pxContext.setS2sErrorReasonInfo(errorReasonInfo);
-        logger.error("Error {}: {}", e.toString(), e.getStackTrace());
+        pxContext.logger.error("Error {}: {}", e.toString(), e.getStackTrace());
     }
 
     @Override
-    public void sendActivity(Activity activity) throws IOException {
+    public void sendActivity(Activity activity, PXContext context) throws IOException {
         IPXIncomingResponse httpResponse = null;
         try {
             String requestBody = JsonUtils.writer.writeValueAsString(activity);
-            logger.debug("Sending Activity: {}", requestBody);
+            context.logger.debug("Sending Activity: {}", requestBody);
             IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES,PXHttpMethod.POST, requestBody);
             httpResponse = client.send(request);
         } catch (Exception e) {
-            logger.debug("Sending activity failed. Error: {}", e.getMessage());
+            context.logger.debug("Sending activity failed. Error: {}", e.getMessage());
         } finally {
             if (httpResponse != null) {
                 httpResponse.close();
@@ -169,19 +169,19 @@ public class PXHttpClient implements PXClient, Closeable {
     }
 
     @Override
-    public void sendBatchActivities(List<Activity> activities) throws IOException {
+    public void sendBatchActivities(List<Activity> activities, PXContext context) throws IOException {
         String requestBody = JsonUtils.writer.writeValueAsString(activities);
-        logger.debug("Sending Activities: {}", requestBody);
+        context.logger.debug("Sending Activities: {}", requestBody);
         IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_ACTIVITIES,PXHttpMethod.POST, requestBody);
-        client.sendAsync(request);
+        client.sendAsync(request, context);
     }
 
     @Override
-    public void sendLogs(String activities) throws IOException {
-        logger.debug("Sending logs to logging service");
+    public void sendLogs(String activities, PXContext context) throws IOException {
+        context.logger.debug("Sending logs to logging service");
         BasicHeader loggerAuthTokenHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getLoggerAuthToken());
         IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_LOGGING_SERVICE_PATH,PXHttpMethod.POST, activities,loggerAuthTokenHeader);
-        client.sendAsync(request);
+        client.sendAsync(request,context);
     }
 
     @Override

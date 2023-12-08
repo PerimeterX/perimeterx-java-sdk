@@ -45,12 +45,12 @@ public class PXCookieOriginalTokenValidator implements PXValidator {
             context.setOriginalUuid(originalCookie.getUUID());
 
             if (!originalCookie.isSecured()) {
-                logger.debug("Original token HMAC validation failed, value: " + decodedOriginalCookie + " user-agent: " + context.getUserAgent());
+                context.logger.debug("Original token HMAC validation failed, value: " + decodedOriginalCookie + " user-agent: " + context.getUserAgent());
                 context.setOriginalTokenError("validation_failed");
                 return false;
             }
         } catch (PXException | PXCookieDecryptionException e) {
-            logger.debug("Received an error while decrypting perimeterx original token:" + e.getMessage());
+            context.logger.debug("Received an error while decrypting perimeterx original token:" + e.getMessage());
             context.setOriginalTokenError("decryption_failed");
             return false;
         }

@@ -1,6 +1,5 @@
 package com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest;
 
-import com.perimeterx.api.PerimeterX;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.ConfigCredentialsFieldPath;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
 import com.perimeterx.utils.logger.IPXLogger;
@@ -10,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @AllArgsConstructor
 public class RequestHeaderExtractor implements CredentialsExtractor {
-    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private final ConfigCredentialsFieldPath credentialsFieldPath;
+    private final IPXLogger logger;
 
     @Override
     public LoginCredentials extractCredentials(HttpServletRequest request) {
@@ -23,7 +22,6 @@ public class RequestHeaderExtractor implements CredentialsExtractor {
             return new LoginCredentials(username, password);
         } catch (Exception e) {
             logger.error("Failed to extract credentials from request headers. error :: ", e);
-
             return null;
         }
     }

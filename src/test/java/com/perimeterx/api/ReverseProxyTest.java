@@ -5,7 +5,9 @@ import com.perimeterx.api.proxy.DefaultReverseProxy;
 import com.perimeterx.api.proxy.ReverseProxy;
 import com.perimeterx.http.PXApacheHttpClient;
 import com.perimeterx.http.PXClient;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.logger.LoggerFactory;
 import org.apache.http.*;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -116,7 +118,8 @@ public class ReverseProxyTest {
         ((MockHttpServletRequest) request).setRequestURI("/12345678/init.js");
         HttpServletResponse response = new MockHttpServletResponse();
 
-        reverseProxy.reversePxClient(request, response);
+        PXContext context = new PXContext(LoggerFactory.getLogger());
+        reverseProxy.reversePxClient(request, response, context);
         verify(mockProxyHttpClient, times(1)).execute(any(HttpUriRequest.class));
         Assert.assertEquals("function()", ((MockHttpServletResponse) response).getContentAsString());
         Assert.assertEquals(response.getHeaderNames().size(), mockedHttpResponse.getAllHeaders().length);
@@ -142,7 +145,8 @@ public class ReverseProxyTest {
         ((MockHttpServletRequest) request).setRequestURI("/12345678/xhr/api/v1/collector");
         HttpServletResponse response = new MockHttpServletResponse();
 
-        reverseProxy.reversePxXhr(request, response);
+        PXContext context = new PXContext(LoggerFactory.getLogger());
+        reverseProxy.reversePxXhr(request, response, context);
         verify(mockProxyHttpClient, times(1)).execute(any());
         Assert.assertEquals("{\"some\": '\"answer\"}", ((MockHttpServletResponse) response).getContentAsString());
         Assert.assertEquals(response.getHeaderNames().size(), mockedHttpResponse.getAllHeaders().length);

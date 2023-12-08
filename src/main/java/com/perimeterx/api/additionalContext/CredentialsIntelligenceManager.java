@@ -9,14 +9,15 @@ import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CredentialsExtractionDetails;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
 import com.perimeterx.models.exceptions.PXException;
+import com.perimeterx.utils.logger.IPXLogger;
 
 import javax.servlet.http.HttpServletRequest;
 
 public class CredentialsIntelligenceManager {
 
-    public static UserLoginData getUserLoginData(PXConfiguration pxConfiguration, HttpServletRequest request) throws PXException {
+    public static UserLoginData getUserLoginData(PXConfiguration pxConfiguration, HttpServletRequest request, IPXLogger logger) throws PXException {
         if (pxConfiguration.isLoginCredentialsExtractionEnabled()) {
-            final LoginCredentials credentials = getCredentials(pxConfiguration, request);
+            final LoginCredentials credentials = getCredentials(pxConfiguration, request, logger);
 
             if (credentials != null && !credentials.isCredentialsEmpty()) {
                 return generateUserLoginData(pxConfiguration, credentials);
@@ -25,15 +26,15 @@ public class CredentialsIntelligenceManager {
         return null;
     }
 
-    private static LoginCredentials getCredentials(PXConfiguration pxConfiguration, HttpServletRequest request) {
+    private static LoginCredentials getCredentials(PXConfiguration pxConfiguration, HttpServletRequest request, IPXLogger logger) {
         final CredentialsExtractionDetails credentialsExtractionDetails = getCredentialsExtractionDetails(pxConfiguration, request);
 
-        if (pxConfiguration.getCredentialsCustomExtractor().extractCredentials(request) != null) {
-
-            return pxConfiguration.getCredentialsCustomExtractor().extractCredentials(request);
+        LoginCredentials loginCredentials = pxConfiguration.getCredentialsCustomExtractor().extractCredentials(request);
+        if (loginCredentials != null) {
+            return loginCredentials;
         }
         else if (credentialsExtractionDetails != null) {
-            return extractCredentials(request, credentialsExtractionDetails);
+            return extractCredentials(request, credentialsExtractionDetails, logger);
         }
 
         return null;
@@ -45,11 +46,13 @@ public class CredentialsIntelligenceManager {
                 .getCredentialsExtractionDetails(request.getServletPath(), request.getMethod());
     }
 
-    private static LoginCredentials extractCredentials(HttpServletRequest request, CredentialsExtractionDetails credentialsExtractionDetails) {
-        final CredentialsExtractor credentialsExtractor = CredentialsExtractorFactory.create(credentialsExtractionDetails);
-
-        return credentialsExtractor.extractCredentials(request);
-
+    private static LoginCredentials extractCredentials(HttpServletRequest request, CredentialsExtractionDetails credentialsExtractionDetails, IPXLogger logger) {
+        LoginCredentials loginCredentials = null;
+        final CredentialsExtractor credentialsExtractor = CredentialsExtractorFactory.create(credentialsExtractionDetails, logger);
+        if (credentialsExtractor!=null) {
+            loginCredentials = credentialsExtractor.extractCredentials(request);
+        }
+        return loginCredentials;
     }
 
     private static UserLoginData generateUserLoginData(PXConfiguration pxConfiguration, LoginCredentials credentials) throws PXException {

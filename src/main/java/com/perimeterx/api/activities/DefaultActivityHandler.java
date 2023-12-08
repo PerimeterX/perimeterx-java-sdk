@@ -29,7 +29,7 @@ public class DefaultActivityHandler implements ActivityHandler {
     public void handleBlockActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
         try {
-            this.client.sendActivity(activity);
+            this.client.sendActivity(activity, context);
         } catch (IOException e) {
             throw new PXException(LogReason.ERROR_HANDLE_BLOCK_ACTIVITY + ". Reason: " + e.getMessage(), e);
         }
@@ -39,7 +39,7 @@ public class DefaultActivityHandler implements ActivityHandler {
     public void handlePageRequestedActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_PAGE_REQUESTED, configuration.getAppId(), context);
         try {
-            this.client.sendActivity(activity);
+            this.client.sendActivity(activity, context);
         } catch (IOException e) {
             throw new PXException(LogReason.ERROR_HANDLE_PAGE_REQUESTED + ". Reason: " + e.getMessage(), e);
         }

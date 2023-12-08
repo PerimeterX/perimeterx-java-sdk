@@ -1,6 +1,8 @@
 package com.perimeterx.api;
 
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.logger.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -25,29 +27,28 @@ public class CustomFilterByFunctionTest {
     @Test
     public void testRequestIsFiltered()  {
         final RequestFilter requestFilter = getRequestFilter(TRUTHY_REQUEST_FILTER);
-
-        assertTrue(requestFilter.isFilteredByCustomFunction(req));
+        assertTrue(requestFilter.isFilteredByCustomFunction(req, new PXContext(LoggerFactory.getLogger())));
     }
 
     @Test
     public void testRequestIsNotFiltered() {
         final RequestFilter requestFilter = getRequestFilter(FALSY_REQUEST_FILTER);
 
-        assertFalse(requestFilter.isFilteredByCustomFunction(req));
+        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(LoggerFactory.getLogger())));
     }
 
     @Test
     public void testExceptionHandlingShouldReturnFalse() {
         final RequestFilter requestFilter = getRequestFilter((req) -> {throw new RuntimeException();});
 
-        assertFalse(requestFilter.isFilteredByCustomFunction(req));
+        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(LoggerFactory.getLogger())));
     }
 
     @Test
     public void testDefaultBehaviorShouldReturnFalse() {
         final RequestFilter requestFilter = getRequestFilter(null);
 
-        assertFalse(requestFilter.isFilteredByCustomFunction(req));
+        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(LoggerFactory.getLogger())));
     }
 
     private RequestFilter getRequestFilter(Predicate<HttpServletRequest> filterByCustomFunction) {

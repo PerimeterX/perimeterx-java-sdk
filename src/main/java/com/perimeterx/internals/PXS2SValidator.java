@@ -45,7 +45,7 @@ public class PXS2SValidator implements PXValidator {
      * @throws PXException will be thrown when an error occurs
      */
     public boolean verify(PXContext pxContext) {
-        logger.debug(LogReason.DEBUG_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
+        pxContext.logger.debug(LogReason.DEBUG_S2S_RISK_API_REQUEST, pxContext.getS2sCallReason());
         RiskResponse response = null;
         long startRiskRtt = System.currentTimeMillis();
         long rtt;
@@ -58,13 +58,13 @@ public class PXS2SValidator implements PXValidator {
             return true;
         } catch (Exception e) {
             handleS2SError(pxContext, System.currentTimeMillis() - startRiskRtt, response, e);
-            logger.error("Error {}: {}", e.toString(), e.getStackTrace());
+            pxContext.logger.error("Error {}: {}", e.toString(), e.getStackTrace());
             return true;
         }
 
         try {
             rtt = System.currentTimeMillis() - startRiskRtt;
-            logger.debug(LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null) ? "" : response.getScore(), rtt);
+            pxContext.logger.debug(LogReason.DEBUG_S2S_RISK_API_RESPONSE, (response == null) ? "" : response.getScore(), rtt);
 
             if (!isResponseValid(response)) {
                 handleS2SError(pxContext, rtt, response, null);
@@ -82,14 +82,14 @@ public class PXS2SValidator implements PXValidator {
             } else {
                 pxContext.setBlockReason(BlockReason.SERVER);
             }
-            logger.debug(LogReason.DEBUG_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
+            pxContext.logger.debug(LogReason.DEBUG_S2S_ENFORCING_ACTION, pxContext.getBlockReason());
             return false;
         } catch (Exception e) {
             if (!pxContext.getS2sErrorReasonInfo().isErrorSet()) {
                 String errorMessage = LogReason.ERROR_RISK_EVALUATION_EXCEPTION.toString();
                 EnforcerErrorUtils.handleEnforcerError(pxContext, errorMessage, e);
             }
-            logger.error("Error {}: {}", e.toString(), e.getStackTrace());
+            pxContext.logger.error("Error {}: {}", e.toString(), e.getStackTrace());
             return true;
         } finally {
             pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);

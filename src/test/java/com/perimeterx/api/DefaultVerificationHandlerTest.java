@@ -114,7 +114,7 @@ public class DefaultVerificationHandlerTest {
 
         defaultVerificationHandler.handleVerification(context, response);
         final ArgumentCaptor<Activity> captor = ArgumentCaptor.forClass(Activity.class);
-        verify(pxClient).sendActivity(captor.capture());
+        verify(pxClient).sendActivity(captor.capture(), context);
 
         Assert.assertTrue((((BlockActivityDetails) captor.getValue().getDetails()).getSimulatedBlock()));
     }

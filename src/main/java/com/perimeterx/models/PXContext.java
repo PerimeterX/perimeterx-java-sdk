@@ -57,7 +57,7 @@ public class PXContext {
     /**
      * Original HTTP request
      */
-    private final HttpServletRequest request;
+    private HttpServletRequest request;
 
     private String pxCookieRaw;
 
@@ -87,7 +87,7 @@ public class PXContext {
 
     // PerimeterX computed data on the request
     private String riskCookie;
-    private final String appId;
+    private String appId;
 
     private String cookieHmac;
 
@@ -244,10 +244,15 @@ public class PXContext {
         this.appId = pxConfiguration.getAppId();
         this.ip = ipProvider.getRequestIP(request);
         this.hostname = hostnameProvider.getHostname(request);
-        initContext(request, pxConfiguration);
+        postInitContext(request, pxConfiguration);
     }
 
-    private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
+    //This constructor is in use by unit tests where we don't need context but only logger
+    public PXContext(IPXLogger logger) {
+        this.logger = logger;
+    }
+
+    private void postInitContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
         if (headers.containsKey(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) || headers.containsKey(Constants.MOBILE_SDK_TOKENS_HEADER)) {
             logger.debug(LogReason.DEBUG_MOBILE_SDK_DETECTED);
             this.isMobileToken = true;
@@ -348,11 +353,11 @@ public class PXContext {
     }
 
     private void parseCookies(HttpServletRequest request, boolean isMobileToken) {
-        HeaderParser headerParser = new CookieHeaderParser();
+        HeaderParser headerParser = new CookieHeaderParser(logger);
         List<RawCookieData> tokens = new ArrayList<>();
         List<RawCookieData> originalTokens = new ArrayList<>();
         if (isMobileToken) {
-            headerParser = new MobileCookieHeaderParser();
+            headerParser = new MobileCookieHeaderParser(logger);
 
             String tokensHeader = request.getHeader(Constants.MOBILE_SDK_TOKENS_HEADER);
             tokens.addAll(headerParser.createRawCookieDataList(tokensHeader));
@@ -453,7 +458,7 @@ public class PXContext {
         final LoginData loginData;
 
         try {
-            loginData = new LoginData(request, pxConfiguration);
+            loginData = new LoginData(request, pxConfiguration, this.logger);
             this.setLoginData(loginData);
         } catch (PXException pxe) {
             logger.error("Failed to generate login data. Error :: ", pxe);

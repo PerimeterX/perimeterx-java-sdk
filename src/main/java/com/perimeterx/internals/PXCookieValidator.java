@@ -20,8 +20,6 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class PXCookieValidator implements PXValidator {
 
-    private static final IPXLogger logger = PerimeterX.globalLogger;
-
     private PXConfiguration pxConfiguration;
 
     public PXCookieValidator(PXConfiguration pxConfiguration) {
@@ -68,7 +66,7 @@ public class PXCookieValidator implements PXValidator {
             }
 
             if (pxCookie.isExpired()) {
-                logger.debug(LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
+                context.logger.debug(LogReason.DEBUG_COOKIE_TLL_EXPIRED, pxCookie.getPxCookie(), System.currentTimeMillis() - pxCookie.getTimestamp());
                 context.setS2sCallReason(S2SCallReason.COOKIE_EXPIRED.getValue());
                 return false;
             }
@@ -79,7 +77,7 @@ public class PXCookieValidator implements PXValidator {
             }
 
             if (context.isSensitiveRequest()) {
-                logger.debug(LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getServletPath());
+                context.logger.debug(LogReason.DEBUG_S2S_RISK_API_SENSITIVE_ROUTE, context.getServletPath());
                 context.setS2sCallReason(S2SCallReason.SENSITIVE_ROUTE.getValue());
                 return false;
             }
@@ -88,7 +86,7 @@ public class PXCookieValidator implements PXValidator {
             return true;
 
         } catch (PXException e) {
-            logger.error(LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
+            context.logger.error(LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie);
             context.setS2sCallReason(S2SCallReason.INVALID_VERIFICATION.getValue());
             return false;
         }

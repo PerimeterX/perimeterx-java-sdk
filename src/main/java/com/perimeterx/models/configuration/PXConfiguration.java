@@ -386,20 +386,6 @@ public class PXConfiguration {
         }
     }
 
-    private void updateWithParamsMap(Map<String, String> fileConfigParams, PXConfiguration loadedConfig) {
-        for (String param : fileConfigParams.keySet()) {
-            try {
-                Field field = this.getClass().getDeclaredField(param);
-                field.setAccessible(true);
-                Object newVal = field.get(loadedConfig);
-                field.set(this, newVal);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                PerimeterX.globalLogger.error("Config param " + param + "does not exist in PXConfiguration.");
-            }
-
-        }
-    }
-
     public static class PXConfigurationBuilder {
 
         public PXConfigurationBuilder appId(String appId) {
