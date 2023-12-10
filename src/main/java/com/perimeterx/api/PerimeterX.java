@@ -170,10 +170,6 @@ public class PerimeterX implements Closeable {
         globalLogger.debug(LogReason.DEBUG_STARTING_REQUEST_VERIFICATION);
 
         try {
-            if (isValidTelemetryRequest(req)) {
-                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND);
-                return null;
-            }
 
             if (!moduleEnabled()) {
                 globalLogger.debug(LogReason.DEBUG_MODULE_DISABLED);
@@ -182,13 +178,18 @@ public class PerimeterX implements Closeable {
 
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
+            if (isValidTelemetryRequest(req)) {
+                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, context);
+                return context;
+            }
+
             if (shouldReverseRequest(req, responseWrapper, context)) {
                 context.setFirstPartyRequest(true);
                 return context;
             }
 
             if (requestFilter.isFilteredRequest(req, context)) {
-                return null;
+                return context;
             }
 
             handleCookies(context);
@@ -258,18 +259,24 @@ public class PerimeterX implements Closeable {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            context.logger.sendMemoryLogs(this.configuration, context);
-            if (context != null && response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
-                final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration,context);
-
-                context.getLoginData().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
-                context.getLoginData().setResponseStatusCode(response.getStatus());
-
-                activityHandler.handleAdditionalS2SActivity(context);
+            if (context != null){
+                context.logger.sendMemoryLogs(this.configuration, context);
+                if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
+                    handleAdditionalS2SActivityWithCI(response, context);
+                }
             }
         } catch (Exception e) {
             context.logger.error("Failed to post verify response. Error :: ", e);
         }
+    }
+
+    private void handleAdditionalS2SActivityWithCI(ResponseWrapper response, PXContext context) throws PXException {
+        final LoginResponseValidator loginResponseValidator = LoginResponseValidatorFactory.create(configuration, context);
+
+        context.getLoginData().setLoginSuccessful(loginResponseValidator.isSuccessfulLogin(response));
+        context.getLoginData().setResponseStatusCode(response.getStatus());
+
+        activityHandler.handleAdditionalS2SActivity(context);
     }
 
     public boolean isValidTelemetryRequest(HttpServletRequest request) {

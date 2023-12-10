@@ -17,17 +17,20 @@ public class RequestFilter {
     }
 
     public boolean isFilteredRequest(HttpServletRequest req, PXContext context) {
-        return isExtensionWhiteListed(req.getServletPath(), req.getMethod())
+        return isExtensionWhiteListed(req.getServletPath(), req.getMethod(), context)
                 || isFilteredByCustomFunction(req,context);
     }
 
-    protected boolean isExtensionWhiteListed(String path, String method) {
+    protected boolean isExtensionWhiteListed(String path, String method, PXContext context) {
         if (!method.equalsIgnoreCase(PXHttpMethod.GET.name())) {
             return false;
         }
 
-        return configuration.getStaticFilesExt()
-                .contains(FilenameUtils.getExtension(path));
+        boolean isStaticFileWhiteListed = configuration.getStaticFilesExt().contains(FilenameUtils.getExtension(path));
+        if (isStaticFileWhiteListed){
+            context.logger.debug("isExtensionWhiteListed - filter request");
+        }
+        return  isStaticFileWhiteListed;
     }
 
     protected boolean isFilteredByCustomFunction(HttpServletRequest req, PXContext context) {

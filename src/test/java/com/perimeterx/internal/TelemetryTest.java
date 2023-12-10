@@ -4,12 +4,14 @@ import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.BufferedActivityHandler;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.http.PXHttpClient;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.EnforcerTelemetry;
 import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.Base64;
 import com.perimeterx.utils.HMACUtils;
 import com.perimeterx.utils.StringUtils;
+import com.perimeterx.utils.logger.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
@@ -79,7 +81,7 @@ public class TelemetryTest extends ConfiguredTest {
         boolean thrown = false;
 
         try {
-            activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND);
+            activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, new PXContext(LoggerFactory.getLogger()));
         } catch (Exception e) {
             thrown = true;
         }
@@ -92,7 +94,8 @@ public class TelemetryTest extends ConfiguredTest {
         final String validHmac = encodeHmac(this.configuration.getCookieKey(), VALID_EXPIRATION_TIME);
         this.perimeterx.pxVerify(getMockHttpRequestWithTelemetryHeader(validHmac), this.mockHttpResponse);
 
-        verify(this.pxHttpClient, times(1)).sendEnforcerTelemetry(any(EnforcerTelemetry.class));
+        PXContext ctx = new PXContext(LoggerFactory.getLogger());
+        verify(this.pxHttpClient, times(1)).sendEnforcerTelemetry(any(EnforcerTelemetry.class), ctx);
     }
 
     @Test
@@ -100,15 +103,17 @@ public class TelemetryTest extends ConfiguredTest {
         final String invalidExpirationTime = String.valueOf(System.currentTimeMillis() - MS_IN_DAY);
         final String encodedHmac = encodeHmac(this.configuration.getCookieKey(), invalidExpirationTime);
         this.perimeterx.pxVerify(getMockHttpRequestWithTelemetryHeader(encodedHmac), this.mockHttpResponse);
+        PXContext ctx = new PXContext(LoggerFactory.getLogger());
 
-        verify(this.pxHttpClient, never()).sendEnforcerTelemetry(any(EnforcerTelemetry.class));
+        verify(this.pxHttpClient, never()).sendEnforcerTelemetry(any(EnforcerTelemetry.class), ctx);
     }
 
     @Test
     public void testWontSendTelemetryActivityWithNoTelemetryHeader() throws Exception {
         this.perimeterx.pxVerify(new MockHttpServletRequest(), this.mockHttpResponse);
+        PXContext ctx = new PXContext(LoggerFactory.getLogger());
 
-        verify(this.pxHttpClient, never()).sendEnforcerTelemetry(any(EnforcerTelemetry.class));
+        verify(this.pxHttpClient, never()).sendEnforcerTelemetry(any(EnforcerTelemetry.class), ctx);
     }
 
     private MockHttpServletRequest getMockHttpRequestWithTelemetryHeader(String headerValue) {

@@ -48,7 +48,7 @@ public class MockPXClient implements PXClient {
     }
 
     @Override
-    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) {
+    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry, PXContext ctx) {
         logger.debug("Mocking sendEnforcerTelemetry");
     }
 }

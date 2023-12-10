@@ -61,7 +61,7 @@ public interface PXClient extends Closeable {
      *
      * @param enforcerTelemetry
      */
-    void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException;
+    void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry, PXContext context) throws IOException;
 
 
     void sendLogs(String activities, PXContext context) throws IOException;

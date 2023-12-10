@@ -85,7 +85,7 @@ public class PXClientMock implements PXClient {
     }
 
     @Override
-    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException {
+    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry, PXContext ctx) throws IOException {
         // noop
     }
 }

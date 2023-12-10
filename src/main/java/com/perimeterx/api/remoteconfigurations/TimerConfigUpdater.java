@@ -33,7 +33,7 @@ public class TimerConfigUpdater extends TimerTask {
         if (dynamicConfig != null) {
             configManager.updateConfiguration(dynamicConfig);
             try {
-                activityHandler.handleEnforcerTelemetryActivity(pxConfiguration, UpdateReason.REMOTE_CONFIG);
+                activityHandler.handleEnforcerTelemetryActivity(pxConfiguration, UpdateReason.REMOTE_CONFIG, null);
             } catch (PXException e) {
                 logger.error("Failed to report telemetry, {}", e.getMessage());
             }
