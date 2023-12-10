@@ -52,6 +52,7 @@ public class DefaultActivityHandler implements ActivityHandler {
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfiguration.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry, context);
         } catch (Exception e) {
+            context.logger.debug("An error occurred while sending telemetry command");
             throw new PXException(LogReason.ERROR_TELEMETRY_EXCEPTION + ". Reason: " + e.getMessage(), e);
         }
     }

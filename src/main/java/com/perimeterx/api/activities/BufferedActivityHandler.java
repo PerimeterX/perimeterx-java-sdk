@@ -61,6 +61,7 @@ public class BufferedActivityHandler implements ActivityHandler {
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfig.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry, context);
         } catch (IOException e) {
+            logger.debug("An error occurred while sending telemetry command");
             throw new PXException(LogReason.ERROR_TELEMETRY_EXCEPTION.toString(), e);
         }
     }

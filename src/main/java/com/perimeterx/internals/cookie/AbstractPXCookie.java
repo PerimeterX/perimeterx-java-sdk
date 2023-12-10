@@ -138,6 +138,7 @@ public abstract class AbstractPXCookie implements PXCookie {
             String decodedString = new String(decodedBytes);
             return mapper.readTree(decodedString);
         } catch (IOException e) {
+            context.logger.debug("Cookie decode failed with a reason");
             throw new PXCookieDecryptionException("Cookie decode failed in reason => ".concat(e.getMessage()));
         }
     }

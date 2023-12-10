@@ -53,6 +53,7 @@ public class DefaultBlockHandler implements BlockHandler {
         try {
             sendMessage(blockPageResponse, responseWrapper, context, pxConfig);
         } catch (IOException e) {
+            context.logger.error("Failed to handle block page response");
             throw new PXException(e);
         }
     }
@@ -69,6 +70,7 @@ public class DefaultBlockHandler implements BlockHandler {
             try {
                 blockPageResponse = new ObjectMapper().writeValueAsString(new MobilePageResponse(parseAction(context.getBlockAction().getCode()), context.getUuid(), context.getVid(), context.getAppId(), base64Page, context.getCollectorURL()));
             } catch (JsonProcessingException e) {
+                context.logger.error("Failed to parse mobile block page response");
                 throw new PXException(e);
             }
         } else {

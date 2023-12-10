@@ -128,6 +128,7 @@ public class PXApacheHttpClient implements IPXHttpClient {
             this.timerConfigUpdater = new TimerValidateRequestsQueue(nHttpConnectionManager, pxConfiguration);
             timerConfigUpdater.schedule();
         } catch (IOReactorException e) {
+            logger.error("Failed to initialize async http client :", e);
             throw new RuntimeException(e);
         }
     }
