@@ -94,8 +94,7 @@ public class TelemetryTest extends ConfiguredTest {
         final String validHmac = encodeHmac(this.configuration.getCookieKey(), VALID_EXPIRATION_TIME);
         this.perimeterx.pxVerify(getMockHttpRequestWithTelemetryHeader(validHmac), this.mockHttpResponse);
 
-        PXContext ctx = new PXContext(LoggerFactory.getLogger());
-        verify(this.pxHttpClient, times(1)).sendEnforcerTelemetry(any(EnforcerTelemetry.class), ctx);
+        verify(this.pxHttpClient, times(1)).sendEnforcerTelemetry(any(EnforcerTelemetry.class), any(PXContext.class));
     }
 
     @Test
@@ -103,17 +102,15 @@ public class TelemetryTest extends ConfiguredTest {
         final String invalidExpirationTime = String.valueOf(System.currentTimeMillis() - MS_IN_DAY);
         final String encodedHmac = encodeHmac(this.configuration.getCookieKey(), invalidExpirationTime);
         this.perimeterx.pxVerify(getMockHttpRequestWithTelemetryHeader(encodedHmac), this.mockHttpResponse);
-        PXContext ctx = new PXContext(LoggerFactory.getLogger());
 
-        verify(this.pxHttpClient, never()).sendEnforcerTelemetry(any(EnforcerTelemetry.class), ctx);
+        verify(this.pxHttpClient, never()).sendEnforcerTelemetry(any(EnforcerTelemetry.class), any(PXContext.class));
     }
 
     @Test
     public void testWontSendTelemetryActivityWithNoTelemetryHeader() throws Exception {
         this.perimeterx.pxVerify(new MockHttpServletRequest(), this.mockHttpResponse);
-        PXContext ctx = new PXContext(LoggerFactory.getLogger());
 
-        verify(this.pxHttpClient, never()).sendEnforcerTelemetry(any(EnforcerTelemetry.class), ctx);
+        verify(this.pxHttpClient, never()).sendEnforcerTelemetry(any(EnforcerTelemetry.class), any(PXContext.class));
     }
 
     private MockHttpServletRequest getMockHttpRequestWithTelemetryHeader(String headerValue) {
