@@ -178,10 +178,6 @@ public class PerimeterX implements Closeable {
 
             context = new PXContext(req, this.ipProvider, this.hostnameProvider, configuration);
 
-            if (isValidTelemetryRequest(req)) {
-                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, context);
-                return context;
-            }
 
             if (shouldReverseRequest(req, responseWrapper, context)) {
                 context.setFirstPartyRequest(true);
@@ -189,6 +185,11 @@ public class PerimeterX implements Closeable {
             }
 
             if (requestFilter.isFilteredRequest(req, context)) {
+                return context;
+            }
+
+            if (isValidTelemetryRequest(req)) {
+                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, context);
                 return context;
             }
 
@@ -260,10 +261,10 @@ public class PerimeterX implements Closeable {
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
             if (context != null){
-                context.logger.sendMemoryLogs(this.configuration, context);
                 if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                     handleAdditionalS2SActivityWithCI(response, context);
                 }
+                context.logger.sendMemoryLogs(this.configuration, context);
             }
         } catch (Exception e) {
             context.logger.error("Failed to post verify response. Error :: ", e);

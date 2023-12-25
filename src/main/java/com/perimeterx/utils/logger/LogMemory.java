@@ -6,6 +6,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.JsonUtils;
 import com.perimeterx.utils.StringUtils;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,23 +14,41 @@ import java.util.List;
 public abstract class LogMemory implements IPXLogger {
 
     private final boolean isMemoryEnabled;
+    protected LoggerSeverity severity;
     private List<LogRecord> memory;
 //    private  PXConfiguration config;
-    protected LogMemory(boolean isMemoryEnabled) {
+    protected LogMemory(boolean isMemoryEnabled, LoggerSeverity severity) {
         this.isMemoryEnabled = isMemoryEnabled;
         if (isMemoryEnabled) {
             this.memory = new ArrayList<>();
         }
+        this.severity = severity;
     }
 
-    public abstract void debug(LogReason reason, Object... args);
+    public void debug(LogReason reason, Object... args) {
+        addLog(reason.toString(), LoggerSeverity.DEBUG);
+        this._debug(reason, args);
+    }
+    public void debug(String msg, Object... args) {
+        addLog(msg, LoggerSeverity.DEBUG);
+        this._debug(msg, args);
+    }
 
-    public abstract void debug(String msg, Object... args);
+    public void error(LogReason reason, Object... args){
+        addLog(reason.toString(), LoggerSeverity.ERROR);
+        this._error(reason,args);
+    }
 
-    public abstract void error(LogReason reason, Object... args);
+    public void error(String msg, Object... args){
+        addLog(msg, LoggerSeverity.ERROR);
+        this._error(msg,args);
+    }
 
-    public abstract void error(String msg, Object... args);
 
+    protected abstract void _debug(LogReason reason, Object... args);
+    protected abstract void _debug(String msg, Object... args);
+    protected abstract void _error(LogReason reason, Object... args);
+    protected abstract void _error(String msg, Object... args);
 
     protected void addLog(String msg, LoggerSeverity severity) {
         if (isMemoryEnabled){
@@ -50,7 +69,7 @@ public abstract class LogMemory implements IPXLogger {
 
     private void dispatchLogs(PXConfiguration conf, PXContext ctx) {
         try {
-            PXClient client = conf.getPxClientInstance();
+            PXClient client = ctx.getPxConfiguration().getPxClientInstance();
             client.sendLogs(this.stringifyMemory(), ctx);
         } catch (Exception e) {
             ctx.logger.error("Failed to send logs to logging service. Error :: ", e, ". Logs: ", this.memory.toString());
