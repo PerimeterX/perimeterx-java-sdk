@@ -248,8 +248,8 @@ public class PXContext {
     }
 
     //This constructor is in use by unit tests where we don't need context but only logger
-    public PXContext(IPXLogger logger) {
-        this.logger = logger;
+    public PXContext(LoggerFactory loggerFactory) {
+        this.logger = loggerFactory.getLogger();
     }
 
     private void postInitContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
@@ -294,7 +294,7 @@ public class PXContext {
     private IPXLogger getLogger(){
         String requestLoggerAuthToken = this.getHeaders().get(LOGGER_TOKEN_HEADER_NAME);
         boolean isLoggerHeaderRequest = requestLoggerAuthToken!=null && this.getPxConfiguration().getLoggerAuthToken().equals(requestLoggerAuthToken);
-        return LoggerFactory.getLogger(isLoggerHeaderRequest);
+        return pxConfiguration.getLoggerFactory().getLogger(isLoggerHeaderRequest);
     }
     public boolean isSensitiveRequest() {
         return this.isContainCredentialsIntelligence()

@@ -118,7 +118,7 @@ public class ReverseProxyTest {
         ((MockHttpServletRequest) request).setRequestURI("/12345678/init.js");
         HttpServletResponse response = new MockHttpServletResponse();
 
-        PXContext context = new PXContext(LoggerFactory.getLogger());
+        PXContext context = new PXContext(new LoggerFactory());
         reverseProxy.reversePxClient(request, response, context);
         verify(mockProxyHttpClient, times(1)).execute(any(HttpUriRequest.class));
         Assert.assertEquals("function()", ((MockHttpServletResponse) response).getContentAsString());
@@ -145,7 +145,7 @@ public class ReverseProxyTest {
         ((MockHttpServletRequest) request).setRequestURI("/12345678/xhr/api/v1/collector");
         HttpServletResponse response = new MockHttpServletResponse();
 
-        PXContext context = new PXContext(LoggerFactory.getLogger());
+        PXContext context = new PXContext(new LoggerFactory());
         reverseProxy.reversePxXhr(request, response, context);
         verify(mockProxyHttpClient, times(1)).execute(any());
         Assert.assertEquals("{\"some\": '\"answer\"}", ((MockHttpServletResponse) response).getContentAsString());

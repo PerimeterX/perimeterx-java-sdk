@@ -24,6 +24,7 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
+import com.perimeterx.utils.logger.LoggerFactory;
 import com.perimeterx.utils.logger.LoggerSeverity;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
@@ -277,6 +278,9 @@ public class PXConfiguration {
 
     @Builder.Default
     private String customCookieHeader = "x-px-cookies";
+
+    @Builder.Default
+    private LoggerFactory loggerFactory = new LoggerFactory();
 
     @Builder.Default
     @Getter(AccessLevel.PRIVATE)

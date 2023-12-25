@@ -11,12 +11,13 @@ import com.perimeterx.utils.logger.IPXLogger;
  */
 public class DefaultRemoteConfigManager implements RemoteConfigurationManager {
 
-    private static final IPXLogger logger = PerimeterX.globalLogger;
+    private final IPXLogger logger;
 
     private PXClient pxClient;
     private PXConfiguration pxConfiguration;
 
     public DefaultRemoteConfigManager(PXConfiguration pxConfiguration, PXClient pxClient) {
+        this.logger = pxConfiguration.getLoggerFactory().getLogger();
         this.pxClient = pxClient;
         this.pxConfiguration = pxConfiguration;
     }

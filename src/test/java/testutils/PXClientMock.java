@@ -40,6 +40,11 @@ public class PXClientMock implements PXClient {
         this.captchaReturnStatus = captchaReturnStatus;
     }
 
+    public PXClientMock() {
+        this.score = 0;
+        this.captchaReturnStatus = 200;
+    }
+
     @Override
     public RiskResponse riskApiCall(PXContext pxContext) {
         ObjectMapper mapper = new ObjectMapper();

@@ -81,7 +81,7 @@ public class TelemetryTest extends ConfiguredTest {
         boolean thrown = false;
 
         try {
-            activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, new PXContext(LoggerFactory.getLogger()));
+            activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, new PXContext(new LoggerFactory()));
         } catch (Exception e) {
             thrown = true;
         }

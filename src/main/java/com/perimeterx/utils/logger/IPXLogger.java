@@ -16,4 +16,6 @@ public interface IPXLogger {
     void error(String msg, Object... args);
 
     void sendMemoryLogs(PXConfiguration conf, PXContext ctx);
+
+    boolean isMemoryEmpty();
 }

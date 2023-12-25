@@ -34,21 +34,21 @@ public class FilterByExtensionTest {
     public void testRequestIsFiltered() {
         MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.GET.name(), VALID_PATH_WITH_EXTENSION);
 
-        assertTrue(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(LoggerFactory.getLogger())));
+        assertTrue(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(new LoggerFactory())));
     }
 
     @Test
     public void testRequestIsNotFilteredByMethod() {
         MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.POST.name(), VALID_PATH_WITH_EXTENSION);
 
-        assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(LoggerFactory.getLogger())));
+        assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(new LoggerFactory())));
     }
 
     @Test
     public void testRequestIsNotFilteredByPath() {
         MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.GET.name(), "test");
 
-        assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(LoggerFactory.getLogger())));
+        assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(new LoggerFactory())));
     }
 
     @Test
@@ -57,6 +57,6 @@ public class FilterByExtensionTest {
         final RequestFilter reqFilter = new RequestFilter(config);
         final MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.GET.name(), VALID_PATH_WITH_EXTENSION);
 
-        assertTrue(reqFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(LoggerFactory.getLogger())));
+        assertTrue(reqFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(new LoggerFactory())));
     }
 }

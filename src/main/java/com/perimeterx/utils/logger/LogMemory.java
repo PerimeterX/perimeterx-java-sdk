@@ -44,6 +44,10 @@ public abstract class LogMemory implements IPXLogger {
         }
     }
 
+    public boolean isMemoryEmpty(){
+        return this.memory==null || this.memory.isEmpty();
+    }
+
     private void dispatchLogs(PXConfiguration conf, PXContext ctx) {
         try {
             PXClient client = conf.getPxClientInstance();

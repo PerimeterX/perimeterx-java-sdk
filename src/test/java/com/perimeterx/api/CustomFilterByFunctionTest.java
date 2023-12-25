@@ -27,28 +27,28 @@ public class CustomFilterByFunctionTest {
     @Test
     public void testRequestIsFiltered()  {
         final RequestFilter requestFilter = getRequestFilter(TRUTHY_REQUEST_FILTER);
-        assertTrue(requestFilter.isFilteredByCustomFunction(req, new PXContext(LoggerFactory.getLogger())));
+        assertTrue(requestFilter.isFilteredByCustomFunction(req, new PXContext(new LoggerFactory())));
     }
 
     @Test
     public void testRequestIsNotFiltered() {
         final RequestFilter requestFilter = getRequestFilter(FALSY_REQUEST_FILTER);
 
-        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(LoggerFactory.getLogger())));
+        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(new LoggerFactory())));
     }
 
     @Test
     public void testExceptionHandlingShouldReturnFalse() {
         final RequestFilter requestFilter = getRequestFilter((req) -> {throw new RuntimeException();});
 
-        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(LoggerFactory.getLogger())));
+        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(new LoggerFactory())));
     }
 
     @Test
     public void testDefaultBehaviorShouldReturnFalse() {
         final RequestFilter requestFilter = getRequestFilter(null);
 
-        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(LoggerFactory.getLogger())));
+        assertFalse(requestFilter.isFilteredByCustomFunction(req, new PXContext(new LoggerFactory())));
     }
 
     private RequestFilter getRequestFilter(Predicate<HttpServletRequest> filterByCustomFunction) {

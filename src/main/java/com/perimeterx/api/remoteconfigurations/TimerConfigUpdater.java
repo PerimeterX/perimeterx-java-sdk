@@ -13,13 +13,14 @@ import java.util.TimerTask;
 
 public class TimerConfigUpdater extends TimerTask {
 
-    private static final IPXLogger logger = PerimeterX.globalLogger;
+    private final IPXLogger logger;
 
     private RemoteConfigurationManager configManager;
     private PXConfiguration pxConfiguration;
     private ActivityHandler activityHandler;
 
     public TimerConfigUpdater(RemoteConfigurationManager configManager, PXConfiguration pxConfiguration, ActivityHandler activityHandler) {
+        this.logger = pxConfiguration.getLoggerFactory().getLogger();
         logger.debug("TimerConfigUpdater[init]");
         this.configManager = configManager;
         this.pxConfiguration = pxConfiguration;

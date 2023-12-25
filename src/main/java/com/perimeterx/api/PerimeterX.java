@@ -93,7 +93,7 @@ public class PerimeterX implements Closeable {
     private RequestFilter requestFilter;
 
     private void init(PXConfiguration configuration) throws PXException {
-        globalLogger = LoggerFactory.getLogger(false);
+        globalLogger = configuration.getLoggerFactory().getLogger();
         globalLogger.debug(LogReason.DEBUG_INITIALIZING_MODULE);
         configuration.mergeConfigurations();
         this.configuration = configuration;

@@ -1,19 +1,31 @@
 package com.perimeterx.api;
 
 import com.perimeterx.http.PXClient;
+import com.perimeterx.http.ResponseWrapper;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JSONUtilsTest;
+import com.perimeterx.utils.logger.ConsoleLogger;
+import com.perimeterx.utils.logger.LoggerFactory;
+import org.mockito.Mockito;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import testutils.ConfiguredTest;
+import testutils.PXClientMock;
 import testutils.TestObjectUtils;
+
+import static com.perimeterx.utils.Constants.LOGGER_TOKEN_HEADER_NAME;
+import static org.mockito.Mockito.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * Created by shikloshi on 13/07/2016.
@@ -125,6 +137,45 @@ public class PerimeterXTest extends ConfiguredTest {
         perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
         Assert.assertEquals(response.getStatus(), 200);
         Assert.assertEquals((((MockHttpServletResponse) response).getContentAsString()), "custom verification handle");
+    }
+
+    @Test
+    public void testPxPostVerify() throws Exception {
+        PXClient client = TestObjectUtils.nonBlockingPXClient(configuration.getBlockingScore());
+        PerimeterX perimeterx = TestObjectUtils.testablePerimeterXObject(configuration, client);
+        perimeterx.setVerificationHandler(new UnitTestVerificationHandler());
+
+        HttpServletRequest request = spy(new MockHttpServletRequest());
+        doReturn("logger_token_123").when(request).getHeader(LOGGER_TOKEN_HEADER_NAME);
+
+        Vector<String> headerNames = new Vector<>();
+        headerNames.add(LOGGER_TOKEN_HEADER_NAME);
+        Enumeration<String> headerNamesEnum = headerNames.elements();
+        doReturn(headerNamesEnum).when(request).getHeaderNames();
+
+        HttpServletResponse response = new MockHttpServletResponse();
+
+        LoggerFactory mockLoggerFactory = mock(LoggerFactory.class);
+        ConsoleLogger mockLogger = mock(ConsoleLogger.class);
+        Mockito.when(mockLoggerFactory.getLogger()).thenReturn(mockLogger);
+
+        PXContext ctx = perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
+        Assert.assertEquals(response.getStatus(), 200);
+        ResponseWrapper responseWrapper = new ResponseWrapper((HttpServletResponse) response);
+
+        Assert.assertNotNull(ctx.logger);
+
+        ctx.logger = mock(ConsoleLogger.class);
+        perimeterx.pxPostVerify(responseWrapper,ctx);
+        verify(ctx.logger,times(1)).sendMemoryLogs(any(PXConfiguration.class),any(PXContext.class));
+
+
+//        PXClientMock clientMock = new PXClientMock();
+//        PXConfiguration configMock = mock(PXConfiguration.class);
+//        Mockito.when(configMock.getPxClientInstance()).thenReturn(clientMock);
+//        ctx.setPxConfiguration(configMock);
+//        perimeterx.pxPostVerify(responseWrapper,ctx);
+//        verify(clientMock, times(1)).sendLogs(any(String.class),any(PXContext.class));
     }
 
 }
