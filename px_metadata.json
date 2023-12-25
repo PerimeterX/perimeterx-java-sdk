@@ -35,7 +35,8 @@
     "pxhd",
     "batched_activities",
     "sensitive_headers",
-    "block_page_hard_block"
+    "block_page_hard_block",
+    "header_based_logger"
   ],
   "excluded_tests": [
     "test_custom_parameters_custom_param_appear_in_activities",
