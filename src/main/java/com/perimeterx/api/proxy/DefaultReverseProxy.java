@@ -102,9 +102,7 @@ public class DefaultReverseProxy implements ReverseProxy {
             return true;
         }
 
-        final String firstPartyAppIdForm = pxConfiguration.getAppId().substring(2);
-        final String xhrPrefix = String.format("/%s/%s", firstPartyAppIdForm, XHR_PATH);
-        final String path = isBlank(req.getRequestURI()) ? "" : req.getRequestURI().substring(xhrPrefix.length());
+        final String path = getPath(req);
         final String url = pxConfiguration.getCollectorUrl() + path;
         final String host = pxConfiguration.getCollectorUrl().replaceFirst("https?:\\/\\/", "");
 
@@ -128,6 +126,12 @@ public class DefaultReverseProxy implements ReverseProxy {
         }
 
         return true;
+    }
+
+    private String getPath(HttpServletRequest req) {
+        final String firstPartyAppIdForm = pxConfiguration.getAppId().substring(2);
+        final String xhrPrefix = String.format("/%s/%s", firstPartyAppIdForm, XHR_PATH);
+        return isBlank(req.getRequestURI()) ? "" : req.getRequestURI().substring(xhrPrefix.length());
     }
 
     private boolean isValidThirdPartyUrl(String rawThirdPartyUrl, String expectedHost, String expectedUrl) {
