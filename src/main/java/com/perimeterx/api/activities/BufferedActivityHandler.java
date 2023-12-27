@@ -107,7 +107,7 @@ public class BufferedActivityHandler implements ActivityHandler {
                         sendAsync(activitiesToSend, context);
                     }
                 } catch (Exception e) {
-                    context.logger.error("failed to send async activities", e);
+                    context.logger.error("failed to send async activities", e.getMessage());
                 } finally {
                     lock.unlock();
                 }

@@ -42,7 +42,7 @@ public class RequestFilter {
 
             return test;
         } catch (Exception e) {
-            context.logger.error("isFilteredByCustomFunction - exception during filter", e);
+            context.logger.error("isFilteredByCustomFunction - exception during filter", e.getMessage());
         }
         return false;
     }

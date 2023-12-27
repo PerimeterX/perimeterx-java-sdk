@@ -267,7 +267,7 @@ public class PerimeterX implements Closeable {
                 context.logger.sendMemoryLogs(this.configuration, context);
             }
         } catch (Exception e) {
-            context.logger.error("Failed to post verify response. Error :: ", e);
+            context.logger.error("Failed to post verify response. Error :: ", e.getMessage());
         }
     }
 

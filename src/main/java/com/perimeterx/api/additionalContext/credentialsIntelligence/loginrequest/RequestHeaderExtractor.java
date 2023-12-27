@@ -21,7 +21,7 @@ public class RequestHeaderExtractor implements CredentialsExtractor {
 
             return new LoginCredentials(username, password);
         } catch (Exception e) {
-            logger.error("Failed to extract credentials from request headers. error :: ", e);
+            logger.error("Failed to extract credentials from request headers. error :: ", e.getMessage());
             return null;
         }
     }

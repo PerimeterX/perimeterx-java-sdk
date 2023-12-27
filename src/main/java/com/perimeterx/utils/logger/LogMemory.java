@@ -72,7 +72,7 @@ public abstract class LogMemory implements IPXLogger {
             PXClient client = ctx.getPxConfiguration().getPxClientInstance();
             client.sendLogs(this.stringifyMemory(), ctx);
         } catch (Exception e) {
-            ctx.logger.error("Failed to send logs to logging service. Error :: ", e, ". Logs: ", this.memory.toString());
+            ctx.logger.error("Failed to send logs to logging service. Error :: ", e.getMessage(), ". Logs: ", this.memory.toString());
             throw new RuntimeException(e);
         } finally {
             this.memory = new ArrayList<>();

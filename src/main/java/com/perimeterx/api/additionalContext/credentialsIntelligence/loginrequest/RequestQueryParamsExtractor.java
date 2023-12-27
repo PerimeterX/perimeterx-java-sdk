@@ -22,7 +22,7 @@ public class RequestQueryParamsExtractor implements CredentialsExtractor {
 
             return new LoginCredentials(username, password);
         } catch (Exception e) {
-            this.logger.error("Failed to extract credentials from request query params. error :: ", e);
+            this.logger.error("Failed to extract credentials from request query params. error :: ", e.getMessage());
             return null;
         }
     }
