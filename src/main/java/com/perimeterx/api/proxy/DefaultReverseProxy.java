@@ -108,11 +108,11 @@ public class DefaultReverseProxy implements ReverseProxy {
 
         if (!isValidThirdPartyUrl(url, host, path)) {
            context.logger.error("First party XHR URL is inaccurate: " + url + ", rendering default response");
-            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
+            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
             return true;
         }
 
-        final RemoteServer remoteServer = new RemoteServer(url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
+        final RemoteServer remoteServer = new RemoteServer(url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration, context);
         IPXOutgoingRequest proxyRequest = null;
 
         try {
