@@ -1,6 +1,5 @@
 package com.perimeterx.api.remoteconfigurations;
 
-import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
@@ -17,7 +16,7 @@ public class DefaultRemoteConfigManager implements RemoteConfigurationManager {
     private PXConfiguration pxConfiguration;
 
     public DefaultRemoteConfigManager(PXConfiguration pxConfiguration, PXClient pxClient) {
-        this.logger = pxConfiguration.getLoggerFactory().getLogger();
+        this.logger = pxConfiguration.getLoggerFactory().getRequestContextLogger();
         this.pxClient = pxClient;
         this.pxConfiguration = pxConfiguration;
     }

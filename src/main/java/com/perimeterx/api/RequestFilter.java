@@ -9,7 +9,6 @@ import org.apache.commons.io.FilenameUtils;
 import javax.servlet.http.HttpServletRequest;
 
 public class RequestFilter {
-    private static final IPXLogger logger = PerimeterX.globalLogger;
     private final PXConfiguration configuration;
 
     public RequestFilter(PXConfiguration configuration) {

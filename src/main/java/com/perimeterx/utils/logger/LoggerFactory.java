@@ -4,7 +4,7 @@ import com.perimeterx.models.configuration.PXConfiguration;
 
 public class LoggerFactory {
 
-    public IPXLogger getLogger(boolean isMemoryEnabled) {
+    public IPXLogger getRequestContextLogger(boolean isMemoryEnabled) {
         LoggerSeverity pxLoggerSeverity = PXConfiguration.getPxLoggerSeverity();
         if (pxLoggerSeverity == null) {
             return new Slf4JLogger(isMemoryEnabled);
@@ -12,7 +12,11 @@ public class LoggerFactory {
             return new ConsoleLogger(pxLoggerSeverity,isMemoryEnabled);
         }
     }
-    public IPXLogger getLogger() {
-        return getLogger(false);
+    public IPXLogger getRequestContextLogger() {
+        return getRequestContextLogger(false);
+    }
+
+    public static IPXLogger getGlobalLogger() {
+        return new ConsoleLogger(LoggerSeverity.ERROR, false);
     }
 }

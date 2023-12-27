@@ -7,7 +7,6 @@ import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
-import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -37,7 +36,6 @@ import static com.perimeterx.utils.PXIOUtils.copy;
  */
 public class RemoteServer {
 
-    private static final IPXLogger logger = PerimeterX.globalLogger;
     private final PXContext context;
     private HttpServletResponse res;
     private HttpServletRequest req;

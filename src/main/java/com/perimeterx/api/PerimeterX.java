@@ -80,7 +80,7 @@ import static java.util.Objects.isNull;
 
 public class PerimeterX implements Closeable {
 
-    public static IPXLogger globalLogger;
+    public static IPXLogger globalLogger = LoggerFactory.getGlobalLogger();;
     private PXConfiguration configuration;
     private PXS2SValidator serverValidator;
     private PXCookieValidator cookieValidator;
@@ -93,7 +93,6 @@ public class PerimeterX implements Closeable {
     private RequestFilter requestFilter;
 
     private void init(PXConfiguration configuration) throws PXException {
-        globalLogger = configuration.getLoggerFactory().getLogger();
         globalLogger.debug(LogReason.DEBUG_INITIALIZING_MODULE);
         configuration.mergeConfigurations();
         this.configuration = configuration;
@@ -188,7 +187,7 @@ public class PerimeterX implements Closeable {
                 return context;
             }
 
-            if (isValidTelemetryRequest(req)) {
+            if (isValidTelemetryRequest(req, context)) {
                 activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, context);
                 return context;
             }
@@ -280,14 +279,14 @@ public class PerimeterX implements Closeable {
         activityHandler.handleAdditionalS2SActivity(context);
     }
 
-    public boolean isValidTelemetryRequest(HttpServletRequest request) {
+    public boolean isValidTelemetryRequest(HttpServletRequest request, PXContext context) {
         final String telemetryHeader = request.getHeader(DEFAULT_TELEMETRY_REQUEST_HEADER_NAME);
 
         if (isNull(telemetryHeader)) {
             return false;
         }
         try {
-            globalLogger.debug("Received command to send enforcer telemetry");
+            context.logger.debug("Received command to send enforcer telemetry");
 
             final String decodedString = new String(Base64.getDecoder().decode(telemetryHeader));
             final String[] splitTimestampAndHmac = decodedString.split(":");
@@ -300,7 +299,7 @@ public class PerimeterX implements Closeable {
             final String hmac = splitTimestampAndHmac[1];
 
             if (Long.parseLong(timestamp) < System.currentTimeMillis()) {
-                globalLogger.error("Telemetry command has expired.");
+                context.logger.error("Telemetry command has expired.");
                 return false;
             }
 
@@ -308,11 +307,11 @@ public class PerimeterX implements Closeable {
             final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
 
             if (!MessageDigest.isEqual(generatedHmac.getBytes(), hmac.getBytes())) {
-                globalLogger.error("Telemetry validation failed - invalid hmac, original=" + hmac + ", generated=" + generatedHmac);
+                context.logger.error("Telemetry validation failed - invalid hmac, original=" + hmac + ", generated=" + generatedHmac);
                 return false;
             }
         } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalArgumentException e) {
-            globalLogger.error("Telemetry validation failed.");
+            context.logger.error("Telemetry validation failed.");
             return false;
         }
 

@@ -4,7 +4,6 @@ import com.perimeterx.http.PXClient;
 import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.JSONUtilsTest;
 import com.perimeterx.utils.logger.ConsoleLogger;
 import com.perimeterx.utils.logger.LoggerFactory;
@@ -14,7 +13,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import testutils.ConfiguredTest;
-import testutils.PXClientMock;
 import testutils.TestObjectUtils;
 
 import static com.perimeterx.utils.Constants.LOGGER_TOKEN_HEADER_NAME;
@@ -157,7 +155,7 @@ public class PerimeterXTest extends ConfiguredTest {
 
         LoggerFactory mockLoggerFactory = mock(LoggerFactory.class);
         ConsoleLogger mockLogger = mock(ConsoleLogger.class);
-        Mockito.when(mockLoggerFactory.getLogger()).thenReturn(mockLogger);
+        Mockito.when(mockLoggerFactory.getRequestContextLogger()).thenReturn(mockLogger);
 
         PXContext ctx = perimeterx.pxVerify(request, new HttpServletResponseWrapper(response));
         Assert.assertEquals(response.getStatus(), 200);

@@ -16,7 +16,7 @@ public abstract class LogMemory implements IPXLogger {
     private final boolean isMemoryEnabled;
     protected LoggerSeverity severity;
     private List<LogRecord> memory;
-//    private  PXConfiguration config;
+
     protected LogMemory(boolean isMemoryEnabled, LoggerSeverity severity) {
         this.isMemoryEnabled = isMemoryEnabled;
         if (isMemoryEnabled) {

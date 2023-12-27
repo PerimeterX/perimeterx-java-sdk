@@ -130,6 +130,6 @@ public class TelemetryTest extends ConfiguredTest {
     private boolean isValidTelemetryRequest(String encodedHmac) {
         MockHttpServletRequest request = getMockHttpRequestWithTelemetryHeader(encodedHmac);
 
-        return this.perimeterx.isValidTelemetryRequest(request);
+        return this.perimeterx.isValidTelemetryRequest(request, new PXContext(new LoggerFactory()));
     }
 }

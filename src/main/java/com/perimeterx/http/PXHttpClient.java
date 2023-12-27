@@ -180,7 +180,8 @@ public class PXHttpClient implements PXClient, Closeable {
     public void sendLogs(String activities, PXContext context) throws IOException {
         context.logger.debug("Sending logs to logging service");
         BasicHeader loggerAuthTokenHeader = new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + pxConfiguration.getLoggerAuthToken());
-        IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_LOGGING_SERVICE_PATH,PXHttpMethod.POST, activities,loggerAuthTokenHeader);
+        String url = this.pxConfiguration.getServerURL() + Constants.API_LOGGING_SERVICE_PATH;
+        IPXOutgoingRequest request = buildOutgoingRequest(url,PXHttpMethod.POST, activities,loggerAuthTokenHeader);
         client.sendAsync(request,context);
     }
 

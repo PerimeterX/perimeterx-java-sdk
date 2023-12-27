@@ -1,6 +1,5 @@
 package com.perimeterx.api.remoteconfigurations;
 
-import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -20,7 +19,7 @@ public class TimerConfigUpdater extends TimerTask {
     private ActivityHandler activityHandler;
 
     public TimerConfigUpdater(RemoteConfigurationManager configManager, PXConfiguration pxConfiguration, ActivityHandler activityHandler) {
-        this.logger = pxConfiguration.getLoggerFactory().getLogger();
+        this.logger = pxConfiguration.getLoggerFactory().getRequestContextLogger();
         logger.debug("TimerConfigUpdater[init]");
         this.configManager = configManager;
         this.pxConfiguration = pxConfiguration;
