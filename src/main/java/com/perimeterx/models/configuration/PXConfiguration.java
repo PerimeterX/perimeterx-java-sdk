@@ -1,6 +1,7 @@
 package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.CredentialsExtractor;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.DefaultCredentialsCustomExtractor;
@@ -23,8 +24,8 @@ import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.CustomParameters;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.FilesUtils;
-import com.perimeterx.utils.LoggerSeverity;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.LoggerFactory;
+import com.perimeterx.utils.logger.LoggerSeverity;
 import lombok.*;
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,7 +51,6 @@ import static com.perimeterx.utils.Constants.*;
 @NoArgsConstructor
 @Getter
 public class PXConfiguration {
-    private static final PXLogger logger = PXLogger.getLogger(PXConfiguration.class);
     private static LoggerSeverity loggerSeverity = null;
 
     public static LoggerSeverity getPxLoggerSeverity() {
@@ -69,6 +69,9 @@ public class PXConfiguration {
 
     @JsonProperty("px_auth_token")
     private String authToken;
+
+    @JsonProperty("px_logger_auth_token")
+    private String loggerAuthToken;
 
     @Builder.Default
     @JsonProperty("px_enabled")
@@ -277,6 +280,9 @@ public class PXConfiguration {
     private String customCookieHeader = "x-px-cookies";
 
     @Builder.Default
+    private LoggerFactory loggerFactory = new LoggerFactory();
+
+    @Builder.Default
     @Getter(AccessLevel.PRIVATE)
     private IPXHttpClient httpClient = null;
 
@@ -360,7 +366,7 @@ public class PXConfiguration {
 
 
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
-        logger.debug("Updating PXConfiguration file");
+        PerimeterX.globalLogger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
         this.checksum = pxDynamicConfiguration.getChecksum();
         this.cookieKey = pxDynamicConfiguration.getCookieSecret();
@@ -379,22 +385,8 @@ public class PXConfiguration {
             try {
                 FilesUtils.readFileConfigAsPXConfig(this, filepath);
             } catch (IOException e) {
-                logger.error(e.getMessage());
+                PerimeterX.globalLogger.error(e.getMessage());
             }
-        }
-    }
-
-    private void updateWithParamsMap(Map<String, String> fileConfigParams, PXConfiguration loadedConfig) {
-        for (String param : fileConfigParams.keySet()) {
-            try {
-                Field field = this.getClass().getDeclaredField(param);
-                field.setAccessible(true);
-                Object newVal = field.get(loadedConfig);
-                field.set(this, newVal);
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                logger.error("Config param " + param + "does not exist in PXConfiguration.");
-            }
-
         }
     }
 

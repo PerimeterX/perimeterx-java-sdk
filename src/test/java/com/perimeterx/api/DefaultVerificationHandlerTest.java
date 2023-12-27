@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -114,7 +115,7 @@ public class DefaultVerificationHandlerTest {
 
         defaultVerificationHandler.handleVerification(context, response);
         final ArgumentCaptor<Activity> captor = ArgumentCaptor.forClass(Activity.class);
-        verify(pxClient).sendActivity(captor.capture());
+        verify(pxClient).sendActivity(captor.capture(), any(PXContext.class));
 
         Assert.assertTrue((((BlockActivityDetails) captor.getValue().getDetails()).getSimulatedBlock()));
     }

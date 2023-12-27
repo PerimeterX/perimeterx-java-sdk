@@ -1,11 +1,10 @@
-package com.perimeterx.utils;
+package com.perimeterx.utils.logger;
 
 import java.io.PrintStream;
-public class ConsoleLogger implements PXLogger {
-    private final LoggerSeverity severity;
+public class ConsoleLogger extends LogMemory {
 
-    public ConsoleLogger(LoggerSeverity severity) {
-        this.severity = severity;
+    public ConsoleLogger(LoggerSeverity severity, boolean isMemoryEnabled) {
+        super(isMemoryEnabled,severity);
     }
 
     private void log(PrintStream out, String prefix, Object msg, Object... additional) {
@@ -17,29 +16,28 @@ public class ConsoleLogger implements PXLogger {
         }
         out.println(builder);
     }
-    @Override
-    public void debug(LogReason reason, Object... args) {
+    public void _debug(LogReason reason, Object... args) {
         if(severity.level >= LoggerSeverity.DEBUG.level) {
-            log(System.out, PXLogger.DEBUG_PREFIX, reason, args);
+            log(System.out, IPXLogger.DEBUG_PREFIX, reason, args);
+        }
+    }
+
+    public void _debug(String msg, Object... args) {
+        addLog(msg, this.severity);
+        if(severity.level >= LoggerSeverity.DEBUG.level) {
+            log(System.out, IPXLogger.DEBUG_PREFIX, msg, args);
         }
     }
 
     @Override
-    public void debug(String msg, Object... args) {
-        if(severity.level >= LoggerSeverity.DEBUG.level) {
-            log(System.out, PXLogger.DEBUG_PREFIX, msg, args);
-        }
-    }
-
-    @Override
-    public void error(LogReason reason, Object... args) {
+    public void _error(LogReason reason, Object... args) {
         if(severity.level >= LoggerSeverity.ERROR.level) {
-            log(System.err, PXLogger.ERROR_PREFIX, reason, args);
+            log(System.err, IPXLogger.ERROR_PREFIX, reason, args);
         }
     }
 
     @Override
-    public void error(String msg, Object... args) {
+    public void _error(String msg, Object... args) {
         if(severity.level >= LoggerSeverity.ERROR.level) {
             log(System.err, msg, args);
         }

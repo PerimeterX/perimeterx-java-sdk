@@ -1,19 +1,18 @@
 package com.perimeterx.internals;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.internals.cookie.AbstractPXCookie;
 import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
 public class PXCookieOriginalTokenValidator implements PXValidator {
-
-    private static final PXLogger logger = PXLogger.getLogger(PXCookieOriginalTokenValidator.class);
 
     private PXConfiguration pxConfiguration;
 
@@ -44,12 +43,12 @@ public class PXCookieOriginalTokenValidator implements PXValidator {
             context.setOriginalUuid(originalCookie.getUUID());
 
             if (!originalCookie.isSecured()) {
-                logger.debug("Original token HMAC validation failed, value: " + decodedOriginalCookie + " user-agent: " + context.getUserAgent());
+                context.logger.debug("Original token HMAC validation failed, value: " + decodedOriginalCookie + " user-agent: " + context.getUserAgent());
                 context.setOriginalTokenError("validation_failed");
                 return false;
             }
         } catch (PXException | PXCookieDecryptionException e) {
-            logger.debug("Received an error while decrypting perimeterx original token:" + e.getMessage());
+            context.logger.debug("Received an error while decrypting perimeterx original token:" + e.getMessage());
             context.setOriginalTokenError("decryption_failed");
             return false;
         }

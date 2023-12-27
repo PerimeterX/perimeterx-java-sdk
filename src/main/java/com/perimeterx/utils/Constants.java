@@ -52,6 +52,9 @@ public final class Constants {
     public static final String API_ENFORCER_TELEMETRY = "/api/v2/risk/telemetry";
     public static final String API_REMOTE_CONFIGURATION = "/api/v1/enforcer";
 
+    public static final String API_LOGGING_SERVICE_PATH = "/enforcer-logs/";
+    public static final String LOGGER_TOKEN_HEADER_NAME = "x-px-enforcer-log";
+
     public static final int CAPTCHA_SUCCESS_CODE = 0;
 
     public static final String CAPTCHA_ACTION_CAPTCHA = "c";

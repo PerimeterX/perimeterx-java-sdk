@@ -5,20 +5,21 @@ import com.perimeterx.models.activities.UpdateReason;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class TimerConfigUpdater extends TimerTask {
 
-    private static final PXLogger logger = PXLogger.getLogger(TimerConfigUpdater.class);
+    private final IPXLogger logger;
 
     private RemoteConfigurationManager configManager;
     private PXConfiguration pxConfiguration;
     private ActivityHandler activityHandler;
 
     public TimerConfigUpdater(RemoteConfigurationManager configManager, PXConfiguration pxConfiguration, ActivityHandler activityHandler) {
+        this.logger = pxConfiguration.getLoggerFactory().getRequestContextLogger();
         logger.debug("TimerConfigUpdater[init]");
         this.configManager = configManager;
         this.pxConfiguration = pxConfiguration;
@@ -32,7 +33,7 @@ public class TimerConfigUpdater extends TimerTask {
         if (dynamicConfig != null) {
             configManager.updateConfiguration(dynamicConfig);
             try {
-                activityHandler.handleEnforcerTelemetryActivity(pxConfiguration, UpdateReason.REMOTE_CONFIG);
+                activityHandler.handleEnforcerTelemetryActivity(pxConfiguration, UpdateReason.REMOTE_CONFIG, null);
             } catch (PXException e) {
                 logger.error("Failed to report telemetry, {}", e.getMessage());
             }

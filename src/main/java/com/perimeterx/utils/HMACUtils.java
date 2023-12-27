@@ -1,5 +1,8 @@
 package com.perimeterx.utils;
 
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -19,14 +22,14 @@ public final class HMACUtils {
     }
 
     public static boolean isHMACValid(String encodedString, String hmac,
-                                      String cookieKey, PXLogger logger) {
+                                      String cookieKey, IPXLogger logger) {
         boolean isValid;
         try {
             byte[] bHMAC = HMACString(encodedString, cookieKey);
             byte[] bCookieHmac = StringUtils.hexStringToByteArray(hmac);
             isValid = Arrays.equals(bHMAC, bCookieHmac);
         } catch (Exception e) {
-            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_HMAC_VALIDATION_FAILED, e.getMessage());
+            logger.debug(LogReason.DEBUG_COOKIE_HMAC_VALIDATION_FAILED, e.getMessage());
             isValid = false;
         }
 

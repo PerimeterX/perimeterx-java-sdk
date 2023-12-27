@@ -2,9 +2,13 @@ package com.perimeterx.internals.cookie;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.perimeterx.api.PerimeterX;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXCookieDecryptionException;
 import com.perimeterx.utils.*;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -19,10 +23,11 @@ import java.util.Arrays;
  */
 public abstract class AbstractPXCookie implements PXCookie {
 
-    private static final PXLogger logger = PXLogger.getLogger(AbstractPXCookie.class);
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private static final int KEY_LEN = 32;
     private static final String HMAC_SHA_256 = "HmacSHA256";
+    protected final PXContext context;
 
     private String cookieVersion;
     protected String ip;
@@ -36,7 +41,8 @@ public abstract class AbstractPXCookie implements PXCookie {
     protected String cookieKey;
     protected String cookieOrig;
 
-    public AbstractPXCookie(PXConfiguration pxConfiguration, CookieData cookieData) {
+    public AbstractPXCookie(PXConfiguration pxConfiguration, CookieData cookieData, PXContext context) {
+        this.context = context;
         this.mapper = new ObjectMapper();
         this.pxCookie = cookieData.getPxCookie();
         this.cookieOrig = cookieData.getPxCookie();
@@ -132,6 +138,7 @@ public abstract class AbstractPXCookie implements PXCookie {
             String decodedString = new String(decodedBytes);
             return mapper.readTree(decodedString);
         } catch (IOException e) {
+            context.logger.debug("Cookie decode failed with a reason");
             throw new PXCookieDecryptionException("Cookie decode failed in reason => ".concat(e.getMessage()));
         }
     }
@@ -147,7 +154,7 @@ public abstract class AbstractPXCookie implements PXCookie {
     public boolean isHmacValid(String hmacStr, String cookieHmac) {
         boolean isValid = HMACUtils.isHMACValid(hmacStr, cookieHmac, this.cookieKey, logger);
         if (!isValid) {
-            logger.debug(PXLogger.LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, this.userAgent);
+            context.logger.debug(LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, this.userAgent);
         }
 
         return isValid;

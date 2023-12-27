@@ -40,6 +40,11 @@ public class PXClientMock implements PXClient {
         this.captchaReturnStatus = captchaReturnStatus;
     }
 
+    public PXClientMock() {
+        this.score = 0;
+        this.captchaReturnStatus = 200;
+    }
+
     @Override
     public RiskResponse riskApiCall(PXContext pxContext) {
         ObjectMapper mapper = new ObjectMapper();
@@ -55,13 +60,18 @@ public class PXClientMock implements PXClient {
     }
 
     @Override
-    public void sendActivity(Activity activity) throws PXException, IOException {
+    public void sendActivity(Activity activity, PXContext context) throws PXException, IOException {
         // noop
     }
 
     @Override
-    public void sendBatchActivities(List<Activity> activities) throws PXException, IOException {
+    public void sendBatchActivities(List<Activity> activities, PXContext context) throws PXException, IOException {
         // noop
+    }
+
+    @Override
+    public void sendLogs(String activities, PXContext context) throws IOException {
+        //noop
     }
 
     @Override
@@ -80,7 +90,7 @@ public class PXClientMock implements PXClient {
     }
 
     @Override
-    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry) throws IOException {
+    public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry, PXContext ctx) throws IOException {
         // noop
     }
 }
