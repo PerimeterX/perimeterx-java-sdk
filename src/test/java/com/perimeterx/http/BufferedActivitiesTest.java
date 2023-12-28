@@ -57,7 +57,7 @@ public class BufferedActivitiesTest {
             bufferedActivityHandler.handleBlockActivity(context);
         }
         Thread.sleep(100);
-        verify(pxClient, atLeastOnce()).sendBatchActivities(any(List.class));
+        verify(pxClient, atLeastOnce()).sendBatchActivities(any(List.class), any(PXContext.class));
     }
 
     @Test
@@ -65,6 +65,6 @@ public class BufferedActivitiesTest {
         for (int i = 0; i < this.configuration.getMaxBufferLen() - 1; i++) {
             bufferedActivityHandler.handleBlockActivity(context);
         }
-        verify(pxClient, never()).sendBatchActivities(any(List.class));
+        verify(pxClient, never()).sendBatchActivities(any(List.class), any(PXContext.class));
     }
 }

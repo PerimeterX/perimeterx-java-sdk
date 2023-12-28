@@ -1,4 +1,4 @@
-package com.perimeterx.utils;
+package com.perimeterx.utils.logger;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

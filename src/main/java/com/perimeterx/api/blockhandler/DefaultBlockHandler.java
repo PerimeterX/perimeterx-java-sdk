@@ -53,6 +53,7 @@ public class DefaultBlockHandler implements BlockHandler {
         try {
             sendMessage(blockPageResponse, responseWrapper, context, pxConfig);
         } catch (IOException e) {
+            context.logger.error("Failed to handle block page response. error :: ", e.getMessage());
             throw new PXException(e);
         }
     }
@@ -69,6 +70,7 @@ public class DefaultBlockHandler implements BlockHandler {
             try {
                 blockPageResponse = new ObjectMapper().writeValueAsString(new MobilePageResponse(parseAction(context.getBlockAction().getCode()), context.getUuid(), context.getVid(), context.getAppId(), base64Page, context.getCollectorURL()));
             } catch (JsonProcessingException e) {
+                context.logger.error("Failed to parse mobile block page response. error :: ", e.getMessage());
                 throw new PXException(e);
             }
         } else {
@@ -77,8 +79,6 @@ public class DefaultBlockHandler implements BlockHandler {
                 responseWrapper.setContentType(Constants.CONTENT_TYPE_APPLICATION_JSON);
 
                 Map<String, String> props = TemplateFactory.getProps(context, pxConfig);
-                final String blockedUrlProperty = props.get("blockedUrl");
-                final String blockedUrl = blockedUrlProperty != null ? "&b=" + Base64.encodeToString(blockedUrlProperty.getBytes(), false) : "";
 
                 AdvancedBlockingResponse advancedBlockingResponse = new AdvancedBlockingResponse(props.get("appId"),
                         props.get("jsClientSrc"),
@@ -86,8 +86,8 @@ public class DefaultBlockHandler implements BlockHandler {
                         props.get("vid"),
                         props.get("uuid"),
                         props.get("hostUrl"),
-                        props.get("blockScript") + blockedUrl,
-                        props.get("altBlockScript") + blockedUrl,
+                        props.get("blockScript"),
+                        props.get("altBlockScript"),
                         props.get("customLogo"));
 
                 blockPageResponse = new ObjectMapper().writeValueAsString(advancedBlockingResponse);

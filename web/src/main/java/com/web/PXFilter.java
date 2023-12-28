@@ -1,6 +1,7 @@
 package com.web;
 
 import com.perimeterx.api.PerimeterX;
+import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.CredentialsExtractorFactory;
 import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.models.PXContext;

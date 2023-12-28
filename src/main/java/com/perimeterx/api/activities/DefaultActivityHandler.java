@@ -6,10 +6,9 @@ import com.perimeterx.models.activities.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
+import com.perimeterx.utils.logger.LogReason;
 
 import java.io.IOException;
-
-import static com.perimeterx.utils.PXLogger.LogReason.*;
 
 /**
  * Simple activity send per server request
@@ -30,9 +29,9 @@ public class DefaultActivityHandler implements ActivityHandler {
     public void handleBlockActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
         try {
-            this.client.sendActivity(activity);
+            this.client.sendActivity(activity, context);
         } catch (IOException e) {
-            throw new PXException(ERROR_HANDLE_BLOCK_ACTIVITY + ". Reason: " + e.getMessage(), e);
+            throw new PXException(LogReason.ERROR_HANDLE_BLOCK_ACTIVITY + ". Reason: " + e.getMessage(), e);
         }
     }
 
@@ -40,20 +39,21 @@ public class DefaultActivityHandler implements ActivityHandler {
     public void handlePageRequestedActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_PAGE_REQUESTED, configuration.getAppId(), context);
         try {
-            this.client.sendActivity(activity);
+            this.client.sendActivity(activity, context);
         } catch (IOException e) {
-            throw new PXException(ERROR_HANDLE_PAGE_REQUESTED + ". Reason: " + e.getMessage(), e);
+            throw new PXException(LogReason.ERROR_HANDLE_PAGE_REQUESTED + ". Reason: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfiguration, UpdateReason updateReason) throws PXException {
+    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfiguration, UpdateReason updateReason, PXContext context) throws PXException {
         try {
             EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfiguration, updateReason);
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfiguration.getAppId(), details);
-            this.client.sendEnforcerTelemetry(enforcerTelemetry);
+            this.client.sendEnforcerTelemetry(enforcerTelemetry, context);
         } catch (Exception e) {
-            throw new PXException(ERROR_TELEMETRY_EXCEPTION + ". Reason: " + e.getMessage(), e);
+            context.logger.debug("An error occurred while sending telemetry command");
+            throw new PXException(LogReason.ERROR_TELEMETRY_EXCEPTION + ". Reason: " + e.getMessage(), e);
         }
     }
 

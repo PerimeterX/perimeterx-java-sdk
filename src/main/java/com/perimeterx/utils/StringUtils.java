@@ -3,6 +3,7 @@ package com.perimeterx.utils;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.ConfigCredentialsFieldPath;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.LoginCredentials;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLDecoder;
@@ -72,6 +73,10 @@ public final class StringUtils {
         }
 
         return params;
+    }
+
+    public static String getFullPathWithQueryParam(HttpServletRequest request){
+        return request.getRequestURI() + (request.getQueryString() != null ? "?" + request.getQueryString() : "");
     }
 
     public static boolean isValid(String email) {

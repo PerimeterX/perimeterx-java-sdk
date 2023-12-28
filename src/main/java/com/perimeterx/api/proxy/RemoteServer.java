@@ -1,11 +1,12 @@
 package com.perimeterx.api.proxy;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.http.*;
 import com.perimeterx.http.PXOutgoingRequestImpl.PXOutgoingRequestImplBuilder;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
-import com.perimeterx.utils.PXLogger;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpStatus;
@@ -35,8 +36,7 @@ import static com.perimeterx.utils.PXIOUtils.copy;
  */
 public class RemoteServer {
 
-    private final PXLogger logger = PXLogger.getLogger(RemoteServer.class);
-
+    private final PXContext context;
     private HttpServletResponse res;
     private HttpServletRequest req;
     private IPXHttpClient proxyClient;
@@ -70,7 +70,7 @@ public class RemoteServer {
 
     public RemoteServer(String serverUrl, HttpServletRequest req, HttpServletResponse res,
                         IPProvider ipProvider, IPXHttpClient httpClient, PredefinedResponse predefinedResponse,
-                        PredefinedResponseHelper predefinedResponseHelper, PXConfiguration pxConfiguration) throws URISyntaxException {
+                        PredefinedResponseHelper predefinedResponseHelper, PXConfiguration pxConfiguration, PXContext context) throws URISyntaxException {
         this.req = req;
         this.res = res;
         this.targetUri = serverUrl;
@@ -81,10 +81,11 @@ public class RemoteServer {
         this.predefinedResponse = predefinedResponse;
         this.predefinedResponseHelper = predefinedResponseHelper;
         this.pxConfiguration = pxConfiguration;
+        this.context = context;
     }
 
     public IPXOutgoingRequest prepareProxyRequest() throws IOException {
-        logger.debug("Preparing proxy request");
+        context.logger.debug("Preparing first party request");
         String method = req.getMethod();
         String proxyRequestUri = rewriteUrlFromRequest(req);
 
@@ -108,7 +109,7 @@ public class RemoteServer {
         return requestBuilder.build();
     }
 
-    public IPXIncomingResponse handleResponse(IPXOutgoingRequest proxyRequest) {
+    public IPXIncomingResponse handleResponse(IPXOutgoingRequest proxyRequest, PXContext context) {
         IPXIncomingResponse proxyResponse = null;
         try {
             // Execute the request
@@ -117,7 +118,7 @@ public class RemoteServer {
 
             // In failure we can check if we enable predefined request or proxy the original response
             if (this.isAllowedPredefinedResponse() && statusCode >= HttpStatus.SC_BAD_REQUEST) {
-                predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
+                predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
                 return proxyResponse;
             }
 
@@ -140,7 +141,7 @@ public class RemoteServer {
 
         } catch (Exception e) {
             if (this.isAllowedPredefinedResponse()) {
-                predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
+                predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
             }
         }
         return proxyResponse;
@@ -324,11 +325,11 @@ public class RemoteServer {
         return request.getContentLength();
     }
     protected String rewriteUrlFromRequest(HttpServletRequest servletRequest) {
-        logger.debug("Rewiring url from request");
+        context.logger.debug("Rewiring url from request");
         StringBuilder uri = new StringBuilder(this.maxUrlLength);
         uri.append(this.targetUri);
 
-        logger.debug("Setting uri to reverse {}", uri);
+        context.logger.debug("Setting uri to reverse {}", uri);
         // Handle the query string & fragment
         String queryString = servletRequest.getQueryString();//ex:(following '?'): name=value&foo=bar#fragment
         String fragment = null;
@@ -352,7 +353,7 @@ public class RemoteServer {
             // fragment is not decoded, so we need encodeUriQuery not to encode "%" characters, to avoid double-encoding
             uri.append(encodeUriQuery(fragment, false));
         }
-        logger.debug("Final uri to proxy: {}", uri);
+        context.logger.debug("Final uri to proxy: {}", uri);
         return uri.toString();
     }
 

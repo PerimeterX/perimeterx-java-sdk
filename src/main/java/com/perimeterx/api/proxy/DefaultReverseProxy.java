@@ -1,11 +1,12 @@
 package com.perimeterx.api.proxy;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.http.IPXHttpClient;
 import com.perimeterx.http.IPXOutgoingRequest;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.proxy.PredefinedResponse;
-import com.perimeterx.utils.PXLogger;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,17 +15,18 @@ import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 import static com.perimeterx.utils.Constants.CONTENT_TYPE_APPLICATION_JSON;
 import static com.perimeterx.utils.Constants.XHR_PATH;
 import static com.perimeterx.utils.PXResourcesUtil.*;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Created by nitzangoldfeder on 14/05/2018.
  */
 public class DefaultReverseProxy implements ReverseProxy {
 
-    private final PXLogger logger = PXLogger.getLogger(DefaultReverseProxy.class);
     private final String DEFAULT_JAVASCRIPT_VALUE = "";
     private final String DEFAULT_JSON_VALUE = "{}";
     private final byte[] DEFAULT_EMPTY_GIF_VALUE = {0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, (byte) 0x80, 0x00,
@@ -60,25 +62,25 @@ public class DefaultReverseProxy implements ReverseProxy {
         this.proxyClient = pxConfiguration.getIPXHttpClientInstance();
     }
 
-    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
+    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res, PXContext context) throws URISyntaxException, IOException {
         if (!req.getRequestURI().startsWith(clientReversePrefix)) {
             return false;
         }
 
         if (!pxConfiguration.isFirstPartyEnabled()) {
-            logger.debug("First party is disabled, rendering default response");
+            context.logger.debug("First party is disabled, rendering default response");
             PredefinedResponse predefinedResponse = new PredefinedResponse(CONTENT_TYPE_JAVASCRIPT, DEFAULT_JAVASCRIPT_VALUE);
-            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
+            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
             return true;
         }
 
-        final RemoteServer remoteServer = new RemoteServer(getPxSensorURL(pxConfiguration), req, res, ipProvider, proxyClient, null, null, pxConfiguration);
+        final RemoteServer remoteServer = new RemoteServer(getPxSensorURL(pxConfiguration), req, res, ipProvider, proxyClient, null, null, pxConfiguration, context);
         IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
-        remoteServer.handleResponse(proxyRequest);
+        remoteServer.handleResponse(proxyRequest, context);
         return true;
     }
 
-    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
+    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res, PXContext context) throws URISyntaxException, IOException {
         if (!req.getRequestURI().startsWith(xhrReversePrefix)) {
             return false;
         }
@@ -95,26 +97,53 @@ public class DefaultReverseProxy implements ReverseProxy {
         PredefinedResponse predefinedResponse = new PredefinedResponse(predefinedContentType, predefinedContent);
 
         if (!pxConfiguration.isFirstPartyEnabled() || !pxConfiguration.isXhrFirstPartyEnabled()) {
-            logger.debug("First party is disabled, rendering default response");
-            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
+            context.logger.debug("First party is disabled, rendering default response");
+            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
             return true;
         }
 
-        final String url = getPxXhrUrl(pxConfiguration, req.getRequestURI());
-        final RemoteServer remoteServer = new RemoteServer(url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
+        final String path = getPath(req);
+        final String url = pxConfiguration.getCollectorUrl() + path;
+        final String host = pxConfiguration.getCollectorUrl().replaceFirst("https?:\\/\\/", "");
+
+        if (!isValidThirdPartyUrl(url, host, path)) {
+           context.logger.error("First party XHR URL is inaccurate: " + url + ", rendering default response");
+            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
+            return true;
+        }
+
+        final RemoteServer remoteServer = new RemoteServer(url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration, context);
         IPXOutgoingRequest proxyRequest = null;
 
         try {
             proxyRequest = remoteServer.prepareProxyRequest();
-            remoteServer.handleResponse(proxyRequest);
+            remoteServer.handleResponse(proxyRequest, context);
         } catch (Exception e) {
-            logger.error("reversePxXhr - failed to handle xhr request, error :: ", e.getMessage());
+            context.logger.error("reversePxXhr - failed to handle xhr request, error :: ", e.getMessage());
             safelyCloseInputStream(proxyRequest);
 
             throw e;
         }
 
         return true;
+    }
+
+    private String getPath(HttpServletRequest req) {
+        final String firstPartyAppIdForm = pxConfiguration.getAppId().substring(2);
+        final String xhrPrefix = String.format("/%s/%s", firstPartyAppIdForm, XHR_PATH);
+        return isBlank(req.getRequestURI()) ? "" : req.getRequestURI().substring(xhrPrefix.length());
+    }
+
+    private boolean isValidThirdPartyUrl(String rawThirdPartyUrl, String expectedHost, String expectedUrl) {
+        try {
+            URL url = new URL(rawThirdPartyUrl);
+            String uri = url.getPath() + (url.getQuery() != null ? url.getQuery() : "");
+            return url.getHost().equalsIgnoreCase(expectedHost) && uri.startsWith(expectedUrl);
+        } catch (Exception e) {
+            PerimeterX.globalLogger.error("Failed to parse rawUrl. ", e.getMessage());
+        }
+
+        return false;
     }
 
     private void safelyCloseInputStream(IPXOutgoingRequest proxyRequest) throws IOException {
@@ -125,24 +154,24 @@ public class DefaultReverseProxy implements ReverseProxy {
     }
 
     @Override
-    public boolean reverseCaptcha(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
+    public boolean reverseCaptcha(HttpServletRequest req, HttpServletResponseWrapper res, PXContext context) throws IOException, URISyntaxException {
         if (!req.getRequestURI().contains(captchaReversePrefix)) {
             return false;
         }
         final PredefinedResponse predefinedResponse = new PredefinedResponse(CONTENT_TYPE_JAVASCRIPT, DEFAULT_JAVASCRIPT_VALUE);
 
         if (!pxConfiguration.isFirstPartyEnabled()) {
-            logger.debug("First party is disabled, rendering default response");
-            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse);
+            context.logger.debug("First party is disabled, rendering default response");
+            predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
             return false;
         }
 
         final String url = getPxCaptchaURL(pxConfiguration, req.getQueryString(), false);
-        logger.debug("Forwarding request from " + req.getRequestURL() + "to xhr at " + url);
+        context.logger.debug("Forwarding request from " + req.getRequestURL() + "to xhr at " + url);
 
-        final RemoteServer remoteServer = new RemoteServer(url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration);
+        final RemoteServer remoteServer = new RemoteServer(url, req, res, ipProvider, proxyClient, predefinedResponse, predefinedResponseHelper, pxConfiguration, context);
         IPXOutgoingRequest proxyRequest = remoteServer.prepareProxyRequest();
-        remoteServer.handleResponse(proxyRequest);
+        remoteServer.handleResponse(proxyRequest, context);
         return true;
 
     }
@@ -164,7 +193,7 @@ public class DefaultReverseProxy implements ReverseProxy {
             try {
                 ((Closeable) proxyClient).close();
             } catch (IOException e) {
-                logger.debug("While destroying servlet, shutting down HttpClient: " + e, e);
+                PerimeterX.globalLogger.debug("While destroying servlet, shutting down HttpClient: " + e, e);
             }
         }
     }

@@ -1,12 +1,14 @@
 package com.perimeterx.api.activities;
 
+import com.perimeterx.api.PerimeterX;
 import com.perimeterx.http.PXClient;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.activities.*;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.utils.Constants;
-import com.perimeterx.utils.PXLogger;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,8 +19,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.perimeterx.utils.PXLogger.LogReason.ERROR_TELEMETRY_EXCEPTION;
-
 
 /**
  * Buffered activities and sends them to PX servers when buffer is full
@@ -27,7 +27,7 @@ import static com.perimeterx.utils.PXLogger.LogReason.ERROR_TELEMETRY_EXCEPTION;
  */
 public class BufferedActivityHandler implements ActivityHandler {
     private static final ExecutorService es = Executors.newFixedThreadPool(8);
-    private static final PXLogger logger = PXLogger.getLogger(BufferedActivityHandler.class);
+    private static final IPXLogger logger = PerimeterX.globalLogger;
 
     private final int maxBufferLength;
     private volatile ConcurrentLinkedQueue<Activity> bufferedActivities = new ConcurrentLinkedQueue<>();
@@ -45,30 +45,31 @@ public class BufferedActivityHandler implements ActivityHandler {
     @Override
     public void handleBlockActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_BLOCKED, configuration.getAppId(), context);
-        handleSendActivities(activity);
+        handleSendActivities(activity, context);
     }
 
     @Override
     public void handlePageRequestedActivity(PXContext context) throws PXException {
         Activity activity = ActivityFactory.createActivity(Constants.ACTIVITY_PAGE_REQUESTED, configuration.getAppId(), context);
-        handleSendActivities(activity);
+        handleSendActivities(activity, context);
     }
 
     @Override
-    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason) throws PXException {
+    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason, PXContext context) throws PXException {
         try {
             EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfig, updateReason);
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfig.getAppId(), details);
-            this.client.sendEnforcerTelemetry(enforcerTelemetry);
+            this.client.sendEnforcerTelemetry(enforcerTelemetry, context);
         } catch (IOException e) {
-            throw new PXException(ERROR_TELEMETRY_EXCEPTION.toString(), e);
+            logger.debug("An error occurred while sending telemetry command");
+            throw new PXException(LogReason.ERROR_TELEMETRY_EXCEPTION.toString(), e);
         }
     }
 
     @Override
     public void handleAdditionalS2SActivity(PXContext context) throws PXException {
         final Activity activity = createAdditionalS2SActivity(context);
-        handleSendActivities(activity);
+        handleSendActivities(activity, context);
     }
 
     public Activity createAdditionalS2SActivity(PXContext context) {
@@ -89,41 +90,41 @@ public class BufferedActivityHandler implements ActivityHandler {
                 && configuration.isAddRawUsernameOnAdditionalS2SActivity();
     }
 
-    private void handleSendActivities(Activity activity) {
+    private void handleSendActivities(Activity activity, PXContext context) {
         bufferedActivities.add(activity);
         int count = counter.incrementAndGet();
         if (count > maxBufferLength) {
-            handleOverflow();
+            handleOverflow(context);
         }
     }
 
-    private void handleOverflow() {
+    private void handleOverflow(PXContext context) {
         es.execute(() -> {
             if (lock.tryLock()) {
                 try {
                     if (this.bufferedActivities.size() > this.maxBufferLength) {
                         ConcurrentLinkedQueue<Activity> activitiesToSend = flush();
-                        sendAsync(activitiesToSend);
+                        sendAsync(activitiesToSend, context);
                     }
                 } catch (Exception e) {
-                    logger.debug("failed to send async activities", e);
+                    context.logger.error("failed to send async activities", e.getMessage());
                 } finally {
                     lock.unlock();
                 }
             } else {
-                logger.debug("handleOverflow -Lock acquisition failed");
+                context.logger.debug("handleOverflow -Lock acquisition failed");
             }
         });
     }
 
-    private void sendAsync(ConcurrentLinkedQueue<Activity> activitiesToSend) throws PXException {
+    private void sendAsync(ConcurrentLinkedQueue<Activity> activitiesToSend, PXContext context) throws PXException {
         if (activitiesToSend == null) {
             return;
         }
 
         List<Activity> activitiesLocal = activitiesAsList(activitiesToSend);
         try {
-            client.sendBatchActivities(activitiesLocal);
+            client.sendBatchActivities(activitiesLocal, context);
         } catch (Exception e) {
             throw new PXException(e);
         }

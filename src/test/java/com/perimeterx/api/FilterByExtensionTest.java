@@ -1,7 +1,9 @@
 package com.perimeterx.api;
 
 import com.perimeterx.http.PXHttpMethod;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
+import com.perimeterx.utils.logger.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -32,21 +34,21 @@ public class FilterByExtensionTest {
     public void testRequestIsFiltered() {
         MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.GET.name(), VALID_PATH_WITH_EXTENSION);
 
-        assertTrue(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod()));
+        assertTrue(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(new LoggerFactory())));
     }
 
     @Test
     public void testRequestIsNotFilteredByMethod() {
         MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.POST.name(), VALID_PATH_WITH_EXTENSION);
 
-        assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod()));
+        assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(new LoggerFactory())));
     }
 
     @Test
     public void testRequestIsNotFilteredByPath() {
         MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.GET.name(), "test");
 
-        assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod()));
+        assertFalse(requestFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(new LoggerFactory())));
     }
 
     @Test
@@ -55,6 +57,6 @@ public class FilterByExtensionTest {
         final RequestFilter reqFilter = new RequestFilter(config);
         final MockHttpServletRequest req = new MockHttpServletRequest(PXHttpMethod.GET.name(), VALID_PATH_WITH_EXTENSION);
 
-        assertTrue(reqFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod()));
+        assertTrue(reqFilter.isExtensionWhiteListed(req.getRequestURI(), req.getMethod(), new PXContext(new LoggerFactory())));
     }
 }

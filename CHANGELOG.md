@@ -1,5 +1,12 @@
 # Change Log
 
+## [v6.10.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.X.X...HEAD) (2023-XX-XX)
+- Added feature  request-header-based-logger
+- Align risk api and async activities fields
+- Added sending risk field and enforcer start timestamp to activities schema
+- Removed the `blockedUrl` window variable from the block page to prevent XSS vulnerability
+- Added blocked URL to the captcha query params
+
 ## [v6.9.5](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.9.5...HEAD) (2023-11-23)
 - Updated the configuration of PX first-party requests to include a connection timeout.
 - Updated the captcha template to handle empty captcha responses.

@@ -1,6 +1,7 @@
 package com.perimeterx.api.proxy.mock;
 
 import com.perimeterx.api.proxy.ReverseProxy;
+import com.perimeterx.models.PXContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,17 +23,17 @@ public class NeverReverseProxy implements ReverseProxy {
     }
 
     @Override
-    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
+    public boolean reversePxClient(HttpServletRequest req, HttpServletResponse res, PXContext context) throws URISyntaxException, IOException {
         return false;
     }
 
     @Override
-    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res) throws URISyntaxException, IOException {
+    public boolean reversePxXhr(HttpServletRequest req, HttpServletResponse res, PXContext context) throws URISyntaxException, IOException {
         return false;
     }
 
     @Override
-    public boolean reverseCaptcha(HttpServletRequest req, HttpServletResponseWrapper res) throws IOException, URISyntaxException {
+    public boolean reverseCaptcha(HttpServletRequest req, HttpServletResponseWrapper res, PXContext context) throws IOException, URISyntaxException {
         return false;
     }
 }

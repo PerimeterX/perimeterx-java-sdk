@@ -1,8 +1,8 @@
 package com.perimeterx.internals.cookie;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
-import com.perimeterx.models.exceptions.PXException;
 
 /**
  * Created by nitzangoldfeder on 13/04/2017.
@@ -11,8 +11,8 @@ public class PXCookieV3 extends AbstractPXCookie {
 
     private String hmac;
 
-    public PXCookieV3(PXConfiguration pxConfiguration, CookieData cookieData) {
-        super(pxConfiguration, cookieData);
+    public PXCookieV3(PXConfiguration pxConfiguration, CookieData cookieData, PXContext context) {
+        super(pxConfiguration, cookieData, context);
         String[] splicedCookie = getPxCookie().split(":", 2);
         if (splicedCookie.length > 1) {
             this.pxCookie = splicedCookie[1];

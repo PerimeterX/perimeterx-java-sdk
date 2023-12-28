@@ -29,15 +29,4 @@ public class PXResourcesUtil {
         final String path = String.format("/%s%s", config.getAppId(), SENSOR_FIRST_PARTY_PATH);
         return  URL_HTTPS_PREFIX + config.getClientHost() + path;
     }
-
-    public static String getPxXhrUrl(PXConfiguration config, String requestURI) {
-        if (isBlank(requestURI)) {
-            return null;
-        }
-        final String firstPartyAppIdForm = config.getAppId().substring(2);
-        final String xhrPrefix = String.format("/%s/%s", firstPartyAppIdForm, XHR_PATH);
-        final String path = requestURI.substring(xhrPrefix.length());
-
-        return config.getCollectorUrl() + path;
-    }
 }

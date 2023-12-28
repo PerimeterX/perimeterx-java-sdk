@@ -19,7 +19,13 @@ import com.perimeterx.models.enforcererror.EnforcerErrorReasonInfo;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.risk.*;
 import com.perimeterx.utils.*;
+import com.perimeterx.utils.logger.IPXLogger;
+import com.perimeterx.utils.logger.LogReason;
+import com.perimeterx.utils.logger.LoggerFactory;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletRequest;
@@ -33,6 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
+import static com.perimeterx.utils.Constants.LOGGER_TOKEN_HEADER_NAME;
 import static com.perimeterx.utils.PXCommonUtils.cookieHeadersNames;
 
 /**
@@ -43,12 +50,14 @@ import static com.perimeterx.utils.PXCommonUtils.cookieHeadersNames;
 @Data
 public class PXContext {
 
-    private static final PXLogger logger = PXLogger.getLogger(PXContext.class);
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    public IPXLogger logger;
 
     /**
      * Original HTTP request
      */
-    private final HttpServletRequest request;
+    private HttpServletRequest request;
 
     private String pxCookieRaw;
 
@@ -78,7 +87,7 @@ public class PXContext {
 
     // PerimeterX computed data on the request
     private String riskCookie;
-    private final String appId;
+    private String appId;
 
     private String cookieHmac;
 
@@ -218,28 +227,39 @@ public class PXContext {
     private String additionalRiskInfo;
     private String servletPath;
     private String pxhdDomain;
+    private long enforcerStartTime;
+
+    /**
+     * The base64 encoded request full url
+     */
+    private String encodedBlockedUrl;
 
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
-        logger.debug(PXLogger.LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
+        this.enforcerStartTime = new Date().getTime();
+        this.request = request;
+        this.headers = PXCommonUtils.getHeadersFromRequest(request);
+        this.logger = getLogger();
+        logger.debug(LogReason.DEBUG_REQUEST_CONTEXT_CREATED);
         this.appId = pxConfiguration.getAppId();
         this.ip = ipProvider.getRequestIP(request);
         this.hostname = hostnameProvider.getHostname(request);
-        this.request = request;
-        initContext(request, pxConfiguration);
+        postInitContext(request, pxConfiguration);
     }
 
-    private void initContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
-        this.headers = PXCommonUtils.getHeadersFromRequest(request);
+    //This constructor is in use by unit tests where we don't need context but only logger
+    public PXContext(LoggerFactory loggerFactory) {
+        this.logger = loggerFactory.getRequestContextLogger();
+    }
 
+    private void postInitContext(final HttpServletRequest request, PXConfiguration pxConfiguration) {
         if (headers.containsKey(Constants.MOBILE_SDK_AUTHORIZATION_HEADER) || headers.containsKey(Constants.MOBILE_SDK_TOKENS_HEADER)) {
-            logger.debug(PXLogger.LogReason.DEBUG_MOBILE_SDK_DETECTED);
+            logger.debug(LogReason.DEBUG_MOBILE_SDK_DETECTED);
             this.isMobileToken = true;
             this.cookieOrigin = Constants.HEADER_ORIGIN;
         }
         parseCookies(request, isMobileToken);
         generateLoginData(request, pxConfiguration);
-
         this.firstPartyRequest = false;
         this.userAgent = request.getHeader("user-agent");
         this.servletPath = request.getServletPath();
@@ -271,6 +291,11 @@ public class PXContext {
         }
     }
 
+    private IPXLogger getLogger(){
+        String requestLoggerAuthToken = this.getHeaders().get(LOGGER_TOKEN_HEADER_NAME);
+        boolean isLoggerHeaderRequest = requestLoggerAuthToken!=null && this.getPxConfiguration().getLoggerAuthToken().equals(requestLoggerAuthToken);
+        return pxConfiguration.getLoggerFactory().getRequestContextLogger(isLoggerHeaderRequest);
+    }
     public boolean isSensitiveRequest() {
         return this.isContainCredentialsIntelligence()
                 || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), servletPath)
@@ -328,11 +353,11 @@ public class PXContext {
     }
 
     private void parseCookies(HttpServletRequest request, boolean isMobileToken) {
-        HeaderParser headerParser = new CookieHeaderParser();
+        HeaderParser headerParser = new CookieHeaderParser(logger);
         List<RawCookieData> tokens = new ArrayList<>();
         List<RawCookieData> originalTokens = new ArrayList<>();
         if (isMobileToken) {
-            headerParser = new MobileCookieHeaderParser();
+            headerParser = new MobileCookieHeaderParser(logger);
 
             String tokensHeader = request.getHeader(Constants.MOBILE_SDK_TOKENS_HEADER);
             tokens.addAll(headerParser.createRawCookieDataList(tokensHeader));
@@ -433,7 +458,7 @@ public class PXContext {
         final LoginData loginData;
 
         try {
-            loginData = new LoginData(request, pxConfiguration);
+            loginData = new LoginData(request, pxConfiguration, this.logger);
             this.setLoginData(loginData);
         } catch (PXException pxe) {
             logger.error("Failed to generate login data. Error :: ", pxe);

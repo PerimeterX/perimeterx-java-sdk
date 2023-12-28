@@ -33,6 +33,7 @@ public class TestObjectUtils {
                 .appId("appId")
                 .authToken("token")
                 .cookieKey("cookieKey")
+                .loggerAuthToken("logger_token_123")
                 .moduleMode(ModuleMode.BLOCKING)
                 .remoteConfigurationEnabled(false)
                 .blockingScore(30)
