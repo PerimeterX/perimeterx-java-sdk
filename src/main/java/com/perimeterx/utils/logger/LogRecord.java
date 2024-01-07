@@ -1,5 +1,6 @@
 package com.perimeterx.utils.logger;
 
+import com.perimeterx.utils.Constants;
 import lombok.*;
 import com.fasterxml.jackson.annotation.*;
 
@@ -12,8 +13,10 @@ public class LogRecord {
     @JsonProperty("message") @NonNull
     private String msg;
 
-    @JsonProperty("enforcerName") @NonNull
-    private String enforcerName = "JavaSDK";
+    @JsonProperty("moduleVersion") @NonNull
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private String moduleVersion = Constants.SDK_VERSION;
 
     @JsonProperty @NonNull
     private LoggerSeverity severity;
