@@ -12,6 +12,9 @@ public class LogRecord {
     @JsonProperty("message") @NonNull
     private String msg;
 
+    @JsonProperty("enforcerName") @NonNull
+    private String enforcerName = "JavaSDK";
+
     @JsonProperty @NonNull
     private LoggerSeverity severity;
 
