@@ -44,8 +44,23 @@
             <version>1.2.17</version>
         </dependency>
     </dependencies>
-
-
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/java/templates</directory>
+                            <include>**</include>
+                            <targetPath>/templates</targetPath>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
