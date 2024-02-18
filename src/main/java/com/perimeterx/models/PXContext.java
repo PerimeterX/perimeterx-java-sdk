@@ -234,6 +234,11 @@ public class PXContext {
      */
     private String encodedBlockedUrl;
 
+    /**
+     * The base64 encoded request http method
+     */
+    private String encodedHttpMethod;
+
     public PXContext(final HttpServletRequest request, final IPProvider ipProvider, final HostnameProvider hostnameProvider, PXConfiguration pxConfiguration) {
         this.pxConfiguration = pxConfiguration;
         this.enforcerStartTime = new Date().getTime();
