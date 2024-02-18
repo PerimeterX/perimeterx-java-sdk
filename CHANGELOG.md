@@ -1,6 +1,9 @@
 # Change Log
 
-## [v6.10.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.X.X...HEAD) (2023-XX-XX)
+## [v6.11.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.11.0...HEAD) (2024-02-18)
+* Added base64-encoded request http method to captcha script query parameters on block pages
+
+## [v6.10.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.10.0...HEAD) (2023-12-27)
 - Added feature  request-header-based-logger
 - Align risk api and async activities fields
 - Added sending risk field and enforcer start timestamp to activities schema
