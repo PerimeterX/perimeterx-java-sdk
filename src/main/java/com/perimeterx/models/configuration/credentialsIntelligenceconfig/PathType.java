@@ -5,5 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum PathType {
 
     @JsonProperty("regex")
-    REGEX
+    REGEX,
+    @JsonProperty("exact")
+    EXACT
 }
