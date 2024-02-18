@@ -1,6 +1,5 @@
 package com.web;
 
-import com.google.gson.Gson;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.loginresponse.LoginResponseValidationReportingMethod;
 import com.perimeterx.models.configuration.ModuleMode;
@@ -35,7 +34,7 @@ public class Config {
                 case "px_logger_auth_token":
                     builder.loggerAuthToken(enforcerConfig.getString(key));
                     break;
-                case "px_enabled":
+                case "px_module_enabled":
                     builder.moduleEnabled(enforcerConfig.getBoolean(key));
                     break;
                 case "px_encryption_enabled":
@@ -47,7 +46,7 @@ public class Config {
                 case "px_sensitive_headers":
                     builder.sensitiveHeaders(jsonArrayToSet(enforcerConfig.getJSONArray(key)));
                     break;
-                case "px_max_buffer_length":
+                case "px_max_buffer_len":
                     builder.maxBufferLen(enforcerConfig.getInt(key));
                     break;
                 case "px_s2s_timeout":
@@ -59,7 +58,7 @@ public class Config {
                 case "px_send_async_activities":
                     builder.sendPageActivities(enforcerConfig.getBoolean(key));
                     break;
-                case "px_server_url":
+                case "px_backend_url":
                     builder.serverURL(enforcerConfig.getString(key));
                     break;
                 case "px_custom_logo":
@@ -89,8 +88,8 @@ public class Config {
                 case "px_first_party_enabled":
                     builder.firstPartyEnabled(enforcerConfig.getBoolean(key));
                     break;
-                case "px_collector_url":
-                    builder.serverURL(enforcerConfig.getString(key));
+                case "px_backend_collector_url":
+                    builder.collectorUrl(enforcerConfig.getString(key));
                     break;
                 case "px_module_mode":
                     if (enforcerConfig.getString(key).equals("active_blocking")) {
@@ -99,7 +98,7 @@ public class Config {
                         builder.moduleMode(ModuleMode.MONITOR);
                     }
                     break;
-                case "px_static_files":
+                case "px_filter_by_extension":
                     builder.staticFilesExt(jsonArrayToSet(enforcerConfig.getJSONArray(key)));
                     break;
                 case "px_remote_configuration_interval_ms":
