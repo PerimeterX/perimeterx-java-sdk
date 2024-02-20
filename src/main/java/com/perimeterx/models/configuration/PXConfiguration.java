@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.perimeterx.utils.Constants.*;
 
@@ -87,7 +88,7 @@ public class PXConfiguration {
 
     @Builder.Default
     @JsonProperty("px_sensitive_headers")
-    private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookieOrig", "cookies"));
+    private Set<String> sensitiveHeaders = new HashSet<>(Arrays.asList("cookieorig", "cookies"));
 
     @Builder.Default
     @JsonProperty("px_max_buffer_length")
@@ -402,6 +403,20 @@ public class PXConfiguration {
             if (this.collectorUrl == null) {
                 this.collectorUrl = String.format(Constants.COLLECTOR_URL, appId.toLowerCase());
             }
+            return this;
+        }
+
+        public PXConfigurationBuilder sensitiveHeaders(Set<String> headers) {
+            if (headers == null) {
+                this.sensitiveHeaders$value = new HashSet<>();
+            } else {
+                this.sensitiveHeaders$value = headers
+                        .stream()
+                        .map(String::toLowerCase)
+                        .collect(Collectors.toSet());
+            }
+
+            this.sensitiveHeaders$set = true;
             return this;
         }
     }
