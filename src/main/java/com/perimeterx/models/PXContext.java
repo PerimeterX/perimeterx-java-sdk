@@ -530,7 +530,7 @@ public class PXContext {
     }
 
     public String getCollectorURL() {
-        return String.format("%s%s%s", Constants.API_COLLECTOR_PREFIX, appId, Constants.API_COLLECTOR_POSTFIX);
+        return pxConfiguration.getCollectorUrl();
     }
 
     public void setCookieVersion(String cookieVersion) {
