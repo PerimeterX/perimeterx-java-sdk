@@ -13,7 +13,8 @@ public class ActivityUtil {
             return null;
         }
         return headers.entrySet().stream()
-                .filter(entry -> !sensitiveHeaders.contains(entry.getKey()))
+                .filter(entry -> entry != null && entry.getKey() != null)
+                .filter(entry -> !sensitiveHeaders.contains(entry.getKey().toLowerCase()))
                 .map(entry -> new ActivityHeader(entry.getKey(), entry.getValue())).collect(Collectors.toList());
 
     }

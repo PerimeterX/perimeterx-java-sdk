@@ -39,4 +39,48 @@ public class PXConfigurationTest extends PowerMockTestCase {
         Assert.assertEquals(pxConfiguration.getModuleMode(), ModuleMode.MONITOR);
         Assert.assertEquals(pxConfiguration.getRemoteConfigurationInterval(), 1);
     }
+
+    @Test
+    public void testSensitiveHeadersDefaultValue() {
+        PXConfiguration configuration = PXConfiguration.builder()
+                .appId("appId")
+                .cookieKey("cookieKey")
+                .authToken("authToken")
+                .build();
+
+        Assert.assertEquals(configuration.getSensitiveHeaders(), new HashSet<>(Arrays.asList("cookieorig", "cookies")));
+    }
+    @Test
+    public void testSensitiveHeadersNonDefaultValues() {
+        PXConfiguration configuration = PXConfiguration.builder()
+                .appId("appId")
+                .cookieKey("cookieKey")
+                .authToken("authToken")
+                .sensitiveHeaders(new HashSet<>(Arrays.asList("a","b","c")))
+                .build();
+
+        Assert.assertEquals(configuration.getSensitiveHeaders(), new HashSet<>(Arrays.asList("a","b","c")));
+    }
+    @Test
+    public void testSensitiveHeadersNonDefaultWithUpperCaseValues() {
+        PXConfiguration configuration = PXConfiguration.builder()
+                .appId("appId")
+                .cookieKey("cookieKey")
+                .authToken("authToken")
+                .sensitiveHeaders(new HashSet<>(Arrays.asList("a","B","c")))
+                .build();
+
+        Assert.assertEquals(configuration.getSensitiveHeaders(), new HashSet<>(Arrays.asList("a","b","c")));
+    }
+    @Test
+    public void testSensitiveHeadersNullValue() {
+        PXConfiguration configuration = PXConfiguration.builder()
+                .appId("appId")
+                .cookieKey("cookieKey")
+                .authToken("authToken")
+                .sensitiveHeaders(null)
+                .build();
+
+        Assert.assertEquals(configuration.getSensitiveHeaders(), new HashSet<>());
+    }
 }
