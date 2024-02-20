@@ -1,5 +1,8 @@
 # Change Log
 
+## [vX.XX.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/X.XX.X...HEAD) (YYYY-MM-DD)
+- Added Dockerfile for web application example. 
+
 ## [v6.11.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.11.0...HEAD) (2024-02-18)
 * Added base64-encoded request http method to captcha script query parameters on block pages
 
