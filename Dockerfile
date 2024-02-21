@@ -24,4 +24,6 @@ COPY web/src/main/resources/ /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/src/
 
 EXPOSE 8080
 
+ENV CATALINA_OPTS="-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+
 CMD ["catalina.sh", "run"]
