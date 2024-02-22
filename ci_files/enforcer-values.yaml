@@ -1,0 +1,4 @@
+enforcerConfig:
+  mountPath: /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/src/main/resources/enforcer_config.json
+service:
+  targetPort: 8080
