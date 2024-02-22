@@ -1,0 +1,5 @@
+internalMockCollectorURL: "http://mock-collector-mock-collector:3001"
+siteURL: "http://java-enforcer-sample-site:3000"
+
+image:
+  repository: localhost:5001/enforcer-spec-tests
