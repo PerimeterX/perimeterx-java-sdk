@@ -4,6 +4,7 @@
 - Added Dockerfile for web application example. 
 - Bugfix - Sensitive headers are now case-insensitive.
 - Block page HTML align with spec.
+- Automatically running e2e tests on pull request. 
 
 ## [v6.11.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.11.0...HEAD) (2024-02-18)
 * Added base64-encoded request http method to captcha script query parameters on block pages
