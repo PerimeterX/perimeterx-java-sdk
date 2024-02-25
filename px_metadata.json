@@ -48,7 +48,6 @@
     "test_block_page_captcha_response_contains_http_reason_phrase",
     "test_cookie_v3_cookie_decryption_failed_iterations_above_max_allowed_value",
     "test_cookie_v3_cookie_validation_failed_big_cookie",
-    "test_block_page_captcha_response_with_special_char_request_web",
     "test_client_ip_extraction_order_risk_api"
   ]
 }
