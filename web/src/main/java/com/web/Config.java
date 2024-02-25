@@ -5,6 +5,7 @@ import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrespons
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
+import com.perimeterx.models.risk.CustomParameters;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -162,6 +163,17 @@ public class Config {
             }
 
         }
+
+        builder.customParametersExtraction(req -> {
+            CustomParameters customParameters = new CustomParameters();
+            customParameters.customParam1 = "test1";
+            customParameters.customParam2 = "test2";
+            customParameters.customParam3 = "3";
+            customParameters.customParam4 = "4";
+            customParameters.customParam5 = "5";
+            customParameters.customParam6 = "6";
+            return customParameters;
+        });
 
         return builder.build();
     }

@@ -39,7 +39,6 @@
     "header_based_logger"
   ],
   "excluded_tests": [
-    "test_custom_parameters_custom_param_appear_in_activities",
     "test_pxde_extraction_(s2s|unverified|verified)",
     "test_risk_cookie_valid_cookie_with_user_agent_of_max_length",
     "test_path_parsing_in_(block|page_requested|risk_api|additional_s2s)\\[with_dots",
