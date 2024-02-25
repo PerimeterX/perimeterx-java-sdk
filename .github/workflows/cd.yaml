@@ -1,0 +1,36 @@
+name: Deploy to maven
+on:
+  push:
+    branches:
+    - master
+jobs:
+  deploy:
+    name: Deploy to maven
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+
+      - name: Import GPG key
+        run: echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import
+        env:
+          # To generate a new GPG key run the following command in your local terminal:
+          # gpg --export-secret-keys -a "<key_id>" | base64
+          GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+      - name: Log GPG keys
+        run: gpg --list-secret-keys --keyid-format LONG
+
+      - name: Deploy a new version
+        run: mvn clean deploy -P build-extras,sign --settings deploy/mvnsettings.xml
+        env:
+          GPG_KEY_NAME: ${{ vars.GPG_KEY_NAME }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          OSSRH_JIRA_USERNAME: ${{ secrets.OSSRH_JIRA_USERNAME }}
+          OSSRH_JIRA_PASSWORD: ${{ secrets.OSSRH_JIRA_PASSWORD }}
+
