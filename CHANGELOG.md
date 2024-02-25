@@ -1,6 +1,6 @@
 # Change Log
 
-## [vX.XX.X](https://github.com/PerimeterX/perimeterx-java-sdk/compare/X.XX.X...HEAD) (YYYY-MM-DD)
+## [v6.11.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.11.1...HEAD) (2024-02-25)
 - Added Dockerfile for web application example. 
 - Bugfix - Sensitive headers are now case-insensitive.
 - Block page HTML align with spec.
