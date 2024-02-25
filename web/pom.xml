@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.perimeterx</groupId>
             <artifactId>perimeterx-sdk</artifactId>
-            <version>6.11.0</version>
+            <version>${com.perimeterx.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -64,6 +64,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <com.perimeterx.version>6.11.0</com.perimeterx.version>
     </properties>
 
 </project>

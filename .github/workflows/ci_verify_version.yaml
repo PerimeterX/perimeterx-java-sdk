@@ -1,0 +1,44 @@
+name: Verify version
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  verify-version:
+    name: Verify version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code - ${{ github.base_ref }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+
+      - name: Get ${{ github.base_ref }} SDK version
+        id: base-version
+        run: echo "project=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout code - current commit
+        uses: actions/checkout@v4
+
+      - name: Get current SDK versions
+        id: new-version
+        run: |
+          echo "project=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> "$GITHUB_OUTPUT" && \
+          echo "px_metadata=$( cat px_metadata.json | jq -r '.version' )" >> "$GITHUB_OUTPUT" && \
+          echo "demo_app_dependency=$( mvn help:evaluate -Dexpression=com.perimeterx.version -q -DforceStdout -f web/pom.xml)" >> "$GITHUB_OUTPUT"
+
+      - name: Verify same version
+        run: |
+          [ $PROJECT_VERSION = $PX_METADATA_VERSION ] && \
+          [ $PROJECT_VERSION = $DEMO_APP_DEPENDENCY_VERSION ]
+        env:
+          PROJECT_VERSION: ${{ steps.new-version.outputs.project }}
+          PX_METADATA_VERSION: ${{ steps.new-version.outputs.px_metadata }}
+          DEMO_APP_DEPENDENCY_VERSION: ${{ steps.new-version.outputs.demo_app_dependency }}
+
+      - name: Verify version increment
+        run: ./ci_files/verify-version-inc.sh $BASE_VERSION $NEW_VERSION
+        env:
+          NEW_VERSION: ${{ steps.new-version.outputs.project }}
+          BASE_VERSION: ${{ steps.base-version.outputs.project }}
+
