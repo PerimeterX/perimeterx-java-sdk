@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v6.11.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.10.0%7Cjar)
+> Latest stable version: [v6.12.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.12.0%7Cjar)
 
 ## Table of Contents
 
