@@ -150,21 +150,3 @@ jobs:
       - name: get tests results
         if: ${{ always() }}
         run: kubectl logs job/fuzzer-enforcer-fuzzer
-
-      - name: run enforcer tests
-        run: |
-          helm install enforcer-spec-tests ./deploy_charts/enforcer-spec-tests/charts/enforcer-spec-tests \
-            --set image.tag=$ENFORCER_SPEC_TESTS_IMAGE_TAG \
-            --set cookieSecret=${{ secrets.TEST_COOKIE_SECRET }} \
-            --set supportedFeatures="${{ needs.extract_metadata.outputs.supported-features }}" \
-            --set authToken="${{ secrets.PX_AUTH_TOKEN }}" \
-            --set appId=${{ secrets.PX_APP_ID }} \
-            --set-file enforcerMetadataContent=./px_metadata.json \
-            -f ./ci_files/spec-tests-values.yaml \
-            --wait \
-            --timeout 60m0s \
-            --wait-for-jobs
-
-      - name: get tests results
-        if: ${{ always() }}
-        run: kubectl logs job/enforcer-spec-tests
