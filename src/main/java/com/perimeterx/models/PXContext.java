@@ -404,8 +404,12 @@ public class PXContext {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("_pxvid") || cookie.getName().equals("pxvid")) {
-                    this.vid = cookie.getValue();
-                    this.vidSource = VidSource.VID_COOKIE;
+                    if (isValidVid(cookie.getValue())) {
+                        this.vid = cookie.getValue();
+                        this.vidSource = VidSource.VID_COOKIE;
+                    } else {
+                        logger.debug("setVidAndPxhd - invalid VID value was extracted");
+                    }
                 }
                 if (cookie.getName().equals("_pxhd")) {
                     try {
@@ -547,5 +551,11 @@ public class PXContext {
 
     public boolean isContainCredentialsIntelligence() {
         return this.getLoginData() != null && this.getLoginData().getLoginCredentials() != null;
+    }
+
+    private boolean isValidVid(String vidCookieValue) {
+        Pattern vidPattern = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = vidPattern.matcher(vidCookieValue);
+        return matcher.matches();
     }
 }
