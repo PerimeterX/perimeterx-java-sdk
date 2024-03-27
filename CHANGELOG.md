@@ -1,5 +1,11 @@
 # Change Log
 
+## [v6.13.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.13.0...HEAD) (2024-04-27)
+- Added vid Validation for _pxvid extraction
+- Added Enforcer Fuzzer as part of the CI process
+- Updated log4j artifact version
+- Removed `/examples` directory
+
 ## [v6.12.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.12.0...HEAD) (2024-02-25)
 - Added Dockerfile for web application example. 
 - Bugfix - Sensitive headers are now case-insensitive.
