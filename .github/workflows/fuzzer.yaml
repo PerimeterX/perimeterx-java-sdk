@@ -150,7 +150,7 @@ jobs:
       - name: Deployment logs - mock collector
         run: kubectl logs deployment/mock-collector-mock-collector
       - name: Deployment logs - enforcer
-        run: kubectl logs deployment/node-express-enforcer-sample-site
+        run: kubectl logs deployment/java-enforcer-sample-site
 
       - name: get tests results
         if: ${{ always() }}
