@@ -1,5 +1,6 @@
 package com.perimeterx.models.configuration;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
@@ -62,6 +63,7 @@ public class PXConfiguration {
     private String appId;
 
     @JsonProperty("px_cookie_secret")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     @Singular
     private List<String> cookieKeys;
 

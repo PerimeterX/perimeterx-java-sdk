@@ -32,7 +32,7 @@ public class CookieV3Test {
     private IPProvider ipProvider;
     private HostnameProvider hostnameProvider;
 
-    @BeforeTest
+    @BeforeMethod
     public void setUp() {
         request = new MockHttpServletRequest();
         ipProvider = new RemoteAddressIPProvider();
