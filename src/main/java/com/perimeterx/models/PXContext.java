@@ -394,7 +394,7 @@ public class PXContext {
             setVidAndPxhd(cookies);
             tokens.addAll(headerParser.createRawCookieDataList(cookieHeaders));
             this.tokens = tokens;
-            DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
+            DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKeys());
             this.pxde = deCookie.getJsonPayload();
             this.pxdeVerified = deCookie.isValid();
         }

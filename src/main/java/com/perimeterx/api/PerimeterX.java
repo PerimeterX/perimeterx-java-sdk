@@ -80,7 +80,7 @@ import static java.util.Objects.isNull;
 
 public class PerimeterX implements Closeable {
 
-    public static IPXLogger globalLogger = LoggerFactory.getGlobalLogger();;
+    public static IPXLogger globalLogger = LoggerFactory.getGlobalLogger();
     private PXConfiguration configuration;
     private PXS2SValidator serverValidator;
     private PXCookieValidator cookieValidator;
@@ -259,7 +259,7 @@ public class PerimeterX implements Closeable {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            if (context != null){
+            if (context != null) {
                 if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                     handleAdditionalS2SActivityWithCI(response, context);
                 }
@@ -303,19 +303,21 @@ public class PerimeterX implements Closeable {
                 return false;
             }
 
-            final byte[] hmacBytes = HMACUtils.HMACString(timestamp, configuration.getCookieKey());
-            final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
+            for (String key : configuration.getCookieKeys()) {
+                final byte[] hmacBytes = HMACUtils.HMACString(timestamp, key);
+                final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
 
-            if (!MessageDigest.isEqual(generatedHmac.getBytes(), hmac.getBytes())) {
-                context.logger.error("Telemetry validation failed - invalid hmac, original=" + hmac + ", generated=" + generatedHmac);
-                return false;
+                if (MessageDigest.isEqual(generatedHmac.getBytes(), hmac.getBytes())) {
+                    return true;
+                }
             }
+            context.logger.debug("Telemetry validation failed - invalid hmac, original=" + hmac);
         } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalArgumentException e) {
             context.logger.error("Telemetry validation failed.");
             return false;
         }
 
-        return true;
+        return false;
     }
 
     /**

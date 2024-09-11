@@ -2,6 +2,7 @@
 
 ## [vX.XX.X]() (XXX-XX-XX)
 - Bump Fuzzer version
+- Support multiple cookie secrets
 
 ## [v6.13.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.13.0...HEAD) (2024-04-27)
 - Added vid Validation for _pxvid extraction

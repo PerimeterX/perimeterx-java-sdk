@@ -8,8 +8,6 @@ import static org.testng.Assert.assertEquals;
 
 public class CookieNamesExtractorTest {
 
-    String cookieHeader = "_px3=px3Cookie;tempCookie=CookieTemp; _px7=NotARealCookie";
-
     @Test
     public void testExtractCookieNames(){
         Cookie px3 = new Cookie("_px3","px3Cookie");

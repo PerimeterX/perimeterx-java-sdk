@@ -31,11 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -66,7 +62,8 @@ public class PXConfiguration {
     private String appId;
 
     @JsonProperty("px_cookie_secret")
-    private String cookieKey;
+    @Singular
+    private List<String> cookieKeys;
 
     @JsonProperty("px_auth_token")
     private String authToken;
@@ -313,7 +310,7 @@ public class PXConfiguration {
      * @return Configuration Object clone without cookieKey and authToken
      **/
     public PXConfiguration getTelemetryConfig() {
-        return this.toBuilder().cookieKey(null).authToken(null).build();
+        return this.toBuilder().clearCookieKeys().authToken(null).build();
     }
 
     public void disableModule() {
@@ -365,12 +362,11 @@ public class PXConfiguration {
         return reverseProxyInstance;
     }
 
-
     public void update(PXDynamicConfiguration pxDynamicConfiguration) {
         PerimeterX.globalLogger.debug("Updating PXConfiguration file");
         this.appId = pxDynamicConfiguration.getAppId();
         this.checksum = pxDynamicConfiguration.getChecksum();
-        this.cookieKey = pxDynamicConfiguration.getCookieSecret();
+        this.cookieKeys = pxDynamicConfiguration.getCookieSecrets();
         this.blockingScore = pxDynamicConfiguration.getBlockingScore();
         this.apiTimeout = pxDynamicConfiguration.getApiConnectTimeout();
         this.connectionTimeout = pxDynamicConfiguration.getApiConnectTimeout();

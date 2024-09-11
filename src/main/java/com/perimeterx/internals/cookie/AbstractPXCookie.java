@@ -11,12 +11,15 @@ import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.logger.LogReason;
 
 import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by nitzangoldfeder on 13/04/2017.
@@ -38,7 +41,7 @@ public abstract class AbstractPXCookie implements PXCookie {
     protected PXConfiguration pxConfiguration;
     protected String pxCookie;
     protected JsonNode decodedCookie;
-    protected String cookieKey;
+    protected List<String> cookieKeys;
     protected String cookieOrig;
 
     public AbstractPXCookie(PXConfiguration pxConfiguration, CookieData cookieData, PXContext context) {
@@ -49,7 +52,7 @@ public abstract class AbstractPXCookie implements PXCookie {
         this.pxConfiguration = pxConfiguration;
         this.userAgent = cookieData.isMobileToken() ? "" : cookieData.getUserAgent();
         this.ip = cookieData.getIp();
-        this.cookieKey = pxConfiguration.getCookieKey();
+        this.cookieKeys = pxConfiguration.getCookieKeys();
         this.cookieVersion = cookieData.getCookieVersion();
     }
 
@@ -115,21 +118,28 @@ public abstract class AbstractPXCookie implements PXCookie {
         final Cipher cipher;   // aes-256-cbc decryptData no salt
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            final int dkLen = KEY_LEN + cipher.getBlockSize();
-            PBKDF2Parameters p = new PBKDF2Parameters(HMAC_SHA_256, "UTF-8", salt, iterations);
-            byte[] dk = new PBKDF2Engine(p).deriveKey(this.cookieKey, dkLen);
-            byte[] key = Arrays.copyOf(dk, KEY_LEN);
-            byte[] iv = Arrays.copyOfRange(dk, KEY_LEN, dk.length);
-            SecretKey secretKey = new SecretKeySpec(key, "AES");
-            IvParameterSpec parameterSpec = new IvParameterSpec(iv);
-            cipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
-            final byte[] data = cipher.doFinal(encrypted, 0, encrypted.length);
-
-            String decryptedString = new String(data, StandardCharsets.UTF_8);
-            return mapper.readTree(decryptedString);
-        } catch (Exception e) {
-            throw new PXCookieDecryptionException("Cookie decryption failed in reason => ".concat(e.getMessage()));
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+            throw new PXCookieDecryptionException(e);
         }
+        final int dkLen = KEY_LEN + cipher.getBlockSize();
+        PBKDF2Parameters p = new PBKDF2Parameters(HMAC_SHA_256, "UTF-8", salt, iterations);
+
+        for (String cookieKey : this.cookieKeys) {
+            try {
+                byte[] dk = new PBKDF2Engine(p).deriveKey(cookieKey, dkLen);
+                byte[] key = Arrays.copyOf(dk, KEY_LEN);
+                byte[] iv = Arrays.copyOfRange(dk, KEY_LEN, dk.length);
+                SecretKey secretKey = new SecretKeySpec(key, "AES");
+                IvParameterSpec parameterSpec = new IvParameterSpec(iv);
+                cipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
+                final byte[] data = cipher.doFinal(encrypted, 0, encrypted.length);
+
+                String decryptedString = new String(data, StandardCharsets.UTF_8);
+                return mapper.readTree(decryptedString);
+            } catch (Exception ignored) {
+            }
+        }
+        throw new PXCookieDecryptionException("Cookie decryption failed");
     }
 
     private JsonNode decode() throws PXCookieDecryptionException {
@@ -152,7 +162,8 @@ public abstract class AbstractPXCookie implements PXCookie {
     }
 
     public boolean isHmacValid(String hmacStr, String cookieHmac) {
-        boolean isValid = HMACUtils.isHMACValid(hmacStr, cookieHmac, this.cookieKey, logger);
+        boolean isValid = this.cookieKeys.stream()
+                .anyMatch(cookieKey -> HMACUtils.isHMACValid(hmacStr, cookieHmac, cookieKey, logger));
         if (!isValid) {
             context.logger.debug(LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, this.userAgent);
         }

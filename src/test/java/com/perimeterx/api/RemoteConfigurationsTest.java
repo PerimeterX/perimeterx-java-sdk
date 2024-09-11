@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 import testutils.TestObjectUtils;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 
 import static org.mockito.Mockito.mock;
@@ -41,15 +42,15 @@ public class RemoteConfigurationsTest {
         RemoteConfigurationManager remoteConfigurationManager = new DefaultRemoteConfigManager(config, pxClient);
         TimerConfigUpdater timerConfigUpdater = new TimerConfigUpdater(remoteConfigurationManager, config, activityHandler);
         timerConfigUpdater.run();
-        Assert.assertTrue(config.getAppId().equals("stub_app_id"));
-        Assert.assertTrue(config.getCookieKey().equals("stub_cookie_key"));
-        Assert.assertTrue(config.getChecksum().equals("stub_checksum"));
-        Assert.assertTrue(config.getBlockingScore() == 1000);
-        Assert.assertTrue(config.getConnectionTimeout() == 1500);
-        Assert.assertTrue(config.getApiTimeout() == 1500);
-        Assert.assertTrue(config.getSensitiveHeaders().equals(new HashSet<String>()));
-        Assert.assertTrue(config.isModuleEnabled() == false);
-        Assert.assertTrue(config.getModuleMode().equals(ModuleMode.BLOCKING));
+        Assert.assertEquals("stub_app_id", config.getAppId());
+        Assert.assertEquals("stub_cookie_key", config.getCookieKeys().get(0));
+        Assert.assertEquals("stub_checksum", config.getChecksum());
+        Assert.assertEquals(1000, config.getBlockingScore());
+        Assert.assertEquals(1500, config.getConnectionTimeout());
+        Assert.assertEquals(1500, config.getApiTimeout());
+        Assert.assertEquals(config.getSensitiveHeaders(), new HashSet<String>());
+        Assert.assertEquals(false, config.isModuleEnabled());
+        Assert.assertEquals(config.getModuleMode(), ModuleMode.BLOCKING);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class RemoteConfigurationsTest {
         pxDynamicConfig.setAppId(appId);
         pxDynamicConfig.setChecksum(checksum);
         pxDynamicConfig.setBlockingScore(blockingScore);
-        pxDynamicConfig.setCookieSecret(cookieSecert);
+        pxDynamicConfig.setCookieSecrets(Collections.singletonList(cookieSecert));
         pxDynamicConfig.setS2sTimeout(s2sTimeout);
         pxDynamicConfig.setApiConnectTimeout(connectionTimeout);
         pxDynamicConfig.setSensitiveHeaders(sensitiveRotues);
