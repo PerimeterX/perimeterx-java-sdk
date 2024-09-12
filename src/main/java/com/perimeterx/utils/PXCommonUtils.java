@@ -1,5 +1,6 @@
 package com.perimeterx.utils;
 
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
@@ -18,6 +19,14 @@ import static org.apache.commons.lang3.StringUtils.isNoneEmpty;
  */
 public class PXCommonUtils {
     final static int FIRST_PARTY_CONNECTION_TIMEOUT_IN_MSEC = 4000;
+
+    public static List<String> cookieKeysToCheck(PXContext context, PXConfiguration configuration) {
+        if (context.getCookieKeyUsed() == null) {
+            return configuration.getCookieKeys();
+        }
+
+        return Collections.singletonList(context.getCookieKeyUsed());
+    }
 
     public static List<Header> getDefaultHeaders(String authToken) {
         Header contentType = new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json");

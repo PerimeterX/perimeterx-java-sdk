@@ -58,6 +58,7 @@ import com.perimeterx.utils.logger.LogReason;
 import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.StringUtils;
 import com.perimeterx.utils.logger.LoggerFactory;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -68,8 +69,10 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.List;
 
 import static com.perimeterx.utils.Constants.*;
+import static com.perimeterx.utils.PXCommonUtils.cookieKeysToCheck;
 import static java.util.Objects.isNull;
 
 /**
@@ -80,7 +83,7 @@ import static java.util.Objects.isNull;
 
 public class PerimeterX implements Closeable {
 
-    public static IPXLogger globalLogger = LoggerFactory.getGlobalLogger();;
+    public static IPXLogger globalLogger = LoggerFactory.getGlobalLogger();
     private PXConfiguration configuration;
     private PXS2SValidator serverValidator;
     private PXCookieValidator cookieValidator;
@@ -259,7 +262,7 @@ public class PerimeterX implements Closeable {
 
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
-            if (context != null){
+            if (context != null) {
                 if (response != null && !configuration.isAdditionalS2SActivityHeaderEnabled() && context.isContainCredentialsIntelligence()) {
                     handleAdditionalS2SActivityWithCI(response, context);
                 }
@@ -303,20 +306,23 @@ public class PerimeterX implements Closeable {
                 return false;
             }
 
-            final byte[] hmacBytes = HMACUtils.HMACString(timestamp, configuration.getCookieKey());
-            final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
+            for (String key : cookieKeysToCheck(context, configuration)) {
+                final byte[] hmacBytes = HMACUtils.HMACString(timestamp, key);
+                final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
 
-            if (!MessageDigest.isEqual(generatedHmac.getBytes(), hmac.getBytes())) {
-                context.logger.error("Telemetry validation failed - invalid hmac, original=" + hmac + ", generated=" + generatedHmac);
-                return false;
+                if (MessageDigest.isEqual(generatedHmac.getBytes(), hmac.getBytes())) {
+                    return true;
+                }
             }
+            context.logger.debug("Telemetry validation failed - invalid hmac, original=" + hmac);
         } catch (NoSuchAlgorithmException | InvalidKeyException | IllegalArgumentException e) {
             context.logger.error("Telemetry validation failed.");
             return false;
         }
 
-        return true;
+        return false;
     }
+
 
     /**
      * Set activity handler

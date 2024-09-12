@@ -11,6 +11,7 @@ import com.perimeterx.models.configuration.PXDynamicConfiguration;
 import com.perimeterx.models.exceptions.PXException;
 import com.perimeterx.models.httpmodels.RiskResponse;
 import com.perimeterx.models.httpmodels.RiskResponseBody;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -80,7 +81,7 @@ public class PXClientMock implements PXClient {
         stub.setAppId("stub_app_id");
         stub.setChecksum("stub_checksum");
         stub.setBlockingScore(1000);
-        stub.setCookieSecret("stub_cookie_key");
+        stub.setCookieSecrets(Collections.singletonList("stub_cookie_key"));
         stub.setS2sTimeout(1500);
         stub.setApiConnectTimeout(1500);
         stub.setSensitiveHeaders(new HashSet<String>());

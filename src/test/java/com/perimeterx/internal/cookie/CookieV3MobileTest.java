@@ -37,6 +37,7 @@ public class CookieV3MobileTest {
         hostnameProvider = new DefaultHostnameProvider();
         this.pxConfiguration = PXConfiguration.builder()
                 .cookieKey("COOKIE_KEY_STRING_MOBILE")
+                .cookieKey("COOKIE_KEY_STRING_MOBILE_2")
                 .appId("APP_ID")
                 .authToken("AUTH_TOKEN")
                 .build();

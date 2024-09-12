@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.perimeterx.utils.PXCommonUtils.cookieKeysToCheck;
 import static java.util.stream.Collectors.toList;
 
 public abstract class HeaderParser {
@@ -48,6 +49,9 @@ public abstract class HeaderParser {
     }
 
     public DataEnrichmentCookie getRawDataEnrichmentCookie(List<RawCookieData> rawCookies, String cookieKey) {
+        return getRawDataEnrichmentCookie(rawCookies, Collections.singletonList(cookieKey));
+    }
+    public DataEnrichmentCookie getRawDataEnrichmentCookie(List<RawCookieData> rawCookies, List<String> cookieKeys) {
         ObjectMapper mapper = new ObjectMapper();
         DataEnrichmentCookie dataEnrichmentCookie = new DataEnrichmentCookie(mapper.createObjectNode(), false);
         RawCookieData rawDataEnrichmentCookie = null;
@@ -67,7 +71,8 @@ public abstract class HeaderParser {
             String hmac = cookiePayloadArray[0];
             String encodedPayload = cookiePayloadArray[1];
 
-            boolean isValid = HMACUtils.isHMACValid(encodedPayload, hmac, cookieKey, logger);
+            boolean isValid = cookieKeys.stream()
+                    .anyMatch(cookieKey -> HMACUtils.isHMACValid(encodedPayload, hmac, cookieKey, logger));
             dataEnrichmentCookie.setValid(isValid);
 
             byte[] decodedPayload = Base64.decode(encodedPayload);
