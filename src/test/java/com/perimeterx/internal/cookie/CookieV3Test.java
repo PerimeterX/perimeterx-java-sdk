@@ -39,6 +39,7 @@ public class CookieV3Test {
         hostnameProvider = new DefaultHostnameProvider();
         this.pxConfiguration = PXConfiguration.builder()
                 .cookieKey("COOKIE_KEY_STRING")
+                .cookieKey("COOKIE_KEY_STRING_2")
                 .appId("APP_ID")
                 .authToken("AUTH_TOKEN")
                 .build();
