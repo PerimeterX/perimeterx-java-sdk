@@ -58,6 +58,7 @@ import com.perimeterx.utils.logger.LogReason;
 import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.StringUtils;
 import com.perimeterx.utils.logger.LoggerFactory;
+import edu.emory.mathcs.backport.java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -68,8 +69,10 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
+import java.util.List;
 
 import static com.perimeterx.utils.Constants.*;
+import static com.perimeterx.utils.PXCommonUtils.cookieKeysToCheck;
 import static java.util.Objects.isNull;
 
 /**
@@ -303,7 +306,7 @@ public class PerimeterX implements Closeable {
                 return false;
             }
 
-            for (String key : configuration.getCookieKeys()) {
+            for (String key : cookieKeysToCheck(context, configuration)) {
                 final byte[] hmacBytes = HMACUtils.HMACString(timestamp, key);
                 final String generatedHmac = StringUtils.byteArrayToHexString(hmacBytes).toLowerCase();
 
@@ -319,6 +322,7 @@ public class PerimeterX implements Closeable {
 
         return false;
     }
+
 
     /**
      * Set activity handler

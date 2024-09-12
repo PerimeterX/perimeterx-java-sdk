@@ -19,7 +19,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.List;
+
+import static com.perimeterx.utils.PXCommonUtils.cookieKeysToCheck;
 
 /**
  * Created by nitzangoldfeder on 13/04/2017.
@@ -41,7 +42,6 @@ public abstract class AbstractPXCookie implements PXCookie {
     protected PXConfiguration pxConfiguration;
     protected String pxCookie;
     protected JsonNode decodedCookie;
-    protected List<String> cookieKeys;
     protected String cookieOrig;
 
     public AbstractPXCookie(PXConfiguration pxConfiguration, CookieData cookieData, PXContext context) {
@@ -52,7 +52,6 @@ public abstract class AbstractPXCookie implements PXCookie {
         this.pxConfiguration = pxConfiguration;
         this.userAgent = cookieData.isMobileToken() ? "" : cookieData.getUserAgent();
         this.ip = cookieData.getIp();
-        this.cookieKeys = pxConfiguration.getCookieKeys();
         this.cookieVersion = cookieData.getCookieVersion();
     }
 
@@ -84,7 +83,7 @@ public abstract class AbstractPXCookie implements PXCookie {
 
         JsonNode decodedCookie;
         if (this.pxConfiguration.isEncryptionEnabled()) {
-            decodedCookie = this.decrypt();
+            decodedCookie = this.decrypt(context);
         } else {
             decodedCookie = this.decode();
         }
@@ -97,7 +96,7 @@ public abstract class AbstractPXCookie implements PXCookie {
         return true;
     }
 
-    private JsonNode decrypt() throws PXCookieDecryptionException {
+    private JsonNode decrypt(PXContext context) throws PXCookieDecryptionException {
         final String[] parts = this.pxCookie.split(":");
         if (parts.length != 3) {
             throw new PXCookieDecryptionException("Part length invalid");
@@ -124,7 +123,7 @@ public abstract class AbstractPXCookie implements PXCookie {
         final int dkLen = KEY_LEN + cipher.getBlockSize();
         PBKDF2Parameters p = new PBKDF2Parameters(HMAC_SHA_256, "UTF-8", salt, iterations);
 
-        for (String cookieKey : this.cookieKeys) {
+        for (String cookieKey : cookieKeysToCheck(this.context, this.pxConfiguration)) {
             try {
                 byte[] dk = new PBKDF2Engine(p).deriveKey(cookieKey, dkLen);
                 byte[] key = Arrays.copyOf(dk, KEY_LEN);
@@ -135,7 +134,9 @@ public abstract class AbstractPXCookie implements PXCookie {
                 final byte[] data = cipher.doFinal(encrypted, 0, encrypted.length);
 
                 String decryptedString = new String(data, StandardCharsets.UTF_8);
-                return mapper.readTree(decryptedString);
+                JsonNode result = mapper.readTree(decryptedString);
+                context.setCookieKeyUsed(cookieKey);
+                return result;
             } catch (Exception ignored) {
             }
         }
@@ -162,7 +163,7 @@ public abstract class AbstractPXCookie implements PXCookie {
     }
 
     public boolean isHmacValid(String hmacStr, String cookieHmac) {
-        boolean isValid = this.cookieKeys.stream()
+        boolean isValid = cookieKeysToCheck(this.context, this.pxConfiguration).stream()
                 .anyMatch(cookieKey -> HMACUtils.isHMACValid(hmacStr, cookieHmac, cookieKey, logger));
         if (!isValid) {
             context.logger.debug(LogReason.DEBUG_COOKIE_DECRYPTION_HMAC_FAILED, pxCookie, this.userAgent);

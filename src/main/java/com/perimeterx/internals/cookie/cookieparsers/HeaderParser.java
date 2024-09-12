@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.perimeterx.utils.PXCommonUtils.cookieKeysToCheck;
 import static java.util.stream.Collectors.toList;
 
 public abstract class HeaderParser {
