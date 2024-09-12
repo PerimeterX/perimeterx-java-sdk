@@ -123,7 +123,7 @@ public abstract class AbstractPXCookie implements PXCookie {
         final int dkLen = KEY_LEN + cipher.getBlockSize();
         PBKDF2Parameters p = new PBKDF2Parameters(HMAC_SHA_256, "UTF-8", salt, iterations);
 
-        for (String cookieKey : cookieKeysToCheck(this.context, this.pxConfiguration)) {
+        for (String cookieKey : this.pxConfiguration.getCookieKeys()) {
             try {
                 byte[] dk = new PBKDF2Engine(p).deriveKey(cookieKey, dkLen);
                 byte[] key = Arrays.copyOf(dk, KEY_LEN);
