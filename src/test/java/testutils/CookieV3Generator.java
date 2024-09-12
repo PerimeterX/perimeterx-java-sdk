@@ -64,19 +64,14 @@ public final class CookieV3Generator {
         final int dkLen = this.keyLen + cipher.getBlockSize();
         PBKDF2Parameters p = new PBKDF2Parameters("HmacSHA256", "UTF-8", this.salt, this.iterations);
         byte[] plain = plain().toString().getBytes();
-        try {
-            byte[] dk = new PBKDF2Engine(p).deriveKey(this.cookieSecret, dkLen);
-            byte[] key = Arrays.copyOf(dk, this.keyLen);
-            byte[] iv = Arrays.copyOfRange(dk, this.keyLen, dk.length);
-            SecretKey secretKey = new SecretKeySpec(key, "AES");
-            IvParameterSpec parameterSpec = new IvParameterSpec(iv);
-            cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
-            final byte[] cipherData = cipher.doFinal(plain, 0, plain.length);
-            return buildCookie(cipherData);
-        } catch (Exception ignored) {
-        }
-//        throw new PXCookieDecryptionException("Cookie decryption failed");
-        return "";
+        byte[] dk = new PBKDF2Engine(p).deriveKey(this.cookieSecret, dkLen);
+        byte[] key = Arrays.copyOf(dk, this.keyLen);
+        byte[] iv = Arrays.copyOfRange(dk, this.keyLen, dk.length);
+        SecretKey secretKey = new SecretKeySpec(key, "AES");
+        IvParameterSpec parameterSpec = new IvParameterSpec(iv);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
+        final byte[] cipherData = cipher.doFinal(plain, 0, plain.length);
+        return buildCookie(cipherData);
     }
 
     public JsonNode plain() {
