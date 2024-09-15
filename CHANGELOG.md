@@ -1,6 +1,6 @@
 # Change Log
 
-## [vX.XX.X]() (XXX-XX-XX)
+## [v6.14.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.0...HEAD) (2024-09-15)
 - Bump Fuzzer version
 - Support multiple cookie secret rotation 
 
