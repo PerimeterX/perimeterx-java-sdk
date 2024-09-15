@@ -26,7 +26,7 @@ jobs:
     name: "Fuzzing Test"
     env:
       MOCK_COLLECTOR_IMAGE_TAG: 1.3.6
-      FUZZER_TAG: 1.0.3
+      FUZZER_TAG: 1.0.4
       SAMPLE_SITE_IMAGE_TAG: 1.0.0
       ENFORCER_TAG: ${{ needs.extract_version.outputs.version }}
 
@@ -146,6 +146,11 @@ jobs:
           FUZZ_MODE: ${{ matrix.mode }}
           PX_APP_ID: ${{ secrets.PX_APP_ID }}
           SITE_URL: "http://java-enforcer-sample-site:3000"
+
+      - name: Deployment logs - mock collector
+        run: kubectl logs deployment/mock-collector-mock-collector
+      - name: Deployment logs - enforcer
+        run: kubectl logs deployment/java-enforcer-sample-site
 
       - name: get tests results
         if: ${{ always() }}

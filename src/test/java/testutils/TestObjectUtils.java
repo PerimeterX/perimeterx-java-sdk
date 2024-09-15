@@ -18,6 +18,14 @@ import java.lang.reflect.Field;
  */
 public class TestObjectUtils {
 
+    public static Object[][] cookieSecretsDataProvider(PXConfiguration configuration) {
+        return configuration.getCookieKeys()
+                .stream()
+                .map(key -> new Object[]{key})
+                .toArray(Object[][]::new);
+
+    }
+
     public static PXClient blockingPXClient(int minScoreToBlock) {
         int scoreToReturn = minScoreToBlock;
         return new PXClientMock(scoreToReturn, Constants.CAPTCHA_SUCCESS_CODE);
@@ -33,6 +41,8 @@ public class TestObjectUtils {
                 .appId("appId")
                 .authToken("token")
                 .cookieKey("cookieKey")
+                .cookieKey("cookieKey2")
+                .cookieKey("cookieKey3")
                 .loggerAuthToken("logger_token_123")
                 .moduleMode(ModuleMode.BLOCKING)
                 .remoteConfigurationEnabled(false)

@@ -1,0 +1,5 @@
+{
+  "px_app_id": "PX1234",
+  "px_cookie_secret": "COOKIE_SECRET",
+  "px_auth_token":"AUTH_TOKEN"
+}

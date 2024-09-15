@@ -1,5 +1,9 @@
 # Change Log
 
+## [v6.14.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.0...HEAD) (2024-09-15)
+- Bump Fuzzer version
+- Support cookie secret rotation
+
 ## [v6.13.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.13.0...HEAD) (2024-04-27)
 - Added vid Validation for _pxvid extraction
 - Added Enforcer Fuzzer as part of the CI process

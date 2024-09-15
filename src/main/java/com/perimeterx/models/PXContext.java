@@ -41,6 +41,7 @@ import java.util.regex.Pattern;
 import static com.perimeterx.utils.Constants.BREACHED_ACCOUNT_KEY_NAME;
 import static com.perimeterx.utils.Constants.LOGGER_TOKEN_HEADER_NAME;
 import static com.perimeterx.utils.PXCommonUtils.cookieHeadersNames;
+import static com.perimeterx.utils.PXCommonUtils.cookieKeysToCheck;
 
 /**
  * PXContext - Populate relevant data from HttpRequest
@@ -230,6 +231,11 @@ public class PXContext {
     private long enforcerStartTime;
 
     /**
+     * The cookie key used to decrypt the cookie
+     */
+    private String cookieKeyUsed;
+
+    /**
      * The base64 encoded request full url
      */
     private String encodedBlockedUrl;
@@ -394,7 +400,7 @@ public class PXContext {
             setVidAndPxhd(cookies);
             tokens.addAll(headerParser.createRawCookieDataList(cookieHeaders));
             this.tokens = tokens;
-            DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, this.pxConfiguration.getCookieKey());
+            DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, cookieKeysToCheck(this, this.pxConfiguration));
             this.pxde = deCookie.getJsonPayload();
             this.pxdeVerified = deCookie.isValid();
         }

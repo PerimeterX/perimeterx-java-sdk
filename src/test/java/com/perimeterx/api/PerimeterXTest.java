@@ -45,7 +45,7 @@ public class PerimeterXTest extends ConfiguredTest {
         Assert.assertTrue(!clonedConfig.equals(configuration));
 
         Assert.assertTrue(!configuration.getAuthToken().equals(clonedConfig.getAuthToken()));
-        Assert.assertTrue(!configuration.getCookieKey().equals(clonedConfig.getCookieKey()));
+        Assert.assertTrue(!configuration.getCookieKeys().equals(clonedConfig.getCookieKeys()));
 
         Assert.assertEquals(clonedConfig.getAppId(), configuration.getAppId());
         Assert.assertEquals(clonedConfig.isModuleEnabled(), configuration.isModuleEnabled());

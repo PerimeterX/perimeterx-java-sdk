@@ -1,5 +1,6 @@
 package com.perimeterx.models;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.FilesUtils;
@@ -11,14 +12,26 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashSet;
 
 @PrepareForTest(FilesUtils.class)
 public class PXConfigurationTest extends PowerMockTestCase {
+
+    @Test
+    public void readingConfigurationWithSingleCookieKeyFromJson() throws IOException {
+        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("basic_configuration.json")) {
+            ObjectMapper mapper = new ObjectMapper();
+            PXConfiguration pxConfiguration = mapper.readValue(in, PXConfiguration.class);
+            Assert.assertEquals(pxConfiguration.getCookieKeys().get(0), "COOKIE_SECRET");
+        }
+    }
+
     @Test
     public void testMergeConfigurations() throws FileNotFoundException {
-        PXConfiguration pxConfiguration = PXConfiguration.builder()
+         PXConfiguration pxConfiguration = PXConfiguration.builder()
                 .appId("appId")
                 .cookieKey("cookieKey")
                 .authToken("authToken")

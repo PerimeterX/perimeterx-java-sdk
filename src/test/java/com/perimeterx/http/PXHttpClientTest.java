@@ -43,7 +43,7 @@ public class PXHttpClientTest {
         PXDynamicConfiguration config = pxClient.getConfigurationFromServer();
         Assert.assertEquals("stub_app_id", config.getAppId());
         Assert.assertEquals("stub_checksum", config.getChecksum());
-        Assert.assertEquals("stub_cookie_key", config.getCookieSecret());
+        Assert.assertEquals("stub_cookie_key", config.getCookieSecrets().get(0));
         Assert.assertEquals(1000, config.getBlockingScore());
         Assert.assertEquals(1500, config.getApiConnectTimeout());
         Assert.assertEquals(1500, config.getS2sTimeout());

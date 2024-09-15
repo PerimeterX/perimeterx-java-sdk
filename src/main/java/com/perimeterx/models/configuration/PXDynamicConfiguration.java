@@ -2,7 +2,10 @@ package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -16,7 +19,9 @@ public class PXDynamicConfiguration {
     @JsonProperty("checksum")
     private String checksum;
     @JsonProperty("cookieKey")
-    private String cookieSecret;
+    @Getter
+    @Setter
+    private List<String> cookieSecrets;
     @JsonProperty("appId")
     private String appId;
     @JsonProperty("blockingScore")
@@ -46,14 +51,6 @@ public class PXDynamicConfiguration {
 
     public void setChecksum(String checksum) {
         this.checksum = checksum;
-    }
-
-    public String getCookieSecret() {
-        return cookieSecret;
-    }
-
-    public void setCookieSecret(String cookieSecert) {
-        this.cookieSecret = cookieSecert;
     }
 
     public String getAppId() {
