@@ -1,5 +1,8 @@
 # Change Log
 
+## [vXX.XX.XX](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.0...HEAD) (XXXX-XX-XX)
+- Fix Telemetry bug when sending page requested activities when telemetry fails
+
 ## [v6.14.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.0...HEAD) (2024-09-15)
 - Bump Fuzzer version
 - Support cookie secret rotation
