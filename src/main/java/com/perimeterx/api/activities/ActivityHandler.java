@@ -36,7 +36,7 @@ public interface ActivityHandler {
      * @param context
      * @throws PXException
      */
-    void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason, PXContext context) throws PXException;
+    void handleEnforcerTelemetryActivity(PXConfiguration pxConfig, UpdateReason updateReason, PXContext context);
 
     /**
      * Sends additional server to server activity in case of login request.
