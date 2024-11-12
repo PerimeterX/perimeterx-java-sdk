@@ -53,6 +53,7 @@ public class PXS2SValidator implements PXValidator {
         } catch (ConnectTimeoutException e) {
             // Timeout handling - report pass reason and proceed with request
             pxContext.setPassReason(PassReason.S2S_TIMEOUT);
+            pxContext.setRiskRtt(System.currentTimeMillis() - startRiskRtt);
             return true;
         } catch (Exception e) {
             handleS2SError(pxContext, System.currentTimeMillis() - startRiskRtt, response, e);
