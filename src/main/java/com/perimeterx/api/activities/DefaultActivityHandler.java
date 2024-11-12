@@ -46,14 +46,13 @@ public class DefaultActivityHandler implements ActivityHandler {
     }
 
     @Override
-    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfiguration, UpdateReason updateReason, PXContext context) throws PXException {
+    public void handleEnforcerTelemetryActivity(PXConfiguration pxConfiguration, UpdateReason updateReason, PXContext context) {
         try {
             EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfiguration, updateReason);
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfiguration.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry, context);
         } catch (Exception e) {
             context.logger.debug("An error occurred while sending telemetry command");
-            throw new PXException(LogReason.ERROR_TELEMETRY_EXCEPTION + ". Reason: " + e.getMessage(), e);
         }
     }
 

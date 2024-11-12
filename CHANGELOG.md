@@ -1,5 +1,9 @@
 # Change Log
 
+## [v6.14.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.1...HEAD) (2024-11-12)
+- Fix Telemetry bug when sending page requested activities when telemetry fails
+- Fix risk_rtt is not sent when risk call gets s2s_timeout
+
 ## [v6.14.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.0...HEAD) (2024-09-15)
 - Bump Fuzzer version
 - Support cookie secret rotation
