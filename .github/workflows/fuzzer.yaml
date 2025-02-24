@@ -96,7 +96,7 @@ jobs:
       - name: pull mock collector image
         run: |
           docker pull us-docker.pkg.dev/hmn-registry/docker-common-us/connecteam/mock-collector:$MOCK_COLLECTOR_IMAGE_TAG && \
-          docker us-docker.pkg.dev/hmn-registry/docker-common-us/connecteam/mock-collector:$MOCK_COLLECTOR_IMAGE_TAG localhost:5001/mock-collector:$MOCK_COLLECTOR_IMAGE_TAG && \
+          docker tag us-docker.pkg.dev/hmn-registry/docker-common-us/connecteam/mock-collector:$MOCK_COLLECTOR_IMAGE_TAG localhost:5001/mock-collector:$MOCK_COLLECTOR_IMAGE_TAG && \
           docker push localhost:5001/mock-collector:$MOCK_COLLECTOR_IMAGE_TAG
 
       - name: deploy mock collector
