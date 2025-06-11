@@ -228,6 +228,7 @@ public class PXContext {
     private String additionalRiskInfo;
     private String servletPath;
     private String pxhdDomain;
+    private String pxCtsCookie;
     private long enforcerStartTime;
 
     /**
@@ -403,6 +404,7 @@ public class PXContext {
             DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, cookieKeysToCheck(this, this.pxConfiguration));
             this.pxde = deCookie.getJsonPayload();
             this.pxdeVerified = deCookie.isValid();
+            this.pxCtsCookie = setCtsCookie(cookies);
         }
     }
 
@@ -427,6 +429,17 @@ public class PXContext {
                 }
             }
         }
+    }
+
+    private String setCtsCookie(Cookie[] cookies) {
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("pxcts")) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     public String getPxOriginalTokenCookie() {
