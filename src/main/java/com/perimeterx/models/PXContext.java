@@ -398,17 +398,16 @@ public class PXContext {
                     .map(request::getHeader)
                     .toArray(String[]::new);
             this.requestCookieNames = CookieNamesExtractor.extractCookieNames(cookies);
-            setVidAndPxhd(cookies);
+            setVidPxhdAndPxcts(cookies);
             tokens.addAll(headerParser.createRawCookieDataList(cookieHeaders));
             this.tokens = tokens;
             DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, cookieKeysToCheck(this, this.pxConfiguration));
             this.pxde = deCookie.getJsonPayload();
             this.pxdeVerified = deCookie.isValid();
-            this.pxCtsCookie = setCtsCookie(cookies);
         }
     }
 
-    private void setVidAndPxhd(Cookie[] cookies) {
+    private void setVidPxhdAndPxcts(Cookie[] cookies) {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("_pxvid") || cookie.getName().equals("pxvid")) {
@@ -427,19 +426,11 @@ public class PXContext {
                         logger.error("setVidAndPxhd - failed while decoding the pxhd value", e);
                     }
                 }
-            }
-        }
-    }
-
-    private String setCtsCookie(Cookie[] cookies) {
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("pxcts")) {
-                    return cookie.getValue();
+                    this.pxCtsCookie = cookie.getValue();
                 }
             }
         }
-        return null;
     }
 
     public String getPxOriginalTokenCookie() {
