@@ -228,6 +228,7 @@ public class PXContext {
     private String additionalRiskInfo;
     private String servletPath;
     private String pxhdDomain;
+    private String pxCtsCookie;
     private long enforcerStartTime;
 
     /**
@@ -397,7 +398,7 @@ public class PXContext {
                     .map(request::getHeader)
                     .toArray(String[]::new);
             this.requestCookieNames = CookieNamesExtractor.extractCookieNames(cookies);
-            setVidAndPxhd(cookies);
+            setVidPxhdAndPxcts(cookies);
             tokens.addAll(headerParser.createRawCookieDataList(cookieHeaders));
             this.tokens = tokens;
             DataEnrichmentCookie deCookie = headerParser.getRawDataEnrichmentCookie(this.tokens, cookieKeysToCheck(this, this.pxConfiguration));
@@ -406,7 +407,7 @@ public class PXContext {
         }
     }
 
-    private void setVidAndPxhd(Cookie[] cookies) {
+    private void setVidPxhdAndPxcts(Cookie[] cookies) {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals("_pxvid") || cookie.getName().equals("pxvid")) {
@@ -424,6 +425,9 @@ public class PXContext {
                     } catch (UnsupportedEncodingException | IllegalArgumentException e) {
                         logger.error("setVidAndPxhd - failed while decoding the pxhd value", e);
                     }
+                }
+                if (cookie.getName().equals("pxcts")) {
+                    this.pxCtsCookie = cookie.getValue();
                 }
             }
         }
