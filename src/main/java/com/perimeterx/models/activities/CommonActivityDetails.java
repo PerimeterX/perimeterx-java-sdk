@@ -56,6 +56,9 @@ public class CommonActivityDetails implements ActivityDetails {
     @JsonProperty("pass")
     public String password;
 
+    @JsonProperty("cross_tab_session")
+    public String pxCtsCookie;
+
     public CommonActivityDetails(PXContext context) {
         final LoginData loginData = context.getLoginData();
 
@@ -81,6 +84,7 @@ public class CommonActivityDetails implements ActivityDetails {
         this.callReason = additional.callReason;
         this.riskStartTime = additional.riskStartTime;
         this.enforcerStartTime = additional.enforcerStartTime;
+        this.pxCtsCookie = additional.pxCtsCookie;
 
     }
 }

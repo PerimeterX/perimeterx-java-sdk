@@ -90,6 +90,9 @@ public class Additional {
     @JsonProperty("risk_start_time")
     public long riskStartTime;
 
+    @JsonProperty("cross_tab_session")
+    public String pxCtsCookie;
+
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
         additional.pxCookie = ctx.getRiskCookie();
@@ -110,6 +113,7 @@ public class Additional {
         additional.requestId = ctx.getRequestId();
         additional.enforcerStartTime = ctx.getEnforcerStartTime();
         additional.riskStartTime = new Date().getTime();
+        additional.pxCtsCookie = ctx.getPxCtsCookie();
 
         setLoginCredentials(ctx, additional);
 
