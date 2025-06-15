@@ -1,5 +1,8 @@
 # Change Log
 
+## [v6.14.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.2...HEAD) (2025-06-15)
+- Added Cross Tab Session cookie support on risk_api and async activities 
+
 ## [v6.14.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.1...HEAD) (2024-11-12)
 - Fix Telemetry bug when sending page requested activities when telemetry fails
 - Fix risk_rtt is not sent when risk call gets s2s_timeout
