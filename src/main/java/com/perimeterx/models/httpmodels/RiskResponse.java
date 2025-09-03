@@ -36,6 +36,9 @@ public class RiskResponse {
     @JsonProperty("additional_risk_info")
     private String additionalRiskInfo;
 
+    @JsonProperty("telemetry_requested")
+    private Boolean telemetryRequested;
+
     @JsonCreator
     public RiskResponse(@JsonProperty(value = "uuid", required = true) String uuid) {
         this.uuid = uuid;
