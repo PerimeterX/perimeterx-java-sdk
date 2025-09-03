@@ -267,18 +267,19 @@ public class PerimeterX implements Closeable {
                     handleAdditionalS2SActivityWithCI(response, context);
                 }
                 
-                if (context.isShouldSendTelemetry()) {
-                    try {
-                        activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, context);
-                    } catch (Exception e) {
-                        context.logger.error("Failed to send telemetry activity: " + e.getMessage());
-                    }
-                }
-                
                 context.logger.sendMemoryLogs(this.configuration, context);
             }
         } catch (Exception e) {
             context.logger.error("Failed to post verify response. Error :: ", e.getMessage());
+        }
+        
+        // Handle telemetry separately with more specific error handling
+        if (context != null && context.isShouldSendTelemetry()) {
+            try {
+                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, context);
+            } catch (Exception e) {
+                context.logger.error("Failed to send telemetry activity: " + e.getMessage());
+            }
         }
     }
 
