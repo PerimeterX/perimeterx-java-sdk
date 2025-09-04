@@ -222,6 +222,7 @@ public class PXContext {
     private String pxhd;
     private PXHDSource pxhdSource;
     private boolean isMonitoredRequest;
+    private boolean shouldSendTelemetry = false;
     private LoginData loginData;
     private UUID requestId;
     private Set<String> sensitiveHeaders;

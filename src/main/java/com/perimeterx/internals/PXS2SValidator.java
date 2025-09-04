@@ -113,6 +113,9 @@ public class PXS2SValidator implements PXValidator {
         if (response.getAdditionalRiskInfo() != null) {
             pxContext.setAdditionalRiskInfo(response.getAdditionalRiskInfo());
         }
+        if (response.getTelemetryRequested() != null && response.getTelemetryRequested()) {
+            pxContext.setShouldSendTelemetry(true);
+        }
     }
 
     private boolean isResponseValid(RiskResponse response) {

@@ -1,0 +1,57 @@
+name: Documentation Enforcement
+
+env:
+  PLATFORM: java-sdk
+
+on:
+  pull_request:
+    branches:
+      - 'master'
+
+jobs:
+  extract_version:
+    runs-on: ubuntu-latest
+    name: Extract release version
+    outputs:
+      version: ${{ steps.version.outputs.value }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Get package version
+        id: version
+        run: echo "value=$(node -p -e "require('./px_metadata.json').version")" >> "$GITHUB_OUTPUT"
+
+  check_open_docs_pr:
+    runs-on: ubuntu-latest
+    name: Check for Open Docs PR
+    needs: extract_version
+    steps:
+      - name: Construct expected branch name
+        id: branch_details
+        run: |
+          VERSION=${{ needs.extract_version.outputs.version }}
+          BRANCH_NAME="${{ env.PLATFORM }}-${VERSION}-doc-update"
+          echo "Expected branch name is: $BRANCH_NAME"
+          echo "branch_name=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Check for open PR from docs branch
+        env:
+          GH_TOKEN: ${{ secrets.CONNECT_PULL_TOKEN }}
+          DOCS_REPO: ${{ github.repository_owner }}/public-docs
+          EXPECTED_BRANCH_NAME: ${{ steps.branch_details.outputs.branch_name }}
+        run: |
+          echo "Searching for an open PR from branch '$EXPECTED_BRANCH_NAME' in repo '$DOCS_REPO'..."
+
+          if gh pr list --repo "$DOCS_REPO" --state open --base main --limit 100 --json headRefName --jq '.[].headRefName' | grep -qFx "$EXPECTED_BRANCH_NAME"; then
+            echo "✅ Success! Found an open PR from branch: '$EXPECTED_BRANCH_NAME'"
+          else
+            echo "❌ Failure! Could not find an open PR in '$DOCS_REPO' from a branch with the exact name: '$EXPECTED_BRANCH_NAME'"
+            echo "Please ensure a documentation PR has been opened against the 'main' branch before merging this release."
+            exit 1
+          fi

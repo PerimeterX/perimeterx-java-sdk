@@ -1,5 +1,9 @@
 # Change Log
 
+## [v6.15.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.15.0...HEAD) (2025-09-03)
+- Added Documentation enforcement workflow - verify that the documentation is up to date with the latest changes in the codebase
+- Added Telemetry by Risk support
+
 ## [v6.14.2](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.14.2...HEAD) (2025-06-15)
 - Added Cross Tab Session cookie support on risk_api and async activities 
 
