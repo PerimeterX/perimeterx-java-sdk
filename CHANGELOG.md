@@ -1,6 +1,6 @@
 # Change Log
 
-## [vX.X.X]
+## [v6.15.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.15.1...HEAD) (2025-09-08)
 - Added additional updateReason RISK to Telemetry flow
 
 ## [v6.15.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.15.0...HEAD) (2025-09-03)
