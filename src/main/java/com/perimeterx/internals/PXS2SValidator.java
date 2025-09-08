@@ -115,6 +115,7 @@ public class PXS2SValidator implements PXValidator {
         }
         if (response.getTelemetryRequested() != null && response.getTelemetryRequested()) {
             pxContext.setShouldSendTelemetry(true);
+            pxContext.setTelemetryTriggeredByRisk(true);
         }
     }
 
