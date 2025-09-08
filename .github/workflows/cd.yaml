@@ -51,11 +51,12 @@ jobs:
           distribution: 'adopt'
 
       - name: Import GPG key
-        run: echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import
+        run: echo -n "$GPG_SIGNING_KEY" | base64 --decode | gpg --import --passphrase "$GPG_PASSPHRASE"
         env:
           # To generate a new GPG key run the following command in your local terminal:
           # gpg --export-secret-keys -a "<key_id>" | base64
           GPG_SIGNING_KEY: ${{ secrets.GPG_SIGNING_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       - name: Log GPG keys
         run: gpg --list-secret-keys --keyid-format LONG
 
