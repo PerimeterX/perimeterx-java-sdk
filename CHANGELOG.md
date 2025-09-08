@@ -1,5 +1,8 @@
 # Change Log
 
+## [vX.X.X]
+- Added additional updateReason RISK to Telemetry flow
+
 ## [v6.15.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.15.0...HEAD) (2025-09-03)
 - Added Documentation enforcement workflow - verify that the documentation is up to date with the latest changes in the codebase
 - Added Telemetry by Risk support

@@ -276,7 +276,8 @@ public class PerimeterX implements Closeable {
         // Handle telemetry separately with more specific error handling
         if (context != null && context.isShouldSendTelemetry()) {
             try {
-                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, context);
+                UpdateReason reason = context.isTelemetryTriggeredByRisk() ? UpdateReason.RISK : UpdateReason.COMMAND;
+                activityHandler.handleEnforcerTelemetryActivity(this.configuration, reason, context);
             } catch (Exception e) {
                 context.logger.error("Failed to send telemetry activity: " + e.getMessage());
             }
