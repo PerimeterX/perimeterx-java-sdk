@@ -290,7 +290,7 @@ public class PXContext {
         this.enforcerErrorReasonInfo = new EnforcerErrorReasonInfo();
         this.sensitiveHeaders = pxConfiguration.getSensitiveHeaders();
 
-        String protocolDetails[] = request.getProtocol().split("/");
+        String[] protocolDetails = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
         this.isSensitiveRequest = determineIsSensitiveRequest();
 
