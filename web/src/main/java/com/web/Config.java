@@ -6,6 +6,7 @@ import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
 import com.perimeterx.models.risk.CustomParameters;
+import com.perimeterx.utils.logger.LoggerSeverity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -152,6 +153,12 @@ public class Config {
                     break;
                 case "px_login_successful_status":
                     builder.loginResponseValidationStatusCode(extractStatusCode(key));
+                    break;
+                case "px_logger_severity":
+                    LoggerSeverity loggerSeverity = LoggerSeverity.DEBUG.jsonName().equals(enforcerConfig.getString(key)) ?
+                        LoggerSeverity.DEBUG : LoggerSeverity.NONE.jsonName().equals(enforcerConfig.getString(key)) ?
+                            LoggerSeverity.NONE : LoggerSeverity.ERROR;
+                    PXConfiguration.setPxLoggerSeverity(loggerSeverity);
                     break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
