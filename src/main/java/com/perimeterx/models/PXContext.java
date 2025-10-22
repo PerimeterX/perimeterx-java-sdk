@@ -232,6 +232,7 @@ public class PXContext {
     private String pxhdDomain;
     private String pxCtsCookie;
     private long enforcerStartTime;
+    private boolean isSensitiveRequest;
 
     /**
      * The cookie key used to decrypt the cookie
@@ -291,6 +292,7 @@ public class PXContext {
 
         String protocolDetails[] = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
+        this.isSensitiveRequest = determineIsSensitiveRequest();
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = pxConfiguration.getCustomParametersExtraction();
@@ -310,7 +312,12 @@ public class PXContext {
         boolean isLoggerHeaderRequest = requestLoggerAuthToken!=null && this.getPxConfiguration().getLoggerAuthToken().equals(requestLoggerAuthToken);
         return pxConfiguration.getLoggerFactory().getRequestContextLogger(isLoggerHeaderRequest);
     }
+
     public boolean isSensitiveRequest() {
+        return this.isSensitiveRequest;
+    }
+
+    private boolean determineIsSensitiveRequest() {
         return this.isContainCredentialsIntelligence()
                 || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), servletPath)
                 || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), servletPath)

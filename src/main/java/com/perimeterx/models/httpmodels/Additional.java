@@ -93,6 +93,9 @@ public class Additional {
     @JsonProperty("cross_tab_session")
     public String pxCtsCookie;
 
+    @JsonProperty("is_sensitive_route")
+    public Boolean isSensitiveRoute;
+
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
         additional.pxCookie = ctx.getRiskCookie();
@@ -114,6 +117,7 @@ public class Additional {
         additional.enforcerStartTime = ctx.getEnforcerStartTime();
         additional.riskStartTime = new Date().getTime();
         additional.pxCtsCookie = ctx.getPxCtsCookie();
+        additional.isSensitiveRoute = ctx.isSensitiveRequest();
 
         setLoginCredentials(ctx, additional);
 
