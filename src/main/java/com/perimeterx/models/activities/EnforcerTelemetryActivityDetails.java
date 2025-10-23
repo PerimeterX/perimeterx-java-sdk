@@ -1,6 +1,8 @@
 package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.perimeterx.models.PXContext;
@@ -9,6 +11,7 @@ import com.perimeterx.utils.Constants;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -43,8 +46,13 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
         try {
             Gson gson = new Gson();
             String pxConfigJson = gson.toJson(pxConfiguration.getTelemetryConfig());
-            this.enforcerConfigs = pxConfigJson;
-        } catch (JsonIOException e) {
+            ObjectMapper mapper = new ObjectMapper();
+            Properties p = new Properties();
+            p.put("active_config", pxConfigJson);
+            p.put("static_config", pxConfigJson);
+            p.put("remote_config", "{}"); // remote config not supported
+            this.enforcerConfigs = mapper.writeValueAsString(p);
+        } catch (JsonIOException | JsonProcessingException e) {
             this.enforcerConfigs = "Could not retrieve pxConfiguration";
         }
     }

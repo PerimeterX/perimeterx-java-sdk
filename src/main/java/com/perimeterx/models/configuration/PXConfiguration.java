@@ -312,7 +312,16 @@ public class PXConfiguration {
      * @return Configuration Object clone without cookieKey and authToken
      **/
     public PXConfiguration getTelemetryConfig() {
-        return this.toBuilder().clearCookieKeys().authToken(null).build();
+        int trailingChars = 4;
+        String redactedPrefix = "***REDACTED***";
+        String redactedAuthToken = redactedPrefix.concat(this.authToken.substring(this.authToken.length() - trailingChars));
+        List<String> redactedCookieKeys = this.cookieKeys.stream().map((key) -> "***REDACTED***".concat(key.substring(key.length() - trailingChars))).collect(Collectors.toList());
+        String redactedLoggerAuthToken = this.loggerAuthToken.isEmpty() ? null : redactedPrefix.concat(this.loggerAuthToken.substring(this.loggerAuthToken.length() - trailingChars));
+        return this.toBuilder()
+                .authToken(redactedAuthToken)
+                .cookieKeys(redactedCookieKeys)
+                .loggerAuthToken(redactedLoggerAuthToken)
+                .build();
     }
 
     public void disableModule() {
