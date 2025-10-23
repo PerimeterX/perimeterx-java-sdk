@@ -10,13 +10,11 @@ import java.util.Map;
  * Created by nitzangoldfeder on 26/06/2017.
  */
 public enum ModuleMode {
-
     MONITOR(0), BLOCKING(1);
 
-    private int value;
+    private final int value;
 
-    private static Map<Integer, ModuleMode> namesMap = new HashMap<>(2);
-
+    private static final Map<Integer, ModuleMode> namesMap = new HashMap<>(2);
     static {
         namesMap.put(0, MONITOR);
         namesMap.put(1, BLOCKING);
@@ -28,25 +26,11 @@ public enum ModuleMode {
     }
 
     @JsonValue
-    public Integer toValue() {
-        for (Map.Entry<Integer, ModuleMode> entry : namesMap.entrySet()) {
-            if (entry.getValue() == this)
-                return entry.getKey();
-        }
-        return 0;
-    }
-
-    ModuleMode(int value) {
-        this.value = value;
-    }
-
-    @JsonValue
     public int getValue() {
         return this.value;
     }
 
-    @JsonCreator
-    public void setValue(int value) {
+    ModuleMode(int value) {
         this.value = value;
     }
 }
