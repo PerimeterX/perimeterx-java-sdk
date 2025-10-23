@@ -3,11 +3,13 @@ package com.perimeterx.models.activities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
+import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.utils.Constants;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.UUID;
 
 /**
  * Created by nitzangoldfeder on 29/10/2017.
@@ -24,11 +26,14 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
     private String nodeName;
     @JsonProperty("update_reason")
     private UpdateReason updateReason;
+    @JsonProperty
+    private UUID requestId;
 
-    public EnforcerTelemetryActivityDetails(PXConfiguration pxConfiguration, UpdateReason updateReason) {
+    public EnforcerTelemetryActivityDetails(PXConfiguration pxConfiguration, PXContext context, UpdateReason updateReason) {
         this.moduleVersion = Constants.SDK_VERSION;
         this.osName = System.getProperty("os.name");
         this.updateReason = updateReason;
+        this.requestId = context.getRequestId();
         try {
             this.nodeName = InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
@@ -58,5 +63,9 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
 
     public String getNodeName() {
         return nodeName;
+    }
+
+    public UUID getRequestId() {
+        return requestId;
     }
 }
