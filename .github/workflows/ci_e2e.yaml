@@ -59,7 +59,7 @@ jobs:
         with:
           repository: PerimeterX/connect-helm-charts
           token: ${{ secrets.CONNECT_PULL_TOKEN }}
-          ref: mock-collector-0.1.1
+          ref: mock-collector-0.1.2
           path: ./deploy_charts/mock-collector
 
 
@@ -68,7 +68,7 @@ jobs:
         with:
           repository: PerimeterX/connect-helm-charts
           token: ${{ secrets.CONNECT_PULL_TOKEN }}
-          ref: enforcer-spec-tests-0.7.1
+          ref: enforcer-spec-tests-0.9.1
           path: ./deploy_charts/enforcer-spec-tests
 
 
@@ -77,7 +77,7 @@ jobs:
         with:
           repository: PerimeterX/connect-helm-charts
           token: ${{ secrets.CONNECT_PULL_TOKEN }}
-          ref: sample-site-0.5.0
+          ref: sample-site-0.6.1
           path: ./deploy_charts/sample-site
 
       - name: Set up Google Cloud SDK
@@ -101,6 +101,7 @@ jobs:
           helm install mock-collector ./deploy_charts/mock-collector/charts/mock-collector \
             --set image.repository=localhost:5001/mock-collector \
             --set image.tag=$MOCK_COLLECTOR_IMAGE_TAG \
+            --set authToken=${{ secrets.PX_AUTH_TOKEN }} \
             --set imagePullPolicy=Always --wait
 
       - name: set secrets in enforcer config
@@ -118,6 +119,9 @@ jobs:
           helm install java-enforcer ./deploy_charts/sample-site/charts/sample-site \
           -f ./ci_files/enforcer-values.yaml \
           --set image.name=localhost:5001/java-enforcer-sample-site \
+          --set appId=${{ secrets.PX_APP_ID }} \
+          --set cookieSecret=${{ secrets.TEST_COOKIE_SECRET }} \
+          --set authToken=${{ secrets.PX_AUTH_TOKEN }} \
           --set image.tag=$SAMPLE_SITE_IMAGE_TAG \
           --set-file enforcerConfig.content=/tmp/enforcer-config.json \
           --wait
