@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code - ${{ github.base_ref }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: ${{ github.base_ref }}
 
@@ -18,7 +18,7 @@ jobs:
         run: echo "project=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> "$GITHUB_OUTPUT"
 
       - name: Checkout code - current commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Get current SDK versions
         id: new-version
