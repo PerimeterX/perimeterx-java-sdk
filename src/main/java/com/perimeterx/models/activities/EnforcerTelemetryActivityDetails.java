@@ -1,9 +1,7 @@
 package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.JsonIOException;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -11,7 +9,6 @@ import com.perimeterx.utils.Constants;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Properties;
 import java.util.UUID;
 
 /**
@@ -22,14 +19,14 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
     @JsonProperty("module_version")
     private String moduleVersion;
     @JsonProperty("enforcer_configs")
-    private String enforcerConfigs;
+    private TelemetryConfiguration enforcerConfigs;
     @JsonProperty("os_name")
     private String osName;
     @JsonProperty("node_name")
     private String nodeName;
     @JsonProperty("update_reason")
     private UpdateReason updateReason;
-    @JsonProperty
+    @JsonProperty("request_id")
     private UUID requestId;
 
     public EnforcerTelemetryActivityDetails(PXConfiguration pxConfiguration, PXContext context, UpdateReason updateReason) {
@@ -44,16 +41,13 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
         }
 
         try {
-            Gson gson = new Gson();
-            String pxConfigJson = gson.toJson(pxConfiguration.getTelemetryConfig());
-            ObjectMapper mapper = new ObjectMapper();
-            Properties p = new Properties();
-            p.put("active_config", pxConfigJson);
-            p.put("static_config", pxConfigJson);
-            p.put("remote_config", "{}"); // remote config not supported
-            this.enforcerConfigs = mapper.writeValueAsString(p);
-        } catch (JsonIOException | JsonProcessingException e) {
-            this.enforcerConfigs = "Could not retrieve pxConfiguration";
+            PXConfiguration config = pxConfiguration.getTelemetryConfig();
+            enforcerConfigs = new TelemetryConfiguration();
+            enforcerConfigs.activeConfig = config;
+            enforcerConfigs.staticConfig = config;
+            enforcerConfigs.remoteConfig = null; // remote config not supported
+        } catch (JsonIOException e) {
+            enforcerConfigs = null;
         }
     }
 
@@ -61,7 +55,7 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
         return moduleVersion;
     }
 
-    public String getEnforcerConfigs() {
+    public TelemetryConfiguration getEnforcerConfigs() {
         return enforcerConfigs;
     }
 
@@ -76,4 +70,76 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
     public UUID getRequestId() {
         return requestId;
     }
+}
+
+class TelemetryConfiguration {
+    @JsonProperty("active_config")
+    @JsonIgnoreProperties({
+            "customParametersProvider",
+            "blockHandler",
+            "customLoginResponseValidator",
+            "credentialsCustomExtractor",
+            "customIsSensitiveRequest",
+            "customParametersExtraction",
+            "filterByCustomFunction",
+            "loggerFactory",
+            "telemetryConfig",
+            "reverseProxyInstance",
+            "ipxHttpClientInstance",
+            "ipxhttpClientInstance",
+            "IPXHttpClientInstance",
+            "pxClientInstance",
+            "PXClientInstance",
+            "pxclientInstance",
+            "httpClient",
+            "pxClient",
+            "pxReverseProxy"
+    })
+    public PXConfiguration activeConfig;
+    @JsonProperty("static_config")
+    @JsonIgnoreProperties({
+            "customParametersProvider",
+            "blockHandler",
+            "customLoginResponseValidator",
+            "credentialsCustomExtractor",
+            "customIsSensitiveRequest",
+            "customParametersExtraction",
+            "filterByCustomFunction",
+            "loggerFactory",
+            "telemetryConfig",
+            "reverseProxyInstance",
+            "ipxHttpClientInstance",
+            "ipxhttpClientInstance",
+            "IPXHttpClientInstance",
+            "pxClientInstance",
+            "PXClientInstance",
+            "pxclientInstance",
+            "httpClient",
+            "pxClient",
+            "pxReverseProxy"
+    })
+    public PXConfiguration staticConfig;
+    @JsonProperty("remote_config")
+    @JsonIgnoreProperties({
+            "customParametersProvider",
+            "blockHandler",
+            "customLoginResponseValidator",
+            "credentialsCustomExtractor",
+            "customIsSensitiveRequest",
+            "customParametersExtraction",
+            "filterByCustomFunction",
+            "loggerFactory",
+            "telemetryConfig",
+            "reverseProxyInstance",
+            "ipxHttpClientInstance",
+            "ipxhttpClientInstance",
+            "IPXHttpClientInstance",
+            "pxClientInstance",
+            "PXClientInstance",
+            "pxclientInstance",
+            "httpClient",
+            "pxClient",
+            "pxReverseProxy"
+    })
+    public PXConfiguration remoteConfig;
 }

@@ -312,16 +312,49 @@ public class PXConfiguration {
      * @return Configuration Object clone without cookieKey and authToken
      **/
     public PXConfiguration getTelemetryConfig() {
-        int trailingChars = 4;
-        String redactedPrefix = "***REDACTED***";
-        String redactedAuthToken = redactedPrefix.concat(this.authToken.substring(this.authToken.length() - trailingChars));
-        List<String> redactedCookieKeys = this.cookieKeys.stream().map((key) -> "***REDACTED***".concat(key.substring(key.length() - trailingChars))).collect(Collectors.toList());
-        String redactedLoggerAuthToken = this.loggerAuthToken.isEmpty() ? null : redactedPrefix.concat(this.loggerAuthToken.substring(this.loggerAuthToken.length() - trailingChars));
-        return this.toBuilder()
-                .authToken(redactedAuthToken)
-                .cookieKeys(redactedCookieKeys)
-                .loggerAuthToken(redactedLoggerAuthToken)
+
+        PXConfiguration telemetry = this.toBuilder()
+                .authToken(this.redactString(this.authToken))
+                .clearCookieKeys()
+                .cookieKeys(this.cookieKeys.stream().map(this::redactString).collect(Collectors.toList()))
+                .loggerAuthToken(this.redactString(this.loggerAuthToken))
+                .sensitiveRoutesRegex(this.stringifyRegexSet(this.sensitiveRoutesRegex))
+                // prune non-serializable/runtime members for telemetry clone
+                .customParametersProvider(null)
+                .blockHandler(null)
+                .customLoginResponseValidator(null)
+                .credentialsCustomExtractor(null)
+                .customIsSensitiveRequest(null)
+                .customParametersExtraction(null)
+                .filterByCustomFunction(null)
+                .loggerFactory(null)
+                .httpClient(null)
+                .pxClient(null)
+                .pxReverseProxy(null)
                 .build();
+        // ensure transient instances are not serialized
+        telemetry.pxClientInstance = null;
+        telemetry.ipxHttpClientInstance = null;
+        telemetry.reverseProxyInstance = null;
+        return telemetry;
+    }
+
+    private Set<String> stringifyRegexSet(Set<String> regexSet) {
+        if (regexSet == null) {
+            return null;
+        }
+        return regexSet.stream()
+                .map(r -> r != null && r.startsWith("_REGEXP ") ? r : "_REGEXP /" + r + "/")
+                .collect(Collectors.toSet());
+    }
+
+    private String redactString(String str) {
+        int trailingChars = 5;
+        String redactedPrefix = "***REDACTED***";
+        if (str == null || str.length() <= trailingChars) {
+            return redactedPrefix;
+        }
+        return redactedPrefix.concat(str.substring(str.length() - trailingChars));
     }
 
     public void disableModule() {
