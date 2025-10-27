@@ -1,13 +1,11 @@
 package com.perimeterx.api.verificationhandler;
 
-import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.activities.ActivityHandler;
 import com.perimeterx.api.additionalContext.PXHDSource;
 import com.perimeterx.api.blockhandler.BlockHandler;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
-import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.logger.LogReason;
 
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -94,6 +92,10 @@ public class DefaultVerificationHandler implements VerificationHandler {
 
         if (isNoneBlank(context.getPxhdDomain())) {
             cookieValue += COOKIE_SEPARATOR + COOKIE_DOMAIN_KEY + context.getPxhdDomain();
+        }
+
+        if (pxConfiguration.isSecuredPxhdEnabled()) {
+            cookieValue += COOKIE_SEPARATOR + "Secure";
         }
 
         return cookieValue;

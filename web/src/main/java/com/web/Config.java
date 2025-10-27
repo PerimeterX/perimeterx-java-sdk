@@ -160,6 +160,9 @@ public class Config {
                             LoggerSeverity.NONE : LoggerSeverity.ERROR;
                     PXConfiguration.setPxLoggerSeverity(loggerSeverity);
                     break;
+                case "px_secured_pxhd_enabled":
+                    builder.securedPxhdEnabled(enforcerConfig.getBoolean(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":

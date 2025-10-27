@@ -257,6 +257,10 @@ public class PXConfiguration {
     private int[] loginResponseValidationStatusCode = {200};
 
     @Builder.Default
+    @JsonProperty("px_secured_pxhd_enabled")
+    private boolean securedPxhdEnabled = false;
+
+    @Builder.Default
     private LoginResponseValidator customLoginResponseValidator = new DefaultCustomLoginResponseValidator();
 
     @Builder.Default
