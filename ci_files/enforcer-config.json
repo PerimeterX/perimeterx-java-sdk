@@ -19,9 +19,6 @@
   "px_custom_first_party_xhr_endpoint": "/custom_first_party_xhr_endpoint",
   "px_custom_first_party_captcha_endpoint": "/custom_first_party_captcha_endpoint",
   "px_custom_first_party_prefix": "/custom_first_party_prefix",
-  "px_filter_by_route": [
-    "/filtered_route"
-  ],
   "px_monitored_routes": [
     "/monitored_route",
     "/monitored_route/suffix",
