@@ -175,12 +175,17 @@ public class Config {
             CustomParameters customParameters = new CustomParameters();
             customParameters.customParam1 = "test1";
             customParameters.customParam2 = "test2";
-            customParameters.customParam3 = "3";
-            customParameters.customParam4 = "4";
-            customParameters.customParam5 = "5";
-            customParameters.customParam6 = "6";
+            customParameters.customParam3 = 3;
+            customParameters.customParam4 = 4;
+            customParameters.customParam5 = 5;
+            customParameters.customParam6 = 6;
+            customParameters.customParam7 = req.getRequestURI();
             return customParameters;
         });
+
+        builder.customIsSensitiveRequest((req -> {
+            return req.getRequestURI().startsWith("/sensitive") && req.getMethod().equals("POST");
+        }));
 
         return builder.build();
     }
