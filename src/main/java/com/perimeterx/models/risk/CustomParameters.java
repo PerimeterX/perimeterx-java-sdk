@@ -6,30 +6,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * Created by nitzangoldfeder on 03/04/2018.
  */
+
+// Note: Parameters are of type Object to allow flexibility in the type of data being sent (e.g., String, Number, Boolean, etc.)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomParameters {
     @JsonProperty("custom_param1")
-    public String customParam1;
+    public Object customParam1;
     @JsonProperty("custom_param2")
-    public String customParam2;
+    public Object customParam2;
     @JsonProperty("custom_param3")
-    public String customParam3;
+    public Object customParam3;
     @JsonProperty("custom_param4")
-    public String customParam4;
+    public Object customParam4;
     @JsonProperty("custom_param5")
-    public String customParam5;
+    public Object customParam5;
     @JsonProperty("custom_param6")
-    public String customParam6;
+    public Object customParam6;
     @JsonProperty("custom_param7")
-    public String customParam7;
+    public Object customParam7;
     @JsonProperty("custom_param8")
-    public String customParam8;
+    public Object customParam8;
     @JsonProperty("custom_param9")
-    public String customParam9;
+    public Object customParam9;
     @JsonProperty("custom_param10")
-    public String customParam10;
+    public Object customParam10;
 
-    public String getCustomParam1() {
+    public Object getCustomParam1() {
         return customParam1;
     }
 
@@ -37,7 +39,7 @@ public class CustomParameters {
         this.customParam1 = customParam1;
     }
 
-    public String getCustomParam2() {
+    public Object getCustomParam2() {
         return customParam2;
     }
 
@@ -45,7 +47,7 @@ public class CustomParameters {
         this.customParam2 = customParam2;
     }
 
-    public String getCustomParam3() {
+    public Object getCustomParam3() {
         return customParam3;
     }
 
@@ -53,7 +55,7 @@ public class CustomParameters {
         this.customParam3 = customParam3;
     }
 
-    public String getCustomParam4() {
+    public Object getCustomParam4() {
         return customParam4;
     }
 
@@ -61,7 +63,7 @@ public class CustomParameters {
         this.customParam4 = customParam4;
     }
 
-    public String getCustomParam5() {
+    public Object getCustomParam5() {
         return customParam5;
     }
 
@@ -69,7 +71,7 @@ public class CustomParameters {
         this.customParam5 = customParam5;
     }
 
-    public String getCustomParam6() {
+    public Object getCustomParam6() {
         return customParam6;
     }
 
@@ -77,7 +79,7 @@ public class CustomParameters {
         this.customParam6 = customParam6;
     }
 
-    public String getCustomParam7() {
+    public Object getCustomParam7() {
         return customParam7;
     }
 
@@ -85,7 +87,7 @@ public class CustomParameters {
         this.customParam7 = customParam7;
     }
 
-    public String getCustomParam8() {
+    public Object getCustomParam8() {
         return customParam8;
     }
 
@@ -93,7 +95,7 @@ public class CustomParameters {
         this.customParam8 = customParam8;
     }
 
-    public String getCustomParam9() {
+    public Object getCustomParam9() {
         return customParam9;
     }
 
@@ -101,7 +103,7 @@ public class CustomParameters {
         this.customParam9 = customParam9;
     }
 
-    public String getCustomParam10() {
+    public Object getCustomParam10() {
         return customParam10;
     }
 
