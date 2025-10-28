@@ -160,6 +160,24 @@ public class Config {
                 case "px_secured_pxhd_enabled":
                     builder.securedPxhdEnabled(enforcerConfig.getBoolean(key));
                     break;
+                case "px_jwt_cookie_name":
+                    builder.pxJwtCookieName(enforcerConfig.getString(key));
+                    break;
+                case "px_jwt_cookie_user_id_field_name":
+                    builder.pxJwtCookieUserIdFieldName(enforcerConfig.getString(key));
+                    break;
+                case "px_jwt_cookie_additional_field_names":
+                    builder.pxJwtCookieAdditionalFieldNames(extractStringList(key));
+                    break;
+                case "px_jwt_header_name":
+                    builder.pxJwtHeaderName(enforcerConfig.getString(key));
+                    break;
+                case "px_jwt_header_user_id_field_name":
+                    builder.pxJwtHeaderUserIdFieldName(enforcerConfig.getString(key));
+                    break;
+                case "px_jwt_header_additional_field_names":
+                    builder.pxJwtHeaderAdditionalFieldNames(extractStringList(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
@@ -212,6 +230,15 @@ public class Config {
             statusCode[i] = jsonField.getInt(i);
         }
         return statusCode;
+    }
+
+    private java.util.List<String> extractStringList(String key) {
+        final JSONArray jsonField = enforcerConfig.getJSONArray(key);
+        final java.util.List<String> out = new java.util.ArrayList<>(jsonField.length());
+        for (int i = 0; i < jsonField.length(); i++) {
+            out.add(jsonField.getString(i));
+        }
+        return out;
     }
 }
 
