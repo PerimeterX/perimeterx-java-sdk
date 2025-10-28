@@ -233,6 +233,7 @@ public class PXContext {
     private String pxCtsCookie;
     private long enforcerStartTime;
     private boolean isSensitiveRequest;
+    private String additionalTokenInfo;
 
     /**
      * The cookie key used to decrypt the cookie
@@ -460,6 +461,7 @@ public class PXContext {
 
     public void setRiskCookie(AbstractPXCookie riskCookie) {
         this.riskCookie = riskCookie.getDecodedCookie().toString();
+        this.additionalTokenInfo = riskCookie.additionalTokenInfo();
     }
 
     public void setBlockAction(String blockAction) {

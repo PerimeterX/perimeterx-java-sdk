@@ -85,8 +85,10 @@ public class Additional {
 
     @JsonProperty("request_id")
     public UUID requestId;
+
     @JsonProperty("enforcer_start_time")
     public long enforcerStartTime;
+
     @JsonProperty("risk_start_time")
     public long riskStartTime;
 
@@ -95,6 +97,9 @@ public class Additional {
 
     @JsonProperty("is_sensitive_route")
     public Boolean isSensitiveRoute;
+
+    @JsonProperty("additional_token_info")
+    public String additionalTokenInfo;
 
     public static Additional fromContext(PXContext ctx) {
         Additional additional = new Additional();
@@ -118,6 +123,7 @@ public class Additional {
         additional.riskStartTime = new Date().getTime();
         additional.pxCtsCookie = ctx.getPxCtsCookie();
         additional.isSensitiveRoute = ctx.isSensitiveRequest();
+        additional.additionalTokenInfo = ctx.getAdditionalTokenInfo();
 
         setLoginCredentials(ctx, additional);
 

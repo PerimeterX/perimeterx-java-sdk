@@ -50,6 +50,9 @@ public class CommonActivityDetails implements ActivityDetails {
     @JsonProperty("additional_risk_info")
     public String additionalRiskInfo;
 
+    @JsonProperty("additional_token_info")
+    public  String additionalTokenInfo;
+
     @JsonProperty("user")
     public String username;
 
@@ -89,5 +92,6 @@ public class CommonActivityDetails implements ActivityDetails {
         this.enforcerStartTime = additional.enforcerStartTime;
         this.pxCtsCookie = additional.pxCtsCookie;
         this.isSensitiveRoute = additional.isSensitiveRoute;
+        this.additionalTokenInfo = additional.additionalTokenInfo;
     }
 }
