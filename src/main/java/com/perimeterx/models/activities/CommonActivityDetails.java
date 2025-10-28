@@ -9,6 +9,7 @@ import com.perimeterx.models.PXContext;
 import com.perimeterx.models.httpmodels.Additional;
 import lombok.Getter;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -62,6 +63,12 @@ public class CommonActivityDetails implements ActivityDetails {
     @JsonProperty("cross_tab_session")
     public String pxCtsCookie;
 
+    @JsonProperty("app_user_id")
+    public String appUserId;
+
+    @JsonProperty("jwt_additional_fields")
+    public Map<String, Object> jwtAdditionalFields;
+
     @JsonProperty("is_sensitive_route")
     public Boolean isSensitiveRoute;
 
@@ -91,6 +98,8 @@ public class CommonActivityDetails implements ActivityDetails {
         this.riskStartTime = additional.riskStartTime;
         this.enforcerStartTime = additional.enforcerStartTime;
         this.pxCtsCookie = additional.pxCtsCookie;
+        this.appUserId = additional.appUserId;
+        this.jwtAdditionalFields = additional.jwtAdditionalFields;
         this.isSensitiveRoute = additional.isSensitiveRoute;
         this.additionalTokenInfo = additional.additionalTokenInfo;
     }

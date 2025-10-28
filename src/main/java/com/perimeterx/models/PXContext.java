@@ -13,6 +13,7 @@ import com.perimeterx.internals.cookie.RawCookieData;
 import com.perimeterx.internals.cookie.cookieparsers.CookieHeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.HeaderParser;
 import com.perimeterx.internals.cookie.cookieparsers.MobileCookieHeaderParser;
+import com.perimeterx.internals.JwtUserIdentifiersExtractor;
 import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.enforcererror.EnforcerErrorReasonInfo;
@@ -235,6 +236,10 @@ public class PXContext {
     private boolean isSensitiveRequest;
     private String additionalTokenInfo;
 
+    // JWT user identifiers
+    private String jwtAppUserId;
+    private Map<String, Object> jwtAdditionalFields;
+
     /**
      * The cookie key used to decrypt the cookie
      */
@@ -305,6 +310,12 @@ public class PXContext {
             }
         } catch (Exception e) {
             logger.debug("failed to extract custom parameters from custom function", e);
+        }
+
+        try {
+            JwtUserIdentifiersExtractor.attachJwtIfConfigured(this, pxConfiguration);
+        } catch (Exception e) {
+            logger.debug("jwt identifiers extraction failed", e);
         }
     }
 
