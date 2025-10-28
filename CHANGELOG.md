@@ -1,4 +1,14 @@
 # Change Log
+## [x.x.x] - YYYY-MM-DD
+- Added `px_secured_pxhd_enabled` configuration option to enable secure flag on `pxhd` cookie
+- Added `is_sensitive_route` to risk api and async activities
+- Added `additional_token_info` to risk api and async activities
+- Updated telemetry activity to new format (`static_config` and `active_config`; `remote_config` is not supported)
+- Updated telemetry activity to include `request_id`
+- Updated captcha page template to newest version
+- Updated dependencies minor and patch versions (major versions unchanged)
+- Changed custom parameters to be of type `Object` instead of `String` to allow more flexibility
+- Changed first party block script in captcha template to end with expected `/captcha.js`
 
 ## [v6.15.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.15.1...HEAD) (2025-09-08)
 - Added additional updateReason RISK to Telemetry flow 
