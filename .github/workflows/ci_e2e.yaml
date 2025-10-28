@@ -109,7 +109,8 @@ jobs:
           cat ./ci_files/enforcer-config.json |\
           jq '.px_app_id="${{ secrets.PX_APP_ID }}"' |\
           jq '.px_cookie_secret="${{ secrets.TEST_COOKIE_SECRET }}"' |\
-          jq '.px_auth_token="${{ secrets.PX_AUTH_TOKEN }}"' > /tmp/enforcer-config.json
+          jq '.px_auth_token="${{ secrets.PX_AUTH_TOKEN }}"' |\
+          jq '.px_logger_auth_token="${{ secrets.PX_LOGGER_AUTH_TOKEN }}"' > /tmp/enforcer-config.json
 
       - name: log enforcer config
         run: cat /tmp/enforcer-config.json
