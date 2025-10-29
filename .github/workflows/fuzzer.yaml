@@ -55,9 +55,16 @@ jobs:
           docker build . -t localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG && \
           docker push localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG
 
-      - uses: azure/setup-helm@v4
-        with:
-          version: '3.19.0'
+#      - uses: azure/setup-helm@v4
+#        with:
+#          version: '3.19.0'
+
+      - name: Setup helm (temp)
+        run: |
+          curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+          sudo apt-get update
+          sudo apt-get install helm
 
       - name: Clone helm charts repo - mock-collector
         uses: actions/checkout@v5
