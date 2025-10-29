@@ -25,7 +25,7 @@ jobs:
   Fuzzing:
     name: "Fuzzing Test"
     env:
-      MOCK_COLLECTOR_IMAGE_TAG: 2.0.5
+      MOCK_COLLECTOR_IMAGE_TAG: 2.0.6
       FUZZER_TAG: 1.1.0
       SAMPLE_SITE_IMAGE_TAG: 1.0.0
       ENFORCER_TAG: ${{ needs.extract_version.outputs.version }}
@@ -55,9 +55,9 @@ jobs:
           docker build . -t localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG && \
           docker push localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG
 
-      - uses: azure/setup-helm@v3
+      - uses: azure/setup-helm@v4
         with:
-          version: '3.14.2'
+          version: '3.16.1'
 
       - name: Clone helm charts repo - mock-collector
         uses: actions/checkout@v5
@@ -105,7 +105,8 @@ jobs:
             --set image.repository=localhost:5001/mock-collector \
             --set image.tag=$MOCK_COLLECTOR_IMAGE_TAG \
             --set authToken=${{ secrets.PX_AUTH_TOKEN }} \
-            --set imagePullPolicy=Always --wait
+            --set imagePullPolicy=Always \
+            --wait
 
       - name: set secrets in enforcer config
         run: |
