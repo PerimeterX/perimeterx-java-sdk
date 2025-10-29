@@ -57,7 +57,7 @@ jobs:
 
       - uses: azure/setup-helm@v4
         with:
-          version: '3.16.1'
+          version: '3.19.0'
 
       - name: Clone helm charts repo - mock-collector
         uses: actions/checkout@v5

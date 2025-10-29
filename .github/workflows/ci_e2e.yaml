@@ -50,9 +50,9 @@ jobs:
           docker build . -t localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG && \
           docker push localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG
 
-      - uses: azure/setup-helm@v3
+      - uses: azure/setup-helm@v4
         with:
-          version: '3.14.1'
+          version: '3.19.0'
 
       - name: Clone helm charts repo - mock-collector
         uses: actions/checkout@v5
