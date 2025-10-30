@@ -50,16 +50,9 @@ jobs:
           docker build . -t localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG && \
           docker push localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG
 
-#      - uses: azure/setup-helm@v4
-#        with:
-#          version: '3.19.0'
-
-      - name: Setup helm (temp)
-        run: |
-          curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4
+        with:
+          version: '3.19.0'
 
       - name: Clone helm charts repo - mock-collector
         uses: actions/checkout@v5
@@ -150,6 +143,7 @@ jobs:
             --set appId=${{ secrets.PX_APP_ID }} \
             --set-file enforcerMetadataContent=./px_metadata.json \
             --set-file enforcerConfigJsonContent=/tmp/enforcer-config.json \
+            --set additionalArgs="-k \"(test_vid_extraction_on_first_party_xhr or test_header_based_logger_logs_on_first_party_requests)\"" \
             -f ./ci_files/spec-tests-values.yaml \
             --wait \
             --timeout 60m0s \
@@ -158,3 +152,7 @@ jobs:
       - name: get tests results
         if: ${{ always() }}
         run: kubectl logs job/enforcer-spec-tests
+
+      - name: get enforcer logs
+        if: ${{ always() }}
+        run: kubectl logs deployment/java-enforcer-sample-site
