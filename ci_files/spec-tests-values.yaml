@@ -3,8 +3,6 @@ additionalArgs:
   - "3"
   - "--retry-delay"
   - "10"
-  - "-k"
-  - "(test_vid_extraction_on_first_party_xhr or test_header_based_logger_logs_on_first_party_requests)"
 
 internalMockCollectorURL: "http://mock-collector-mock-collector:3001"
 siteURL: "http://java-enforcer-sample-site:3000"
