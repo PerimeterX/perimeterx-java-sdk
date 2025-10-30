@@ -35,7 +35,7 @@ jobs:
         mode: [ "url", "first_party", "headers", "cookies", "user_agent" ]
 
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90
     needs:
       - extract_version
 
@@ -55,16 +55,9 @@ jobs:
           docker build . -t localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG && \
           docker push localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG
 
-#      - uses: azure/setup-helm@v4
-#        with:
-#          version: '3.19.0'
-
-      - name: Setup helm (temp)
-        run: |
-          curl -fsSL https://packages.buildkite.com/helm-linux/helm-debian/gpgkey | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          echo "deb [signed-by=/usr/share/keyrings/helm.gpg] https://packages.buildkite.com/helm-linux/helm-debian/any/ any main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4
+        with:
+          version: '3.19.0'
 
       - name: Clone helm charts repo - mock-collector
         uses: actions/checkout@v5
@@ -120,7 +113,8 @@ jobs:
           cat ./ci_files/enforcer-config.json |\
           jq '.px_app_id="${{ secrets.PX_APP_ID }}"' |\
           jq '.px_cookie_secret="${{ secrets.TEST_COOKIE_SECRET }}"' |\
-          jq '.px_auth_token="${{ secrets.PX_AUTH_TOKEN }}"' > /tmp/enforcer-config.json
+          jq '.px_auth_token="${{ secrets.PX_AUTH_TOKEN }}"' |\
+          jq '.px_logger_auth_token="${{ secrets.PX_LOGGER_AUTH_TOKEN }}"' > /tmp/enforcer-config.json
 
       - name: log enforcer config
         run: cat /tmp/enforcer-config.json
@@ -152,7 +146,7 @@ jobs:
             --set mode=$FUZZ_MODE \
             --set siteURL=$SITE_URL \
             --wait \
-            --timeout 60m0s \
+            --timeout 90m0s \
             --wait-for-jobs
         env:
           FUZZ_MODE: ${{ matrix.mode }}
