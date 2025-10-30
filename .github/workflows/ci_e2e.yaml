@@ -143,7 +143,6 @@ jobs:
             --set appId=${{ secrets.PX_APP_ID }} \
             --set-file enforcerMetadataContent=./px_metadata.json \
             --set-file enforcerConfigJsonContent=/tmp/enforcer-config.json \
-            --set additionalArgs="-k \"(test_vid_extraction_on_first_party_xhr or test_header_based_logger_logs_on_first_party_requests)\"" \
             -f ./ci_files/spec-tests-values.yaml \
             --wait \
             --timeout 60m0s \
