@@ -107,7 +107,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         final String host = pxConfiguration.getCollectorUrl().replaceFirst("https?:\\/\\/", "");
 
         if (!isValidThirdPartyUrl(url, host, path)) {
-           context.logger.error("First party XHR URL is inaccurate: " + url + ", rendering default response");
+            context.logger.error("first party XHR URL is inaccurate: " + url + ", rendering default response");
             predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
             return true;
         }
