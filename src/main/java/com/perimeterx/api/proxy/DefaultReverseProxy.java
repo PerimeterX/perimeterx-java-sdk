@@ -143,8 +143,9 @@ public class DefaultReverseProxy implements ReverseProxy {
                 return false;
             }
             String host = url.getHost();
-            if (url.getPort() != url.getDefaultPort()) {
-                host += ":" + url.getPort();
+            final int port = url.getPort();
+            if (port != -1 && port != url.getDefaultPort()) {
+                host += ":" + port;
             }
             if (!host.equalsIgnoreCase(expectedHost)) {
                 context.logger.debug("Validating third party URL failed, expected host does not match the request host. expectedHost: " + expectedHost + ", requestHost: " + host);
