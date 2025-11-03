@@ -109,7 +109,7 @@ public class RemoteServer {
         return requestBuilder.build();
     }
 
-    public IPXIncomingResponse handleResponse(IPXOutgoingRequest proxyRequest, PXContext context) {
+    public void handleResponse(IPXOutgoingRequest proxyRequest, PXContext context) {
         IPXIncomingResponse proxyResponse = null;
         try {
             // Execute the request
@@ -119,7 +119,7 @@ public class RemoteServer {
             // In failure we can check if we enable predefined request or proxy the original response
             if (this.isAllowedPredefinedResponse() && statusCode >= HttpStatus.SC_BAD_REQUEST) {
                 predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
-                return proxyResponse;
+                return;
             }
 
             res.setStatus(statusCode);
@@ -143,8 +143,15 @@ public class RemoteServer {
             if (this.isAllowedPredefinedResponse()) {
                 predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
             }
+        } finally {
+            if (proxyResponse != null) {
+                try {
+                    proxyResponse.close();
+                } catch (IOException e) {
+                    context.logger.debug("Failed to close proxy response", e);
+                }
+            }
         }
-        return proxyResponse;
     }
 
     /**
