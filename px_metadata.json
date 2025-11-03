@@ -18,6 +18,7 @@
     "custom_parameters",
     "custom_proxy",
     "custom_sensitive_request",
+    "data_enrichment_header",
     "enforced_routes",
     "enforcer_error",
     "filter_by_extension",
