@@ -9,6 +9,8 @@
 - Updated dependencies minor and patch versions (major versions unchanged)
 - Changed custom parameters to be of type `Object` instead of `String` to allow more flexibility
 - Changed first party block script in captcha template to end with expected `/captcha.js`
+- Fixed possible connection leak issue due to unclosed responses in first party and telemetry requests
+- Fixed first party fuzzing errors by returning 400 on first party requests with URL length > 1000 characters
 
 ## [v6.15.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.15.1...HEAD) (2025-09-08)
 - Added additional updateReason RISK to Telemetry flow 
