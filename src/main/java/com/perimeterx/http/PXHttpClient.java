@@ -217,14 +217,27 @@ public class PXHttpClient implements PXClient, Closeable {
 
     @Override
     public void sendEnforcerTelemetry(EnforcerTelemetry enforcerTelemetry, PXContext context) throws IOException {
-        String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
-        if (context!=null){
-            context.logger.debug("Sending enforcer telemetry: {}", requestBody);
-        } else{
-            logger.debug("Sending enforcer telemetry: {}", requestBody);
+        IPXIncomingResponse httpResponse = null;
+        try {
+            String requestBody = JsonUtils.writer.writeValueAsString(enforcerTelemetry);
+            if (context != null) {
+                context.logger.debug("Sending enforcer telemetry: {}", requestBody);
+            } else {
+                logger.debug("Sending enforcer telemetry: {}", requestBody);
+            }
+            IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY, PXHttpMethod.POST, requestBody);
+            httpResponse = client.send(request);
+        } catch (Exception e) {
+            if (context != null) {
+                context.logger.debug("Sending enforcer telemetry failed. Error: {}", e.getMessage());
+            } else {
+                logger.debug("Sending enforcer telemetry failed. Error: {}", e.getMessage());
+            }
+        } finally {
+            if (httpResponse != null) {
+                httpResponse.close();
+            }
         }
-        IPXOutgoingRequest request = buildOutgoingRequest(this.pxConfiguration.getServerURL() + Constants.API_ENFORCER_TELEMETRY,PXHttpMethod.POST, requestBody);
-        client.send(request);
     }
 
     private IPXOutgoingRequest buildOutgoingRequest(String url , PXHttpMethod method, String requestBody, BasicHeader... headers) {
