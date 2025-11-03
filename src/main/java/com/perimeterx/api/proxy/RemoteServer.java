@@ -112,6 +112,9 @@ public class RemoteServer {
     public void handleResponse(IPXOutgoingRequest proxyRequest, PXContext context) {
         IPXIncomingResponse proxyResponse = null;
         try {
+            if (proxyRequest != null && proxyRequest.getUrl().length() > maxUrlLength) {
+                throw new IllegalArgumentException("URL too long: " + proxyRequest.getUrl().length());
+            }
             // Execute the request
             proxyResponse = doExecute(proxyRequest);
             int statusCode = proxyResponse.status().getStatusCode();
@@ -139,6 +142,9 @@ public class RemoteServer {
                 copyResponseEntity(proxyResponse);
             }
 
+        } catch (IllegalArgumentException e) {
+            context.logger.debug("Invalid request in first-party proxy: {}", e.getMessage());
+            handleClientError(context);
         } catch (Exception e) {
             if (this.isAllowedPredefinedResponse()) {
                 predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
@@ -151,6 +157,19 @@ public class RemoteServer {
                     context.logger.debug("Failed to close proxy response", e);
                 }
             }
+        }
+    }
+
+    private void handleClientError(PXContext context) {
+        try {
+            res.setStatus(HttpStatus.SC_BAD_REQUEST);
+            res.setContentType("text/plain");
+            res.setCharacterEncoding("UTF-8");
+            res.getWriter().print("Bad Request");
+            res.getWriter().flush();
+        } catch (IOException e) {
+            context.logger.error("Failed to write error response: {}", e.getMessage());
+            res.setStatus(HttpStatus.SC_BAD_REQUEST);
         }
     }
 
