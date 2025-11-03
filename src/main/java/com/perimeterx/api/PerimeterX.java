@@ -240,6 +240,7 @@ public class PerimeterX implements Closeable {
             setBreachedAccount(request, context);
             setAdditionalS2SActivityHeaders(request, context);
         }
+        setDataEnrichmentHeader(request, context);
     }
 
     private void setBreachedAccount(HttpServletRequest request, PXContext context) {
@@ -257,6 +258,24 @@ public class PerimeterX implements Closeable {
 
             ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_HEADER, stringifyActivity);
             ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_URL_HEADER, urlHeader);
+        }
+    }
+
+    private void setDataEnrichmentHeader(HttpServletRequest request, PXContext context) {
+        try {
+            String headerName = configuration.getPxDataEnrichmentHeaderName();
+            if (headerName == null || headerName.isEmpty()) {
+                return;
+            }
+
+            if (context.getPxde() == null || !context.isPxdeVerified()) {
+                return;
+            }
+
+            String pxdeJson = new Gson().toJson(context.getPxde());
+            ((RequestWrapper) request).addHeader(headerName, pxdeJson);
+        } catch (Exception e) {
+            context.logger.debug("Failed to add data enrichment header", e);
         }
     }
 

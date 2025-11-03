@@ -178,6 +178,9 @@ public class Config {
                 case "px_jwt_header_additional_field_names":
                     builder.pxJwtHeaderAdditionalFieldNames(extractStringList(key));
                     break;
+                case "px_data_enrichment_header_name":
+                    builder.pxDataEnrichmentHeaderName(enforcerConfig.getString(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
