@@ -108,6 +108,11 @@ jobs:
             --set imagePullPolicy=Always \
             --wait
 
+      - name: Set LOCAL_FILE_SERVE environment variable
+        run: |
+          kubectl set env deployment/mock-collector-mock-collector LOCAL_FILE_SERVE=true
+          kubectl rollout status deployment/mock-collector-mock-collector --timeout=60s
+
       - name: set secrets in enforcer config
         run: |
           cat ./ci_files/enforcer-config.json |\
