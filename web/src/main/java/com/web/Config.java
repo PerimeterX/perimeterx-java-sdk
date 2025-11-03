@@ -155,10 +155,7 @@ public class Config {
                     builder.loginResponseValidationStatusCode(extractStatusCode(key));
                     break;
                 case "px_logger_severity":
-                    LoggerSeverity loggerSeverity = LoggerSeverity.DEBUG.jsonName().equals(enforcerConfig.getString(key)) ?
-                        LoggerSeverity.DEBUG : LoggerSeverity.NONE.jsonName().equals(enforcerConfig.getString(key)) ?
-                            LoggerSeverity.NONE : LoggerSeverity.ERROR;
-                    PXConfiguration.setPxLoggerSeverity(loggerSeverity);
+                    this.setLoggerSeverity(enforcerConfig.getString(key));
                     break;
                 case "px_secured_pxhd_enabled":
                     builder.securedPxhdEnabled(enforcerConfig.getBoolean(key));
@@ -191,6 +188,20 @@ public class Config {
         }));
 
         return builder.build();
+    }
+
+    private void setLoggerSeverity(String severity) {
+        switch (severity) {
+            case "debug":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.DEBUG);
+                break;
+            case "error":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.ERROR);
+                break;
+            case "none":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.NONE);
+                break;
+        }
     }
 
     private int[] extractStatusCode(String key) {
