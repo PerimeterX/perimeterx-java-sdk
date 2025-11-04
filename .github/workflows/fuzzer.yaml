@@ -35,7 +35,7 @@ jobs:
         mode: [ "url", "first_party", "headers", "cookies", "user_agent" ]
 
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 60
     needs:
       - extract_version
 
@@ -146,7 +146,7 @@ jobs:
             --set mode=$FUZZ_MODE \
             --set siteURL=$SITE_URL \
             --wait \
-            --timeout 90m0s \
+            --timeout 60m0s \
             --wait-for-jobs
         env:
           FUZZ_MODE: ${{ matrix.mode }}
