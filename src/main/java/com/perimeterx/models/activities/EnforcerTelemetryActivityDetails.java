@@ -1,7 +1,6 @@
 package com.perimeterx.models.activities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.JsonIOException;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
@@ -18,14 +17,19 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
 
     @JsonProperty("module_version")
     private String moduleVersion;
+
     @JsonProperty("enforcer_configs")
     private TelemetryConfiguration enforcerConfigs;
+
     @JsonProperty("os_name")
     private String osName;
+
     @JsonProperty("node_name")
     private String nodeName;
+
     @JsonProperty("update_reason")
     private UpdateReason updateReason;
+
     @JsonProperty("request_id")
     private UUID requestId;
 
@@ -74,72 +78,11 @@ public class EnforcerTelemetryActivityDetails implements ActivityDetails {
 
 class TelemetryConfiguration {
     @JsonProperty("active_config")
-    @JsonIgnoreProperties({
-            "customParametersProvider",
-            "blockHandler",
-            "customLoginResponseValidator",
-            "credentialsCustomExtractor",
-            "customIsSensitiveRequest",
-            "customParametersExtraction",
-            "filterByCustomFunction",
-            "loggerFactory",
-            "telemetryConfig",
-            "reverseProxyInstance",
-            "ipxHttpClientInstance",
-            "ipxhttpClientInstance",
-            "IPXHttpClientInstance",
-            "pxClientInstance",
-            "PXClientInstance",
-            "pxclientInstance",
-            "httpClient",
-            "pxClient",
-            "pxReverseProxy"
-    })
     public PXConfiguration activeConfig;
+
     @JsonProperty("static_config")
-    @JsonIgnoreProperties({
-            "customParametersProvider",
-            "blockHandler",
-            "customLoginResponseValidator",
-            "credentialsCustomExtractor",
-            "customIsSensitiveRequest",
-            "customParametersExtraction",
-            "filterByCustomFunction",
-            "loggerFactory",
-            "telemetryConfig",
-            "reverseProxyInstance",
-            "ipxHttpClientInstance",
-            "ipxhttpClientInstance",
-            "IPXHttpClientInstance",
-            "pxClientInstance",
-            "PXClientInstance",
-            "pxclientInstance",
-            "httpClient",
-            "pxClient",
-            "pxReverseProxy"
-    })
     public PXConfiguration staticConfig;
+
     @JsonProperty("remote_config")
-    @JsonIgnoreProperties({
-            "customParametersProvider",
-            "blockHandler",
-            "customLoginResponseValidator",
-            "credentialsCustomExtractor",
-            "customIsSensitiveRequest",
-            "customParametersExtraction",
-            "filterByCustomFunction",
-            "loggerFactory",
-            "telemetryConfig",
-            "reverseProxyInstance",
-            "ipxHttpClientInstance",
-            "ipxhttpClientInstance",
-            "IPXHttpClientInstance",
-            "pxClientInstance",
-            "PXClientInstance",
-            "pxclientInstance",
-            "httpClient",
-            "pxClient",
-            "pxReverseProxy"
-    })
     public PXConfiguration remoteConfig;
 }

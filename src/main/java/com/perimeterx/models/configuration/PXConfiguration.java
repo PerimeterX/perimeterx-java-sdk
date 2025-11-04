@@ -1,6 +1,7 @@
 package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
@@ -48,6 +49,27 @@ import static com.perimeterx.utils.Constants.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@JsonIgnoreProperties({
+        "customParametersProvider",
+        "blockHandler",
+        "customLoginResponseValidator",
+        "credentialsCustomExtractor",
+        "customIsSensitiveRequest",
+        "customParametersExtraction",
+        "filterByCustomFunction",
+        "loggerFactory",
+        "telemetryConfig",
+        "reverseProxyInstance",
+        "ipxHttpClientInstance",
+        "ipxhttpClientInstance",
+        "IPXHttpClientInstance",
+        "pxClientInstance",
+        "PXClientInstance",
+        "pxclientInstance",
+        "httpClient",
+        "pxClient",
+        "pxReverseProxy"
+})
 public class PXConfiguration {
     private static LoggerSeverity loggerSeverity = null;
 
