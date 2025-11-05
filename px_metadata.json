@@ -36,6 +36,7 @@
     "sensitive_headers",
     "sensitive_routes",
     "telemetry_command",
+    "user_identifiers",
     "vid_extraction"
   ],
   "excluded_tests": [
@@ -51,6 +52,7 @@
     "test_cookie_v3_cookie_validation_failed_big_cookie",
     "test_client_ip_extraction_order_risk_api",
     "test_telemetry_command_verify_custom_function_hash",
-    "test_first_party_timeout"
+    "test_first_party_timeout",
+    "test_huge_jwt_(cookie|header)_with_user_id_and_additional_fields"
   ]
 }

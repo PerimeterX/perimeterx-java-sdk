@@ -12,6 +12,7 @@ import com.perimeterx.models.risk.S2SCallReason;
 import com.perimeterx.utils.Constants;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -95,6 +96,12 @@ public class Additional {
     @JsonProperty("cross_tab_session")
     public String pxCtsCookie;
 
+    @JsonProperty("app_user_id")
+    public String appUserId;
+
+    @JsonProperty("jwt_additional_fields")
+    public Map<String, Object> jwtAdditionalFields;
+
     @JsonProperty("is_sensitive_route")
     public Boolean isSensitiveRoute;
 
@@ -122,6 +129,8 @@ public class Additional {
         additional.enforcerStartTime = ctx.getEnforcerStartTime();
         additional.riskStartTime = new Date().getTime();
         additional.pxCtsCookie = ctx.getPxCtsCookie();
+        additional.appUserId = ctx.getJwtAppUserId();
+        additional.jwtAdditionalFields = ctx.getJwtAdditionalFields();
         additional.isSensitiveRoute = ctx.isSensitiveRequest();
         additional.additionalTokenInfo = ctx.getAdditionalTokenInfo();
 

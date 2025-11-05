@@ -334,6 +334,27 @@ public class PXConfiguration {
 
     @Builder.Default
     private Predicate<HttpServletRequest> filterByCustomFunction = req -> false;
+
+    // --- JWT user identifiers configuration ---
+    @JsonProperty("px_jwt_cookie_name")
+    private String pxJwtCookieName;
+
+    @JsonProperty("px_jwt_cookie_user_id_field_name")
+    private String pxJwtCookieUserIdFieldName;
+
+    @Builder.Default
+    @JsonProperty("px_jwt_cookie_additional_field_names")
+    private List<String> pxJwtCookieAdditionalFieldNames = new ArrayList<>();
+
+    @JsonProperty("px_jwt_header_name")
+    private String pxJwtHeaderName;
+
+    @JsonProperty("px_jwt_header_user_id_field_name")
+    private String pxJwtHeaderUserIdFieldName;
+
+    @Builder.Default
+    @JsonProperty("px_jwt_header_additional_field_names")
+    private List<String> pxJwtHeaderAdditionalFieldNames = new ArrayList<>();
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
