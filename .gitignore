@@ -11,3 +11,4 @@ examples/examples.iml
 .classpath
 .project
 .factorypath
+.smarttomcat

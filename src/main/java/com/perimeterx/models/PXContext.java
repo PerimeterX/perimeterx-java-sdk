@@ -232,6 +232,8 @@ public class PXContext {
     private String pxhdDomain;
     private String pxCtsCookie;
     private long enforcerStartTime;
+    private boolean isSensitiveRequest;
+    private String additionalTokenInfo;
 
     /**
      * The cookie key used to decrypt the cookie
@@ -289,8 +291,9 @@ public class PXContext {
         this.enforcerErrorReasonInfo = new EnforcerErrorReasonInfo();
         this.sensitiveHeaders = pxConfiguration.getSensitiveHeaders();
 
-        String protocolDetails[] = request.getProtocol().split("/");
+        String[] protocolDetails = request.getProtocol().split("/");
         this.httpVersion = protocolDetails.length > 1 ? protocolDetails[1] : StringUtils.EMPTY;
+        this.isSensitiveRequest = determineIsSensitiveRequest();
 
         CustomParametersProvider customParametersProvider = pxConfiguration.getCustomParametersProvider();
         Function<? super HttpServletRequest, ? extends CustomParameters> customParametersExtraction = pxConfiguration.getCustomParametersExtraction();
@@ -310,7 +313,12 @@ public class PXContext {
         boolean isLoggerHeaderRequest = requestLoggerAuthToken!=null && this.getPxConfiguration().getLoggerAuthToken().equals(requestLoggerAuthToken);
         return pxConfiguration.getLoggerFactory().getRequestContextLogger(isLoggerHeaderRequest);
     }
+
     public boolean isSensitiveRequest() {
+        return this.isSensitiveRequest;
+    }
+
+    private boolean determineIsSensitiveRequest() {
         return this.isContainCredentialsIntelligence()
                 || checkSensitiveRoute(pxConfiguration.getSensitiveRoutes(), servletPath)
                 || checkSensitiveRouteRegex(pxConfiguration.getSensitiveRoutesRegex(), servletPath)
@@ -453,6 +461,7 @@ public class PXContext {
 
     public void setRiskCookie(AbstractPXCookie riskCookie) {
         this.riskCookie = riskCookie.getDecodedCookie().toString();
+        this.additionalTokenInfo = riskCookie.additionalTokenInfo();
     }
 
     public void setBlockAction(String blockAction) {

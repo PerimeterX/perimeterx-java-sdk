@@ -6,6 +6,7 @@ import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
 import com.perimeterx.models.risk.CustomParameters;
+import com.perimeterx.utils.logger.LoggerSeverity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -153,6 +154,12 @@ public class Config {
                 case "px_login_successful_status":
                     builder.loginResponseValidationStatusCode(extractStatusCode(key));
                     break;
+                case "px_logger_severity":
+                    this.setLoggerSeverity(enforcerConfig.getString(key));
+                    break;
+                case "px_secured_pxhd_enabled":
+                    builder.securedPxhdEnabled(enforcerConfig.getBoolean(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
@@ -168,14 +175,33 @@ public class Config {
             CustomParameters customParameters = new CustomParameters();
             customParameters.customParam1 = "test1";
             customParameters.customParam2 = "test2";
-            customParameters.customParam3 = "3";
-            customParameters.customParam4 = "4";
-            customParameters.customParam5 = "5";
-            customParameters.customParam6 = "6";
+            customParameters.customParam3 = 3;
+            customParameters.customParam4 = 4;
+            customParameters.customParam5 = 5;
+            customParameters.customParam6 = 6;
+            customParameters.customParam7 = req.getRequestURI();
             return customParameters;
         });
 
+        builder.customIsSensitiveRequest((req -> {
+            return req.getRequestURI().startsWith("/sensitive") && req.getMethod().equals("POST");
+        }));
+
         return builder.build();
+    }
+
+    private void setLoggerSeverity(String severity) {
+        switch (severity) {
+            case "debug":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.DEBUG);
+                break;
+            case "error":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.ERROR);
+                break;
+            case "none":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.NONE);
+                break;
+        }
     }
 
     private int[] extractStatusCode(String key) {

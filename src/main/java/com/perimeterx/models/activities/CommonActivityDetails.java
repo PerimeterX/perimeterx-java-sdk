@@ -50,6 +50,9 @@ public class CommonActivityDetails implements ActivityDetails {
     @JsonProperty("additional_risk_info")
     public String additionalRiskInfo;
 
+    @JsonProperty("additional_token_info")
+    public  String additionalTokenInfo;
+
     @JsonProperty("user")
     public String username;
 
@@ -58,6 +61,9 @@ public class CommonActivityDetails implements ActivityDetails {
 
     @JsonProperty("cross_tab_session")
     public String pxCtsCookie;
+
+    @JsonProperty("is_sensitive_route")
+    public Boolean isSensitiveRoute;
 
     public CommonActivityDetails(PXContext context) {
         final LoginData loginData = context.getLoginData();
@@ -85,6 +91,7 @@ public class CommonActivityDetails implements ActivityDetails {
         this.riskStartTime = additional.riskStartTime;
         this.enforcerStartTime = additional.enforcerStartTime;
         this.pxCtsCookie = additional.pxCtsCookie;
-
+        this.isSensitiveRoute = additional.isSensitiveRoute;
+        this.additionalTokenInfo = additional.additionalTokenInfo;
     }
 }

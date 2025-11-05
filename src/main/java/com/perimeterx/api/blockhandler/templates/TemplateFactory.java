@@ -61,7 +61,7 @@ public abstract class TemplateFactory {
         String hostUrl = pxContext.getCollectorURL();
         if (pxConfig.isFirstPartyEnabled() && !pxContext.isMobileToken()) {
             String prefix = pxConfig.getAppId().substring(2);
-            blockScript = SLASH + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + QUESTION_MARK + captchaSrcParams;
+            blockScript = SLASH + prefix + Constants.FIRST_PARTY_CAPTCHA_PATH + CAPTCHA_FIRST_PARTY_FILE_PATH + QUESTION_MARK + captchaSrcParams;
             jsClientSrc = SLASH + prefix + Constants.FIRST_PARTY_VENDOR_PATH;
             hostUrl = SLASH + prefix + Constants.FIRST_PARTY_XHR_PATH;
         }
