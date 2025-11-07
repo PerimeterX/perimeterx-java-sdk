@@ -1,9 +1,7 @@
 package com.perimeterx.internals;
 
-import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.additionalContext.PXHDSource;
 import com.perimeterx.http.PXClient;
-import com.perimeterx.internals.cookie.DataEnrichmentCookie;
 import com.perimeterx.models.PXContext;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.exceptions.PXException;
@@ -14,7 +12,6 @@ import com.perimeterx.models.risk.S2SErrorReason;
 import com.perimeterx.models.risk.S2SErrorReasonInfo;
 import com.perimeterx.utils.Constants;
 import com.perimeterx.utils.EnforcerErrorUtils;
-import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.logger.LogReason;
 import org.apache.http.conn.ConnectTimeoutException;
 
@@ -99,9 +96,10 @@ public class PXS2SValidator implements PXValidator {
         pxContext.setRiskScore(response.getScore());
         pxContext.setUuid(response.getUuid());
         pxContext.setBlockAction(response.getAction());
-        DataEnrichmentCookie dataEnrichment = new DataEnrichmentCookie(response.getDataEnrichment(), true);
-        pxContext.setPxde(dataEnrichment.getJsonPayload());
-        pxContext.setPxdeVerified(dataEnrichment.isValid());
+        if (response.getDataEnrichment() != null) {
+            pxContext.setPxde(response.getDataEnrichment());
+            pxContext.setPxdeVerified(true);
+        }
 
         if(isNoneBlank(response.getPxhd())) {
             pxContext.setPxhd(response.getPxhd());

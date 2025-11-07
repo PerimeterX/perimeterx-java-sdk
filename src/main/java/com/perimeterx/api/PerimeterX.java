@@ -58,18 +58,17 @@ import com.perimeterx.utils.logger.LogReason;
 import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.StringUtils;
 import com.perimeterx.utils.logger.LoggerFactory;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.List;
 
 import static com.perimeterx.utils.Constants.*;
 import static com.perimeterx.utils.PXCommonUtils.cookieKeysToCheck;
@@ -272,8 +271,10 @@ public class PerimeterX implements Closeable {
                 return;
             }
 
-            String pxdeJson = new Gson().toJson(context.getPxde());
-            ((RequestWrapper) request).addHeader(headerName, pxdeJson);
+            String pxdeJson = context.getPxde().toString();
+            byte[] utf8Bytes = pxdeJson.getBytes(StandardCharsets.UTF_8);
+            String encodedPxde = new String(utf8Bytes, StandardCharsets.ISO_8859_1);
+            ((RequestWrapper) request).addHeader(headerName, encodedPxde);
         } catch (Exception e) {
             context.logger.debug("Failed to add data enrichment header", e);
         }
