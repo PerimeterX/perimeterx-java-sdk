@@ -1,7 +1,6 @@
 package com.web;
 
 import com.perimeterx.api.PerimeterX;
-import com.perimeterx.api.additionalContext.credentialsIntelligence.loginrequest.CredentialsExtractorFactory;
 import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.http.ResponseWrapper;
 import com.perimeterx.models.PXContext;
@@ -46,7 +45,7 @@ public class PXFilter implements Filter {
 
             response = new ResponseWrapper((HttpServletResponse) response);
             pxFilter.pxPostVerify((ResponseWrapper) response, context);
-
+            copyDataEnrichmentHeaderToResponse((HttpServletRequest) request, (ResponseWrapper) response);
         } catch (PXException e) {
             filterChain.doFilter(request, response);
         }
@@ -59,6 +58,18 @@ public class PXFilter implements Filter {
             pxFilter.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void copyDataEnrichmentHeaderToResponse(HttpServletRequest request, ResponseWrapper response) {
+        String dataEnrichmentHeaderName = config.getPxConfiguration().getPxDataEnrichmentHeaderName();
+        if (dataEnrichmentHeaderName == null || dataEnrichmentHeaderName.isEmpty()) {
+            return;
+        }
+
+        String dataEnrichmentHeaderValue = request.getHeader(dataEnrichmentHeaderName);
+        if (dataEnrichmentHeaderValue != null && !dataEnrichmentHeaderValue.isEmpty()) {
+            response.setHeader(dataEnrichmentHeaderName, dataEnrichmentHeaderValue);
         }
     }
 }
