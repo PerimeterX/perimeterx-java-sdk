@@ -38,6 +38,7 @@ public class PXFilter implements Filter {
             final PXContext context = pxFilter.pxVerify((HttpServletRequest) request, new HttpServletResponseWrapper((HttpServletResponse) response));
 
             setDefaultPageAttributes((HttpServletRequest) request, config);
+            copyDataEnrichmentHeaderToResponse((HttpServletRequest) request, (HttpServletResponse) response);
 
             if (context != null && context.isRequestLowScore()) {
                 filterChain.doFilter(request, response);
@@ -45,7 +46,6 @@ public class PXFilter implements Filter {
 
             response = new ResponseWrapper((HttpServletResponse) response);
             pxFilter.pxPostVerify((ResponseWrapper) response, context);
-            copyDataEnrichmentHeaderToResponse((HttpServletRequest) request, (ResponseWrapper) response);
         } catch (PXException e) {
             filterChain.doFilter(request, response);
         }
@@ -61,7 +61,7 @@ public class PXFilter implements Filter {
         }
     }
 
-    private void copyDataEnrichmentHeaderToResponse(HttpServletRequest request, ResponseWrapper response) {
+    private void copyDataEnrichmentHeaderToResponse(HttpServletRequest request, HttpServletResponse response) {
         String dataEnrichmentHeaderName = config.getPxConfiguration().getPxDataEnrichmentHeaderName();
         if (dataEnrichmentHeaderName == null || dataEnrichmentHeaderName.isEmpty()) {
             return;
