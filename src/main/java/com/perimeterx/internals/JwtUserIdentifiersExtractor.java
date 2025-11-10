@@ -91,9 +91,15 @@ public final class JwtUserIdentifiersExtractor {
         Map<String, Object> out = new LinkedHashMap<>();
         for (String p : paths) {
             Object v = getByDotPath(json, p);
-            if (v != null) out.put(p, v);
+            if (v != null) out.put(getLastSegment(p), v);
         }
         return out;
+    }
+
+    private static String getLastSegment(String path) {
+        if (isEmpty(path)) return path;
+        int lastDot = path.lastIndexOf('.');
+        return lastDot >= 0 ? path.substring(lastDot + 1) : path;
     }
 
     private static List<String> safeList(List<String> l) { return l == null ? Collections.emptyList() : l; }
