@@ -1,5 +1,5 @@
 # Change Log
-## [x.x.x] - YYYY-MM-DD
+## [v6.16.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.16.0...HEAD) (2025-11-12)
 - Added support for data enrichment header feature (`px_data_enrichment_header_name` configuration)
 - Added `px_secured_pxhd_enabled` configuration option to enable secure flag on `pxhd` cookie
 - Added `is_sensitive_route` to risk api and async activities
