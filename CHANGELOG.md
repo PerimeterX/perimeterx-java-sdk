@@ -1,6 +1,7 @@
 # Change Log
 ## [x.x.x] - YYYY-MM-DD
 - Added support for data enrichment header feature (`px_data_enrichment_header_name` configuration)
+- Added support for user identifiers feature
 - Added `px_secured_pxhd_enabled` configuration option to enable secure flag on `pxhd` cookie
 - Added `is_sensitive_route` to risk api and async activities
 - Added `additional_token_info` to risk api and async activities
