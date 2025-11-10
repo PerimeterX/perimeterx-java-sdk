@@ -355,6 +355,11 @@ public class PXConfiguration {
     @Builder.Default
     @JsonProperty("px_jwt_header_additional_field_names")
     private List<String> pxJwtHeaderAdditionalFieldNames = new ArrayList<>();
+
+    @Builder.Default
+    @JsonProperty("px_data_enrichment_header_name")
+    private String pxDataEnrichmentHeaderName = "";
+
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
