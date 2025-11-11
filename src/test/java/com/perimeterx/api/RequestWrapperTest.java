@@ -152,8 +152,8 @@ public class RequestWrapperTest {
         assertEquals(requestWrapper.getDateHeader("nonExistentHeader"), -1);
         try {
             requestWrapper.getDateHeader("stringHeader");
-            fail("Expected NumberFormatException");
-        } catch (NumberFormatException e) {
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
             // Expected exception
         }
     }
