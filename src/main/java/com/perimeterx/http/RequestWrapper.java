@@ -76,7 +76,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public int getIntHeader(String name) {
+    public int getIntHeader(String name) throws NumberFormatException {
         final String headerValue = getHeader(name);
         if (headerValue != null) {
             return Integer.parseInt(headerValue);
@@ -85,10 +85,14 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     }
 
     @Override
-    public long getDateHeader(String name) {
+    public long getDateHeader(String name) throws IllegalArgumentException {
         final String headerValue = getHeader(name);
         if (headerValue != null) {
-            return Long.parseLong(headerValue);
+            try {
+                return Long.parseLong(headerValue);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Header " + name + " is not a valid date");
+            }
         }
         return -1L;
     }

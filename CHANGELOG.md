@@ -1,6 +1,7 @@
 # Change Log
-## [x.x.x] - YYYY-MM-DD
+## [v6.16.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.16.0...HEAD) (2025-11-12)
 - Added support for data enrichment header feature (`px_data_enrichment_header_name` configuration)
+- Added support for AD user identifiers feature
 - Added `px_secured_pxhd_enabled` configuration option to enable secure flag on `pxhd` cookie
 - Added `is_sensitive_route` to risk api and async activities
 - Added `additional_token_info` to risk api and async activities
@@ -10,6 +11,7 @@
 - Updated dependencies minor and patch versions (major versions unchanged)
 - Changed custom parameters to be of type `Object` instead of `String` to allow more flexibility
 - Changed first party block script in captcha template to end with expected `/captcha.js`
+- Changed `RequestWrapper` to include custom headers in methods that retrieve request headers
 - Fixed possible connection leak issue due to unclosed responses in first party and telemetry requests
 - Fixed first party fuzzing errors by returning 400 on first party requests with URL length > 1000 characters
 

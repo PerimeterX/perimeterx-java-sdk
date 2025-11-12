@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v6.15.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.15.0%7Cjar)
+> Latest stable version: [v6.16.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.16.0%7Cjar)
 
 ## Table of Contents
 
@@ -152,8 +152,12 @@ Please continue reading about the various configurations available on the sdk in
 
 #### <a name="data-enrichment"></a> Data Enrichment - pxde(PerimeterX Data Enrichment)
 
-Users can use the additional activity handler to retrieve information for the request using the pxde object.
-First, check that the data enrichment object is verified, then you can access it's properties.
+Users can access data enrichment information in two ways:
+
+1. **Using context.getPxde()** - Access the data enrichment payload directly in your Java code
+2. **Using a custom header** - Forward the data enrichment payload as a header to another server (e.g., your origin server)
+
+##### Accessing Data Enrichment in Java Code
 
 MyVerificationHandler.java:
 ```java
@@ -191,6 +195,26 @@ enforcer.setVerificationHandler(new MyVerificationHandler(config));
 ...
 ```
 
+##### Forwarding Data Enrichment as a Header
+
+To forward the data enrichment payload to your backend/origin server, configure the header name. After `pxVerify` completes, the PXDE payload will be automatically added as a header to the request, which can then be forwarded:
+
+```java
+PXConfiguration config = new PXConfiguration.Builder()
+     ...
+     .pxDataEnrichmentHeaderName("X-PX-Data-Enrichment")
+     .build();
+PerimeterX enforcer = new PerimeterX(config);
+
+// In your filter:
+PXContext ctx = enforcer.pxVerify(request, response);
+
+// After pxVerify, the request now contains the data enrichment header
+// and can be forwarded to your backend/origin server
+// The header will be available as "X-PX-Data-Enrichment" in the request
+filterChain.doFilter(request, response);
+```
+
 #### <a name="custom-sensitive-request"></a> Custom Sensitive Request
 With the  `customIsSensitive` predicate you can force the request to be sensitive.
 The input of the function is the same request that sent to the method `pxVerify`.
@@ -220,6 +244,8 @@ The input of the function is the same request that sent to the method `pxVerify`
 If the function throws exception, it is equivalent to returning empty custom params.
 Implementing this configuration overrides the deprecated configuration `customParameterProvider`.
 
+Custom parameters support various types including strings, numbers, and booleans, allowing flexibility in the data sent to PerimeterX.
+
 > **Note**
 > The request body can only be read once by default. If your function requires reading the body 
 > consider using RequestWrapper which caches the body. Send the wrapped request to
@@ -234,11 +260,57 @@ PXConfiguration pxConfiguration = new PXConfiguration.Builder()
           CustomParameters customParameters = new CustomParameters();
           customParameters.setCustomParam1("example-value");
           customParameters.setCustomParam2(req.getHeader("example-header"));
+          customParameters.setCustomParam3(123);  // Numbers are supported
+          customParameters.setCustomParam4(true); // Booleans are supported
           return customParameters;
         })
      .build();
 ...
 ```
+
+#### <a name="jwt-user-identifiers"></a> JWT User Identifiers (Account Defender)
+
+The SDK can extract user identifiers from JWT tokens in cookies or headers to enhance Account Defender capabilities. This allows PerimeterX to correlate user activity across sessions and improve detection accuracy.
+
+Configure JWT extraction from cookies:
+```java
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+     ...
+     .pxJwtCookieName("authCookie")
+     .pxJwtCookieUserIdFieldName("userId")
+     .pxJwtCookieAdditionalFieldNames(Arrays.asList("email", "role"))
+     .build();
+```
+
+Configure JWT extraction from headers:
+```java
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+     ...
+     .pxJwtHeaderName("Authorization")
+     .pxJwtHeaderUserIdFieldName("sub")
+     .pxJwtHeaderAdditionalFieldNames(Arrays.asList("exp", "iss"))
+     .build();
+```
+
+The SDK will:
+1. First attempt to extract user identifiers from the configured cookie
+2. If not found, attempt to extract from the configured header
+3. Support dot notation for nested fields (e.g., "user.id")
+4. Automatically handle Bearer token prefixes in headers
+
+#### <a name="secured-pxhd"></a> Secured PXHD Cookie
+
+For enhanced security in HTTPS-only environments, you can enable the secure flag on the `pxhd` cookie. This ensures the cookie is only transmitted over secure connections:
+
+```java
+PXConfiguration pxConfiguration = new PXConfiguration.Builder()
+     ...
+     .securedPxhdEnabled(true)
+     .build();
+```
+
+> **Note**
+> Only enable this in environments where all traffic is served over HTTPS, as the cookie will not be sent over HTTP connections when this flag is enabled.
 
 #### <a name="multi-app-support"></a> Multiple Application Support
 Simply create multiple instances of the PerimeterX class:
