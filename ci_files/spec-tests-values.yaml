@@ -1,3 +1,9 @@
+additionalArgs:
+  - "--retries"
+  - "3"
+  - "--retry-delay"
+  - "10"
+
 internalMockCollectorURL: "http://mock-collector-mock-collector:3001"
 siteURL: "http://java-enforcer-sample-site:3000"
 

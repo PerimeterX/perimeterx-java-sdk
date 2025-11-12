@@ -19,9 +19,6 @@
   "px_custom_first_party_xhr_endpoint": "/custom_first_party_xhr_endpoint",
   "px_custom_first_party_captcha_endpoint": "/custom_first_party_captcha_endpoint",
   "px_custom_first_party_prefix": "/custom_first_party_prefix",
-  "px_filter_by_route": [
-    "/filtered_route"
-  ],
   "px_monitored_routes": [
     "/monitored_route",
     "/monitored_route/suffix",
@@ -116,5 +113,7 @@
   ],
   "px_cors_support_enabled": true,
   "px_cors_preflight_request_filter_enabled": true,
-  "px_url_decode_reserved_characters": true
+  "px_url_decode_reserved_characters": true,
+  "px_secured_pxhd_enabled": true,
+  "px_data_enrichment_header_name": "X-PX-Data-Enrichment"
 }

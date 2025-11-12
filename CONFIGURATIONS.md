@@ -53,6 +53,14 @@ Directives
 |loginResponseValidationStatusCode|Array of status codes that is used to validate if the login was successful.|{200}|int[]
 |customLoginResponseValidator|Custom class that validates if the login was successful. LoginResponseValidator must be implemented to be able to use this class.|DefaultCustomLoginResponseValidator|LoginResponseValidator
 |credentialsCustomExtractor|Custom class that extracts the login credentials. CredentialsExtractor must be implemented to be able to use this class.|DefaultCredentialsCustomExtractor|CredentialsExtractor
+||pxDataEnrichmentHeaderName|Header name for forwarding data enrichment payload to origin server. When set, the SDK will add the PXDE payload as a header that can be forwarded to backend services.|"" (empty string)|String|Used with data enrichment feature
+||securedPxhdEnabled|Enable secure flag on pxhd cookie for enhanced security in HTTPS-only environments.|false|boolean| 
+||pxJwtCookieName|Name of the cookie containing JWT token for user identifier extraction.|null|String|Part of Account Defender JWT user identifiers feature
+||pxJwtCookieUserIdFieldName|Field name in JWT payload to extract as user ID from cookie.|null|String|Supports dot notation for nested fields (e.g., "user.id")
+||pxJwtCookieAdditionalFieldNames|List of additional field names to extract from JWT cookie payload.|Empty List|List<String>|Supports dot notation for nested fields
+||pxJwtHeaderName|Name of the header containing JWT token for user identifier extraction.|null|String|Part of Account Defender JWT user identifiers feature
+||pxJwtHeaderUserIdFieldName|Field name in JWT payload to extract as user ID from header.|null|String|Supports dot notation for nested fields (e.g., "sub")
+||pxJwtHeaderAdditionalFieldNames|List of additional field names to extract from JWT header payload.|Empty List|List<String>|Supports dot notation for nested fields
 
 ## <a name="interfaces"></a> Interfaces
 `perimeterx-java-sdk` can be tuned and set a different type of interface in order to make the module more flexible

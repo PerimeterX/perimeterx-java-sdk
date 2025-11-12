@@ -23,4 +23,5 @@ public interface PXCookie {
 
     boolean isSecured() throws PXException;
 
+    String additionalTokenInfo();
 }

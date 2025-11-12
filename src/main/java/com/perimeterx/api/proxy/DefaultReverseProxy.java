@@ -106,8 +106,8 @@ public class DefaultReverseProxy implements ReverseProxy {
         final String url = pxConfiguration.getCollectorUrl() + path;
         final String host = pxConfiguration.getCollectorUrl().replaceFirst("https?:\\/\\/", "");
 
-        if (!isValidThirdPartyUrl(url, host, path)) {
-           context.logger.error("First party XHR URL is inaccurate: " + url + ", rendering default response");
+        if (!isValidThirdPartyUrl(url, host, path, context)) {
+            context.logger.error("first party XHR URL is inaccurate: " + url + ", rendering default response");
             predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
             return true;
         }
@@ -134,13 +134,26 @@ public class DefaultReverseProxy implements ReverseProxy {
         return isBlank(req.getRequestURI()) ? "" : req.getRequestURI().substring(xhrPrefix.length());
     }
 
-    private boolean isValidThirdPartyUrl(String rawThirdPartyUrl, String expectedHost, String expectedUrl) {
+    private boolean isValidThirdPartyUrl(String rawThirdPartyUrl, String expectedHost, String expectedUrl, PXContext context) {
         try {
             URL url = new URL(rawThirdPartyUrl);
             String uri = url.getPath() + (url.getQuery() != null ? url.getQuery() : "");
-            return url.getHost().equalsIgnoreCase(expectedHost) && uri.startsWith(expectedUrl);
+            if (!uri.startsWith(expectedUrl)) {
+                context.logger.debug("Validating third party URL failed, expected URL does not match the request URL. expectedUrl: " + expectedUrl + ", requestUrl: " + uri);
+                return false;
+            }
+            String host = url.getHost();
+            final int port = url.getPort();
+            if (port != -1 && port != url.getDefaultPort()) {
+                host += ":" + port;
+            }
+            if (!host.equalsIgnoreCase(expectedHost)) {
+                context.logger.debug("Validating third party URL failed, expected host does not match the request host. expectedHost: " + expectedHost + ", requestHost: " + host);
+                return false;
+            }
+            return true;
         } catch (Exception e) {
-            PerimeterX.globalLogger.error("Failed to parse rawUrl. ", e.getMessage());
+            context.logger.error("Failed to parse rawUrl. ", e.getMessage());
         }
 
         return false;

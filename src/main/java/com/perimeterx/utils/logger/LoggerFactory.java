@@ -9,7 +9,7 @@ public class LoggerFactory {
         if (pxLoggerSeverity == null) {
             return new Slf4JLogger(isMemoryEnabled);
         } else {
-            return new ConsoleLogger(pxLoggerSeverity,isMemoryEnabled);
+            return new ConsoleLogger(pxLoggerSeverity, isMemoryEnabled);
         }
     }
     public IPXLogger getRequestContextLogger() {
