@@ -101,16 +101,10 @@
   "px_additional_s2s_activity_header_enabled": false,
   "px_jwt_cookie_name": "authCookie",
   "px_jwt_cookie_user_id_field_name": "idFromCookie",
-  "px_jwt_cookie_additional_field_names": [
-    "expFromCookie",
-    "issFromCookie"
-  ],
+  "px_jwt_cookie_additional_field_names": ["expFromCookie","issFromCookie","profile.id","session.id"],
   "px_jwt_header_name": "auth_header",
   "px_jwt_header_user_id_field_name": "idFromHeader",
-  "px_jwt_header_additional_field_names": [
-    "expFromHeader",
-    "issFromHeader"
-  ],
+  "px_jwt_header_additional_field_names":["expFromHeader","issFromHeader","profile.id","session.id"],
   "px_cors_support_enabled": true,
   "px_cors_preflight_request_filter_enabled": true,
   "px_url_decode_reserved_characters": true,
