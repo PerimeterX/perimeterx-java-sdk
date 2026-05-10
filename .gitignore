@@ -12,3 +12,4 @@ examples/examples.iml
 .project
 .factorypath
 .smarttomcat
+.tools/
