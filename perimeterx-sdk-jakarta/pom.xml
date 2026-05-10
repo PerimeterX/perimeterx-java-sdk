@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.perimeterx</groupId>
         <artifactId>perimeterx-java-sdk-parent</artifactId>
-        <version>6.15.0</version>
+        <version>6.16.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 

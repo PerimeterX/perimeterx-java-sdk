@@ -12,7 +12,7 @@
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
-        <com.perimeterx.version>6.15.0</com.perimeterx.version>
+        <com.perimeterx.version>6.16.0</com.perimeterx.version>
     </properties>
 
     <dependencies>
