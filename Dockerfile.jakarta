@@ -1,0 +1,22 @@
+FROM maven:3.9.6-eclipse-temurin-17 AS builder
+WORKDIR /app
+
+# Build Jakarta SDK + demo WAR (Tomcat 10 / Servlet 5).
+COPY pom.xml .
+COPY perimeterx-sdk/pom.xml perimeterx-sdk/pom.xml
+COPY perimeterx-sdk-jakarta/pom.xml perimeterx-sdk-jakarta/pom.xml
+COPY perimeterx-sdk/src perimeterx-sdk/src
+RUN mvn clean install -pl perimeterx-sdk-jakarta -am -DskipTests=true -q
+
+COPY web-jakarta ./web-jakarta
+RUN mvn clean install war:war -DskipTests=true -f web-jakarta/pom.xml -q
+
+FROM tomcat:10.1-jre17-temurin
+
+COPY --from=builder /app/web-jakarta/target/ROOT.war /usr/local/tomcat/webapps/ROOT.war
+
+EXPOSE 8080
+
+ENV CATALINA_OPTS="-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+
+CMD ["catalina.sh", "run"]
