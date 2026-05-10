@@ -8,8 +8,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Reading HttpServletRequest is limited to one time only
@@ -26,6 +25,12 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         this.customHeaders = new HashMap<>();
     }
 
+    // Add a custom header to the request
+    public void addHeader(String name, String value) {
+        this.customHeaders.put(name, value);
+    }
+
+    // Modify body methods to read from the cached body
     @Override
     public ServletInputStream getInputStream() throws IOException {
         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(getBody().getBytes());
@@ -37,6 +42,7 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         return new BufferedReader(new InputStreamReader(this.getInputStream()));
     }
 
+    // Modify header methods to include custom headers
     @Override
     public String getHeader(String name) {
         String headerValue = customHeaders.get(name);
@@ -44,11 +50,52 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         if (headerValue != null) {
             return headerValue;
         }
-        return ((HttpServletRequest) getRequest()).getHeader(name);
+        return super.getHeader(name);
     }
 
-    public void addHeader(String name, String value) {
-        this.customHeaders.put(name, value);
+    @Override
+    public Enumeration<String> getHeaderNames() {
+        Enumeration<String> headerNames = super.getHeaderNames();
+        List<String> list = Collections.list(headerNames);
+        for (String customHeaderName : customHeaders.keySet()) {
+            if (!list.contains(customHeaderName)) {
+                list.add(customHeaderName);
+            }
+        }
+        return Collections.enumeration(list);
+    }
+
+    @Override
+    public Enumeration<String> getHeaders(String name) {
+        String headerValue = customHeaders.get(name);
+        if (headerValue != null) {
+            List<String> list = new ArrayList<>();
+            list.add(headerValue);
+            return Collections.enumeration(list);
+        }
+        return super.getHeaders(name);
+    }
+
+    @Override
+    public int getIntHeader(String name) throws NumberFormatException {
+        final String headerValue = getHeader(name);
+        if (headerValue != null) {
+            return Integer.parseInt(headerValue);
+        }
+        return -1;
+    }
+
+    @Override
+    public long getDateHeader(String name) throws IllegalArgumentException {
+        final String headerValue = getHeader(name);
+        if (headerValue != null) {
+            try {
+                return Long.parseLong(headerValue);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Header " + name + " is not a valid date");
+            }
+        }
+        return -1L;
     }
 
     public synchronized String getBody() throws IOException {

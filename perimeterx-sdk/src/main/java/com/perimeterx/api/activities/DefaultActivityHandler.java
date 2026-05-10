@@ -48,7 +48,7 @@ public class DefaultActivityHandler implements ActivityHandler {
     @Override
     public void handleEnforcerTelemetryActivity(PXConfiguration pxConfiguration, UpdateReason updateReason, PXContext context) {
         try {
-            EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfiguration, updateReason);
+            EnforcerTelemetryActivityDetails details = new EnforcerTelemetryActivityDetails(pxConfiguration, context, updateReason);
             EnforcerTelemetry enforcerTelemetry = new EnforcerTelemetry("enforcer_telemetry", pxConfiguration.getAppId(), details);
             this.client.sendEnforcerTelemetry(enforcerTelemetry, context);
         } catch (Exception e) {

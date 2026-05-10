@@ -186,4 +186,9 @@ public abstract class AbstractPXCookie implements PXCookie {
     public String getVID() {
         return decodedCookie.get("v").asText();
     }
+
+    @Override
+    public String additionalTokenInfo() {
+        return this.decodedCookie.get("add") != null ? this.decodedCookie.get("add").asText() : null;
+    }
 }

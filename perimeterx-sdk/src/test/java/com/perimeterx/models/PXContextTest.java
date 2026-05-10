@@ -5,6 +5,7 @@ import com.perimeterx.api.providers.DefaultHostnameProvider;
 import com.perimeterx.api.providers.HostnameProvider;
 import com.perimeterx.api.providers.IPProvider;
 import com.perimeterx.api.providers.RemoteAddressIPProvider;
+import com.perimeterx.http.RequestWrapper;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.risk.CustomParameters;
 import org.mockito.Mockito;
@@ -14,6 +15,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 
 /**
  * Test {@link PXContext}
@@ -52,5 +54,42 @@ public class PXContextTest {
         Assert.assertEquals(context.getCustomParameters().getCustomParam10(), "number10");
 
         Mockito.verify(spyTestCustomParamProvider).buildCustomParameters(pxConfig, context);
+    }
+
+    @Test
+    public void allRequestHeadersShouldBeInPXContext() {
+        CustomParameters customParameters = new CustomParameters();
+        customParameters.setCustomParam1("number1");
+        TestCustomParamProvider spyTestCustomParamProvider = Mockito.spy(new TestCustomParamProvider(customParameters));
+        PXConfiguration pxConfig = PXConfiguration.builder()
+                .appId("APP_ID")
+                .authToken("AUTH_123")
+                .cookieKey("COOKIE_123")
+                .customParametersProvider(spyTestCustomParamProvider)
+                .build();
+        ((MockHttpServletRequest) request).addHeader("TEST-BYPASS", "0");
+        PXContext context = new PXContext(request, this.ipProvider, this.hostnameProvider, pxConfig);
+        Assert.assertEquals(context.getHeaders().size(), Collections.list(request.getHeaderNames()).size());
+    }
+
+    @Test
+    public void allRequestWrapperHeadersShouldBeInPXContext() {
+        CustomParameters customParameters = new CustomParameters();
+        customParameters.setCustomParam1("number1");
+        TestCustomParamProvider spyTestCustomParamProvider = Mockito.spy(new TestCustomParamProvider(customParameters));
+        PXConfiguration pxConfig = PXConfiguration.builder()
+                .appId("APP_ID")
+                .authToken("AUTH_123")
+                .cookieKey("COOKIE_123")
+                .customParametersProvider(spyTestCustomParamProvider)
+                .build();
+        ((MockHttpServletRequest) request).addHeader("TEST-BYPASS", "0");
+        RequestWrapper requestWrapper = new RequestWrapper(request);
+        requestWrapper.addHeader("client-ip", "127.0.0.1");
+        requestWrapper.addHeader("accept", "application/json");
+        requestWrapper.addHeader("content-type", "application/json");
+
+        PXContext context = new PXContext(requestWrapper, this.ipProvider, this.hostnameProvider, pxConfig);
+        Assert.assertEquals(context.getHeaders().size(), Collections.list(request.getHeaderNames()).size() + 3);
     }
 }

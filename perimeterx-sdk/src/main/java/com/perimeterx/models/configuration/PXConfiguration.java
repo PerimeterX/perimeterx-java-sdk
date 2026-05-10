@@ -1,6 +1,7 @@
 package com.perimeterx.models.configuration;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.perimeterx.api.PerimeterX;
 import com.perimeterx.api.additionalContext.credentialsIntelligence.CIProtocol;
@@ -48,6 +49,27 @@ import static com.perimeterx.utils.Constants.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@JsonIgnoreProperties({
+        "customParametersProvider",
+        "blockHandler",
+        "customLoginResponseValidator",
+        "credentialsCustomExtractor",
+        "customIsSensitiveRequest",
+        "customParametersExtraction",
+        "filterByCustomFunction",
+        "loggerFactory",
+        "telemetryConfig",
+        "reverseProxyInstance",
+        "ipxHttpClientInstance",
+        "ipxhttpClientInstance",
+        "IPXHttpClientInstance",
+        "pxClientInstance",
+        "PXClientInstance",
+        "pxclientInstance",
+        "httpClient",
+        "pxClient",
+        "pxReverseProxy"
+})
 public class PXConfiguration {
     private static LoggerSeverity loggerSeverity = null;
 
@@ -257,6 +279,10 @@ public class PXConfiguration {
     private int[] loginResponseValidationStatusCode = {200};
 
     @Builder.Default
+    @JsonProperty("px_secured_pxhd_enabled")
+    private boolean securedPxhdEnabled = false;
+
+    @Builder.Default
     private LoginResponseValidator customLoginResponseValidator = new DefaultCustomLoginResponseValidator();
 
     @Builder.Default
@@ -308,11 +334,79 @@ public class PXConfiguration {
 
     @Builder.Default
     private Predicate<HttpServletRequest> filterByCustomFunction = req -> false;
+
+    // --- JWT user identifiers configuration ---
+    @JsonProperty("px_jwt_cookie_name")
+    private String pxJwtCookieName;
+
+    @JsonProperty("px_jwt_cookie_user_id_field_name")
+    private String pxJwtCookieUserIdFieldName;
+
+    @Builder.Default
+    @JsonProperty("px_jwt_cookie_additional_field_names")
+    private List<String> pxJwtCookieAdditionalFieldNames = new ArrayList<>();
+
+    @JsonProperty("px_jwt_header_name")
+    private String pxJwtHeaderName;
+
+    @JsonProperty("px_jwt_header_user_id_field_name")
+    private String pxJwtHeaderUserIdFieldName;
+
+    @Builder.Default
+    @JsonProperty("px_jwt_header_additional_field_names")
+    private List<String> pxJwtHeaderAdditionalFieldNames = new ArrayList<>();
+
+    @Builder.Default
+    @JsonProperty("px_data_enrichment_header_name")
+    private String pxDataEnrichmentHeaderName = "";
+
     /**
      * @return Configuration Object clone without cookieKey and authToken
      **/
     public PXConfiguration getTelemetryConfig() {
-        return this.toBuilder().clearCookieKeys().authToken(null).build();
+
+        PXConfiguration telemetry = this.toBuilder()
+                .authToken(this.redactString(this.authToken))
+                .clearCookieKeys()
+                .cookieKeys(this.cookieKeys.stream().map(this::redactString).collect(Collectors.toList()))
+                .loggerAuthToken(this.redactString(this.loggerAuthToken))
+                .sensitiveRoutesRegex(this.stringifyRegexSet(this.sensitiveRoutesRegex))
+                // prune non-serializable/runtime members for telemetry clone
+                .customParametersProvider(null)
+                .blockHandler(null)
+                .customLoginResponseValidator(null)
+                .credentialsCustomExtractor(null)
+                .customIsSensitiveRequest(null)
+                .customParametersExtraction(null)
+                .filterByCustomFunction(null)
+                .loggerFactory(null)
+                .httpClient(null)
+                .pxClient(null)
+                .pxReverseProxy(null)
+                .build();
+        // ensure transient instances are not serialized
+        telemetry.pxClientInstance = null;
+        telemetry.ipxHttpClientInstance = null;
+        telemetry.reverseProxyInstance = null;
+        return telemetry;
+    }
+
+    private Set<String> stringifyRegexSet(Set<String> regexSet) {
+        if (regexSet == null) {
+            return null;
+        }
+        return regexSet.stream()
+                .map(r -> r != null && r.startsWith("_REGEXP ") ? r : "_REGEXP /" + r + "/")
+                .collect(Collectors.toSet());
+    }
+
+    private String redactString(String str) {
+        int trailingChars = 5;
+        String redactedPrefix = "***REDACTED***";
+        if (str == null || str.length() <= trailingChars) {
+            return redactedPrefix;
+        }
+        return redactedPrefix.concat(str.substring(str.length() - trailingChars));
     }
 
     public void disableModule() {

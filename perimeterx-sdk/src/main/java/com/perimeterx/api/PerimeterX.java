@@ -58,18 +58,17 @@ import com.perimeterx.utils.logger.LogReason;
 import com.perimeterx.utils.logger.IPXLogger;
 import com.perimeterx.utils.StringUtils;
 import com.perimeterx.utils.logger.LoggerFactory;
-import edu.emory.mathcs.backport.java.util.Collections;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.List;
 
 import static com.perimeterx.utils.Constants.*;
 import static com.perimeterx.utils.PXCommonUtils.cookieKeysToCheck;
@@ -240,6 +239,7 @@ public class PerimeterX implements Closeable {
             setBreachedAccount(request, context);
             setAdditionalS2SActivityHeaders(request, context);
         }
+        setDataEnrichmentHeader(request, context);
     }
 
     private void setBreachedAccount(HttpServletRequest request, PXContext context) {
@@ -260,6 +260,26 @@ public class PerimeterX implements Closeable {
         }
     }
 
+    private void setDataEnrichmentHeader(HttpServletRequest request, PXContext context) {
+        try {
+            String headerName = configuration.getPxDataEnrichmentHeaderName();
+            if (headerName == null || headerName.isEmpty()) {
+                return;
+            }
+
+            if (context.getPxde() == null || !context.isPxdeVerified()) {
+                return;
+            }
+
+            String pxdeJson = context.getPxde().toString();
+            byte[] utf8Bytes = pxdeJson.getBytes(StandardCharsets.UTF_8);
+            String encodedPxde = new String(utf8Bytes, StandardCharsets.ISO_8859_1);
+            ((RequestWrapper) request).addHeader(headerName, encodedPxde);
+        } catch (Exception e) {
+            context.logger.debug("Failed to add data enrichment header", e);
+        }
+    }
+
     public void pxPostVerify(ResponseWrapper response, PXContext context) throws PXException {
         try {
             if (context != null) {
@@ -276,7 +296,8 @@ public class PerimeterX implements Closeable {
         // Handle telemetry separately with more specific error handling
         if (context != null && context.isShouldSendTelemetry()) {
             try {
-                activityHandler.handleEnforcerTelemetryActivity(this.configuration, UpdateReason.COMMAND, context);
+                UpdateReason reason = context.isTelemetryTriggeredByRisk() ? UpdateReason.RISK : UpdateReason.COMMAND;
+                activityHandler.handleEnforcerTelemetryActivity(this.configuration, reason, context);
             } catch (Exception e) {
                 context.logger.error("Failed to send telemetry activity: " + e.getMessage());
             }
