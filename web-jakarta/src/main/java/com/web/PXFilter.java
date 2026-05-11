@@ -49,6 +49,7 @@ public class PXFilter implements Filter {
             final PXContext context = pxFilter.pxVerify((HttpServletRequest) request, new HttpServletResponseWrapper((HttpServletResponse) response));
 
             setDefaultPageAttributes((HttpServletRequest) request, config);
+            copyDataEnrichmentHeaderToResponse((HttpServletRequest) request, (HttpServletResponse) response);
 
             if (context != null && context.isHandledResponse()) {
                 return;
@@ -71,6 +72,18 @@ public class PXFilter implements Filter {
             pxFilter.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void copyDataEnrichmentHeaderToResponse(HttpServletRequest request, HttpServletResponse response) {
+        String dataEnrichmentHeaderName = config.getPxConfiguration().getPxDataEnrichmentHeaderName();
+        if (dataEnrichmentHeaderName == null || dataEnrichmentHeaderName.isEmpty()) {
+            return;
+        }
+
+        String dataEnrichmentHeaderValue = request.getHeader(dataEnrichmentHeaderName);
+        if (dataEnrichmentHeaderValue != null && !dataEnrichmentHeaderValue.isEmpty()) {
+            response.setHeader(dataEnrichmentHeaderName, dataEnrichmentHeaderValue);
         }
     }
 }

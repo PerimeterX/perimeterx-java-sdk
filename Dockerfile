@@ -16,6 +16,10 @@ FROM tomcat:9.0.68
 
 COPY --from=builder /app/web/target/ROOT /usr/local/tomcat/webapps/ROOT
 
+## Remove the template config from the classpath so Utils.getEnforcerConfig() falls back to the
+## filesystem path below, where Kubernetes mounts the real enforcer config at runtime.
+RUN rm -f /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/enforcer_config.json
+
 ## Enforcer configuration json file is located at:
 ## /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/src/main/resources/enforcer_config.json
 COPY web/src/main/resources/ /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/src/main/resources

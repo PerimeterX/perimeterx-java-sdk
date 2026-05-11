@@ -6,8 +6,12 @@ import com.perimeterx.models.configuration.ModuleMode;
 import com.perimeterx.models.configuration.PXConfiguration;
 import com.perimeterx.models.configuration.credentialsIntelligenceconfig.CILoginMap;
 import com.perimeterx.models.risk.CustomParameters;
+import com.perimeterx.utils.logger.LoggerSeverity;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.web.Utils.getEnforcerConfig;
 import static com.web.Utils.jsonArrayToSet;
@@ -153,6 +157,33 @@ public class Config {
                 case "px_login_successful_status":
                     builder.loginResponseValidationStatusCode(extractStatusCode(key));
                     break;
+                case "px_logger_severity":
+                    this.setLoggerSeverity(enforcerConfig.getString(key));
+                    break;
+                case "px_secured_pxhd_enabled":
+                    builder.securedPxhdEnabled(enforcerConfig.getBoolean(key));
+                    break;
+                case "px_jwt_cookie_name":
+                    builder.pxJwtCookieName(enforcerConfig.getString(key));
+                    break;
+                case "px_jwt_cookie_user_id_field_name":
+                    builder.pxJwtCookieUserIdFieldName(enforcerConfig.getString(key));
+                    break;
+                case "px_jwt_cookie_additional_field_names":
+                    builder.pxJwtCookieAdditionalFieldNames(extractStringList(key));
+                    break;
+                case "px_jwt_header_name":
+                    builder.pxJwtHeaderName(enforcerConfig.getString(key));
+                    break;
+                case "px_jwt_header_user_id_field_name":
+                    builder.pxJwtHeaderUserIdFieldName(enforcerConfig.getString(key));
+                    break;
+                case "px_jwt_header_additional_field_names":
+                    builder.pxJwtHeaderAdditionalFieldNames(extractStringList(key));
+                    break;
+                case "px_data_enrichment_header_name":
+                    builder.pxDataEnrichmentHeaderName(enforcerConfig.getString(key));
+                    break;
                 case "px_user_agent_max_length":
                 case "px_risk_cookie_max_length":
                 case "px_risk_cookie_max_iterations":
@@ -168,14 +199,33 @@ public class Config {
             CustomParameters customParameters = new CustomParameters();
             customParameters.customParam1 = "test1";
             customParameters.customParam2 = "test2";
-            customParameters.customParam3 = "3";
-            customParameters.customParam4 = "4";
-            customParameters.customParam5 = "5";
-            customParameters.customParam6 = "6";
+            customParameters.customParam3 = 3;
+            customParameters.customParam4 = 4;
+            customParameters.customParam5 = 5;
+            customParameters.customParam6 = 6;
+            customParameters.customParam7 = req.getRequestURI();
             return customParameters;
         });
 
+        builder.customIsSensitiveRequest((req -> {
+            return req.getRequestURI().startsWith("/sensitive") && req.getMethod().equals("POST");
+        }));
+
         return builder.build();
+    }
+
+    private void setLoggerSeverity(String severity) {
+        switch (severity) {
+            case "debug":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.DEBUG);
+                break;
+            case "error":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.ERROR);
+                break;
+            case "none":
+                PXConfiguration.setPxLoggerSeverity(LoggerSeverity.NONE);
+                break;
+        }
     }
 
     private int[] extractStatusCode(String key) {
@@ -186,6 +236,15 @@ public class Config {
             statusCode[i] = jsonField.getInt(i);
         }
         return statusCode;
+    }
+
+    private List<String> extractStringList(String key) {
+        final JSONArray jsonField = enforcerConfig.getJSONArray(key);
+        final List<String> out = new ArrayList<>(jsonField.length());
+        for (int i = 0; i < jsonField.length(); i++) {
+            out.add(jsonField.getString(i));
+        }
+        return out;
     }
 }
 
