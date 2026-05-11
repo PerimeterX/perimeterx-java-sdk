@@ -51,11 +51,9 @@ public class PXFilter implements Filter {
             setDefaultPageAttributes((HttpServletRequest) request, config);
             copyDataEnrichmentHeaderToResponse((HttpServletRequest) request, (HttpServletResponse) response);
 
-            if (context != null && context.isHandledResponse()) {
-                return;
+            if (context == null || !context.isHandledResponse()) {
+                filterChain.doFilter(request, response);
             }
-            // Pass request
-            filterChain.doFilter(request, response);
 
             response = new ResponseWrapper((HttpServletResponse) response);
             pxFilter.pxPostVerify((ResponseWrapper) response, context);
