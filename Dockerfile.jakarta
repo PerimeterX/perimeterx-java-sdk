@@ -23,8 +23,12 @@ RUN rm -f /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/enforcer_config.json
 ## /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/src/main/resources/enforcer_config.json
 COPY web-jakarta/src/main/resources/ /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/src/main/resources
 
-EXPOSE 8080
+## Tomcat 10.1 introduced the encodedSolidusHandling connector attribute which defaults to
+## path as-is so getRequestURL() returns the literal encoded form expected by the enforcer.
+## "reject" (returning 400 for any path containing %2F).
+RUN sed -i 's|protocol="HTTP/1.1"|protocol="HTTP/1.1" encodedSolidusHandling="passthrough"|' \
+    /usr/local/tomcat/conf/server.xml
 
-ENV CATALINA_OPTS="-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
+EXPOSE 8080
 
 CMD ["catalina.sh", "run"]
