@@ -10,6 +10,19 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '8'
-          distribution: 'adopt'
-      - name: Build and run unit tests
-        run: mvn test -f pom.xml
+          distribution: 'temurin'
+      - name: Build and run unit tests (SDK module only)
+        run: mvn test -f pom.xml -pl perimeterx-sdk -am
+
+  build-jakarta:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Build Jakarta module
+        run: mvn clean install -pl perimeterx-sdk-jakarta -am -DskipTests=true
