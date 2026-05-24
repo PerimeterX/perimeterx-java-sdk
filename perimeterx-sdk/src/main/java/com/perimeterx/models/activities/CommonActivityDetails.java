@@ -72,6 +72,9 @@ public class CommonActivityDetails implements ActivityDetails {
     @JsonProperty("is_sensitive_route")
     public Boolean isSensitiveRoute;
 
+    @JsonProperty("orig_cookie_vid")
+    public String origCookieVid;
+
     public CommonActivityDetails(PXContext context) {
         final LoginData loginData = context.getLoginData();
 
@@ -102,5 +105,6 @@ public class CommonActivityDetails implements ActivityDetails {
         this.jwtAdditionalFields = additional.jwtAdditionalFields;
         this.isSensitiveRoute = additional.isSensitiveRoute;
         this.additionalTokenInfo = additional.additionalTokenInfo;
+        this.origCookieVid = context.getOrigCookieVid();
     }
 }

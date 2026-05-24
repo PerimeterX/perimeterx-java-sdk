@@ -79,6 +79,7 @@ public class PXContext {
 
     // Additional fields extracted from the original HTTP request
     private String vid;
+    private String origCookieVid;
     private String uuid;
     private Map<String, String> headers;
     private String hostname;
@@ -436,6 +437,7 @@ public class PXContext {
                         this.vid = cookie.getValue();
                         this.vidSource = VidSource.VID_COOKIE;
                     } else {
+                        this.origCookieVid = cookie.getValue();
                         logger.debug("setVidAndPxhd - invalid VID value was extracted");
                     }
                 }

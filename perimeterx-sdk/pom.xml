@@ -4,48 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.perimeterx</groupId>
-    <artifactId>perimeterx-java-sdk-parent</artifactId>
-    <version>6.16.0</version>
-    <packaging>pom</packaging>
 
-    <name>PerimeterX Java SDK Parent</name>
-    <description>PerimeterX Java SDK (multi-module reactor)</description>
-    <url>https://github.com/PerimeterX/perimeterx-java-sdk</url>
+    <parent>
+        <groupId>com.perimeterx</groupId>
+        <artifactId>perimeterx-java-sdk-parent</artifactId>
+        <version>6.16.0</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-    <organization>
-        <name>PerimeterX</name>
-        <url>https://www.perimeterx.com/</url>
-    </organization>
+    <artifactId>perimeterx-sdk</artifactId>
+    <packaging>jar</packaging>
+    <name>PerimeterX JAVA SDK</name>
+    <description>PerimeterX Java SDK (javax.servlet)</description>
 
-    <developers>
-        <developer>
-            <name>Noam Levi</name>
-            <email>noam.levi@perimeterx.com</email>
-            <organization>PerimeterX</organization>
-            <organizationUrl>https://www.perimeterx.com/</organizationUrl>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>MIT License</name>
-            <url>http://www.opensource.org/licenses/mit-license.php</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <url>https://github.com/PerimeterX/perimeterx-java-sdk</url>
-        <connection>scm:git:https://github.com/PerimeterX/perimeterx-java-sdk</connection>
-        <developerConnection>scm:git:https://github.com/PerimeterX/perimeterx-java-sdk</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <modules>
-        <module>perimeterx-sdk</module>
-        <module>perimeterx-sdk-jakarta</module>
-    </modules>
     <profiles>
         <profile>
             <id>disable-javadoc-doclint</id>
@@ -79,6 +50,9 @@
         </profile>
         <profile>
             <id>build-extras</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
@@ -133,19 +107,19 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.17.2</version>
+            <version>2.11.4</version>
         </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>2.17.2</version>
+            <version>2.10.2</version>
         </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.14.0</version>
+            <version>2.8.0</version>
         </dependency>
 
         <dependency>
@@ -157,7 +131,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.18.0</version>
+            <version>3.12.0</version>
         </dependency>
 
         <dependency>
@@ -169,25 +143,25 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>1.7.30</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpasyncclient</artifactId>
-            <version>4.1.5</version>
+            <version>4.1.4</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
+            <version>4.5.13</version>
         </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.0.1</version>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
 
@@ -208,14 +182,14 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>4.3.30.RELEASE</version>
+            <version>4.3.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>4.3.30.RELEASE</version>
+            <version>4.3.1.RELEASE</version>
             <scope>test</scope>
         </dependency>
 
@@ -229,7 +203,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.10.1</version>
+            <version>2.8.6</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -256,82 +230,52 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                    <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.2</version>
-                    <configuration>
-                        <forkCount>3</forkCount>
-                        <reuseForks>true</reuseForks>
-                        <argLine>-Xmx1024m</argLine>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.8.0</version>
-                <extensions>true</extensions>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
-                    <publishingServerId>central</publishingServerId>
-                    <autoPublish>true</autoPublish>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${project.basedir}/src/main/resources/com/perimeterx/utils/metadata.properties</file>
+                    <outputFile>${project.build.outputDirectory}/com/perimeterx/utils/metadata.properties</outputFile>
+                    <token>@sdk_version@</token>
+                    <value>${project.version}</value>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>
-                    <forkCount>3</forkCount>
-                    <reuseForks>true</reuseForks>
-                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                </configuration>
             </plugin>
         </plugins>
     </build>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
-        </repository>
-    </distributionManagement>
 
 </project>

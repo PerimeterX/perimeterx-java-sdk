@@ -26,7 +26,7 @@ jobs:
     name: "Fuzzing Test"
     env:
       MOCK_COLLECTOR_IMAGE_TAG: 2.0.6
-      FUZZER_TAG: 1.1.0
+      FUZZER_TAG: 1.1.1
       SAMPLE_SITE_IMAGE_TAG: 1.0.0
       ENFORCER_TAG: ${{ needs.extract_version.outputs.version }}
 
