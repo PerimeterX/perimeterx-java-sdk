@@ -4,7 +4,7 @@
 
 # [PerimeterX](http://www.perimeterx.com) Java SDK
 
-> Latest stable version: [v6.16.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.16.0%7Cjar)
+> Latest stable version: [v6.17.0](https://search.maven.org/#artifactdetails%7Ccom.perimeterx%7Cperimeterx-sdk%7C6.17.0%7Cjar)
 
 ## Table of Contents
 
@@ -28,7 +28,9 @@
 ----------------------------
 ### JDK:
 
-Use `jdk 1.7` or higher.
+Use `jdk 1.7` or higher for `perimeterx-sdk` (javax).
+
+For `perimeterx-sdk-jakarta`, use **JDK 17** or higher (required by Jakarta Servlet 6 / Spring Boot 3).
 
 ### Unlimited Strength Jurisdiction Policy:
 
@@ -44,14 +46,33 @@ If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors
 <a name="installation"></a> Installation
 ----------------------------------------
 
+The SDK is published as two Maven artifacts:
+
+| Artifact | Servlet API | Use when |
+|---|---|---|
+| `perimeterx-sdk` | `javax.servlet` (Java EE 8) | Spring Boot 2.x, Tomcat 9 and earlier |
+| `perimeterx-sdk-jakarta` | `jakarta.servlet` (Jakarta EE 9+) | Spring Boot 3.x, Tomcat 10+ |
+
+Both artifacts share the same version number and API.
+
 ### Maven:
 
-- Add `perimeterx-sdk` to `pom.xml`:
+- Add `perimeterx-sdk` (javax) or `perimeterx-sdk-jakarta` (Jakarta) to `pom.xml`:
 
 ```xml
+<!-- Java EE / javax.servlet (Spring Boot 2.x, Tomcat 9-) -->
 <dependency>
    <groupId>com.perimeterx</groupId>
    <artifactId>perimeterx-sdk</artifactId>
+   <version>${VERSION}</version>
+</dependency>
+```
+
+```xml
+<!-- Jakarta EE / jakarta.servlet (Spring Boot 3.x, Tomcat 10+) -->
+<dependency>
+   <groupId>com.perimeterx</groupId>
+   <artifactId>perimeterx-sdk-jakarta</artifactId>
    <version>${VERSION}</version>
 </dependency>
 ```
@@ -61,7 +82,9 @@ If the SDK is throwing `Unlimited Strength Jurisdiction Policy` assertion errors
 - Add `perimeterx-sdk` to your `build.gradle`:
 
 ```groovy
-compile group: 'com.perimeterx', name: 'perimeterx-sdk', version: '${VERSION}'
+implementation 'com.perimeterx:perimeterx-sdk:${VERSION}'
+// or for Jakarta EE:
+implementation 'com.perimeterx:perimeterx-sdk-jakarta:${VERSION}'
 ```
 
 
