@@ -1,7 +1,7 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Build Jakarta SDK + demo WAR (Tomcat 10 / Servlet 5).
+# Build Jakarta SDK + demo WAR (Tomcat 10.1 / Servlet 6).
 COPY pom.xml .
 COPY perimeterx-sdk/pom.xml perimeterx-sdk/pom.xml
 COPY perimeterx-sdk-jakarta/pom.xml perimeterx-sdk-jakarta/pom.xml
