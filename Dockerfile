@@ -24,11 +24,6 @@ RUN rm -f /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/enforcer_config.json
 ## /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/src/main/resources/enforcer_config.json
 COPY web/src/main/resources/ /usr/local/tomcat/webapps/ROOT/WEB-INF/classes/src/main/resources
 
-## relaxedQueryChars allows fuzz/special characters (`, {, }, |, ^, \, [, ]) in query strings
-## that Tomcat rejects by default per RFC 7230 strict mode.
-RUN sed -i 's@protocol="HTTP/1.1"@protocol="HTTP/1.1" relaxedQueryChars="`{}|^\\[]"@' \
-    /usr/local/tomcat/conf/server.xml
-
 EXPOSE 8080
 
 ENV CATALINA_OPTS="-Dorg.apache.tomcat.util.buf.UDecoder.ALLOW_ENCODED_SLASH=true"
