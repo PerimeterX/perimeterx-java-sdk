@@ -23,19 +23,11 @@ jobs:
 
 
   CI:
-    name: E2E tests (${{ matrix.variant }})
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - variant: javax
-            dockerfile: Dockerfile
-          - variant: jakarta
-            dockerfile: Dockerfile.jakarta
+    name: "E2E tests"
     env:
       MOCK_COLLECTOR_IMAGE_TAG: 2.0.6
       SAMPLE_SITE_IMAGE_TAG: 1.0.0
-      ENFORCER_SPEC_TESTS_IMAGE_TAG: 1.23.5
+      ENFORCER_SPEC_TESTS_IMAGE_TAG: 1.23.4
 
     runs-on: ubuntu-latest
     timeout-minutes: 60
@@ -55,7 +47,7 @@ jobs:
 
       - name: Build Enforcer Docker image
         run: |
-          docker build -f ${{ matrix.dockerfile }} . -t localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG
+          docker build . -t localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG && \
           docker push localhost:5001/java-enforcer-sample-site:$SAMPLE_SITE_IMAGE_TAG
 
       - uses: azure/setup-helm@v4

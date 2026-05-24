@@ -1,10 +1,5 @@
 # Change Log
-## [XX.XX.XX](https://github.com/PerimeterX/perimeterx-java-sdk/compare/xx.xx.xx...HEAD) (xxxx-xx-xx)
-- Fixed first party captcha reverse proxy to use `startsWith` instead of `contains` when matching the captcha prefix
-- Fixed first party captcha reverse proxy to correctly return `true` (handled) after rendering the default response when first party is disabled
-
-## [v6.16.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/xx.xx.xx...HEAD) (2025-11-12)
-- Fixed first party captcha reverse proxy handling
+## [v6.16.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/6.16.0...HEAD) (2025-11-12)
 - Added support for data enrichment header feature (`px_data_enrichment_header_name` configuration)
 - Added support for AD user identifiers feature
 - Added `px_secured_pxhd_enabled` configuration option to enable secure flag on `pxhd` cookie

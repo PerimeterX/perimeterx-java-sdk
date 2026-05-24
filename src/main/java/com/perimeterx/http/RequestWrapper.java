@@ -1,6 +1,5 @@
 package com.perimeterx.http;
 
-import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -130,21 +129,6 @@ public class RequestWrapper extends HttpServletRequestWrapper {
         @Override
         public void close() throws IOException {
             inputStream.close();
-        }
-
-        @Override
-        public boolean isFinished() {
-            return inputStream.available() == 0;
-        }
-
-        @Override
-        public boolean isReady() {
-            return true;
-        }
-
-        @Override
-        public void setReadListener(ReadListener readListener) {
-            throw new IllegalStateException("Non-blocking reads are not supported for this request wrapper");
         }
     }
 }

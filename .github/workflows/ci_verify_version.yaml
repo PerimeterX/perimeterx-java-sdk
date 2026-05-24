@@ -25,19 +25,16 @@ jobs:
         run: |
           echo "project=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )" >> "$GITHUB_OUTPUT" && \
           echo "px_metadata=$( cat px_metadata.json | jq -r '.version' )" >> "$GITHUB_OUTPUT" && \
-          echo "demo_app_dependency=$( mvn help:evaluate -Dexpression=com.perimeterx.version -q -DforceStdout -f web/pom.xml)" >> "$GITHUB_OUTPUT" && \
-          echo "demo_jakarta_dependency=$( mvn help:evaluate -Dexpression=com.perimeterx.version -q -DforceStdout -f web-jakarta/pom.xml)" >> "$GITHUB_OUTPUT"
+          echo "demo_app_dependency=$( mvn help:evaluate -Dexpression=com.perimeterx.version -q -DforceStdout -f web/pom.xml)" >> "$GITHUB_OUTPUT"
 
       - name: Verify same version
         run: |
           [ $PROJECT_VERSION = $PX_METADATA_VERSION ] && \
-          [ $PROJECT_VERSION = $DEMO_APP_DEPENDENCY_VERSION ] && \
-          [ $PROJECT_VERSION = $DEMO_JAKARTA_DEPENDENCY_VERSION ]
+          [ $PROJECT_VERSION = $DEMO_APP_DEPENDENCY_VERSION ]
         env:
           PROJECT_VERSION: ${{ steps.new-version.outputs.project }}
           PX_METADATA_VERSION: ${{ steps.new-version.outputs.px_metadata }}
           DEMO_APP_DEPENDENCY_VERSION: ${{ steps.new-version.outputs.demo_app_dependency }}
-          DEMO_JAKARTA_DEPENDENCY_VERSION: ${{ steps.new-version.outputs.demo_jakarta_dependency }}
 
       - name: Verify version increment
         run: ./ci_files/verify-version-inc.sh $BASE_VERSION $NEW_VERSION

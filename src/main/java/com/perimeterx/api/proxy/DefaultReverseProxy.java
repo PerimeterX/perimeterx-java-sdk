@@ -168,7 +168,7 @@ public class DefaultReverseProxy implements ReverseProxy {
 
     @Override
     public boolean reverseCaptcha(HttpServletRequest req, HttpServletResponseWrapper res, PXContext context) throws IOException, URISyntaxException {
-        if (!req.getRequestURI().startsWith(captchaReversePrefix)) {
+        if (!req.getRequestURI().contains(captchaReversePrefix)) {
             return false;
         }
         final PredefinedResponse predefinedResponse = new PredefinedResponse(CONTENT_TYPE_JAVASCRIPT, DEFAULT_JAVASCRIPT_VALUE);
@@ -176,7 +176,7 @@ public class DefaultReverseProxy implements ReverseProxy {
         if (!pxConfiguration.isFirstPartyEnabled()) {
             context.logger.debug("First party is disabled, rendering default response");
             predefinedResponseHelper.handlePredefinedResponse(res, predefinedResponse, context);
-            return true;
+            return false;
         }
 
         final String url = getPxCaptchaURL(pxConfiguration, req.getQueryString(), false);
