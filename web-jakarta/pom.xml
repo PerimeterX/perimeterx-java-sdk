@@ -6,21 +6,20 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.web</groupId>
-    <artifactId>web</artifactId>
+    <artifactId>web-jakarta</artifactId>
     <version>1.0.0</version>
     <packaging>war</packaging>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.release>17</maven.compiler.release>
         <com.perimeterx.version>6.17.0</com.perimeterx.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -30,19 +29,19 @@
         </dependency>
         <dependency>
             <groupId>com.perimeterx</groupId>
-            <artifactId>perimeterx-sdk</artifactId>
+            <artifactId>perimeterx-sdk-jakarta</artifactId>
             <version>${com.perimeterx.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.9</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.25</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.23.1</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -50,10 +49,18 @@
             <version>2.23.1</version>
         </dependency>
     </dependencies>
+
     <build>
-        <!-- Same as web-jakarta: WAR must deploy as ROOT so "/" is the app (not /web-1.0.0/). -->
         <finalName>ROOT</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.4.0</version>

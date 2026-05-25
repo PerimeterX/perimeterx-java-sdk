@@ -5,7 +5,7 @@ import com.google.gson.JsonParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
