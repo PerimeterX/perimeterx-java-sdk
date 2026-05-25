@@ -13,7 +13,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <com.perimeterx.version>6.16.0</com.perimeterx.version>
+        <com.perimeterx.version>6.17.0</com.perimeterx.version>
     </properties>
 
     <dependencies>

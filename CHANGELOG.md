@@ -1,9 +1,13 @@
 # Change Log
-## [XX.XX.XX](https://github.com/PerimeterX/perimeterx-java-sdk/compare/xx.xx.xx...HEAD) (xxxx-xx-xx)
+
+## [v6.17.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.17.0...HEAD) (2026-05-24)
+- Added Jakarta EE support via new `perimeterx-sdk-jakarta` artifact (Spring Boot 3, Tomcat 10+)
 - Fixed first party captcha reverse proxy to use `startsWith` instead of `contains` when matching the captcha prefix
 - Fixed first party captcha reverse proxy to correctly return `true` (handled) after rendering the default response when first party is disabled
+- Send original vid from cookie on all activities under orig_cookie_vid
 
-## [v6.16.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/xx.xx.xx...HEAD) (2025-11-12)
+
+## [v6.16.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.16.0...HEAD) (2025-11-12)
 - Fixed first party captcha reverse proxy handling
 - Added support for data enrichment header feature (`px_data_enrichment_header_name` configuration)
 - Added support for AD user identifiers feature
