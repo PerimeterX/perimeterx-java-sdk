@@ -3,6 +3,12 @@ on:
   push:
     branches:
     - master
+  workflow_dispatch:
+    inputs:
+      skip_github_release:
+        description: 'Skip creating a GitHub release'
+        type: boolean
+        default: true
 jobs:
   extract_version:
     runs-on: ubuntu-latest
@@ -24,6 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: extract_version
     name: Create release on GitHub
+    # Skip when triggered manually with skip_github_release=true (default for dispatch).
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.skip_github_release == false }}
     permissions:
       contents: write
     steps:
@@ -38,7 +46,7 @@ jobs:
   publish:
     name: Deploy to maven
     needs:
-      - create_release
+      - extract_version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -61,7 +69,9 @@ jobs:
         run: gpg --list-secret-keys --keyid-format LONG
 
       - name: Deploy a new version
-        run: mvn clean deploy -P build-extras,sign --settings deploy/mvnsettings.xml -pl perimeterx-sdk,perimeterx-sdk-jakarta -am
+        # Tests are verified on JDK 8 in ci.yml. PowerMock 1.6 is not JDK 17 compatible,
+        # so the release build on JDK 17 must skip tests.
+        run: mvn clean deploy -P build-extras,sign --settings deploy/mvnsettings.xml -pl perimeterx-sdk,perimeterx-sdk-jakarta -am -DskipTests
         env:
           GPG_KEY_NAME: ${{ vars.GPG_KEY_NAME }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
