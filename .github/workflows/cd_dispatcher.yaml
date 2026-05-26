@@ -1,0 +1,19 @@
+name: CD Dispatcher (Manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_github_release:
+        description: 'Skip creating a GitHub release tag'
+        type: boolean
+        default: true
+
+jobs:
+  run_cd:
+    name: Run CD pipeline
+    uses: ./.github/workflows/cd.yaml
+    with:
+      skip_github_release: ${{ inputs.skip_github_release }}
+    secrets: inherit
+    permissions:
+      contents: write
