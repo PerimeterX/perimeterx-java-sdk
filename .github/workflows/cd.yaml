@@ -2,7 +2,7 @@ name: CD
 on:
   push:
     branches:
-      - master
+    - master
 jobs:
   extract_version:
     runs-on: ubuntu-latest
