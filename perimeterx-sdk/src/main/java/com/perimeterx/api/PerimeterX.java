@@ -242,9 +242,17 @@ public class PerimeterX implements Closeable {
         setDataEnrichmentHeader(request, context);
     }
 
+    private void addHeaderSafely(HttpServletRequest request, String headerName, String headerValue, PXContext context) {
+        if (request instanceof RequestWrapper) {
+            ((RequestWrapper) request).addHeader(headerName, headerValue);
+        } else {
+            request.setAttribute(headerName, headerValue);
+        }
+    }
+
     private void setBreachedAccount(HttpServletRequest request, PXContext context) {
         if (configuration.isLoginCredentialsExtractionEnabled() && context.isBreachedAccount()) {
-            ((RequestWrapper) request).addHeader(configuration.getPxCompromisedCredentialsHeader(), String.valueOf(context.getPxde().get(BREACHED_ACCOUNT_KEY_NAME)));
+            addHeaderSafely(request, configuration.getPxCompromisedCredentialsHeader(), String.valueOf(context.getPxde().get(BREACHED_ACCOUNT_KEY_NAME)), context);
         }
     }
 
@@ -255,8 +263,8 @@ public class PerimeterX implements Closeable {
             final String stringifyActivity = new Gson().toJson(activity);
             final String urlHeader = configuration.getServerURL() + API_ACTIVITIES;
 
-            ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_HEADER, stringifyActivity);
-            ((RequestWrapper) request).addHeader(ADDITIONAL_ACTIVITY_URL_HEADER, urlHeader);
+            addHeaderSafely(request, ADDITIONAL_ACTIVITY_HEADER, stringifyActivity, context);
+            addHeaderSafely(request, ADDITIONAL_ACTIVITY_URL_HEADER, urlHeader, context);
         }
     }
 
@@ -274,7 +282,7 @@ public class PerimeterX implements Closeable {
             String pxdeJson = context.getPxde().toString();
             byte[] utf8Bytes = pxdeJson.getBytes(StandardCharsets.UTF_8);
             String encodedPxde = new String(utf8Bytes, StandardCharsets.ISO_8859_1);
-            ((RequestWrapper) request).addHeader(headerName, encodedPxde);
+            addHeaderSafely(request, headerName, encodedPxde, context);
         } catch (Exception e) {
             context.logger.debug("Failed to add data enrichment header", e);
         }
