@@ -1,5 +1,9 @@
 # Change Log
 
+## [v6.17.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.17.1...HEAD) (2026-06-29)
+- Fix ClassCastException when adding headers to non-RequestWrapper request
+
+
 ## [v6.17.0](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.17.0...HEAD) (2026-05-24)
 - Added Jakarta EE support via new `perimeterx-sdk-jakarta` artifact (Spring Boot 3, Tomcat 10+)
 - Fixed first party captcha reverse proxy to use `startsWith` instead of `contains` when matching the captcha prefix
