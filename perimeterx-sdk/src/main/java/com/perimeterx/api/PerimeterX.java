@@ -247,7 +247,6 @@ public class PerimeterX implements Closeable {
             ((RequestWrapper) request).addHeader(headerName, headerValue);
         } else {
             request.setAttribute(headerName, headerValue);
-            context.logger.debug("Request is not a RequestWrapper instance, header '{}' was added as a request attribute instead", headerName);
         }
     }
 
