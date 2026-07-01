@@ -90,34 +90,22 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Generate token
-        id: generate-token
-        uses: actions/create-github-app-token@v2
-        with:
-          # App ID and private key PX docs app
-          app-id: ${{ vars.HS_DOCS_UPDATER_APP_ID }}
-          private-key: ${{ secrets.HS_DOCS_UPDATER_APP_PRIVATE_KEY }}
-          repositories: public-docs
-
-      - name: Clone public-docs
-        uses: actions/checkout@v6
-        with:
-          repository: PerimeterX/public-docs
-          path: ${{ env.DOCS_REPO_PATH }}
-          token: ${{ steps.generate-token.outputs.token }}
-          ref: main
-
       - name: Check if CHANGELOG.md was modified
         id: check_changelog
         run: |
           BEFORE_SHA="${{ github.event.before }}"
           AFTER_SHA="${{ github.event.after }}"
-        
+
           if [[ "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]] || [[ -z "$BEFORE_SHA" ]]; then
-          echo "New branch or missing before SHA, checking if CHANGELOG.md exists"
-            if [ -f "CHANGELOG.md" ]; then
-              echo "changelog_modified=true" >> "$GITHUB_OUTPUT"
+            echo "New branch or missing before SHA, checking parent commit diff"
+            if git rev-parse HEAD~1 >/dev/null 2>&1; then
+              if git diff --name-only HEAD~1 HEAD | grep -q "^CHANGELOG.md$"; then
+                echo "changelog_modified=true" >> "$GITHUB_OUTPUT"
+              else
+                echo "changelog_modified=false" >> "$GITHUB_OUTPUT"
+              fi
             else
+              echo "No parent commit available, skipping changelog sync"
               echo "changelog_modified=false" >> "$GITHUB_OUTPUT"
             fi
           else
@@ -127,6 +115,25 @@ jobs:
               echo "changelog_modified=false" >> "$GITHUB_OUTPUT"
             fi
           fi
+
+      - name: Generate token
+        if: steps.check_changelog.outputs.changelog_modified == 'true'
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          # App ID and private key PX docs app
+          app-id: ${{ vars.HS_DOCS_UPDATER_APP_ID }}
+          private-key: ${{ secrets.HS_DOCS_UPDATER_APP_PRIVATE_KEY }}
+          repositories: public-docs
+
+      - name: Clone public-docs
+        if: steps.check_changelog.outputs.changelog_modified == 'true'
+        uses: actions/checkout@v6
+        with:
+          repository: PerimeterX/public-docs
+          path: ${{ env.DOCS_REPO_PATH }}
+          token: ${{ steps.generate-token.outputs.token }}
+          ref: main
 
       - name: Extract and create changelog entry
         if: steps.check_changelog.outputs.changelog_modified == 'true'
@@ -138,83 +145,33 @@ jobs:
             
             const version = '${{ needs.extract_version.outputs.version }}';
             
-            // Read the CHANGELOG.md file
             const changelogContent = fs.readFileSync('${{ env.SOURCE_FILE }}', 'utf8');
             
-            // Parse all changelog entries
-            const lines = changelogContent.split('\n');
-            const entries = [];
-            let currentEntry = null;
-            
             // Expected format: ## [vVERSION](url) (YYYY-MM-DD)
-            // e.g., ## [v6.17.1](https://github.com/...) (2026-06-29)
-            for (let i = 0; i < lines.length; i++) {
-              const line = lines[i];
-              const match = line.match(/^## \[([^\]]+)\]\([^)]*\) \((\d{4}-\d{2}-\d{2})\)/);
-              
-              if (match) {
-                // Save previous entry if exists
-                if (currentEntry) {
-                  entries.push(currentEntry);
-                }
-                
-                // Start new entry
-                currentEntry = {
-                  version: match[1],
-                  date: match[2],
-                  content: []
-                };
-              } else if (currentEntry) {
-                // Add line to current entry content
-                currentEntry.content.push(line);
-              }
-            }
-            
-            if (currentEntry) {
-              entries.push(currentEntry);
-            }
-            
-            if (entries.length === 0) {
-              core.setFailed('No changelog entries found');
-              return;
-            }
-            
-            core.info(`Found ${entries.length} changelog entries`);
-            
-            const normalizeVersion = (v) => v.replace(/^v/i, '');
-
-            // Find the entry matching the extracted version
-            const matchingEntry = entries.find(
-              entry => normalizeVersion(entry.version) === normalizeVersion(version)
+            // e.g., ## [v6.17.1](https://github.com/PerimeterX/perimeterx-java-sdk/compare/v6.17.1...HEAD) (2026-06-29)
+            const escapedVersion = version.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Do not use the multiline flag here: with /m, $ matches every line end and
+            // the lazy capture stops after the first blank line, omitting entry content.
+            const entryMatch = changelogContent.match(
+              new RegExp(`(?:^|\\n)## \\[v?${escapedVersion}\\]\\([^)]*\\) \\((\\d{4}-\\d{2}-\\d{2})\\)\\n([\\s\\S]*?)(?=\\n## \\[|$)`)
             );
             
-            if (!matchingEntry) {
+            if (!entryMatch) {
               core.setFailed(`No changelog entry found for version ${version}`);
               return;
             }
             
-            core.info(`Processing changelog entry for version ${version} dated ${matchingEntry.date}`);
+            const date = entryMatch[1];
+            const content = entryMatch[2].trim();
             
-            // Get the content
-            const content = matchingEntry.content.join('\n').trim();
+            core.info(`Processing changelog entry for version ${version} dated ${date}`);
             
-            const versionHeader = `Version ${version}`;
+            const versionEntry = `## Version ${version}\n\n${content}\n`;
 
-            // Create the .mdx file content
-            const mdxContent = `## ${versionHeader}\n\n${content}\n`;
-            
-            // Write the file with DATE.mdx format
-            const versionEntry = `## ${versionHeader}\n\n${content}\n`;
-
-            const filename = `${matchingEntry.date}.mdx`;
+            const filename = `${date}.mdx`;
             const filepath = path.join(process.env.DOCS_REPO_PATH, process.env.CHANGELOG_DEST_DIR, filename);
 
-            // Ensure directory exists before writing file
-            const dirPath = path.dirname(filepath);
-            if (!fs.existsSync(dirPath)) {
-              fs.mkdirSync(dirPath, { recursive: true });
-              core.info(`Created directory: ${dirPath}`);
-            }
+            fs.mkdirSync(path.dirname(filepath), { recursive: true });
             
             let finalContent;
             if (fs.existsSync(filepath)) {
@@ -222,7 +179,7 @@ jobs:
               const existingContent = fs.readFileSync(filepath, 'utf8');
               
               // Check if this exact version header already exists in the file
-              const versionHeaderRegex = new RegExp(`^## ${versionHeader.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'm');
+              const versionHeaderRegex = new RegExp(`^## Version ${escapedVersion}$`, 'm');
               if (versionHeaderRegex.test(existingContent)) {
                 core.info(`Version ${version} already exists in ${filename}, skipping...`);
                 return;
@@ -240,9 +197,10 @@ jobs:
             fs.writeFileSync(filepath, finalContent);
           
             core.info(`Created/updated changelog file: ${filepath}`);
-            core.info(`Version: ${version}, Date: ${matchingEntry.date}`);
+            core.info(`Version: ${version}, Date: ${date}`);
         
-      - name: Commit and push changes to public-docs
+      - name: Commit and push changes to public-docs repo
+        if: steps.check_changelog.outputs.changelog_modified == 'true'
         id: commit_push_changes
         run: |
           cd ${{ env.DOCS_REPO_PATH }}
